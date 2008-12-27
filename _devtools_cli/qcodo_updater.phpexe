@@ -1,0 +1,18 @@
+<?php
+	/**
+	 * This is a Windows-based PHP CLI (Command Line Interface) script
+	 * to perform the Qcodo Update Utility.
+	 *
+	 * Remember: Windows CLI must be executed by the php.exe executable (usually
+	 * installed at c:\php\php.exe).
+	 *
+	 * Typical usage would be:
+	 *    c:\php\php.exe qcodo_updater.phpexe [SETTINGS...]
+	 */
+
+	// Specify we are Windows
+	$blnWindows = true;
+
+	// Include the rest of the OS-agnostic script
+	require('qcodo_updater.inc.php');
+?>

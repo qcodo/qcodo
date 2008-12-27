@@ -1,0 +1,19 @@
+#!/usr/local/bin/php
+<?php
+	/**
+	 * This is a *nix/Mac-based PHP CLI (Command Line Interface) script
+	 * to perform the Qcodo Update Utility.
+	 *
+	 * Remember: You may need to update the top line to have it point
+	 * to the php binary on your server.
+	 *
+	 * Typical usage would be:
+	 *     ./qcodo_updater.cli [SETTINGS...]
+	 */
+
+	// Specify we are Non-Windows
+	$blnWindows = false;
+
+	// Include the rest of the OS-agnostic script
+	require('qcodo_updater.inc.php');
+?>

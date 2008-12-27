@@ -1,0 +1,1 @@
+This folder is to temporarily store the webroot-accessible uploaded files created by the QFileAsset example.

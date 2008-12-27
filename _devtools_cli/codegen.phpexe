@@ -1,0 +1,18 @@
+<?php
+	/**
+	 * This is a Windows-based PHP CLI (Command Line Interface) script
+	 * which is a wrapper around the CodeGen object.
+	 *
+	 * Remember: Windows CLI must be executed by the php.exe executable (usually
+	 * installed at c:\php\php.exe).
+	 *
+	 * Typical usage would be:
+	 *    c:\php\php.exe codegen.phpexe [SETTINGS...]
+	 */
+
+	// Running as a Windows Command Name
+	$strCommandName = 'c:\\php\\php.exe codegen.phpexe';
+
+	// Include the rest of the OS-agnostic script
+	require('codegen.inc.php');
+?>
