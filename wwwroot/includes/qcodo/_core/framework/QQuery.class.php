@@ -339,7 +339,7 @@
 				$this->strRootTableName = $strName;
 		}
 
-		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false) {
+		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
 			// Make sure our Root Tables Match
 			if ($this->_RootTableName != $objBuilder->RootTableName)
 				throw new QCallerException('Cannot use QQNode for "' . $this->_RootTableName . '" when querying against the "' . $objBuilder->RootTableName . '" table', 3);
@@ -1057,7 +1057,7 @@
 			$this->objParentQueryNodes = $objParentQueryNodes;
 			$this->strSql = $strSql;
 		}
-		public function GetColumnAlias($objBuilder) {
+		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
 			$strSql = $this->strSql;
 			for ($intIndex = 1; $intIndex < count($this->objParentQueryNodes); $intIndex++) {
 				if (!is_null($this->objParentQueryNodes[$intIndex]))
@@ -1075,7 +1075,7 @@
 			$this->strName = trim(strtolower($strName));
 			$this->objSubQueryDefinition = $objSubQueryDefinition;
 		}
-		public function GetColumnAlias(QQueryBuilder $objBuilder) {
+		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
 			if ($this->objSubQueryDefinition) {
 				$objBuilder->SetVirtualNode($this->strName, $this->objSubQueryDefinition);
 				return $this->objSubQueryDefinition->GetColumnAlias($objBuilder);
