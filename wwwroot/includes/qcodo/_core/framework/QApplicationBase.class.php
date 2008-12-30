@@ -353,13 +353,13 @@
 				require($strClassFile);
 
 			// Perform initialize routine for CLI calls (if applicable)
-			if (QApplication::$CliMode) QApplication::InitializeCli();
+			if (QApplication::$CliMode) QApplication::InitializeForCli();
 
 			// Finally, Initialize the Database Connections
 			QApplication::InitializeDatabaseConnections();
 		}
 
-		protected static function InitializeCli() {
+		protected static function InitializeForCli() {
 			// First, turn off output buffering
 			ob_end_clean();
 
@@ -376,7 +376,7 @@
 				print "   qcodo-updater   Updates your installed Qcodo framework to a new version\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
-				print "See the README.txt file for more information.";
+				print "See the _README.txt file in " . __DEVTOOLS_CLI__ . " for more information.";
 				print "\r\n";
 				exit(1);
 			}
