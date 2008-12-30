@@ -191,27 +191,47 @@
 		////////////////////////
 
 		/**
-		 * This should be the first call to initialize all the static variables
-		 * The application object also has static methods that are miscellaneous web
-		 * development utilities, etc.
-		 *
+		 * Called by QApplication::Initialize() to setup error and exception handling
+		 * to use the Qcodo Error/Exception handler.  Only called for non-CLI calls.
 		 * @return void
 		 */
-		public static function Initialize() {
-			// Are we running as CLI?
+		protected static function InitializeErrorHandling() {
+			if (!QApplication::$CliMode) {
+				set_error_handler('QcodoHandleError');
+				set_exception_handler('QcodoHandleException');
+			}
+		}
+
+		/**
+		 * Called by QApplication::Initialize() to initialize the QApplication::$CliMode setting.
+		 * @return void
+		 */
+		protected static function InitializeCliMode() {
 			if (PHP_SAPI == 'cli')
 				QApplication::$CliMode = true;
 			else
 				QApplication::$CliMode = false;
-
-			// Setup Server Address
+		}
+		
+		/**
+		 * Called by QApplication::Initialize() to initialize the QApplication::$ServerAddress setting.
+		 * @return void
+		 */
+		protected static function InitializeServerAddress() {
 			if (array_key_exists('LOCAL_ADDR', $_SERVER))
 				QApplication::$ServerAddress = $_SERVER['LOCAL_ADDR'];
 			else if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER))
 				QApplication::$ServerAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
 			else if (array_key_exists('SERVER_ADDR', $_SERVER))
 				QApplication::$ServerAddress = $_SERVER['SERVER_ADDR'];
-
+		}
+		
+		/**
+		 * Called by QApplication::Initialize() to initialize the various
+		 * QApplication settings on ScriptName, DocumentRoot, etc.
+		 * @return void
+		 */
+		protected static function InitializeScriptInfo() {
 			// Setup ScriptFilename and ScriptName
 			QApplication::$ScriptFilename = $_SERVER['SCRIPT_FILENAME'];
 			QApplication::$ScriptName = $_SERVER['SCRIPT_NAME'];
@@ -224,8 +244,16 @@
 			// Setup PathInfo and QueryString (if applicable)
 			QApplication::$PathInfo = array_key_exists('PATH_INFO', $_SERVER) ? trim($_SERVER['PATH_INFO']) : null;
 			QApplication::$QueryString = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : null;
-
-			// Setup RequestUri
+			
+			// Setup DocumentRoot
+			QApplication::$DocumentRoot = trim(__DOCROOT__);
+		}
+		
+		/**
+		 * Called by QApplication::Initialize() to initialize the QApplication::$RequestUri setting.
+		 * @return void
+		 */
+		protected static function InitializeRequestUri() {
 			if (defined('__URL_REWRITE__')) {
 				switch (strtolower(__URL_REWRITE__)) {
 					case 'apache':
@@ -246,11 +274,13 @@
 					QApplication::$ScriptName, QApplication::$PathInfo,
 					(QApplication::$QueryString) ? sprintf('?%s', QApplication::$QueryString) : null);
 			}
-
-			// Setup DocumentRoot
-			QApplication::$DocumentRoot = trim(__DOCROOT__);
-
-			// Setup Browser Type
+		}
+		
+		/**
+		 * Called by QApplication::Initialize() to initialize the QApplication::$BrowserType setting.
+		 * @return void
+		 */
+		protected static function InitializeBrowserType() {
 			if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
 				$strUserAgent = trim(strtolower($_SERVER['HTTP_USER_AGENT']));
 
@@ -298,10 +328,72 @@
 				if (strpos($strUserAgent, 'macintosh') !== false)
 					QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Macintosh;
 			}
+		}
 
-			// Preload Class Files
+		/**
+		 * This should be the first call to initialize all the static variables
+		 * The application object also has static methods that are miscellaneous web
+		 * development utilities, etc.
+		 * 
+		 * It also will make a call to InitializeDatabaseConnections()
+		 *
+		 * @return void
+		 */
+		public static function Initialize() {
+			// Basic Initailization Routines
+			QApplication::InitializeCliMode();
+			QApplication::InitializeErrorHandling();
+			QApplication::InitializeServerAddress();
+			QApplication::InitializeScriptInfo();
+			QApplication::InitializeRequestUri();
+			QApplication::InitializeBrowserType();
+
+			// Preload all required "Prepload" Class Files
 			foreach (QApplication::$PreloadedClassFile as $strClassFile)
 				require($strClassFile);
+
+			// Perform initialize routine for CLI calls (if applicable)
+			if (QApplication::$CliMode) QApplication::InitializeCli();
+
+			// Finally, Initialize the Database Connections
+			QApplication::InitializeDatabaseConnections();
+		}
+
+		protected static function InitializeCli() {
+			// First, turn off output buffering
+			ob_end_clean();
+
+			// Next, did we ask for a script to be run?
+			if (!array_key_exists(1, $_SERVER['argv']) ||
+				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
+				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
+				print "usage: qcodo SCRIPT [ARGS]\r\n";
+				print "\r\n";
+				print "The following scripts are included with the Qcodo Distribution:\r\n";
+				print "   codegen         Code generates your ORM-layer\r\n";
+				print "   plugin-install  Installs an external Qcodo plugin\r\n";
+				print "   plugin-package  Packages custom code you wrote into a Qcodo plugin\r\n";
+				print "   qcodo-updater   Updates your installed Qcodo framework to a new version\r\n";
+				print "\r\n";
+				print "Other custom scripts can be created as well.\r\n";
+				print "See the README.txt file for more information.";
+				print "\r\n";
+				exit(1);
+			}
+
+			// Find Script
+			if (strpos($_SERVER['argv'][1], '.cli.php') === false)
+				$strScriptFilename = __DEVTOOLS_CLI__ . '/' . $_SERVER['argv'][1] . '.cli.php';
+			else
+				$strScriptFilename = __DEVTOOLS_CLI__ . '/' . $_SERVER['argv'][1];
+
+			if (file_exists($strScriptFilename)) {
+				QApplication::$ScriptFilename = $strScriptFilename;
+				QApplication::$ScriptName = $_SERVER['argv'][1];
+			} else {
+				print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
+				exit(1);
+			}
 		}
 
 		public static function IsBrowser($intBrowserType) {

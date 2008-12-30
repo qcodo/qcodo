@@ -1,0 +1,23 @@
+#!/usr/local/bin/php
+<?php
+	/*
+	 * Line #1 of this file (above) should be the absolute path to your PHP
+	 * CLI bin file.  This is typically /usr/local/bin/php or /usr/bin/php
+	 * on most *nix/Mac-based systems.  Feel free to modify as needed.
+	 */
+
+	ini_set('error_reporting', E_ALL | E_STRICT);
+
+	/*
+	 * The following line should require() the prepend.inc.php file
+	 * in your includes directory.  This can either be a relative
+	 * or an absolute path, but it is recommended to use a relative
+	 * path, especially for systems that use multiple instances of Qcodo.
+	 * Feel free to modify as needed.
+	 */
+	require(dirname(__FILE__) . '/../wwwroot/includes/prepend.inc.php');
+
+
+	// Finally, require() the ScriptFilename that is being run/executed
+	require(QApplication::$ScriptFilename);
+?>
