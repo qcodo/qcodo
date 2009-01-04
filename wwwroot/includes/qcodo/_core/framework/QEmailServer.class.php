@@ -158,8 +158,9 @@
 						$strResponse = fgets($objResource, 4096);
 
 				// Check for a "220" response
-				if ((strpos($strResponse, "220") === false) || (strpos($strResponse, "220") != 0))
-					throw new QEmailException(sprintf('Error Response on Connect: %s', $strResponse));
+				if (!QEmailServer::$TestMode)
+					if ((strpos($strResponse, "220") === false) || (strpos($strResponse, "220") != 0))
+						throw new QEmailException(sprintf('Error Response on Connect: %s', $strResponse));
 			}
 
 			// Send: EHLO
@@ -173,8 +174,9 @@
 						$strResponse = fgets($objResource, 4096);
 
 				// Check for a "250" response
-				if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
-					throw new QEmailException(sprintf('Error Response on EHLO: %s', $strResponse));
+				if (!QEmailServer::$TestMode)
+					if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
+						throw new QEmailException(sprintf('Error Response on EHLO: %s', $strResponse));
 			}
 
 			// Send Authentication
@@ -191,22 +193,25 @@
 				fwrite($objResource,"AUTH LOGIN\r\n");
 				if (!feof($objResource)) {
 					$strResponse = fgets($objResource, 4096);
-					if ((strpos($strResponse, "334") === false) || (strpos($strResponse, "334") != 0))
-						throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
+					if (!QEmailServer::$TestMode)
+						if ((strpos($strResponse, "334") === false) || (strpos($strResponse, "334") != 0))
+							throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
 				}
 
 				fwrite($objResource, base64_encode(QEmailServer::$SmtpUsername) . "\r\n");
 				if (!feof($objResource)) {
 					$strResponse = fgets($objResource, 4096);
-					if ((strpos($strResponse, "334") === false) || (strpos($strResponse, "334") != 0))
-						throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
+					if (!QEmailServer::$TestMode)
+						if ((strpos($strResponse, "334") === false) || (strpos($strResponse, "334") != 0))
+							throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
 				}
 
 				fwrite($objResource, base64_encode(QEmailServer::$SmtpPassword) . "\r\n");
 				if (!feof($objResource)) {
  					$strResponse = fgets($objResource, 4096);
-					if ((strpos($strResponse, "235") === false) || (strpos($strResponse, "235") != 0))
-						throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
+					if (!QEmailServer::$TestMode)
+						if ((strpos($strResponse, "235") === false) || (strpos($strResponse, "235") != 0))
+							throw new QEmailException(sprintf('Error in response from AUTH LOGIN: %s', $strResponse));
 				}
 			}
 
@@ -221,8 +226,9 @@
 				$strResponse = fgets($objResource, 4096);
 				
 				// Check for a "250" response
-				if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
-					throw new QEmailException(sprintf('Error Response on MAIL FROM: %s', $strResponse));
+				if (!QEmailServer::$TestMode)
+					if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
+						throw new QEmailException(sprintf('Error Response on MAIL FROM: %s', $strResponse));
 			}
 
 			// Setup RCPT TO line(s)
@@ -248,8 +254,9 @@
 					$strResponse = fgets($objResource, 4096);
 					
 					// Check for a "250" response
-					if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
-						throw new QEmailException(sprintf('Error Response on RCPT TO: %s', $strResponse));
+					if (!QEmailServer::$TestMode)
+						if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
+							throw new QEmailException(sprintf('Error Response on RCPT TO: %s', $strResponse));
 				}
 			}
 
@@ -259,8 +266,9 @@
 				$strResponse = fgets($objResource, 4096);
 				
 				// Check for a "354" response
-				if ((strpos($strResponse, "354") === false) || (strpos($strResponse, "354") != 0))
-					throw new QEmailException(sprintf('Error Response on DATA: %s', $strResponse));
+				if (!QEmailServer::$TestMode)
+					if ((strpos($strResponse, "354") === false) || (strpos($strResponse, "354") != 0))
+						throw new QEmailException(sprintf('Error Response on DATA: %s', $strResponse));
 			}
 
 			// Send: Required Headers
@@ -311,12 +319,11 @@
 
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType));
-//				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
-				fwrite($objResource, sprintf("Content-Transfer-Encoding: 7bit\r\n\r\n"));
-
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));								
+		
 				fwrite($objResource, $objMessage->HtmlBody);
 				fwrite($objResource, "\r\n\r\n");
-
+				
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
 			} elseif($objMessage->HasFiles) {
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));				
@@ -357,8 +364,9 @@
 				$strResponse = fgets($objResource, 4096);
 				
 				// Check for a "250" response
-				if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
-					throw new QEmailException(sprintf('Error Response on MAIL FROM: %s', $strResponse));
+				if (!QEmailServer::$TestMode)
+					if ((strpos($strResponse, "250") === false) || (strpos($strResponse, "250") != 0))
+						throw new QEmailException(sprintf('Error Response on DATA finish: %s', $strResponse));
 			}
 
 			// Send: QUIT
@@ -368,6 +376,8 @@
 				
 			// Close the Resource
 			fclose($objResource);
+			if (QEmailServer::$TestMode)
+				chmod($strFileName, 0777);
 		}
 	}
 
@@ -516,11 +526,13 @@
 						$strBody = QType::Cast($mixValue, QType::String);
 						$strBody = str_replace("\r", "", $strBody);
 						$strBody = str_replace("\n", "\r\n", $strBody);
+						$strBody = str_replace("\r\n.", "\r\n..", $strBody);
 						return ($this->strBody = $strBody);
 					case 'HtmlBody':
 						$strHtmlBody = QType::Cast($mixValue, QType::String);
 						$strHtmlBody = str_replace("\r", "", $strHtmlBody);
 						$strHtmlBody = str_replace("\n", "\r\n", $strHtmlBody);
+						$strHtmlBody = str_replace("\r\n.", "\r\n..", $strHtmlBody);
 						return ($this->strHtmlBody = $strHtmlBody);
 
 					case 'Cc': return ($this->strCc = QType::Cast($mixValue, QType::String));
