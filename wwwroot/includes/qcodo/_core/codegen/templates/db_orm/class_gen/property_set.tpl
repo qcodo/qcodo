@@ -14,11 +14,9 @@
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 	<% if ((!$objColumn->Identity) && (!$objColumn->Timestamp)) { %>
 				case '<%= $objColumn->PropertyName %>':
-					/**
-					 * Sets the value for <%= $objColumn->VariableName %> <% if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
-					 * @param <%= $objColumn->VariableType %> $mixValue
-					 * @return <%= $objColumn->VariableType %>
-					 */
+					// Sets the value for <%= $objColumn->VariableName %> <% if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
+					// @param <%= $objColumn->VariableType %> $mixValue
+					// @return <%= $objColumn->VariableType %>
 					try {
 		<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
 						$this-><%= $objColumn->Reference->VariableName %> = null;
@@ -38,11 +36,9 @@
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 	<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
 				case '<%= $objColumn->Reference->PropertyName %>':
-					/**
-					 * Sets the value for the <%= $objColumn->Reference->VariableType %> object referenced by <%= $objColumn->VariableName %> <% if ($objColumn->Identity) return '(Read-Only PK)'; else if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
-					 * @param <%= $objColumn->Reference->VariableType %> $mixValue
-					 * @return <%= $objColumn->Reference->VariableType %>
-					 */
+					// Sets the value for the <%= $objColumn->Reference->VariableType %> object referenced by <%= $objColumn->VariableName %> <% if ($objColumn->Identity) return '(Read-Only PK)'; else if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
+					// @param <%= $objColumn->Reference->VariableType %> $mixValue
+					// @return <%= $objColumn->Reference->VariableType %>
 					if (is_null($mixValue)) {
 						$this-><%= $objColumn->VariableName %> = null;
 						$this-><%= $objColumn->Reference->VariableName %> = null;
@@ -74,11 +70,9 @@
 <% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>
 	<% if ($objReverseReference->Unique) { %>
 				case '<%= $objReverseReference->ObjectPropertyName %>':
-					/**
-					 * Sets the value for the <%= $objReverseReference->VariableType %> object referenced by <%= $objReverseReference->ObjectMemberVariable %> (Unique)
-					 * @param <%= $objReverseReference->VariableType %> $mixValue
-					 * @return <%= $objReverseReference->VariableType %>
-					 */
+					// Sets the value for the <%= $objReverseReference->VariableType %> object referenced by <%= $objReverseReference->ObjectMemberVariable %> (Unique)
+					// @param <%= $objReverseReference->VariableType %> $mixValue
+					// @return <%= $objReverseReference->VariableType %>
 					if (is_null($mixValue)) {
 						$this-><%= $objReverseReference->ObjectMemberVariable %> = null;
 
