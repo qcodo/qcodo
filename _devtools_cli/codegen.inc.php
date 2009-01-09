@@ -12,7 +12,7 @@
 	function PrintInstructions() {
 		global $strCommandName;
 		print('Qcodo Code Generator (Command Line Interface) - ' . QCODO_VERSION . '
-Copyright (c) 2001 - 2007, QuasIdea Development, LLC
+Copyright (c) 2001 - 2009, Quasidea Development, LLC
 This program is free software with ABSOLUTELY NO WARRANTY; you may
 redistribute it under the terms of The MIT License.
 

@@ -929,7 +929,7 @@
 				$strCommandName = './qcodo_downloader.cli';
 
 			print('Qcodo Downloader Service - ' . QCODO_VERSION . '
-Copyright (c) 2001 - 2007, QuasIdea Development, LLC
+Copyright (c) 2001 - 2009, Quasidea Development, LLC
 This program is free software with ABSOLUTELY NO WARRANTY; you may
 redistribute it under the terms of The MIT License.
 
@@ -1038,7 +1038,7 @@ For more information, please go to www.qcodo.com
            updating to.";
 
 			printf('Qcodo Updater Service - ' . QCODO_VERSION . '
-Copyright (c) 2001 - 2007, QuasIdea Development, LLC
+Copyright (c) 2001 - 2009, Quasidea Development, LLC
 This program is free software with ABSOLUTELY NO WARRANTY; you may
 redistribute it under the terms of The MIT License.
 
