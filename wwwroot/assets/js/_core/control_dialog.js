@@ -172,7 +172,7 @@
 		if (qcodo.isBrowser(qcodo.IE))
 			objDbBg.style.overflow = "auto";
 		else
-			objDbBg.style.overflow = "hide";
+			objDbBg.style.overflow = "hidden";
 
 		if (blnMatteClickable) {
 			objDbBg.style.cursor = "pointer";
