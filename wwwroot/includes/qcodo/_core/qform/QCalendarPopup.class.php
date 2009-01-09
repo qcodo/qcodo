@@ -39,7 +39,7 @@
 
 					// Otherwise, set up a new date object, and update dttNewDateTime accordingly
 					$blnChanged = true;
-					$dttSelectedDate = new QDateTime($_POST[$strKey]);
+					$dttSelectedDate = QDateTime::FromTimestamp($_POST[$strKey]);
 
 					$dttNewDateTime->SetDate($dttSelectedDate->Year, $dttSelectedDate->Month, $dttSelectedDate->Day);					
 				}
@@ -141,7 +141,7 @@
 				case QCalendarType::TimeOnly:
 				case QCalendarType::TimeSecondsOnly:
 					if ($intTimestamp)
-						$dttDate = new QDateTime($intTimestamp);
+						$dttDate = QDateTime::FromTimestamp($intTimestamp);
 					else
 						$dttDate = new QDateTime();
 
@@ -188,7 +188,7 @@
 				// MISC
 				case "DateTime":
 					if ($this->intTimestamp) {
-						$dttToReturn = new QDateTime($this->intTimestamp);
+						$dttToReturn = QDateTime::FromTimestamp($this->intTimestamp);
 						$dttToReturn->SetTime(null, null, null);
 						return $dttToReturn;
 					} else {
