@@ -33,7 +33,7 @@
 			$this-><%= $strLabelId %> = new QLabel($this->objParentObject, $strControlId);
 			$this-><%= $strLabelId %>->Name = QApplication::Translate('<%= QConvertNotation::WordsFromCamelCase($objColumn->PropertyName) %>');
 			$this->str<%= $objColumn->PropertyName %>DateTimeFormat = $strDateTimeFormat;
-			$this-><%= $strLabelId %>->Text = sprintf($this-><%= $strObjectName %>-><%= $objColumn->PropertyName %>) ? $this-><%= $strObjectName %>->__toString($this->str<%= $objColumn->PropertyName %>DateTimeFormat) : null;
+			$this-><%= $strLabelId %>->Text = sprintf($this-><%= $strObjectName %>-><%= $objColumn->PropertyName %>) ? $this-><%= $strObjectName %>-><%= $objColumn->PropertyName %>->__toString($this->str<%= $objColumn->PropertyName %>DateTimeFormat) : null;
 <% if ($objColumn->NotNull) { %>
 			$this-><%=$strLabelId %>->Required = true;
 <% } %>
