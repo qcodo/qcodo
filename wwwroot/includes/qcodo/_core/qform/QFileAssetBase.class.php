@@ -68,11 +68,11 @@
 		public function dlgFileAsset_Upload() {
 			// File Not Uploaded
 			if (!file_exists($this->dlgFileAsset->flcFileAsset->File) || !$this->dlgFileAsset->flcFileAsset->Size) {
-				$this->dlgFileAsset->ShowError($this->strUnacceptableMessage);
+				$this->dlgFileAsset->ShowError($this->strUnacceptableMessage . ' 1');
 
 			// File Has Incorrect MIME Type (only if an acceptiblemimearray is setup)
 			} else if (is_array($this->strAcceptibleMimeArray) && (!array_key_exists($this->dlgFileAsset->flcFileAsset->Type, $this->strAcceptibleMimeArray))) {
-				$this->dlgFileAsset->ShowError($this->strUnacceptableMessage);
+				$this->dlgFileAsset->ShowError($this->strUnacceptableMessage . ' 2');
 
 			// File Successfully Uploaded
 			} else {
@@ -123,6 +123,9 @@
 			// Create a new shell FileAsset for this panel
 			$this->File = null;
 			$this->Refresh();
+
+			// Temporary fix for Double DBox Render issue after Delete/Reupload
+			QApplication::ExecuteJavaScript('document.getElementById(document.getElementById("Qform__FormId").value).removeChild(document.getElementById("' . $this->dlgFileAsset->ControlId . '_ctl"));');
 		}
 
 		public function __get($strName) {
