@@ -216,8 +216,9 @@
 		 *	zz - "PM" or "AM"
 		 *	zzz - "p.m." or "a.m."
 		 *	zzzz - "P.M." or "A.M."
-		 * 
-		 *  ttt - Timezone as a three-letter code (e.g. GMT)
+		 *
+		 *  ttt - Timezone Abbreviation as a three-letter code (e.g. PDT, GMT)
+		 *  tttt - Timezone Identifier (e.g. America/Los_Angeles)
 		 *
 		 * @param string $strFormat the format of the date
 		 * @return string the formatted date as a string
@@ -322,6 +323,9 @@
 
 						case 'ttt':
 							$strToReturn .= parent::format('T');
+							break;
+						case 'tttt':
+							$strToReturn .= parent::format('e');
 							break;
 
 						default:
