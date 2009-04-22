@@ -17,6 +17,8 @@
 		protected $strLabelForRequiredUnnamed;
 		protected $objItemStyle = null;
 
+		protected $blnHtmlEntities = true;
+
 		// BEHAVIOR
 		protected $strSelectionMode = QSelectionMode::Single;
 
@@ -92,7 +94,7 @@
 				$intIndex,
 				($objItem->Selected) ? 'selected="selected"' : "",
 				$objStyle->GetAttributes(),
-				QApplication::HtmlEntities($objItem->Name)
+				($this->blnHtmlEntities) ? QApplication::HtmlEntities($objItem->Name) : $objItem->Name
 			);
 
 			return $strToReturn;
@@ -186,7 +188,8 @@
 				case "LabelForRequired": return $this->strLabelForRequired;
 				case "LabelForRequiredUnnamed": return $this->strLabelForRequiredUnnamed;
 				case "ItemStyle": return $this->objItemStyle;
-				
+				case "HtmlEntities": return $this->blnHtmlEntities;
+
 				// BEHAVIOR
 				case "SelectionMode": return $this->strSelectionMode;
 
@@ -227,6 +230,14 @@
 				case "LabelForRequiredUnnamed":
 					try {
 						$this->strLabelForRequiredUnnamed = QType::Cast($mixValue, QType::String);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+				case "HtmlEntities":
+					try {
+						$this->blnHtmlEntities = QType::Cast($mixValue, QType::Boolean);
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
