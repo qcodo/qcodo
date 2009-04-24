@@ -69,5 +69,17 @@
 
 			return $strString;
 		}
+
+		/**
+		 * Obfuscates an email so that it can be outputted as HTML to the page.
+		 * @param string $strEmail the email address to obfuscate
+		 * @return string the HTML of the obfuscated Email address
+		 */
+		public static function ObfuscateEmail($strEmail) {
+			$strEmail = QApplication::HtmlEntities($strEmail);
+			$strEmail = str_replace('@', '<strong style="display: none;">' . md5(microtime()) . '</strong>&#064;<strong style="display: none;">' . md5(microtime()) . '</strong>', $strEmail);
+			$strEmail = str_replace('.', '<strong style="display: none;">' . md5(microtime()) . '</strong>&#046;<strong style="display: none;">' . md5(microtime()) . '</strong>', $strEmail);
+			return $strEmail;
+		}
 	}
 ?>
