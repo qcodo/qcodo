@@ -166,8 +166,16 @@
 			// Now, we need to see if the file, itself, is actually in the docroot somewhere so that
 			// it can be viewed, and if so, we need to return the web-based URL (relative to the docroot)
 			if ($this->strFile) {
-				if (substr($this->strFile, 0, strlen(__DOCROOT__)) == __DOCROOT__)
-					return __VIRTUAL_DIRECTORY__ . substr($this->strFile, strlen(__DOCROOT__));
+				if (substr($this->strFile, 0, strlen(__DOCROOT__)) == __DOCROOT__) {
+					$strToReturn = __VIRTUAL_DIRECTORY__ . substr($this->strFile, strlen(__DOCROOT__));
+
+					// On Windows, we must replace all "\" with "/"
+					if (substr(__DOCROOT__, 1, 2) == ':\\') {
+						$strToReturn = str_replace('\\', '/', $strToReturn);
+					}
+
+					return $strToReturn;
+				}
 			}
 
 			return null;
@@ -222,13 +230,17 @@
 					break;
 				case QFileAssetType::Pdf:
 					$this->intFileAssetType = $intFileAssetType;
-					$this->strAcceptibleMimeArray = array('application/pdf' => 'pdf');
+					$this->strAcceptibleMimeArray = array(
+						'application/pdf' => 'pdf',
+						'application/octet-stream' => 'pdf'
+					);
 					$this->strUnacceptableMessage = QApplication::Translate('Must be a PDF');
 					break;
 				case QFileAssetType::Document:
 					$this->intFileAssetType = $intFileAssetType;
 					$this->strAcceptibleMimeArray = array(
 						'application/pdf' => 'pdf',
+						'application/octet-stream' => 'pdf',
 						'image/pjpeg' => 'jpg',
 						'image/jpeg' => 'jpg',
 						'image/jpg' => 'jpg',
