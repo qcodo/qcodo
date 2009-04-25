@@ -166,7 +166,11 @@
 			// Now, we need to see if the file, itself, is actually in the docroot somewhere so that
 			// it can be viewed, and if so, we need to return the web-based URL (relative to the docroot)
 			if ($this->strFile) {
-				if (substr($this->strFile, 0, strlen(__DOCROOT__)) == __DOCROOT__) {
+
+				// Normalize all backslashes to just plain slashes 
+				$strFile = str_replace('\\', '/', substr($this->strFile, 0, strlen(__DOCROOT__)));
+				$strDocRoot = str_replace('\\', '/', __DOCROOT__);
+				if ($strFile == $strDocRoot) {
 					$strToReturn = __VIRTUAL_DIRECTORY__ . substr($this->strFile, strlen(__DOCROOT__));
 
 					// On Windows, we must replace all "\" with "/"
@@ -192,7 +196,12 @@
 			} else {
 				// Valid File Selected
 				$this->strFile = realpath($strFile);
-				
+
+				// On Windows, we must replace all "\" with "/"
+				if (substr($this->strFile, 1, 2) == ':\\') {
+					$this->strFile = str_replace('\\', '/', $this->strFile);
+				}
+
 				// Figure Out File Type, and Display Icon Accordingly
 				$strExtension = substr($this->strFile, strrpos($this->strFile, '.') + 1);
 				switch (trim(strtolower($strExtension))) {
