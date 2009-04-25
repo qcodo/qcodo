@@ -15,6 +15,8 @@
 		protected $strText = null;
 		protected $blnHtmlEntities = true;
 
+		protected $strLinkUrl = '#';
+
 		//////////
 		// Methods
 		//////////
@@ -23,7 +25,8 @@
 			if ($strStyle)
 				$strStyle = sprintf('style="%s"', $strStyle);
 
-			$strToReturn = sprintf('<a href="#" id="%s" %s%s>%s</a>',
+			$strToReturn = sprintf('<a href="%s" id="%s" %s%s>%s</a>',
+				$this->strLinkUrl,
 				$this->strControlId,
 				$this->GetAttributes(),
 				$strStyle,
@@ -42,6 +45,7 @@
 				// APPEARANCE
 				case "Text": return $this->strText;
 				case "HtmlEntities": return $this->blnHtmlEntities;
+				case 'LinkUrl': return $this->strLinkUrl;
 				default:
 					try {
 						return parent::__get($strName);
@@ -74,6 +78,14 @@
 						$this->blnHtmlEntities = QType::Cast($mixValue, QType::Boolean);
 						break;
 					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+
+				case 'LinkUrl': 
+					try {
+						return ($this->strLinkUrl = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) {
 						$objExc->IncrementOffset();
 						throw $objExc;
 					}
