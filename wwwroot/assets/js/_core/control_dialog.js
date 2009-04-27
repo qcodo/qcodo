@@ -45,7 +45,7 @@
 
 		objWrapper.handleResize = function(objEvent) {
 			objEvent = qcodo.handleEvent(objEvent);
-			if (objEvent.target) {
+			if (objEvent.target && objEvent.target.nodeName) {
 				if ((objEvent.target.nodeName.toLowerCase() == 'div') || (objEvent.target.nodeName.toLowerCase() == 'span'))
 					return;
 			};
