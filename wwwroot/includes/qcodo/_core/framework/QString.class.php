@@ -46,13 +46,21 @@
 		 * Truncates the string to a given length, adding elipses (if needed).
 		 * @param string $strString string to truncate
 		 * @param integer $intMaxLength the maximum possible length of the string to return (including length of the elipse)
+		 * @param bololean $blnHtmlEntities whether or not to escape the text with htmlentities first
 		 * @return string the full string or the truncated string with eplise
 		 */
-		public final static function Truncate($strText, $intMaxLength) {
-			if (strlen($strText) > $intMaxLength)
-				return substr($strText, 0, $intMaxLength - 3) . "...";
-			else
+		public final static function Truncate($strText, $intMaxLength, $blnHtmlEntities = true) {
+			if (strlen($strText) > $intMaxLength) {
+				$strText = substr($strText, 0, $intMaxLength - 1);
+				if ($blnHtmlEntities) $strText = QApplication::HtmlEntities($strText);
+				$strText .= '&hellip;';
 				return $strText;
+			} else {
+				if ($blnHtmlEntities)
+					return QApplication::HtmlEntities($strText);
+				else
+					return $strText;
+			}
 		}
 
 		/**
