@@ -22,6 +22,13 @@
 
 			return $mixValue;
 		}
+		
+		public function AppendStringToTop($strContent) {
+			if (is_string($this->objArray[$this->Size() - 1]))
+				$this->objArray[$this->Size() - 1] .= $strContent;
+			else
+				throw new QInvalidCastException('Topmost object is not a string');
+		}
 
 		public function Pop() {
 			if (!$this->IsEmpty())
@@ -44,7 +51,7 @@
 			if (array_key_exists($intIndex, $this->objArray))
 				return $this->objArray[$intIndex];
 			else
-				throw new QIndexOutOfRangeException("Index on stack does not exist");
+				throw new QIndexOutOfRangeException($intIndex, "Index on stack does not exist");
 		}
 
 		public function PeekLast() {
