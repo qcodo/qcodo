@@ -51,7 +51,7 @@
 			if ($intCount = count($this->objArray))
 				return $this->objArray[$intCount - 1];
 			else
-				throw new QIndexOutOfRangeException("Stack is empty");
+				throw new QIndexOutOfRangeException($intCount - 1, "Stack is empty");
 		}
 
 		public function IsEmpty() {
