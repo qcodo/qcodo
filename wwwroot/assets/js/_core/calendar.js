@@ -22,13 +22,17 @@
 		objControl.calendarPane.style.display = "none";
 
 		objControl.showCalendar = function() {
-			var strPositionArray = this.wrapper.getAbsolutePosition();
-			this.calendarPane.style.left = strPositionArray.x + "px";
-			this.calendarPane.style.top = strPositionArray.y + "px";
-			this.calendarPane.style.position = "absolute";
-			this.calendarPane.style.zIndex = 10;
-			this.calendarPane.style.display = "block";
-			this.drawCalendar(0, 0);
+			if (!qcodo.isCalendarOpen) {
+				qcodo.isCalendarOpen = true;
+
+				var strPositionArray = this.wrapper.getAbsolutePosition();
+				this.calendarPane.style.left = strPositionArray.x + "px";
+				this.calendarPane.style.top = strPositionArray.y + "px";
+				this.calendarPane.style.position = "absolute";
+				this.calendarPane.style.zIndex = 10;
+				this.calendarPane.style.display = "block";
+				this.drawCalendar(0, 0);
+			}
 		};
 
 		objControl.setDate = function(intYear, intMonth, intDay) {
@@ -129,6 +133,7 @@
 		};
 
 		objControl.hideCalendar = function() {
+			qcodo.isCalendarOpen = false;
 			this.calendarPane.style.display = 'none';
 		};
 
