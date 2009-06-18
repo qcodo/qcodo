@@ -45,6 +45,11 @@
 
 			// Other Setup
 			$this->strCalendarImageSource = __IMAGE_ASSETS__ . '/calendar.png';
+			
+			$this->dtxLinkedControl->RemoveAllActions(QClickEvent::EventName);
+			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QJavaScriptAction("qc.getC('" . $this->strControlId . "').showCalendar(); "));
+			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QBlurControlAction($this->dtxLinkedControl));
+			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QTerminateAction());
 		}
 		public function GetEndScript() {
 			$strToReturn = parent::GetEndScript();

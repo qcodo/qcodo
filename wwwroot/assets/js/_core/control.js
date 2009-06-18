@@ -273,7 +273,17 @@
 					this.control.focus();
 			};
 		};
-		
+
+		// Blur
+		objWrapper.blur = function() {
+			if (this.control.blur) {
+				if (qcodo.isBrowser(qcodo.IE) && (typeof (this.control.blur) == "object"))
+					this.control.blur();
+				else if (typeof (this.control.blur) == "function")
+					this.control.blur();
+			};
+		};
+
 		// Select All (will only work for textboxes only)
 		objWrapper.select = function() {
 			if (this.control.select)
