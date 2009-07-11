@@ -476,7 +476,7 @@
 			if ($this->intTabIndex)
 				$strToReturn .= sprintf('tabindex="%s" ', $this->intTabIndex);
 			if ($this->strToolTip)
-				$strToReturn .= sprintf('title="%s" ', $this->strToolTip);
+				$strToReturn .= sprintf('title="%s" ', QApplication::HtmlEntities($this->strToolTip));
 			if ($this->strCssClass)
 				$strToReturn .= sprintf('class="%s" ', $this->strCssClass);
 			if ($this->strAccessKey)
