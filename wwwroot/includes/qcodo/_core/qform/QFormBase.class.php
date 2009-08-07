@@ -22,7 +22,8 @@
 		protected $strIgnoreStyleSheetFileArray = array();
 
 		private $pxyProcessHashProxy = null;
-
+		private $intProcessHashPollingInterval = null;
+		
 		protected $strPreviousRequestMode = false;
 		protected $strHtmlIncludeFilePath;
 		protected $strCssClass;
@@ -1141,7 +1142,7 @@
 
 			// And lastly, add a Hash Processor (if any and if applicable)
 			if ($this->pxyProcessHashProxy && !$this->IsPostBack()) {
-				$strEndScript .= sprintf('qc.processHash("%s"); ', $this->pxyProcessHashProxy->ControlId);
+				$strEndScript .= sprintf('setInterval("qc.processHash(\'%s\')", %s); ', $this->pxyProcessHashProxy->ControlId, $this->intProcessHashPollingInterval);
 			}
 
 			// Create Final EndScript Script
@@ -1198,11 +1199,13 @@
 		 * passed in will be the value of the hash value (if any).  If no parent object is specified, this QForm will be assumed.
 		 * @param string $strMethodName name of the event handling method to be called 
 		 * @param Object $objParentControl optional object that contains the method
+		 * @param integer $intHashPollingInterval the interval (in ms) on how often the URL is reprocessed (optional, default is 250ms)
 		 * @return void
 		 */
-		public function SetHashProcessor($strMethodName, $objParentControl = null) {
+		public function SetHashProcessor($strMethodName, $objParentControl = null, $intHashPollingInterval = 250) {
 			if (!$this->pxyProcessHashProxy)
 				$this->pxyProcessHashProxy = new QControlProxy($this);
+			$this->intProcessHashPollingInterval = $intHashPollingInterval;
 
 			$this->pxyProcessHashProxy->RemoveAllActions(QClickEvent::EventName);
 

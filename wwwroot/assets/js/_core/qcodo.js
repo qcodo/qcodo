@@ -153,20 +153,29 @@
 		////////////////////////////////////
 		// URL Hash Processing
 		////////////////////////////////////
-
+			this.processHashCurrent = null;
 			this.processHash = function(strControlId) {
-				var strFormId = document.getElementById("Qform__FormId").value;
-
 				// Get the Hash Value
 				var strUrl = new String(document.location);
-				var intPosition = strUrl.indexOf('#');
-				var strAction = "";
 
-				if (intPosition > 0)
-					strAction = strUrl.substring(intPosition + 1);
+				// Only Proceed if it's different than before
+				if (qc.processHashCurrent != strUrl) {
+					// Update the stored current hash stuff
+					qc.processHashCurrent = strUrl;
 
-				// Make the callback
-				qc.pA(strFormId, strControlId, 'QClickEvent', strAction, null);
+					// Get Info Needed for the Control Proxy call
+					var strFormId = document.getElementById("Qform__FormId").value;
+
+					// Figure out the Hash data
+					var intPosition = strUrl.indexOf('#');
+					var strHashData = "";
+
+					if (intPosition > 0)
+						strHashData = strUrl.substring(intPosition + 1);
+
+					// Make the callback
+					qc.pA(strFormId, strControlId, 'QClickEvent', strHashData, null);
+				}
 			}
 
 
