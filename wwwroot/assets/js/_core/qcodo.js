@@ -151,6 +151,27 @@
 
 
 		////////////////////////////////////
+		// URL Hash Processing
+		////////////////////////////////////
+
+			this.processHash = function(strControlId) {
+				var strFormId = document.getElementById("Qform__FormId").value;
+
+				// Get the Hash Value
+				var strUrl = new String(document.location);
+				var intPosition = strUrl.indexOf('#');
+				var strAction = "";
+
+				if (intPosition > 0)
+					strAction = strUrl.substring(intPosition + 1);
+
+				// Make the callback
+				qc.pA(strFormId, strControlId, 'QClickEvent', strAction, null);
+			}
+
+
+
+		////////////////////////////////////
 		// Mouse Drag Handling Functionality
 		////////////////////////////////////
 

@@ -21,6 +21,8 @@
 		protected $strIncludedStyleSheetFileArray = array();
 		protected $strIgnoreStyleSheetFileArray = array();
 
+		private $pxyProcessHashProxy = null;
+
 		protected $strPreviousRequestMode = false;
 		protected $strHtmlIncludeFilePath;
 		protected $strCssClass;
@@ -121,7 +123,6 @@
 		protected function Form_PreRender() {}
 		protected function Form_Validate() {return true;}
 		protected function Form_Exit() {}
-		
 
 		public function VarExport($blnReturn = true) {
 			if ($this->objControlArray) foreach ($this->objControlArray as $objControl)
@@ -1132,11 +1133,16 @@
 					$strEndScript = 'qc.loadJavaScriptFile("' . $strScript . '", null); ';
 			}
 
-			// Finally, add qcodo includes path
+			// Next, add qcodo includes path
 			$strEndScript = sprintf('qc.jsAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __JS_ASSETS__) . $strEndScript;
 			$strEndScript = sprintf('qc.phpAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __PHP_ASSETS__) . $strEndScript;
 			$strEndScript = sprintf('qc.cssAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __CSS_ASSETS__) . $strEndScript;
 			$strEndScript = sprintf('qc.imageAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__) . $strEndScript;
+
+			// And lastly, add a Hash Processor (if any and if applicable)
+			if ($this->pxyProcessHashProxy && !$this->IsPostBack()) {
+				$strEndScript .= sprintf('qc.processHash("%s"); ', $this->pxyProcessHashProxy->ControlId);
+			}
 
 			// Create Final EndScript Script
 			$strEndScript = sprintf('<script type="text/javascript">qc.registerForm(); %s</script>', $strEndScript);
@@ -1185,8 +1191,29 @@
 			} else
 				return $strToReturn;
 		}
+
+		/**
+		 * If the QForm should process the URL hash value after initial rendering, set the PHP method name (and parent object)
+		 * to be called to process the hash on initial load.  Method specified should be an Event Handler, where the $strParameter
+		 * passed in will be the value of the hash value (if any).  If no parent object is specified, this QForm will be assumed.
+		 * @param string $strMethodName name of the event handling method to be called 
+		 * @param Object $objParentControl optional object that contains the method
+		 * @return void
+		 */
+		public function SetHashProcessor($strMethodName, $objParentControl = null) {
+			if (!$this->pxyProcessHashProxy)
+				$this->pxyProcessHashProxy = new QControlProxy($this);
+
+			$this->pxyProcessHashProxy->RemoveAllActions(QClickEvent::EventName);
+
+			if ($objParentControl) {
+				$this->pxyProcessHashProxy->AddAction(new QClickEvent(), new QAjaxControlAction($objParentControl, $strMethodName));
+			} else {
+				$this->pxyProcessHashProxy->AddAction(new QClickEvent(), new QAjaxAction($strMethodName));
+			}
+		}
 	}
-	
+
 	function __QForm_EvaluateTemplate_ObHandler($strBuffer) {
 		return $strBuffer;
 	}
