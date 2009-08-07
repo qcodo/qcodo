@@ -159,9 +159,9 @@
 				var strUrl = new String(document.location);
 
 				// Only Proceed if it's different than before
-				if (qc.processHashCurrent != strUrl) {
+				if (qc.processHashCurrent != strUrl.toString()) {
 					// Update the stored current hash stuff
-					qc.processHashCurrent = strUrl;
+					qc.processHashCurrent = strUrl.toString();
 
 					// Get Info Needed for the Control Proxy call
 					var strFormId = document.getElementById("Qform__FormId").value;
