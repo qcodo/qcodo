@@ -694,11 +694,17 @@
 		public static $JavaScriptArrayHighPriority = array();
 
 		public static $ErrorFlag = false;
-		
+
 		public static function DisplayAlert($strMessage) {
 			array_push(QApplication::$AlertMessageArray, $strMessage);
 		}
-		
+
+		public static function UpdatePageTitle($strPageTitle) {
+			$strPageTitle = QApplication::HtmlEntities($strPageTitle);
+			$strJavaScript = sprintf('document.title = "%s";', $strPageTitle);
+			QApplication::ExecuteJavaScript($strJavaScript);
+		}
+
 		public static function ExecuteJavaScript($strJavaScript, $blnHighPriority = false) {
 			if ($blnHighPriority)
 				array_push(QApplication::$JavaScriptArrayHighPriority, $strJavaScript);
