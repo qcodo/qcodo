@@ -21,8 +21,11 @@
 		protected $strIncludedStyleSheetFileArray = array();
 		protected $strIgnoreStyleSheetFileArray = array();
 
-		private $pxyProcessHashProxy = null;
-		private $intProcessHashPollingInterval = null;
+		private $pxyUrlHashProxy = null;
+		private $intUrlHashPollingInterval = null;
+		private $strUrlHashMethod = null;
+		private $objUrlHashParentObject = null;
+		protected $strUrlHash;
 		
 		protected $strPreviousRequestMode = false;
 		protected $strHtmlIncludeFilePath;
@@ -52,6 +55,7 @@
 				case "FormStatus": return $this->intFormStatus;
 				case "HtmlIncludeFilePath": return $this->strHtmlIncludeFilePath;
 				case "CssClass": return $this->strCssClass;
+				case "UrlHash": return $this->strUrlHash;
 
 				default:
 					try {
@@ -1141,8 +1145,8 @@
 			$strEndScript = sprintf('qc.imageAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__) . $strEndScript;
 
 			// And lastly, add a Hash Processor (if any and if applicable)
-			if ($this->pxyProcessHashProxy && !$this->IsPostBack()) {
-				$strEndScript .= sprintf('setInterval("qc.processHash(\'%s\')", %s); ', $this->pxyProcessHashProxy->ControlId, $this->intProcessHashPollingInterval);
+			if ($this->pxyUrlHashProxy && !$this->IsPostBack()) {
+				$strEndScript .= sprintf('setInterval("qc.processHash(\'%s\')", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
 			}
 
 			// Create Final EndScript Script
@@ -1199,21 +1203,28 @@
 		 * passed in will be the value of the hash value (if any).  If no parent object is specified, this QForm will be assumed.
 		 * @param string $strMethodName name of the event handling method to be called 
 		 * @param Object $objParentControl optional object that contains the method
-		 * @param integer $intHashPollingInterval the interval (in ms) on how often the URL is reprocessed (optional, default is 250ms)
+		 * @param integer $intUrlHashPollingInterval the interval (in ms) on how often the URL is reprocessed (optional, default is 250ms)
 		 * @return void
 		 */
-		public function SetHashProcessor($strMethodName, $objParentControl = null, $intHashPollingInterval = 250) {
-			if (!$this->pxyProcessHashProxy)
-				$this->pxyProcessHashProxy = new QControlProxy($this);
-			$this->intProcessHashPollingInterval = $intHashPollingInterval;
+		public function SetUrlHashProcessor($strMethodName, $objParentControl = null, $intUrlHashPollingInterval = 250) {
+			if (!$this->pxyUrlHashProxy)
+				$this->pxyUrlHashProxy = new QControlProxy($this);
 
-			$this->pxyProcessHashProxy->RemoveAllActions(QClickEvent::EventName);
+			// Setup Values
+			$this->intUrlHashPollingInterval = $intUrlHashPollingInterval;
+			$this->strUrlHashMethod = $strMethodName;
+			$this->objUrlHashParentObject = $objParentControl;
 
-			if ($objParentControl) {
-				$this->pxyProcessHashProxy->AddAction(new QClickEvent(), new QAjaxControlAction($objParentControl, $strMethodName));
-			} else {
-				$this->pxyProcessHashProxy->AddAction(new QClickEvent(), new QAjaxAction($strMethodName));
-			}
+			// Setup the Control Proxy
+			$this->pxyUrlHashProxy->RemoveAllActions(QClickEvent::EventName);
+			$this->pxyUrlHashProxy->AddAction(new QClickEvent(), new QAjaxAction('UrlHashProxy_Process'));
+		}
+
+		protected function UrlHashProxy_Process($strFormId, $strControlId, $strParameter) {
+			$this->strUrlHash = trim($strParameter);
+			$objObject = ($this->objUrlHashParentObject) ? $this->objUrlHashParentObject : $this;
+			$strMethod = $this->strUrlHashMethod;
+			$objObject->$strMethod(); 
 		}
 	}
 
