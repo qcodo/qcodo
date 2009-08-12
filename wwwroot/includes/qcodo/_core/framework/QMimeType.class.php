@@ -126,5 +126,33 @@
 
 			return QMimeType::_Default;
 		}
+
+		/**
+		 * To more easily process a file repository based on Mime Types, it's sometimes
+		 * easier to tokenize a mimetype and process using the tokens (e.g. if you have a
+		 * directory of image icons that you want to map back to a mime type or a 
+		 * collection of mime types, a tokenized-version of the mime type would be more
+		 * appropriate).
+		 * 
+		 * Given a string-based mime type, this will return a "tokenized" version
+		 * of the mime type, which only consists of lower case characters and underscores (_).
+		 * @param string $strMimeType
+		 * @return string
+		 */
+		public static function GetTokenForMimeType($strMimeType) {
+			$strMimeType = strtolower($strMimeType);
+			$strToReturn = '';
+			$intLength = strlen($strMimeType);
+
+			for ($intIndex = 0; $intIndex < $intLength; $intIndex++) {
+				$strCharacter = $strMimeType[$intIndex];
+				if ((ord($strCharacter) >= ord('a')) &&
+					(ord($strCharacter) <= ord('z')))
+					$strToReturn .= $strCharacter;
+				else if ($strCharacter == '/')
+					$strToReturn .= '_';
+			}
+			return $strToReturn;
+		}
 	}
 ?>
