@@ -4,6 +4,7 @@
 		const _Default = 'application/octet-stream';
 		const Executable = 'application/octet-stream';
 		const Gif = 'image/gif';
+		const Gzip = 'application/x-gzip';
 		const Html = 'text/html';
 		const Jpeg = 'image/jpeg';
 		const Mp3 = 'audio/mpeg';
@@ -11,13 +12,17 @@
 		const MsExcel = 'application/vnd.ms-excel';
 		const MsPowerpoint = 'application/vnd.ms-powerpoint';
 		const MsWord = 'application/vnd.ms-word';
+		const OoXmlWordProcessing = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+		const OoXmlPresentation = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+		const OoXmlSpreadsheet = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		const Pdf = 'application/pdf';
 		const PlainText = 'text/plain';
 		const Png = 'image/png';
 		const RichText = 'text/richtext';
 		const Quicktime = 'video/quicktime';
+		const WavAudio = 'audio/x-wav';
 		const Xml = 'text/xml';
-		const Zip = 'application/zip';
+		const Zip = 'application/x-zip';
 
 		/**
 		 * MimeTypeFor array is used in conjunction with GetMimeTypeForFilename()
@@ -25,8 +30,10 @@
 		 */
 		public static $MimeTypeFor = array(
 			'doc' => QMimeType::MsWord,
+			'docx' => QMimeType::OoXmlWordProcessing,
 			'exe' => QMimeType::Executable,
 			'gif' => QMimeType::Gif,
+			'gz' => QMimeType::Gzip,
 			'htm' => QMimeType::Html,
 			'html' => QMimeType::Html,
 			'jpeg' => QMimeType::Jpeg,
@@ -39,10 +46,13 @@
 			'php' => QMimeType::PlainText,
 			'png' => QMimeType::Png,
 			'ppt' => QMimeType::MsPowerpoint,
+			'pptx' => QMimeType::OoXmlPresentation,
 			'rtf' => QMimeType::RichText,
 			'sql' => QMimeType::PlainText,
 			'txt' => QMimeType::PlainText,
+			'wav' => QMimeType::WavAudio,
 			'xls' => QMimeType::MsExcel,
+			'xlsx' => QMimeType::OoXmlSpreadsheet,
 			'xml' => QMimeType::Xml,
 			'zip' => QMimeType::Zip
 		);
