@@ -1145,7 +1145,7 @@
 			$strEndScript = sprintf('qc.imageAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__) . $strEndScript;
 
 			// And lastly, add a Hash Processor (if any and if applicable)
-			if ($this->pxyUrlHashProxy && !$this->IsPostBack()) {
+			if ($this->pxyUrlHashProxy && (QApplication::$RequestMode != QRequestMode::Ajax)) {
 				$strEndScript .= sprintf('setInterval("qc.processHash(\'%s\')", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
 			}
 
