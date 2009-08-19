@@ -47,9 +47,12 @@
 			$this->objSpinner->Display = false;
 
 			$strFileControlCallback = $this->strFileUploadCallback;
-			$this->objParentControl->$strFileControlCallback($strFormId, $strControlId, $strParameter);
+			if ($this->objParentControl)
+				$this->objParentControl->$strFileControlCallback($strFormId, $strControlId, $strParameter);
+			else
+				$this->objForm->$strFileControlCallback($strFormId, $strControlId, $strParameter);
 		}
-		
+
 		public function ShowError($strErrorMessage) {
 			$this->lblError->Text = $strErrorMessage;
 			$this->flcFileAsset->Focus();
