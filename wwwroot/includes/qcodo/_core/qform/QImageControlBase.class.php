@@ -38,6 +38,9 @@
 		}
 
 		public function RenderAsImgSrc($blnDisplayOutput = true) {
+			// If not a visible control, then don't process anything
+			if (!$this->blnVisible) return;
+
 			// Ensure that the ImagePath is Valid
 			if (!$this->strImagePath || !file_exists($this->strImagePath))
 				throw new QCallerException('ImagePath is not defined or does not exist');
