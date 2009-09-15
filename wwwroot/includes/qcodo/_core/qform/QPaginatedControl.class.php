@@ -19,6 +19,8 @@
 		protected $strDataBindMethod;
 		protected $objDataBindControl;
 
+		const LastPage = -9999;
+
 		public function __construct($objParentObject, $strControlId = null) {
 			parent::__construct($objParentObject, $strControlId);
 
@@ -82,22 +84,31 @@
 
 				// MISC
 				case "DataSource": return $this->objDataSource;
+
 				case "LimitClause":
 					if ($this->objPaginator) {
-//						if ($this->objPaginator->TotalItemCount > 0) {
-							$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
-							return QQ::LimitInfo($this->objPaginator->ItemsPerPage, $intOffset);
-//						}
+						// If Paginator PageNumber is set to "LastPage", then set it to the total PageCount
+						if ($this->objPaginator->PageNumber == QPaginatedControl::LastPage) {
+							$this->objPaginator->PageNumber = $this->objPaginator->PageCount;
+						}
+
+						$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
+						return QQ::LimitInfo($this->objPaginator->ItemsPerPage, $intOffset);
 					}
 					return null;
+
 				case "LimitInfo":
 					if ($this->objPaginator) {
-//						if ($this->objPaginator->TotalItemCount > 0) {
-							$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
-							return $intOffset . ',' . $this->objPaginator->ItemsPerPage;
-//						}
+						// If Paginator PageNumber is set to "LastPage", then set it to the total PageCount
+						if ($this->objPaginator->PageNumber == QPaginatedControl::LastPage) {
+							$this->objPaginator->PageNumber = $this->objPaginator->PageCount;
+						}
+
+						$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
+						return $intOffset . ',' . $this->objPaginator->ItemsPerPage;
 					}
 					return null;
+
 				case "ItemCount": return count($this->objDataSource);
 
 				case 'PageNumber':

@@ -105,6 +105,8 @@
 					try {
 						if ($mixValue > 0)
 							return ($this->intPageNumber = QType::Cast($mixValue, QType::Integer));
+						else if ($mixValue == QPaginatedControl::LastPage)
+							return ($this->intPageNumber = QPaginatedControl::LastPage);
 						else
 							return ($this->intPageNumber = 1);
 						break;
