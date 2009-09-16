@@ -340,8 +340,10 @@
 				$strToReturn = $objControl->RenderAjax(false);
 			if ($strToReturn)
 				$strToReturn .= "\r\n";
-			foreach ($objControl->GetChildControls() as $objChildControl)
+			foreach ($objControl->GetChildControls() as $objChildControl) {
 				$strToReturn .= $this->RenderAjaxHelper($objChildControl);
+				$objChildControl->MarkAsRendered();
+			}
 			return $strToReturn;
 		}
 		
