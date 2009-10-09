@@ -10,6 +10,13 @@
 		var objControl; if (!(objControl = qcodo.getControl(mixControl))) return;
 		var objWrapper = objControl.wrapper;
 
+		// Ensure we have only one
+		objWrapper.id = objControl.id + "_ctls";
+		while (objOldDialogWrapper = document.getElementById(objControl.id + "_ctl")) {
+			objOldDialogWrapper.parentNode.removeChild(objOldDialogWrapper);
+		};
+		objWrapper.id = objControl.id + "_ctl";
+
 		// DialogBox MUST be at the "top level" in the DOM, a direct child of the FORM
 		document.getElementById(document.getElementById("Qform__FormId").value).appendChild(objWrapper);
 

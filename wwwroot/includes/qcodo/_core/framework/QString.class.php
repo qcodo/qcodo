@@ -43,6 +43,19 @@
 		}
 
 		/**
+		 * Returns whether or not the given string starts with another string
+		 * @param $strString
+		 * @param $strStartsWith
+		 * @return boolean
+		 */
+		public final static function IsStartsWith($strString, $strStartsWith) {
+			if (substr($strString, 0, strlen($strStartsWith)) == $strStartsWith)
+				return true;
+			else
+				return false;
+		}
+
+		/**
 		 * Truncates the string to a given length, adding elipses (if needed).
 		 * @param string $strString string to truncate
 		 * @param integer $intMaxLength the maximum possible length of the string to return (including length of the elipse)
