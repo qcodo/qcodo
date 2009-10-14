@@ -342,6 +342,7 @@
 		public static function Initialize() {
 			// Basic Initailization Routines
 			QApplication::InitializeCliMode();
+			QApplication::InitializeOutputBuffering();
 			QApplication::InitializeErrorHandling();
 			QApplication::InitializeServerAddress();
 			QApplication::InitializeScriptInfo();
@@ -358,12 +359,15 @@
 			// Finally, Initialize the Database Connections
 			QApplication::InitializeDatabaseConnections();
 		}
+		
+		protected static function InitializeOutputBuffering() {
+			if (!QApplication::$CliMode) {
+				ob_start('__ob_callback');
+			}
+		}
 
 		protected static function InitializeForCli() {
-			// First, turn off output buffering
-			ob_end_clean();
-
-			// Next, did we ask for a script to be run?
+			// Did we ask for a script to be run?
 			if (!array_key_exists(1, $_SERVER['argv']) ||
 				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
 				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";

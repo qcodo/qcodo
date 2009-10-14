@@ -51,7 +51,6 @@
 	function __ob_callback($strBuffer) {
 		return QApplication::OutputPage($strBuffer);
 	}
-	ob_start('__ob_callback');
 
 	// Qcodo Signature
 	header(sprintf('X-Powered-By: PHP/%s; Qcodo/%s', PHP_VERSION, QCODO_VERSION));

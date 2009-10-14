@@ -6,7 +6,6 @@
 	 * on most *nix/Mac-based systems.  Feel free to modify as needed.
 	 */
 
-	ini_set('error_reporting', E_ALL | E_STRICT);
 
 	/*
 	 * The following line should require() the prepend.inc.php file
