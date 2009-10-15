@@ -27,36 +27,255 @@
 		 * @return QCliParameterProcessor
 		 */
 		public function __construct($strQcodoCliCommand, $strHelpTextHeadline) {
-			$this->strQcodoCliCommand = $strQcodoCliCommand;
-			$this->strHelpTextHeadline = $strHelpTextHeadline;
+			$this->strQcodoCliCommand = trim($strQcodoCliCommand);
+			$this->strHelpTextHeadline = trim($strHelpTextHeadline);
 		}
 
+
+		/**
+		 * Parse the given array of arguments
+		 * If nothing is passed in, we'll just assume to use argv, MINUS the "qcodo" call and the script name.
+		 * If asking for help, it will print out help and exit with success.
+		 * If error parsing the argument array, it will print out the error and exit with failure.
+		 * Otherwise, it will return void and not exit at all.
+		 * @param string[] $strArgumentArray
+		 * @return void
+		 */
+		public function Run($strArgumentArray = null) {
+			if (is_null($strArgumentArray)) {
+				$strArgumentArray = $_SERVER['argv'];
+				array_shift($strArgumentArray);
+				array_shift($strArgumentArray);
+			}
+
+			// Asking for help?
+			if ((count($strArgumentArray) == 1) && (
+					(strtolower($strArgumentArray[0]) == '-h') ||
+					(strtolower($strArgumentArray[0]) == '-?') ||
+					(strtolower($strArgumentArray[0]) == '--help')
+				)) {
+				print $this->GetHelpText();
+				exit(0);
+			}
+
+			if ($strError = $this->ParseArguments($strArgumentArray)) {
+				printf("%s: %s\r\n", $this->strQcodoCliCommand, $strError);
+				printf("See \"qcodo %s --help\" for more information\r\n", $this->strQcodoCliCommand);
+				exit(1);
+			}
+		}
+
+		/**
+		 * This will actually handle the argument parsing from the array.
+		 * 
+		 * @param string[] $strArgumentArray
+		 * @return string null if cleanly and completely parsed or string with an error message
+		 */
+		public function ParseArguments($strArgumentArray) {
+			$intCurrentDefaultParameterIndex = 0;
+
+			$intCurrentValueIndex = null;
+			foreach ($strArgumentArray as $strArgument) {
+				// a named parameter or flag?
+				if ((substr($strArgument, 0, 1) == '-') || (substr($strArgument, 0, 2) == '--')) {
+					// We are specifying a named parameter or flag -- if we are in middle of evaluating a ValueIndex, we need to
+					// set the value of that ValueIndex to null
+					if (!is_null($intCurrentValueIndex)) {
+						$this->mixValueArray[$intCurrentValueIndex] = null;
+						$intCurrentValueIndex = null;
+					}
+
+					// Figure out the ValueIndex we're dealing with
+					$strValue = null;
+					if ((substr($strArgument, 0, 2) == '--')) {
+						// Parse out the LongIdentifier and the possible linked value
+						$strArgument = substr($strArgument, 2);
+						if (($intPosition = strpos($strArgument, '=')) !== false) {
+							$strValue = substr($strArgument, $intPosition+1);
+							$strArgument = substr($strArgument, 0, $intPosition);
+						}
+						try {
+							$strArgument = QCliParameterProcessor::CleanLongIdentifier($strArgument);
+						} catch (QCallerException $objExc) {
+							return 'invalid argument "' . $strArgument . '"';
+						}
+
+						// Get the ValueIndex
+						if (array_key_exists($strArgument, $this->strLongIdentifierArray))
+							$intValueIndex = $this->strLongIdentifierArray[$strArgument];
+						else
+							return 'invalid argument "' . $strArgument . '"';
+					} else {
+						// Parse out the ShortIdentifier and the possible linked value
+						$strArgument = substr($strArgument, 1);
+						$chrShortIdentifier = substr($strArgument, 0, 1);
+						try {
+							$chrShortIdentifier = QCliParameterProcessor::CleanShortIdentifier($chrShortIdentifier);
+						} catch (QCallerException $objExc) {
+							return 'invalid argument "' . $chrShortIdentifier . '"';
+						}
+						$strArgument = substr($strArgument, 1);
+
+						// parse out a Value if applicable
+						if (substr($strArgument, 0, 1) == '=') $strArgument = substr($strArgument, 1);
+						if (strlen($strArgument)) $strValue = $strArgument;
+
+						// Get the ValueIndex
+						if (array_key_exists($chrShortIdentifier, $this->chrShortIdentifierArray))
+							$intValueIndex = $this->chrShortIdentifierArray[$chrShortIdentifier];
+						else
+							return 'invalid argument "' . $chrShortIdentifier . '"';
+					}
+					
+					// Are we dealing with a FlagParameter or a NamedParameter
+					if (array_key_exists($intValueIndex, $this->blnFlagArray)) {
+						// Flag
+
+						// if there is a value, return an error
+						if (!is_null($strValue)) {
+							return sprintf('cannot set flag argument "%s"', array_key_exists($intValueIndex, $this->strLongIdentifierByIndex) ?
+									$this->strLongIdentifierByIndex[$intValueIndex] : $this->chrShortIdentifierByIndex[$intValueIndex]);
+
+						// Otherwise, set the flag value to true
+						} else {
+							$this->mixValueArray[$intValueIndex] = true;
+						}
+					} else {
+						// NamedParameter
+
+						// if there is a value, set it
+						if (!is_null($strValue)) {
+							try {
+								$this->mixValueArray[$intValueIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intParameterTypeArray[$intValueIndex]);
+							} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
+							
+						// otherwise, set the currentValueIndex to this valueindex
+						} else {
+							$intCurrentValueIndex = $intValueIndex;
+						}
+					}
+
+				// Just a value -- we need to see who it belongs to
+				} else {
+					$strValue = $strArgument;
+
+					// Are we currently trying to parse a valueindex
+					if (!is_null($intCurrentValueIndex)) {
+						try {
+							$this->mixValueArray[$intCurrentValueIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intParameterTypeArray[$intCurrentValueIndex]);
+						} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
+
+					// or if not, then this is a default parameter
+					} else {
+						if (array_key_exists($intCurrentDefaultParameterIndex, $this->mixDefaultValueArray)) {
+							try {
+								$this->mixDefaultValueArray[$intCurrentDefaultParameterIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intDefaultParameterTypeArray[$intCurrentDefaultParameterIndex]);
+							} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
+							$intCurrentDefaultParameterIndex++;
+						} else {
+							return 'invalid argument "' . $strValue . '"';
+						}
+					}
+				}
+			}
+
+			// Done iterating through the arguments
+			// Make sure all the default arguments are accounted for
+			if (array_key_exists($intCurrentDefaultParameterIndex, $this->mixDefaultValueArray)) {
+				return 'missing value for "' . $this->strDefaultIdentifierArray[$intCurrentDefaultParameterIndex] . '"';
+			}
+		}
+		
+		public function GetValue($strIdentifier) {
+			$strIdentifier = trim($strIdentifier);
+			if (!strlen($strIdentifier)) throw new QCallerException('Invalid Identifier: ' . $strIdentifier);
+			
+			try {
+				if (strlen($strIdentifier) == 1) {
+					$strIdentifier = QCliParameterProcessor::CleanShortIdentifier($strIdentifier);
+					if (array_key_exists($strIdentifier, $this->chrShortIdentifierArray))
+						return ($this->mixValueArray[$this->chrShortIdentifierArray[$strIdentifier]]); 
+				} else {
+					$strIdentifier = QCliParameterProcessor::CleanLongIdentifier($strIdentifier); 
+					if (array_key_exists($strIdentifier, $this->strLongIdentifierArray))
+						return ($this->mixValueArray[$this->strLongIdentifierArray[$strIdentifier]]); 
+				}
+			} catch (QInvalidCastException $objExc) {}
+
+			throw new QCallerException('Unknown Identifier: ' . $strIdentifier);
+		}
+
+		/**
+		 * Given a value (usually parsed from the arguments), clean it up according to the type it is supposed to be
+		 * or throw a QInvalidCastException
+		 * @param mixed $mixValue
+		 * @param QCliParameterType $intCliParameterType
+		 * @return mixed
+		 */
+		public static function CleanValue($mixValue, $intCliParameterType) {
+			try {
+				switch ($intCliParameterType) {
+					case QCliParameterType::Integer:
+						return QType::Cast($mixValue, QType::Integer);
+
+					case QCliParameterType::String:
+						return QType::Cast($mixValue, QType::String);
+
+					case QCliParameterType::Boolean:
+						return QType::Cast($mixValue, QType::Boolean);
+
+					case QCliParameterType::Path:
+						$strPath = QType::Cast($mixValue, QType::String);
+						// Windows
+						if (substr(__FILE__, 1, 2) == ':\\') {
+							if (substr($strPath, 1, 2) == ':\\')
+								return $strPath;
+							else
+								return $_SERVER['PWD'] . '\\' . $strPath;
+						} else {
+							if (substr($strPath, 0, 1) == '/')
+								return $strPath;
+							else
+								return $_SERVER['PWD'] . '/' . $strPath;
+						}
+
+					default:
+						throw new Exception('Invalid QCliParameterType: ' . $intCliParameterType);
+				}
+			} catch (QCallerException $objExc) {
+				throw new QCallerException('unable to parse ' . QCliParameterType::$NameArray[$intCliParameterType] . ' value "' . $mixValue . '"');
+			}
+		}
 		/**
 		 * Returns the "Help Text" based on the way this QCliParameterProcessor is set up.
 		 * @return string
 		 */
 		public function GetHelpText() {
 			$strToReturn = $this->strHelpTextHeadline . "\r\n";
-			$strToReturn .= 'usage:  qcodo ' . $this->strQcodoCliCommand . ' ';
+			$strToReturn .= 'usage: qcodo ' . $this->strQcodoCliCommand . ' ';
 			if (count($this->mixValueArray)) $strToReturn .= '[OPTIONS] ';
 			if (count($this->strDefaultIdentifierArray)) $strToReturn .= implode(' ', $this->strDefaultIdentifierArray);
 			$strToReturn .= "\r\n\r\n";
 
 
+			// Default Identifier MaxLength and associated HelpText width and padding
 			$intMaxIdentifierLength = 16;
 			$strPadding = str_repeat(' ', $intMaxIdentifierLength+4);
-			$intHelpTextWidth = 120-$intMaxIdentifierLength-4;
+			$intHelpTextWidth = 78-$intMaxIdentifierLength-4;
 
+
+			// Printout any required parameters
 			if (count($this->strDefaultIdentifierArray)) {
 				$strToReturn .= "required parameters:\r\n";
 
-				// Update MaxIdLength calculation
+				// Update MaxIdLength calculation (if applicable)
 				foreach ($this->strDefaultIdentifierArray as $strDefaultIdentifier) {
 					if (strlen($strDefaultIdentifier) > $intMaxIdentifierLength) $intMaxIdentifierLength = strlen($strDefaultIdentifier);
 				}
 				$strPadding = str_repeat(' ', $intMaxIdentifierLength+4);
 				$intHelpTextWidth = 78-$intMaxIdentifierLength-4;
 
+				// Render the Required Parameters
 				foreach ($this->strDefaultIdentifierArray as $intIndex => $strDefaultIdentifier) {
 					$strToReturn .= sprintf("  %-" . $intMaxIdentifierLength . "s  %s\r\n",
 						$strDefaultIdentifier, QCliParameterProcessor::RenderHelpText($this->strDefaultHelpTextArray[$intIndex], $intHelpTextWidth, $strPadding));
@@ -65,6 +284,8 @@
 				$strToReturn .= "\r\n";
 			}
 
+
+			// Printout any optional parameters
 			if (count($this->mixValueArray)) {
 				$strToReturn .= "optional parameters:\r\n";
 
@@ -78,9 +299,11 @@
 						$strIdentifier .= '--' . $this->strLongIdentifierByIndex[$intIndex];
 					}
 
+					// For non-flags (actual named parameters) output the parameter type we are expecting
 					if (array_key_exists($intIndex, $this->intParameterTypeArray))
 						$strIdentifier .= '=' . QCliParameterType::$NameArray[$this->intParameterTypeArray[$intIndex]];
 
+					// Print it out by itself, or include the help text (if applicable)
 					if (!($strHelpText = $this->strHelpTextArray[$intIndex])) {
 						$strToReturn .= '  ' . $strIdentifier . "\r\n";
 					} else {
@@ -94,6 +317,8 @@
 
 				$strToReturn .= "\r\n";
 			}
+
+			// Return the rendered Help Text
 			return $strToReturn;
 		}
 
