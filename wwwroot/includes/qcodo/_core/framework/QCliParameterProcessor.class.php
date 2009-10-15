@@ -89,70 +89,10 @@
 					$strValue = null;
 					if ((substr($strArgument, 0, 2) == '--')) {
 						// Parse out the LongIdentifier and the possible linked value
-						$strArgument = substr($strArgument, 2);
-						if (($intPosition = strpos($strArgument, '=')) !== false) {
-							$strValue = substr($strArgument, $intPosition+1);
-							$strArgument = substr($strArgument, 0, $intPosition);
-						}
-						try {
-							$strArgument = QCliParameterProcessor::CleanLongIdentifier($strArgument);
-						} catch (QCallerException $objExc) {
-							return 'invalid argument "' . $strArgument . '"';
-						}
-
-						// Get the ValueIndex
-						if (array_key_exists($strArgument, $this->strLongIdentifierArray))
-							$intValueIndex = $this->strLongIdentifierArray[$strArgument];
-						else
-							return 'invalid argument "' . $strArgument . '"';
+						if ($strError = $this->ParseLongIdentifier($strArgument, $intCurrentValueIndex)) return $strError;
 					} else {
 						// Parse out the ShortIdentifier and the possible linked value
-						$strArgument = substr($strArgument, 1);
-						$chrShortIdentifier = substr($strArgument, 0, 1);
-						try {
-							$chrShortIdentifier = QCliParameterProcessor::CleanShortIdentifier($chrShortIdentifier);
-						} catch (QCallerException $objExc) {
-							return 'invalid argument "' . $chrShortIdentifier . '"';
-						}
-						$strArgument = substr($strArgument, 1);
-
-						// parse out a Value if applicable
-						if (substr($strArgument, 0, 1) == '=') $strArgument = substr($strArgument, 1);
-						if (strlen($strArgument)) $strValue = $strArgument;
-
-						// Get the ValueIndex
-						if (array_key_exists($chrShortIdentifier, $this->chrShortIdentifierArray))
-							$intValueIndex = $this->chrShortIdentifierArray[$chrShortIdentifier];
-						else
-							return 'invalid argument "' . $chrShortIdentifier . '"';
-					}
-					
-					// Are we dealing with a FlagParameter or a NamedParameter
-					if (array_key_exists($intValueIndex, $this->blnFlagArray)) {
-						// Flag
-
-						// if there is a value, return an error
-						if (!is_null($strValue)) {
-							return sprintf('cannot set flag argument "%s"', array_key_exists($intValueIndex, $this->strLongIdentifierByIndex) ?
-									$this->strLongIdentifierByIndex[$intValueIndex] : $this->chrShortIdentifierByIndex[$intValueIndex]);
-
-						// Otherwise, set the flag value to true
-						} else {
-							$this->mixValueArray[$intValueIndex] = true;
-						}
-					} else {
-						// NamedParameter
-
-						// if there is a value, set it
-						if (!is_null($strValue)) {
-							try {
-								$this->mixValueArray[$intValueIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intParameterTypeArray[$intValueIndex]);
-							} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
-							
-						// otherwise, set the currentValueIndex to this valueindex
-						} else {
-							$intCurrentValueIndex = $intValueIndex;
-						}
+						if ($strError = $this->ParseShortIdentifier($strArgument, $intCurrentValueIndex)) return $strError;
 					}
 
 				// Just a value -- we need to see who it belongs to
@@ -163,6 +103,7 @@
 					if (!is_null($intCurrentValueIndex)) {
 						try {
 							$this->mixValueArray[$intCurrentValueIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intParameterTypeArray[$intCurrentValueIndex]);
+							$intCurrentValueIndex = null;
 						} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
 
 					// or if not, then this is a default parameter
@@ -170,8 +111,8 @@
 						if (array_key_exists($intCurrentDefaultParameterIndex, $this->mixDefaultValueArray)) {
 							try {
 								$this->mixDefaultValueArray[$intCurrentDefaultParameterIndex] = QCliParameterProcessor::CleanValue($strValue, $this->intDefaultParameterTypeArray[$intCurrentDefaultParameterIndex]);
+								$intCurrentDefaultParameterIndex++;
 							} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
-							$intCurrentDefaultParameterIndex++;
 						} else {
 							return 'invalid argument "' . $strValue . '"';
 						}
@@ -184,8 +125,159 @@
 			if (array_key_exists($intCurrentDefaultParameterIndex, $this->mixDefaultValueArray)) {
 				return 'missing value for "' . $this->strDefaultIdentifierArray[$intCurrentDefaultParameterIndex] . '"';
 			}
+
+			// Otherwise, Success - no error
+			return null;
 		}
-		
+
+		/**
+		 * Given a "--"-based argument, this will parse out the information, pulling out and validating the LongIdentifier.
+		 * If it is a FlagParameter, it will set the flag to true.
+		 * If it is a NamedParameter, then if a value is specified using "=", then the value will be applied to the LongIdentifier, otherwise, it will set $intCurrentValueIndex to the ValueIndex of the LongIdentifier.
+		 * @param string $strArgument the full "--"-based argument
+		 * @param integer $intCurrentValueIndex the new current ValueIndex that should be evaluated (if applicable)
+		 * @return string any error message (if any)
+		 */
+		protected function ParseLongIdentifier($strArgument, &$intCurrentValueIndex) {
+			// Parse out the leading "--"
+			$strArgument = substr($strArgument, 2);
+			$mixValue = null;
+
+			// Get out any "value" after "=" (if applicable)
+			if (($intPosition = strpos($strArgument, '=')) !== false) {
+				$mixValue = substr($strArgument, $intPosition+1);
+				$strArgument = substr($strArgument, 0, $intPosition);
+			}
+
+			// Clean Out and Verify the LongIdentifier
+			try {
+				$strLongIdentifier = QCliParameterProcessor::CleanLongIdentifier($strArgument);
+			} catch (QCallerException $objExc) {
+				return 'invalid argument "' . $strArgument . '"';
+			}
+
+			// Get the ValueIndex
+			if (array_key_exists($strLongIdentifier, $this->strLongIdentifierArray))
+				$intValueIndex = $this->strLongIdentifierArray[$strLongIdentifier];
+			else
+				return 'invalid argument "' . $strArgument . '"';
+
+			// See if this is a Flag- or a Named-Parameter
+			if (array_key_exists($intValueIndex, $this->blnFlagArray)) {
+				// Flag -- Set it to True!
+				$this->mixValueArray[$intValueIndex] = true;
+			} else {
+				// NamedParameter -- Do we Have a Value?
+				if (!is_null($mixValue)) {
+					// Yes -- Set it
+					try {
+						$this->mixValueArray[$intValueIndex] = QCliParameterProcessor::CleanValue($mixValue, $this->intParameterTypeArray[$intValueIndex]);
+					} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
+				} else {
+					// No -- so let's update the Currently-processing ValueIndex
+					$intCurrentValueIndex = $intValueIndex;
+				}
+			}
+
+			// Success - no errors
+			return null;
+		}
+
+		/**
+		 * Given a "-"-based argument, this will parse out the information, pulling out and validating any/all ShortIdentifiers.
+		 * If it is a single or clustered FlagParameter, it will set the flag(s) to true.
+		 * If it is a NamedParameter, then if a value is specified using "=", then the value will be applied to the ShortIdentifier, otherwise, it will set $intCurrentValueIndex to the ValueIndex of the ShortIdentifier.
+		 * @param string $strArgument the full "-"-based argument
+		 * @param integer $intCurrentValueIndex the new current ValueIndex that should be evaluated (if applicable)
+		 * @return string any error message (if any)
+		 */
+		protected function ParseShortIdentifier($strArgument, &$intCurrentValueIndex) {
+			// Parse out the leading "-"
+			$strArgument = substr($strArgument, 1);
+
+			// Clean Out and Verify the ShortIdentifier
+			$chrShortIdentifier = substr($strArgument, 0, 1);
+			try {
+				$chrShortIdentifier = QCliParameterProcessor::CleanShortIdentifier($chrShortIdentifier);
+			} catch (QCallerException $objExc) {
+				return 'invalid argument "' . $chrShortIdentifier . '"';
+			}
+
+			// Get the ValueIndex
+			if (array_key_exists($chrShortIdentifier, $this->chrShortIdentifierArray))
+				$intValueIndex = $this->chrShortIdentifierArray[$chrShortIdentifier];
+			else
+				return 'invalid argument "' . $chrShortIdentifier . '"';
+
+			// See if this is a Flag- or a Named-Parameter
+			if (array_key_exists($intValueIndex, $this->blnFlagArray)) {
+				// Flag!  This also may be clustered, so go through all of the letters in the argument and set the flag value to true
+				return $this->ParseShortIdentifierCluster($strArgument);
+			} else {
+				// NamedParameter -- Do we Have a Value?
+				$strArgument = substr($strArgument, 1);
+				if (strlen($strArgument)) {
+					// Yes -- Set it
+
+					// Take out any leading "="
+					if (QString::FirstCharacter($strArgument) == '=') $strArgument = substr($strArgument, 1);
+
+					// Set the Value
+					try {
+						$this->mixValueArray[$intValueIndex] = QCliParameterProcessor::CleanValue($strArgument, $this->intParameterTypeArray[$intValueIndex]);
+					} catch (QCallerException $objExc) { return $objExc->GetMessage(); }
+				} else {
+					// No -- so let's update the Currently-processing ValueIndex
+					$intCurrentValueIndex = $intValueIndex;
+				}
+			}
+
+			// Success - no errors
+			return null;
+		}
+
+		/**
+		 * Assuming that a cluster of flags is passed it, it will parse out, validate each letter in the cluster as a flag
+		 * and set its value to true.  It will return null if successful or return an error message if not.
+		 * @param string $strClusterOfFlags
+		 * @return string any error message (if any)
+		 */
+		protected function ParseShortIdentifierCluster($strClusterOfFlags) {
+			for ($intCharacter = 0; $intCharacter < strlen($strClusterOfFlags); $intCharacter++) {
+				// Parse out and validate the shortidentifier
+				$chrShortIdentifier = substr($strClusterOfFlags, $intCharacter, 1);
+				try {
+					$chrShortIdentifier = QCliParameterProcessor::CleanShortIdentifier($chrShortIdentifier);
+				} catch (QCallerException $objExc) {
+					return 'invalid argument "' . $strClusterOfFlags . '"';
+				}
+
+				// Get the ValueIndex
+				if (array_key_exists($chrShortIdentifier, $this->chrShortIdentifierArray))
+					$intValueIndex = $this->chrShortIdentifierArray[$chrShortIdentifier];
+				else
+					return 'invalid argument "' . $strClusterOfFlags . '"';
+
+				// Ensure it's a flag
+				if (!array_key_exists($intValueIndex, $this->blnFlagArray))
+					return 'invalid argument "' . $strClusterOfFlags . '"';
+
+				// Set the Value to TRUE
+				$this->mixValueArray[$intValueIndex] = true;
+			}
+
+			// Success - no errors
+			return null;
+		}
+
+
+
+		/**
+		 * Gets the value of a NamedParameter or a FlagParameter, based on the short or long identifier being passed in.
+		 * Throws an exception if the identifier passed in doesn't exist.
+		 * @param string $strIdentifier
+		 * @return mixed
+		 */
 		public function GetValue($strIdentifier) {
 			$strIdentifier = trim($strIdentifier);
 			if (!strlen($strIdentifier)) throw new QCallerException('Invalid Identifier: ' . $strIdentifier);
@@ -204,6 +296,31 @@
 
 			throw new QCallerException('Unknown Identifier: ' . $strIdentifier);
 		}
+
+
+
+		/**
+		 * Gets the value of a DefaultParameter, based on the defaultIdentifier being passed in.
+		 * Throws an exception if the defaultIdentifier passed in doesn't exist.
+		 * @param string $strDefaultIdentifier
+		 * @return mixed
+		 */
+		public function GetDefaultValue($strDefaultIdentifier) {
+			$strDefaultIdentifier = trim($strDefaultIdentifier);
+			if (!strlen($strDefaultIdentifier)) throw new QCallerException('Invalid DefaultIdentifier: ' . $strDefaultIdentifier);
+
+			try {
+				$strDefaultIdentifier = QCliParameterProcessor::CleanDefaultIdentifier($strDefaultIdentifier);
+				foreach ($this->strDefaultIdentifierArray as $intValueIndex => $strIdentifier) {
+					if ($strIdentifier == $strDefaultIdentifier)
+						return $this->mixDefaultValueArray[$intValueIndex];
+				}
+			} catch (QInvalidCastException $objExc) {}
+
+			throw new QCallerException('Unknown DefaultIdentifier: ' . $strDefaultIdentifier);
+		}
+
+
 
 		/**
 		 * Given a value (usually parsed from the arguments), clean it up according to the type it is supposed to be
