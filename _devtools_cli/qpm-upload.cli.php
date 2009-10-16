@@ -7,9 +7,11 @@
 
 	// Optional Parameters include Username, Password, "Live" mode, and "Force" upload
 	$objParameters->AddNamedParameter('p', 'password', QCliParameterType::String, null, 'the qcodo.com password to use, or if not specified, it will use the information stored in the QPM Settings file');
-	$objParameters->AddFlagParameter('l', 'live', 'actually perform the live upload - by default, calling qpm-upload will only *report* to you files that will be uploaded; specify the "live" flag to actually perform the upload');
+	$objParameters->AddFlagParameter('l', 'live', 'actually perform the live upload; by default, calling qpm-upload will only *report* to you files that will be uploaded; specify the "live" flag to actually perform the upload');
 	$objParameters->AddFlagParameter('f', 'force', 'force the upload, even if the most recent Qcodo version is more recent than what is currently installed here');
 	$objParameters->AddNamedParameter('s', 'settings-path', QCliParameterType::Path, null, 'path to the QPM Settings XML file; defaults to ' . __DEVTOOLS_CLI__ . '/settings_qpm.xml');
+	$objParameters->AddNamedParameter('n', 'notes', QCliParameterType::String, null, 'text of any notes to include with this QPM package');
+	$objParameters->AddNamedParameter('N', 'notes-path', QCliParameterType::Path, null, 'path to textfile containing any notes to include with this QPM package; if both notes and notes-path are set, only the contents from notes-path will be included in the QPM package');
 	$objParameters->Run();
 
 	// Pull the Parameter Values
@@ -23,9 +25,11 @@
 	$blnForce = $objParameters->GetValue('f');
 	$strPassword = $objParameters->GetValue('p');
 	$strSettingsFilePath = $objParameters->GetValue('s');
-
+	$strNotes = $objParameters->GetValue('n');
+	$strNotesPath = $objParameters->GetValue('N');
+		
 	try {
-		$objQpm = new QPackageManager($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath);
+		$objQpm = new QPackageManager($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath, $strNotes, $strNotesPath);
 		$objQpm->PerformUpload();
 	} catch (Exception $objExc) {
 		print 'error: ' . trim($objExc->getMessage()) . "\r\n";

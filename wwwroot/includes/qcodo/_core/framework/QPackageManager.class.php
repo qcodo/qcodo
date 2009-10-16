@@ -7,7 +7,8 @@
 		protected $strPassword;
 		protected $blnLive;
 		protected $blnForce;
-		
+		protected $strNotes;
+
 		protected $strSettingsFilePath;
 		protected $objDirectoryArray;
 		protected $objFileArrayByInode;
@@ -20,6 +21,7 @@
 		protected $blnVersionMatch = false;
 		protected $blnValidCredential = false;
 		protected $blnValidPackage = false;
+		protected $intNewVersionNumber;
 
 		protected $strManifestVersion;
 		protected $strManifestVersionType;
@@ -38,20 +40,33 @@
 			'svn' => true
 		);
 
-		public function __construct($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath) {
-			$this->strPackageName = $strPackageName;
-			$this->strUsername = $strUsername;
+		public function __construct($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath, $strNotes, $strNotesPath) {
+			$this->strPackageName = trim(strtolower($strPackageName));
+			$this->strUsername = trim(strtolower($strUsername));
 			$this->strPassword = $strPassword;
 			$this->blnLive = $blnLive;
 			$this->blnForce = $blnForce;
 			$this->strSettingsFilePath = $strSettingsFilePath;
 
 			$this->SetupSettings();
+			$this->SetupNotes($strNotes, $strNotesPath);
 			$this->SetupManifestXml();
 			$this->SetupDirectoryArray();
 			$this->SetupFileArray();
 			$this->CheckVersion();
 			$this->CheckCredentialsAndPackage();
+		}
+
+		protected function SetupNotes($strNotes, $strNotesPath) {
+			if ($strNotesPath) {
+				if (!is_file($strNotesPath)) {
+					throw new Exception('QPM Upload notes file does not exist: ' . $strNotesPath);
+				} else {
+					$this->strNotes = trim(file_get_contents($strNotesPath));
+				}
+			} else {
+				$this->strNotes = trim($strNotes);
+			}
 		}
 
 		protected function SetupSettings() {
@@ -130,6 +145,11 @@
 			$intPackageId = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetPackageId?name=' . urlencode($this->strPackageName)));
 			if ($intPersonId) $this->blnValidCredential = true;
 			if ($intPackageId) $this->blnValidPackage = true;
+			
+			if ($this->blnValidCredential && $this->blnValidPackage) {
+				$this->intNewVersionNumber = 1 +
+					trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetPackageVersionCount?name=' . urlencode($this->strPackageName) . '&u=' . urlencode($this->strUsername)));
+			}
 		}
 
 
@@ -238,25 +258,44 @@
 
 
 		protected function ExecuteUpload() {
-			print "result:\r\n";
-			$strPayload = $this->strManifestVersion . '|' . count($this->objNewFileArray) . '|' . count($this->objChangedFileArray) . "\r\n";
+			// Setup QPM XML
+			$strQpmXml = '<?xml version="1.0" encoding="UTF-8" ?>';
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= '<qpm version="1.0">';
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= sprintf('<package name="%s" user="%s" version="%s" qcodoVersion="%s" submitted="%s">',
+				$this->strPackageName, $this->strUsername, $this->intNewVersionNumber, $this->strManifestVersion, QDateTime::Now()->__toString(QDateTime::FormatRfc822));
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= sprintf('<notes>%s</notes>', QString::XmlEscape($this->strNotes));
+			$strQpmXml .= "\r\n";
 
+			$strQpmXml .= '<newFiles>';
+			$strQpmXml .= "\r\n";
 			foreach ($this->objNewFileArray as $objFile) {
-				$strPayload .= $objFile->DirectoryToken . '|' . $objFile->Path . '|' . $objFile->Md5 . '|';
-				$strPayload .= base64_encode(file_get_contents($objFile->GetFullPath()));
-				$strPayload .= "\r\n";
+				$strQpmXml .= sprintf('<file directoryToken="%s" path="%s" md5="%s">%s</file>',
+					$objFile->DirectoryToken, $objFile->Path, $objFile->Md5, base64_encode(file_get_contents($objFile->GetFullPath())));
+				$strQpmXml .= "\r\n";
 			}
+			$strQpmXml .= '</newFiles>';
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= '<changedFiles>';
+			$strQpmXml .= "\r\n";
 			foreach ($this->objChangedFileArray as $objFile) {
-				$strPayload .= $objFile->DirectoryToken . '|' . $objFile->Path . '|' . $objFile->Md5 . '|';
-				$strPayload .= base64_encode(file_get_contents($objFile->GetFullPath()));
-				$strPayload .= "\r\n";
+				$strQpmXml .= sprintf('<file directoryToken="%s" path="%s" md5="%s">%s</file>',
+					$objFile->DirectoryToken, $objFile->Path, $objFile->Md5, base64_encode(file_get_contents($objFile->GetFullPath())));
+				$strQpmXml .= "\r\n";
 			}
+			$strQpmXml .= '</changedFiles>';
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= '</package>';
+			$strQpmXml .= "\r\n";
+			$strQpmXml .= '</qpm>';
 
-			$strPayload = trim($strPayload);
+			print "result:\r\n";
 
 			if (function_exists('gzuncompress')) {
 				$blnGzCompress = true;
-				$strPayload = gzcompress($strPayload, 9);
+				$strQpmXml = gzcompress($strQpmXml, 9);
 			} else {
 				$blnGzCompress = false;
 			}
@@ -265,10 +304,10 @@
 			$strHost = substr($strEndpoint, 0, strpos($strEndpoint, '/'));
 			$strPath = substr($strEndpoint, strpos($strEndpoint, '/'));
 			$strHeader = sprintf("GET %s/UploadPackage?name=%s&u=%s&p=%s&gz=%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %s\r\n\r\n",
-				$strPath, $this->strPackageName, $this->strUsername, $this->strPassword, $blnGzCompress, $strHost, strlen($strPayload));
+				$strPath, $this->strPackageName, $this->strUsername, $this->strPassword, $blnGzCompress, $strHost, strlen($strQpmXml));
 			$objSocket = fsockopen($strHost, 80);
 			fputs($objSocket, $strHeader);
-			fputs($objSocket, $strPayload);
+			fputs($objSocket, $strQpmXml);
 			fputs($objSocket, "\r\n\r\n");
 			$strResponse = null;
 			while (($chr = fgetc($objSocket)) !== false)
