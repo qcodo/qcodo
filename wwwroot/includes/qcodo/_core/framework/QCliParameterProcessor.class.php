@@ -627,7 +627,7 @@
 		 */
 		public static function CleanDefaultIdentifier($strDefaultIdentifier) {
 			if (!strlen($strDefaultIdentifier)) throw new QInvalidCastException('Default Identifier cannot be null');
-			preg_match('/[A-Za-z][A-Za-z0-9_]+/', $strDefaultIdentifier, $arrMatches);
+			preg_match('/[A-Za-z][A-Za-z0-9_\\/]+/', $strDefaultIdentifier, $arrMatches);
 			if (count($arrMatches) != 1) throw new QInvalidCastException('Invalid Default Identifier: ' . $strDefaultIdentifier);
 			if ($arrMatches[0] != $strDefaultIdentifier) throw new QInvalidCastException('Invalid Default Identifier: ' . $strDefaultIdentifier);
 			return strtoupper($strDefaultIdentifier);

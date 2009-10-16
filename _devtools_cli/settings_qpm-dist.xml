@@ -6,5 +6,5 @@
 	file and name it settings_qpm.xml in your cli directory, and
 	edit the values for your Qcodo.com website credentials.
 -->
-	<qcodoWebsite username="" password=""/>
+	<qcodoWebsite password=""/>
 </qpm>

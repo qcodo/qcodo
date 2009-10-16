@@ -232,9 +232,52 @@
 			} else if (($this->blnVersionMatch || $this->blnForce) &&
 						($this->blnValidCredential) &&
 						($this->blnValidPackage)) {
-				print "status:\r\n";
+				$this->ExecuteUpload();
 			}
 		}
+
+
+		protected function ExecuteUpload() {
+			print "result:\r\n";
+			$strPayload = $this->strManifestVersion . '|' . count($this->objNewFileArray) . '|' . count($this->objChangedFileArray) . "\r\n";
+
+			foreach ($this->objNewFileArray as $objFile) {
+				$strPayload .= $objFile->DirectoryToken . '|' . $objFile->Path . '|' . $objFile->Md5 . '|';
+				$strPayload .= base64_encode(file_get_contents($objFile->GetFullPath()));
+				$strPayload .= "\r\n";
+			}
+			foreach ($this->objChangedFileArray as $objFile) {
+				$strPayload .= $objFile->DirectoryToken . '|' . $objFile->Path . '|' . $objFile->Md5 . '|';
+				$strPayload .= base64_encode(file_get_contents($objFile->GetFullPath()));
+				$strPayload .= "\r\n";
+			}
+
+			$strPayload = trim($strPayload);
+
+			if (function_exists('gzuncompress')) {
+				$blnGzCompress = true;
+				$strPayload = gzcompress($strPayload, 9);
+			} else {
+				$blnGzCompress = false;
+			}
+
+			$strEndpoint = substr(QPackageManager::QpmServiceEndpoint, strlen('http://'));
+			$strHost = substr($strEndpoint, 0, strpos($strEndpoint, '/'));
+			$strPath = substr($strEndpoint, strpos($strEndpoint, '/'));
+			$strHeader = sprintf("GET %s/UploadPackage?name=%s&u=%s&p=%s&gz=%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %s\r\n\r\n",
+				$strPath, $this->strPackageName, $this->strUsername, $this->strPassword, $blnGzCompress, $strHost, strlen($strPayload));
+			$objSocket = fsockopen($strHost, 80);
+			fputs($objSocket, $strHeader);
+			fputs($objSocket, $strPayload);
+			fputs($objSocket, "\r\n\r\n");
+			$strResponse = null;
+			while (($chr = fgetc($objSocket)) !== false)
+				$strResponse .= $chr;
+			$strResponseArray = explode("\r\n\r\n", trim($strResponse));
+			print '  ' . $strResponseArray[1] . "\r\n";
+			fclose($objSocket);
+		}
+
 
 		/**
 		 * Given the path of a directory, process all the directories and files in it that have NOT been seen in SeenInode.
