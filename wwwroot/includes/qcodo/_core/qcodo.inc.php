@@ -99,7 +99,11 @@
 	QApplicationBase::$ClassFile['qlexer'] = __QCODO_CORE__ . '/framework/QLexer.class.php';
 	QApplicationBase::$ClassFile['qregex'] = __QCODO_CORE__ . '/framework/QRegex.class.php';
 	QApplicationBase::$ClassFile['qcliparameterprocessor'] = __QCODO_CORE__ . '/framework/QCliParameterProcessor.class.php';
+
 	QApplicationBase::$ClassFile['qpackagemanager'] = __QCODO_CORE__ . '/framework/QPackageManager.class.php';
+	QApplicationBase::$ClassFile['qpackagemanagerdownload'] = __QCODO_CORE__ . '/framework/QPackageManagerDownload.class.php';
+	QApplicationBase::$ClassFile['qpackagemanagerupload'] = __QCODO_CORE__ . '/framework/QPackageManagerUpload.class.php';
+	QApplicationBase::$ClassFile['qupdateutility'] = __QCODO_CORE__ . '/framework/QUpdateUtility.class.php';
 
 	QApplicationBase::$ClassFile['qcache'] = __QCODO_CORE__ . '/framework/QCache.class.php';
 	QApplicationBase::$ClassFile['qdatetimespan'] = __QCODO_CORE__ . '/framework/QDateTimeSpan.class.php';

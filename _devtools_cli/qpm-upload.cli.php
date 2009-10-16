@@ -29,7 +29,7 @@
 	$strNotesPath = $objParameters->GetValue('N');
 		
 	try {
-		$objQpm = new QPackageManager($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath, $strNotes, $strNotesPath);
+		$objQpm = new QPackageManagerUpload($strPackageName, $strUsername, $strPassword, $blnLive, $blnForce, $strSettingsFilePath, $strNotes, $strNotesPath);
 		$objQpm->PerformUpload();
 	} catch (Exception $objExc) {
 		print 'error: ' . trim($objExc->getMessage()) . "\r\n";
