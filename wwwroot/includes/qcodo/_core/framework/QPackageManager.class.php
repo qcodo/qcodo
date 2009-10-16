@@ -17,6 +17,17 @@
 		protected $objNewFileArray;
 		protected $objChangedFileArray;
 
+		protected $blnVersionMatch = false;
+		protected $blnValidCredential = false;
+		protected $blnValidPackage = false;
+
+		protected $strManifestVersion;
+		protected $strManifestVersionType;
+		protected $strCurrentStableVersion;
+		protected $strCurrentDevelopmentVersion;
+
+		const QpmServiceEndpoint = 'http://qpm.qcodo.dev/1_0.php';
+
 		/**
 		 * In addition to any files OR folders that start with a period ("."), QPM will ignore any
 		 * folders that are named in the following IgnoreFolderArray
@@ -39,6 +50,8 @@
 			$this->SetupManifestXml();
 			$this->SetupDirectoryArray();
 			$this->SetupFileArray();
+			$this->CheckVersion();
+			$this->CheckCredentialsAndPackage();
 		}
 
 		protected function SetupSettings() {
@@ -99,6 +112,96 @@
 			}
 		}
 
+		public function CheckVersion() {
+			$this->strManifestVersion = (string) $this->objManifestXml->version;
+			$this->strManifestVersionType = (string) $this->objManifestXml->type;
+			$this->strCurrentStableVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion'));
+			$this->strCurrentDevelopmentVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion?dev=1'));
+
+			if (($this->strManifestVersion != $this->strCurrentStableVersion) && ($this->strManifestVersion != $this->strCurrentDevelopmentVersion)) {
+				$this->blnVersionMatch = false;
+			} else {
+				$this->blnVersionMatch = true;
+			}
+		}
+
+		public function CheckCredentialsAndPackage() {
+			$intPersonId = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/Login?u=' . urlencode($this->strUsername) . '&p=' . urlencode($this->strPassword)));
+			$intPackageId = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetPackageId?name=' . urlencode($this->strPackageName)));
+			if ($intPersonId) $this->blnValidCredential = true;
+			if ($intPackageId) $this->blnValidPackage = true;
+		}
+
+
+		public function GetInvalidCredentialOrPackageErrorText() {
+			$strToReturn = null;
+			if ((!$this->blnValidCredential) || (!$this->blnValidPackage)) {
+				$strToReturn .= "error(s):\r\n";
+
+				if (!$this->blnValidCredential)
+					$strToReturn .= '  cannot log in to QPM service with username "' . $this->strUsername . '"' . "\r\n";
+
+				if (!$this->blnValidPackage)
+					$strToReturn .= '  package does not exist: "' . $this->strPackageName . '"' . "\r\n";
+
+				$strToReturn .= "\r\n";
+			}
+			return $strToReturn;
+		}
+
+		public function GetVersionMismatchWarningText() {
+			$strToReturn = null;
+			if (!$this->blnVersionMatch) {
+				$strToReturn .= "notice on out-of-date Qcodo version:\r\n";
+				$strToReturn .= "  The local install of Qcodo is not the most up-to-date version:\r\n";
+				$strToReturn .= sprintf("    local install: v%s (%s)\r\n", $this->strManifestVersion, $this->strManifestVersionType);
+				$strToReturn .= sprintf("    Qcodo release: v%s (Development)\r\n", $this->strCurrentDevelopmentVersion);
+				$strToReturn .= sprintf("                   v%s (Stable)\r\n", $this->strCurrentStableVersion);
+
+				$strText =
+					'You can still upload your QPM package, but note that because the installation ' .
+					'is older than what is currently available to the community, it may limit the ' .
+					'interest and/or comptability for this QPM package.';
+				$strText = wordwrap($strText, 76, "\r\n");
+				$strText = '  ' . str_replace("\r\n", "\r\n  ", $strText);
+				$strToReturn .= $strText . "\r\n\r\n";
+
+				$strText =
+					'If you still want to proceed with uploading this QPM, be sure to specify the ' .
+					'"-f" or "--force" flag to override this warning.';
+				$strText = wordwrap($strText, 76, "\r\n");
+				$strText = '  ' . str_replace("\r\n", "\r\n  ", $strText);
+				$strToReturn .= $strText . "\r\n\r\n";
+			}
+			return $strToReturn;
+		}
+
+		public function GetNonLiveText() {
+			$strToReturn = null;
+			if (!$this->blnLive) {
+				$strToReturn .= "notice on non-live mode:\r\n";
+
+				$strText =
+					'This is only a report of what WOULD be uploaded.  To actually execute the upload(s) ' .
+					'live mode, be sure to specify the "-l" or "--live" flag.';
+				$strText = wordwrap($strText, 76, "\r\n");
+				$strText = '  ' . str_replace("\r\n", "\r\n  ", $strText);
+				$strToReturn .= $strText . "\r\n\r\n";
+
+				$strToReturn .= "new files to be included in this QPM package:\r\n";
+				foreach ($this->objNewFileArray as $objFile) {
+					$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+				}
+				$strToReturn .= "\r\n";
+
+				$strToReturn .= "changed files to be included in this QPM package:\r\n";
+				foreach ($this->objChangedFileArray as $objFile) {
+					$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+				}
+				$strToReturn .= "\r\n";
+			}
+			return $strToReturn;
+		}
 
 		public function PerformUpload() {
 			$this->intSeenInode = array();
@@ -115,17 +218,22 @@
 				}
 			}
 
-			print "new files to be included in this QPM package:\r\n";
-			foreach ($this->objNewFileArray as $objFile) {
-				printf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+			print 'Qcodo Package Manager (QPM) Uploader Tool v' . QCODO_VERSION . "\r\n\r\n";
+			if ((!$this->blnValidCredential) || (!$this->blnValidPackage)) {
+				print $this->GetInvalidCredentialOrPackageErrorText();
 			}
-			print "\r\n";
 
-			print "changed files to be included in this QPM package:\r\n";
-			foreach ($this->objChangedFileArray as $objFile) {
-				printf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+			if (!$this->blnVersionMatch) {
+				print $this->GetVersionMismatchWarningText();
 			}
-			print "\r\n";
+
+			if (!$this->blnLive) {
+				print $this->GetNonLiveText();
+			} else if (($this->blnVersionMatch || $this->blnForce) &&
+						($this->blnValidCredential) &&
+						($this->blnValidPackage)) {
+				print "status:\r\n";
+			}
 		}
 
 		/**
