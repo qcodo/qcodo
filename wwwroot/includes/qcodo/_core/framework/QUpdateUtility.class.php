@@ -1,4 +1,6 @@
 <?php
+	require(dirname(__FILE__) . "/_manifest_helpers.inc.php");
+
 	/**
 	 * The QUpdateUtility is used by the qcodo_updater.cli and qcodo_downloader.cli command line utilities.
 	 * It will use the Qcodo Updater WebService at http://api.qcodo.com/ to perform updates to the installed
@@ -1065,34 +1067,5 @@ For more information, please go to www.qcodo.com
 ', $strDetails);
 			exit();
 		}
-	}
-	
-	class QDirectoryToken {
-		public $Token;
-		public $RelativeFlag;
-		public $CoreFlag;
-	}
-
-	/* The following functions are used as QUpdateUtility error handlers for OS-level errors while trying
-	 * to perform updates/deletes/overwrites/saves/socket connections, etc.
-	 * (e.g. cannot connect, or permission denied, file locked, etc.)
-	 */
-	function QUpdateUtilityErrorHandler($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine) {
-		QUpdateUtility::Error('Could not connect to Qcodo Update webservice at ' . QUpdateUtility::ServiceUrl . ' (' . $strErrorString . ')');
-	}
-
-	function QUpdateUtilityFileSystemErrorHandler($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine) {
-		QUpdateUtility::$PrimaryInstance->strAlertArray[count(QUpdateUtility::$PrimaryInstance->strAlertArray)] =
-			sprintf('%s while trying to download and save %s', $strErrorString, QUpdateUtility::$CurrentFilePath);
-	}
-
-	function QUpdateUtilityFileSystemErrorHandlerForDelete($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine) {
-		QUpdateUtility::$PrimaryInstance->strAlertArray[count(QUpdateUtility::$PrimaryInstance->strAlertArray)] =
-			sprintf('%s while trying to delete %s', $strErrorString, QUpdateUtility::$CurrentFilePath);
-	}
-
-	function QUpdateUtilityFileSystemErrorHandlerForRename($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine) {
-		QUpdateUtility::$PrimaryInstance->strAlertArray[count(QUpdateUtility::$PrimaryInstance->strAlertArray)] =
-			sprintf('%s while trying to rename %s', $strErrorString, QUpdateUtility::$CurrentFilePath);
 	}
 ?>
