@@ -3,5 +3,5 @@
 .cache
 .buildpath
 .DS_Store
-settings_qpm.xml
-settings_codegen.xml
+codegen.xml
+qpm.xml

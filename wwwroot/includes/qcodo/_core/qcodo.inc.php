@@ -100,6 +100,8 @@
 	QApplicationBase::$ClassFile['qregex'] = __QCODO_CORE__ . '/framework/QRegex.class.php';
 	QApplicationBase::$ClassFile['qcliparameterprocessor'] = __QCODO_CORE__ . '/framework/QCliParameterProcessor.class.php';
 
+	QApplicationBase::$ClassFile['qcodegen'] = __QCODO__ . '/codegen/QCodeGen.class.php';
+
 	QApplicationBase::$ClassFile['qpackagemanager'] = __QCODO_CORE__ . '/framework/QPackageManager.class.php';
 	QApplicationBase::$ClassFile['qpackagemanagerdownload'] = __QCODO_CORE__ . '/framework/QPackageManagerDownload.class.php';
 	QApplicationBase::$ClassFile['qpackagemanagerupload'] = __QCODO_CORE__ . '/framework/QPackageManagerUpload.class.php';
