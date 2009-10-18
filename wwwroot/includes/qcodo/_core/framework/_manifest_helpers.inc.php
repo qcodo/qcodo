@@ -24,9 +24,85 @@
 		public $Path;
 		public $Md5;
 		public $DirectoryTokenObject;
+		public $Base64Data;
 
 		public function GetFullPath() {
 			return $this->DirectoryTokenObject->GetFullPath() . '/' . $this->Path;
+		}
+		
+		/**
+		 * Given FileXml from a QPM package definition, this will return a valid QFileInManifest object for that XML element
+		 * @param SimpleXMLElement $objFileXml
+		 * @param QDirectoryToken[] $objDirectoryTokenArray
+		 * @return QFileInManifest
+		 */
+		public static function LoadFromQpmXml(SimpleXMLElement $objFileXml, $objDirectoryTokenArray) {
+			$objFile = new QFileInManifest();
+			$objFile->DirectoryToken = (string) $objFileXml['directoryToken'];
+			$objFile->Path = (string) $objFileXml['path'];
+			$objFile->Md5 = (string) $objFileXml['md5'];
+
+			if (array_key_exists($objFile->DirectoryToken, $objDirectoryTokenArray)) {
+				$objFile->DirectoryTokenObject = $objDirectoryTokenArray[$objFile->DirectoryToken];
+			} else {
+				return null;
+			}
+
+			if (is_file($objFile->GetFullPath()))
+				$objFile->Inode = fileinode($objFile->GetFullPath());
+
+			$objFile->Base64Data = (string) $objFileXml;
+			return $objFile;
+		}
+
+		/**
+		 * This will save the contents of the base64_decoded data to the filesystem.
+		 * @param string $strAlternateToken
+		 * @return void
+		 */
+		public function SaveFileFromQpm($strAlternateToken = null) {
+			$strDecodedData = base64_decode($this->Base64Data);
+			if (md5($strDecodedData) != $this->Md5) print "WARNING: Invalid MD5 Match for " . $this->Path . "\r\n";
+			if ($strAlternateToken)
+				file_put_contents($this->GetFullPathWithAlternateToken($strAlternateToken), $strDecodedData);
+			else
+				file_put_contents($this->GetFullPath(), $strDecodedData);
+		}
+
+		public function GetFullPathWithAlternateToken($strAlternateToken) {
+			$strActualFilePath = $this->GetFullPath();
+			$strBaseName = basename($strActualFilePath);
+			$intPosition = strpos($strBaseName, '.');
+			if ($intPosition)
+				return sprintf('%s/%s (%s).%s',
+					dirname($strActualFilePath), substr($strBaseName, 0, $intPosition),
+					$strAlternateToken,
+					substr($strBaseName, $intPosition + 1));
+			else
+				return sprintf('%s/%s (%s)',
+					dirname($strActualFilePath), $strBaseName, $strAlternateToken);
+		}
+		
+		public function IsMd5MatchWithFilesystem() {
+			return (md5_file($this->GetFullPath()) == $this->Md5);
+		}
+
+		public function GetTextForQpmReport() {
+			return sprintf("  %-16s  %s\r\n", $this->DirectoryToken, $this->Path);
+		}
+
+		public function GetTextForQpmReportWithAlternateToken($strAlternateToken) {
+			$intPosition = strpos($this->Path, '.');
+
+			if ($intPosition)
+				$strPath = sprintf('%s (%s).%s',
+					substr($this->Path, 0, $intPosition),
+					$strAlternateToken,
+					substr($this->Path, $intPosition + 1));
+			else
+				$strPath = sprintf('%s (%s)', $this->Path, $strAlternateToken);
+
+			return sprintf("  %-16s  %s\r\n", $this->DirectoryToken, $strPath);
 		}
 	}
 

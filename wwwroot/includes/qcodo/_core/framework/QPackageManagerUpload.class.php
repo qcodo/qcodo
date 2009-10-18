@@ -179,7 +179,7 @@
 
 				$strText =
 					'This is only a report of what WOULD be uploaded.  To actually execute the upload(s) ' .
-					'live mode, be sure to specify the "-l" or "--live" flag.';
+					'in "live" mode, be sure to specify the "-l" or "--live" flag.';
 				$strText = wordwrap($strText, 76, "\r\n");
 				$strText = '  ' . str_replace("\r\n", "\r\n  ", $strText);
 				$strToReturn .= $strText . "\r\n\r\n";
@@ -219,7 +219,7 @@
 				print $this->GetInvalidCredentialOrPackageErrorText();
 			}
 
-			if (!$this->blnVersionMatch) {
+			if (!$this->blnVersionMatch && !$this->blnForce) {
 				print $this->GetVersionMismatchWarningText();
 			}
 
