@@ -398,17 +398,27 @@
 			// Did we ask for a script to be run?
 			if (!array_key_exists(1, $_SERVER['argv']) ||
 				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
+				$strDefaultPath = __DEVTOOLS_CLI__;
+				$strDefaultPath = str_replace('/html/../', '/', $strDefaultPath);
+				$strDefaultPath = str_replace('/docroot/../', '/', $strDefaultPath);
+				$strDefaultPath = str_replace('/wwwroot/../', '/', $strDefaultPath);
+				$strDefaultPath = str_replace('/www/../', '/', $strDefaultPath);
+
 				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
-				print "usage: qcodo SCRIPT [ARGS]\r\n";
+				print "usage: qcodo SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
 				print "\r\n";
-				print "The following SCRIPTs are included with the Qcodo distribution:\r\n";
+				print "required parameters:\r\n";
+				print "  SCRIPT         the .cli.php script name inside the CLI directory\r\n";
+				print "                 that you wish to run\r\n";
+				print "\r\n";
+				print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
 				print "  codegen        Code generates your ORM-layer\r\n";
 				print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
 				print "  qpm-download   Download and installs an external QPM package\r\n";
 				print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
-				print "See the _README.txt file in " . __DEVTOOLS_CLI__ . " for more information.";
+				print "See \"" . $strDefaultPath . "/_README.txt\" for more info";
 				print "\r\n";
 				exit(1);
 			}

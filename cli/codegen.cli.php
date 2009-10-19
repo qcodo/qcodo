@@ -6,6 +6,8 @@
 	$strDefaultPath = __DEVTOOLS_CLI__ . '/settings/codegen.xml';
 
 	// Small cleanup on the text
+	$strDefaultPath = str_replace('/html/../', '/', $strDefaultPath);
+	$strDefaultPath = str_replace('/docroot/../', '/', $strDefaultPath);
 	$strDefaultPath = str_replace('/wwwroot/../', '/', $strDefaultPath);
 	$strDefaultPath = str_replace('/www/../', '/', $strDefaultPath);
 
