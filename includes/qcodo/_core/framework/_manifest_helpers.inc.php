@@ -63,6 +63,7 @@
 		public function SaveFileFromQpm($strAlternateToken = null) {
 			$strDecodedData = base64_decode($this->Base64Data);
 			if (md5($strDecodedData) != $this->Md5) print "WARNING: Invalid MD5 Match for " . $this->Path . "\r\n";
+			QApplication::MakeDirectory(dirname($this->GetFullPath()));
 			if ($strAlternateToken)
 				file_put_contents($this->GetFullPathWithAlternateToken($strAlternateToken), $strDecodedData);
 			else
