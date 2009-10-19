@@ -5,7 +5,7 @@
 	 */
 
 	// Include prepend.inc to load Qcodo
-	require('includes/prepend.inc.php');
+	require(dirname(__FILE__) . '/../includes/prepend.inc.php');
 
 	class SampleForm extends QForm {
 		protected $lblMessage;

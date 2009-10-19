@@ -1,7 +1,7 @@
 <template OverwriteFlag="true" DocrootFlag="true" DirectorySuffix="" TargetDirectory="<%= __FORM_DRAFTS__ %>" TargetFileName="<%= QConvertNotation::UnderscoreFromCamelCase($objTable->ClassName) %>_edit.php"/>
 <?php
 	// Load the Qcodo Development Framework
-	require('../includes/prepend.inc.php');
+	require(dirname(__FILE__) . '/../../includes/prepend.inc.php');
 
 	/**
 	 * This is a quick-and-dirty draft QForm object to do Create, Edit, and Delete functionality

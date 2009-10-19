@@ -32,7 +32,7 @@
 		After codegenning, you can use either of the following tools to view the "generated" draft pages of your database application:
 		<ul>
 		<li><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/index.php"><?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?></a> - to view the generated Form Drafts of your database</li>
-		<li><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __DEVTOOLS__) ?>/codegen.php"><?php _p(__VIRTUAL_DIRECTORY__ . __PANEL_DRAFTS__) ?></a> - to view the generated Panel Drafts "dashboard" of your database</li>
+		<li><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/dashboard/index.php"><?php _p(__VIRTUAL_DIRECTORY__ . __PANEL_DRAFTS__) ?></a> - to view the generated Panel Drafts "dashboard" of your database</li>
 		</ul>
 
 		For more information, please go to the Qcodo website at: <a href="http://www.qcodo.com/">http://www.qcodo.com/</a>
