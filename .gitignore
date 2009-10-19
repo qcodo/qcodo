@@ -4,3 +4,4 @@
 .buildpath
 .DS_Store
 /cli/settings/*.xml
+/includes/configuration.inc.php

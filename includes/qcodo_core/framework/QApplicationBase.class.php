@@ -202,10 +202,8 @@
 		 * @return void
 		 */
 		protected static function InitializeErrorHandling() {
-			if (!QApplication::$CliMode) {
-				set_error_handler('QcodoHandleError');
-				set_exception_handler('QcodoHandleException');
-			}
+			set_error_handler('QcodoHandleError');
+			set_exception_handler('QcodoHandleException');
 		}
 
 		/**
@@ -347,25 +345,25 @@
 		 */
 		public static function Initialize() {
 			// Basic Initailization Routines
-			QApplication::InitializeErrorHandling();
 			QApplication::InitializeCliMode();
 			QApplication::InitializeScriptInfo();
 
-			// Initialization for CLI
+			// Perform Initialization for CLI
 			if (QApplication::$CliMode) {
 				QApplication::InitializeForCli();
 
-			// Initialization for WebApp
+			// *OR* Perform Initializations for WebApp
 			} else {
+				QApplication::InitializeErrorHandling();
 				QApplication::InitializeOutputBuffering();
 				QApplication::InitializeServerAddress();
 				QApplication::InitializeRequestUri();
 				QApplication::InitializeBrowserType();
-				QApplication::IntiailizeServerSignature();
+				QApplication::InitializeServerSignature();
 				QApplication::InitializePhpSession();
 			}
 
-			// Next, Initialize the Database Connections and Session
+			// Next, Initialize the Database Connections
 			QApplication::InitializeDatabaseConnections();
 
 			// Then Preload all required "Prepload" Class Files
@@ -377,8 +375,8 @@
 
 		protected static function InitializeAutoIncludes() {
 			$objDirectory = opendir(__INCLUDES__ . '/auto_includes');
-			while ($strFile = readdir($strFile)) {
-				if (strtolower(substr($strFile, strlen($strFile, 8))) == '.inc.php')
+			while ($strFile = readdir($objDirectory)) {
+				if (strtolower(substr($strFile, strlen($strFile) - 8)) == '.inc.php')
 					require(__INCLUDES__ . '/auto_includes/' . $strFile);
 			}
 		}
