@@ -239,7 +239,7 @@
 					}
 
 			// Let's first add the new manifest.xml file
-			$this->strShouldUpdateArray['__QCODO_CORE__|manifest.xml'] = __QCODO_CORE__ . '/manifest.xml';
+			$this->strShouldUpdateArray['__QCODO_CORE__|manifest/manifest.xml'] = __QCODO_CORE__ . 'manifest/manifest.xml';
 
 			// Iterate through the Server manifest, 
 			foreach ($this->strServerManifest as $strFile => $strServerMd5) {
