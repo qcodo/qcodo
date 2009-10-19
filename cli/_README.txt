@@ -1,36 +1,22 @@
-This directory contains command-line-based drivers for Qcodo's development
-tools:
+This directory contains command-line-based tools for your Qcodo application.
 
-* codegen.cli - for Unix/Linux/Mac OS X command lines
-* codegen.phpexe - for Windows command line
+Any cli-based tools or applications that you wish to have in the context
+of your Qcodo application environment, including codegen, the qpm tools,
+qcodo updater, and any custom ones that you build, should reside in the
+"scripts/" subdirectory this cli directory and should be suffixed with
+a ".cli.php" extension.
 
-  Both use the QCodeGen and related Qcodo codegen libraries to do the bulk
-  of the work. They simply instantiate a QCodeGen object, execute various
-  public methods on it to do the code generation, and create a text-based
-  report of its activities, outputting it to STDOUT.
+All Qcodo-based CLI tools can be called using one of the following CLI
+runner wrappers:
+* qcodo (for POSIX-based environments, including Mac OS X, Unix/Linux, Cygwin)
+* qcodo.bat (for Windows-based environments)
 
-* (future tools tba)
+For example, to execute codegen in your POSIX-based environment, you can run:
+  /path/to/my/cli/qcodo codegen
 
-Feel free to alter the settings, inputs and/or outputs of any of the drivers
-as you wish.
+To execute codegen in your Windows-based enviornment, you can run:
+  c:\path\to\my\cli\qcodo.bat codegen
 
-
-PATH_TO_PREPEND.TXT
-
-VERY IMPORTANT: Before running ANY command line tools, you need to be sure
-to update the path_to_prepend.txt file with the absolute path to the
-prepend.inc.php file in your includes directory.
-
-
-OTHER IMPORTANT NOTES
-
-For the .cli version, you may need to update the top line of the file to
-match the path of the PHP bin executable on your system, too.
-
-For the .phpexe version, you need to remember to run it as a PARAMETER to
-the php.exe executable (usually installed in c:\php\php.exe).
-
-
-CUSTOM COMMAND LINE TOOLS
-
-Feel free to implement your own command line tools here, as well.
+Note that you may need to alter your qcodo or qcodo.bat CLI runner wrapper
+script to correctly reflect the path to your PHP CLI bin executable file.
+For more information, refer to either of those files.

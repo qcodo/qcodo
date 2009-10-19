@@ -27,7 +27,7 @@
 		);
 
 		protected function SetupManifestXml() {
-			$this->objManifestXml = new SimpleXMLElement(file_get_contents(__QCODO_CORE__ . '/manifest.xml'));
+			$this->objManifestXml = new SimpleXMLElement(file_get_contents(__QCODO_CORE__ . '/manifest/manifest.xml'));
 		}
 
 		protected function SetupDirectoryArray() {
@@ -51,9 +51,12 @@
 
 				$objFileInManifest->DirectoryTokenObject = $this->objDirectoryArray[$objFileInManifest->DirectoryToken];
 
-				$objFileInManifest->Inode = fileinode($objFileInManifest->GetFullPath());
-				if ($objFileInManifest->Inode)
-					$this->objFileArrayByInode[$objFileInManifest->Inode] = $objFileInManifest;
+				// Make sure this is valid and in-use DirectoryToken and that this file exists
+				if (constant($objFileInManifest->DirectoryTokenObject->Token) && file_exists($objFileInManifest->GetFullPath())) {
+					$objFileInManifest->Inode = fileinode($objFileInManifest->GetFullPath());
+					if ($objFileInManifest->Inode)
+						$this->objFileArrayByInode[$objFileInManifest->Inode] = $objFileInManifest;
+				}
 			}
 		}
 

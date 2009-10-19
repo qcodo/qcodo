@@ -1,5 +1,11 @@
 <?php
-	// Setup the Parameters for qpm-upload
+	/**
+	 * Codegen Qcodo CLI file
+	 * Part of the Qcodo Development Framework
+	 * Copyright (c) 2005-2009, Quasidea Development, LLC
+	 */
+
+	// Setup the Parameters for qpm-download
 	$objParameters = new QCliParameterProcessor('qpm-download', 'Qcodo Package Manager (QPM) Download and Install Tool v' . QCODO_VERSION);
 
 	// Package Name is always required

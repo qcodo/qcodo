@@ -72,39 +72,6 @@
 		}
 
 
-		protected function SetupManifestXml() {
-			$this->objManifestXml = new SimpleXMLElement(file_get_contents(__QCODO_CORE__ . '/manifest.xml'));
-		}
-
-
-		protected function SetupDirectoryArray() {
-			$this->objDirectoryArray = array();
-			foreach ($this->objManifestXml->directories->directory as $objDirectoryXml) {
-				$objToken = new QDirectoryToken();
-				$objToken->Token = (string) $objDirectoryXml['token'];
-				$objToken->CoreFlag = (string) $objDirectoryXml['coreFlag'];
-				$objToken->RelativeFlag = (string) $objDirectoryXml['relativeFlag'];
-				$this->objDirectoryArray[$objToken->Token] = $objToken;
-			}
-		}
-
-
-		protected function SetupFileArray() {
-			$this->objFileArrayByInode = array();
-			foreach ($this->objManifestXml->files->file as $objFileXml) {
-				$objFileInManifest = new QFileInManifest();
-				$objFileInManifest->DirectoryToken = (string) $objFileXml['directoryToken'];
-				$objFileInManifest->Path = (string) $objFileXml['path'];
-				$objFileInManifest->Md5 = (string) $objFileXml['md5'];
-
-				$objFileInManifest->DirectoryTokenObject = $this->objDirectoryArray[$objFileInManifest->DirectoryToken];
-
-				$objFileInManifest->Inode = fileinode($objFileInManifest->GetFullPath());
-				if ($objFileInManifest->Inode)
-					$this->objFileArrayByInode[$objFileInManifest->Inode] = $objFileInManifest;
-			}
-		}
-
 		public function CheckVersion() {
 			$this->strCurrentStableVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion'));
 			$this->strCurrentDevelopmentVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion?dev=1'));
@@ -205,12 +172,15 @@
 			$this->objChangedFileArray = array();
 
 			foreach ($this->objDirectoryArray as $objDirectoryToken) {
-				// Figure out the actual Path of the directory
-				$strPath = $objDirectoryToken->GetFullPath();
+				// Make sure this is a directory token that is still in use
+				if (constant($objDirectoryToken->Token)) {
+					// Figure out the actual Path of the directory
+					$strPath = $objDirectoryToken->GetFullPath();
 
-				// Make sure it exists
-				if (is_dir($strPath)) {
-					$this->ProcessDirectory($strPath, $objDirectoryToken);
+					// Make sure it exists
+					if (is_dir($strPath)) {
+						$this->ProcessDirectory($strPath, $objDirectoryToken);
+					}
 				}
 			}
 
@@ -345,7 +315,7 @@
 				// Ensure that the FileInManifest Matches the Directory we are in
 				$objFile = $this->objFileArrayByInode[$intInode];
 				if ($objFile->DirectoryToken != $objDirectoryToken->Token)
-					throw new Exception('Mismatched Directory Token: ' . $strFullPath);
+					throw new Exception('Mismatched Directory Token: ' . $strFullPath . ' ' . $objFile->DirectoryToken . ' ' . $objDirectoryToken->Token);
 				if ($objFile->Path != $objDirectoryToken->GetRelativePathForFile($strFullPath))
 					throw new Exception('Mismatched File Path: ' . $strFullPath);
 

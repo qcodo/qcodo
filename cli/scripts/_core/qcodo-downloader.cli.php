@@ -3,20 +3,14 @@
 	 * to perform the Qcodo Update Utility's File Downloading functionality.
 	 */
 
-	// Call the CLI prepend.inc.php
-	require('cli_prepend.inc.php');
-
-	// Finally, load the QUpdateUtility class itself
-	require(__QCODO_CORE__ . '/framework/QUpdateUtility.class.php');
-
 	// Ensure that there are parameters
-	if ($_SERVER['argc'] != 5)
+	if ($_SERVER['argc'] != 6)
 		QUpdateUtility::PrintDownloaderInstructions();
 
-	$strVersion = trim(strtolower($_SERVER['argv'][1]));
+	$strVersion = trim(strtolower($_SERVER['argv'][2]));
 	if (($strVersion == 'stable') || ($strVersion == 'development'))
 		QUpdateUtility::Error('Invalid Version format: ' . $strVersion);
 
 	$objUpdateUtility = new QUpdateUtility($strVersion);
-	$objUpdateUtility->RunDownloader($_SERVER['argv'][2], $_SERVER['argv'][3], $_SERVER['argv'][4]);
+	$objUpdateUtility->RunDownloader($_SERVER['argv'][3], $_SERVER['argv'][4], $_SERVER['argv'][5]);
 ?>

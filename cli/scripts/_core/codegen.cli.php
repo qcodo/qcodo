@@ -1,5 +1,11 @@
 <?php
-	// Setup the Parameters for qpm-upload
+	/**
+	 * Codegen Qcodo CLI file
+	 * Part of the Qcodo Development Framework
+	 * Copyright (c) 2005-2009, Quasidea Development, LLC
+	 */
+
+	// Setup the Parameters for codegen
 	$objParameters = new QCliParameterProcessor('codegen', 'Qcodo Code Generator v' . QCODO_VERSION);
 
 	// Optional Parameters for Path to Codegen Settings

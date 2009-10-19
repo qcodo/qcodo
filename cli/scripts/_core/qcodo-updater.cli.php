@@ -1,23 +1,13 @@
 <?php
-	/* This includes library file is used by the qcodo_updater.cli and qcodo_updater.phpexe scripts
-	 * to perform the Qcodo Update Utility functionality.
-	 */
-
-	// Call the CLI prepend.inc.php
-	require('cli_prepend.inc.php');
-
-	// Finally, load the QUpdateUtility class itself
-	require(__QCODO_CORE__ . '/framework/QUpdateUtility.class.php');
-
 	// Ensure that there are parameters
-	if ($_SERVER['argc'] < 2)
+	if ($_SERVER['argc'] < 3)
 		QUpdateUtility::PrintUpdaterInstructions();
 
 	// Setup Parameter Defaults
 	$strInteractionType = QUpdateUtility::Interactive;
 	$blnQuietMode = false;
 
-	for ($intIndex = 1; $intIndex < $_SERVER['argc']; $intIndex++) {
+	for ($intIndex = 2; $intIndex < $_SERVER['argc']; $intIndex++) {
 		$strArgument = strtolower($_SERVER['argv'][$intIndex]);
 
 		if ($strArgument == '--quiet') {

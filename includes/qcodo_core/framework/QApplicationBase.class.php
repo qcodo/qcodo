@@ -132,6 +132,13 @@
 		public static $CliMode;
 
 		/**
+		 * A flag to indicate whether or not this script is running in a Windows environment
+		 *
+		 * @var boolean Windows
+		 */
+		public static $Windows;
+
+		/**
 		 * Class File Array - used by QApplication::AutoLoad to more quickly load
 		 * core class objects without making a file_exists call.
 		 *
@@ -207,16 +214,24 @@
 		}
 
 		/**
-		 * Called by QApplication::Initialize() to initialize the QApplication::$CliMode setting.
+		 * Called by QApplication::Initialize() to initialize the QApplication::$CliMode and
+		 * QApplication::$Windows settings.
 		 * @return void
 		 */
-		protected static function InitializeCliMode() {
+		protected static function InitializeEnvironment() {
 			if (PHP_SAPI == 'cli')
 				QApplication::$CliMode = true;
 			else
 				QApplication::$CliMode = false;
+
+			if (array_key_exists('windir', $_SERVER))
+				QApplication::$Windows = true;
+			else if (array_key_exists('WINDIR', $_SERVER))
+				QApplication::$Windows = true;
+			else
+				QApplication::$Windows = false;
 		}
-		
+
 		/**
 		 * Called by QApplication::Initialize() to initialize the QApplication::$ServerAddress setting.
 		 * @return void
@@ -345,7 +360,7 @@
 		 */
 		public static function Initialize() {
 			// Basic Initailization Routines
-			QApplication::InitializeCliMode();
+			QApplication::InitializeEnvironment();
 			QApplication::InitializeScriptInfo();
 
 			// Perform Initialization for CLI
@@ -408,7 +423,7 @@
 				print "usage: qcodo SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
 				print "\r\n";
 				print "required parameters:\r\n";
-				print "  SCRIPT         the .cli.php script name inside the CLI directory\r\n";
+				print "  SCRIPT         the .cli.php script name inside the cli/scripts directory\r\n";
 				print "                 that you wish to run\r\n";
 				print "\r\n";
 				print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
@@ -418,20 +433,23 @@
 				print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
-				print "See \"" . $strDefaultPath . "/_README.txt\" for more info";
+				print "See \"" . $strDefaultPath . "/scripts/_README.txt\" for more info";
 				print "\r\n";
 				exit(1);
 			}
 
 			// Find Script
 			if (strpos($_SERVER['argv'][1], '.cli.php') === false)
-				$strScriptFilename = __DEVTOOLS_CLI__ . '/' . $_SERVER['argv'][1] . '.cli.php';
+				$strScriptFilename = $_SERVER['argv'][1] . '.cli.php';
 			else
-				$strScriptFilename = __DEVTOOLS_CLI__ . '/' . $_SERVER['argv'][1];
+				$strScriptFilename = $_SERVER['argv'][1];
 
-			if (file_exists($strScriptFilename)) {
-				QApplication::$ScriptFilename = $strScriptFilename;
-				QApplication::$ScriptName = $_SERVER['argv'][1];
+			if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/' . $strScriptFilename)) {
+				QApplication::$ScriptFilename = $strPath;
+				QApplication::$ScriptName = $strScriptFilename;
+			} else if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/_core/' . $strScriptFilename)) {
+				QApplication::$ScriptFilename = $strPath;
+				QApplication::$ScriptName = $strScriptFilename;
 			} else {
 				print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
 				exit(1);
