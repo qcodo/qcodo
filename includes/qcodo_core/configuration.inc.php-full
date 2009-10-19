@@ -1,7 +1,7 @@
 <?php
 	// This is the "full" version of configuration.inc.php, complete with full comments inline in the configuration file.
-	// While it is recommended (for ease of code readability) to use the recommended version of configuration.inc.php-dist,
-	// this file can be useful for newer users of Qcodo.
+	// While it is recommended (for ease of code readability) to use configuration.inc.php-dist instead,
+	// this "-full" file can be useful for newer users of Qcodo.
 
 	// To use, simply rename or copy this file to includes/configuration.inc.php, and begin making modifications
 	// to the configuration constants as it makes sense for your PHP and docroot installation.

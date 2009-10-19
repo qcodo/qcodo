@@ -5,3 +5,4 @@
 .DS_Store
 /cli/settings/*.xml
 /includes/configuration.inc.php
+/includes/QApplication.class.php

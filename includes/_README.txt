@@ -10,7 +10,7 @@ information, docroot paths (including subfoldering and virtual directories),
 etc.  You must make modifications to this file to have it reflect the
 configuration of your system.
 
-See the inline documentation in configuration.inc.php for more information.
+See the inline documentation in qcodo_core/configuration.inc.php-full for more information.
 
 
 
@@ -45,7 +45,7 @@ The qcodo/ subdirectory contains the codebase for the qcodo framework, itself.
 
 	** Qcodo Core
 
-	The qcodo/_core/ subdirectory contains the "core" code that is not meant to be
+	The qcodo_core/ directory contains the "core" code that is not meant to be
 	modified by most end users, excpet in cases where you are adding non-standard
 	functionality or making bug fixes, etc.
 
@@ -73,8 +73,7 @@ Examples Site for more information.
 
 
 
-
-Please note: this file is deprecated as of 0.3.33
+**** MISC
 
 If you wish to run Qcodo without any QForm interactions, simply comment out the following lines in qcodo.inc.php:
 

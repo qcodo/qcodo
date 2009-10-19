@@ -33,7 +33,7 @@
 		///////////////////////////////////////////////
 		// Define and Initialize the QApplication Class
 		///////////////////////////////////////////////
-		require(__QCODO__ . '/QApplication.class.php');
+		require(__INCLUDES__ . '/QApplication.class.php');
 		QApplication::Initialize();
 
 
