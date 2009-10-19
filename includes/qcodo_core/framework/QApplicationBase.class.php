@@ -401,11 +401,11 @@
 				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
 				print "usage: qcodo SCRIPT [ARGS]\r\n";
 				print "\r\n";
-				print "The following scripts are included with the Qcodo Distribution:\r\n";
-				print "   codegen         Code generates your ORM-layer\r\n";
-				print "   plugin-install  Installs an external Qcodo plugin\r\n";
-				print "   plugin-package  Packages custom code you wrote into a Qcodo plugin\r\n";
-				print "   qcodo-updater   Updates your installed Qcodo framework to a new version\r\n";
+				print "The following SCRIPTs are included with the Qcodo distribution:\r\n";
+				print "  codegen        Code generates your ORM-layer\r\n";
+				print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
+				print "  qpm-download   Download and installs an external QPM package\r\n";
+				print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
 				print "See the _README.txt file in " . __DEVTOOLS_CLI__ . " for more information.";
