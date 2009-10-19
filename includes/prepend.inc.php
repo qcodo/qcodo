@@ -11,6 +11,11 @@
 		 * configuration.inc.php should store any and all server-specific configuration
 		 * settings and constants for your Qcodo-based application.
 		 * 
+		 * The following lines will
+		 * 	1) Check to make sure configuration.inc.php exists in this directory
+		 *  2) Load it in
+		 *  3) Ensure that it is at least somewhat configured correctly
+		 * 
 		 * If you have not done so, be sure to copy either one of the following files:
 		 * 	includes/qcodo_core/configuration.inc.php-dist or
 		 * 	includes/qcodo_core/configuration.inc.php-full
@@ -20,8 +25,15 @@
 		 * directory as this prepend include file.  But if you want to move the
 		 * configuration file anywhere you want, be sure to provide a relative or
 		 * absolute path to the file.
+		 * 
+		 * Finally, make sure you check and update configuration.inc.php and ensure
+		 * all the constants are configured correctly.
 		 */
+		if (!file_exists(dirname(__FILE__) . '/configuration.inc.php'))
+			exit('error: configuration.inc.php missing from includes/ directory; copy includes/qcodo_core/configuration.inc.php-dist to the includes/ directory');
 		require(dirname(__FILE__) . '/configuration.inc.php');
+		if (realpath(__FILE__) != realpath(__INCLUDES__ . '/prepend.inc.php'))
+			exit('error: __DOCROOT__ and/or __INCLUDES__ settings not valid in configuration.inc.php; update includes/configuration.inc.php with the correct settings');
 
 
 		///////////////////////////
@@ -30,10 +42,9 @@
 		require(__QCODO_CORE__ . '/qcodo.inc.php');
 
 
-		///////////////////////////////////////////////
-		// Define and Initialize the QApplication Class
-		///////////////////////////////////////////////
-		require(__INCLUDES__ . '/QApplication.class.php');
+		////////////////////////////////////
+		// Initialize the QApplication Class
+		////////////////////////////////////
 		QApplication::Initialize();
 
 

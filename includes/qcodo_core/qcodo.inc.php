@@ -45,6 +45,11 @@
 	// Load in the "Core" Functions
 	require(__QCODO_CORE__ . '/framework/_functions.inc.php');
 
+	// Load the User-defined QApplication class (check to see if it exists, first)
+	if (!file_exists(__INCLUDES__ . '/QApplication.class.php'))
+		exit('error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo_core/QApplication.class.php-dist to your includes/ directory');
+	require(__INCLUDES__ . '/QApplication.class.php');
+
 	// Preload Other Framework Classes
 	require(__QCODO_CORE__ . '/framework/QDatabaseBase.class.php');
 	if (version_compare(PHP_VERSION, '5.2.0', '<'))
