@@ -74,6 +74,7 @@
 
 		public function CheckVersion() {
 			$this->strCurrentStableVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion'));
+			if (!$this->strCurrentStableVersion) throw new Exception('Unable to access information at ' . QPackageManager::QpmServiceEndpoint);
 			$this->strCurrentDevelopmentVersion = trim(file_get_contents(QPackageManager::QpmServiceEndpoint . '/GetCurrentQcodoVersion?dev=1'));
 
 			if (($this->strManifestVersion != $this->strCurrentStableVersion) && ($this->strManifestVersion != $this->strCurrentDevelopmentVersion)) {
