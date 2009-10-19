@@ -98,16 +98,16 @@ For more information, you can also refer the Qcodo Documentation online at
 	* Any code generated form_draft page
 
 	To change this or for any new PHP scripts you want to write, simply make sure any PHP
-	script that wants to utilize the QCodo Framework STARTS with:
+	script that wants to utilize Qcodo STARTS with:
 		require(dirname(__FILE__) . '/../includes/prepend.inc.php');
 	on the very first line.
 
-	NOTE that the "/../includes/prepend.inc.php" party may be different -- it depends on the relative
+	NOTE that the "/../includes/prepend.inc.php" part may be different -- it depends on the relative
 	path to the includes/prepend.inc.php file.  So if you have a docroot structure like:
 		/path/to/my/docroot/pages/foo/blah.php
 		/path/to/my/includes/prepend.inc.php
-	then in blah.php, the require line will be:
+	then in blah.php, the require line should be:
 		require(dirname(__FILE__) . '/../../../includes/prepend.inc.php');
 
-	Note that if you move your .php script to another directory level, you may need to update
+	Note that if you ever move your .php script to another directory level, you will need to update
 	the relative path to prepend.inc.php
