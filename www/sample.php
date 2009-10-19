@@ -17,7 +17,7 @@
 
 			$this->btnButton = new QButton($this);
 			$this->btnButton->Text = 'Click Me';
-			$this->btnButton->AddAction(new QClickEvent(), new QServerAction('btnButton_Click'));
+			$this->btnButton->AddAction(new QClickEvent(), new QAjaxAction('btnButton_Click'));
 		}
 
 		protected function btnButton_Click($strFormId, $strControlId, $strParameter) {

@@ -14,7 +14,7 @@
 		protected $strManifestVersion;
 		protected $strManifestVersionType;
 
-		const QpmServiceEndpoint = 'http://qpm.qcodo.dev/1_0.php';
+		const QpmServiceEndpoint = 'http://qpm.qcodo.com/1_0.php';
 
 		/**
 		 * In addition to any files OR folders that start with a period ("."), QPM will ignore any

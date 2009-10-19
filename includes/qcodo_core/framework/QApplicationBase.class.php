@@ -390,10 +390,14 @@
 
 		protected static function InitializeAutoIncludes() {
 			$objDirectory = opendir(__INCLUDES__ . '/auto_includes');
+			$strFileArray = array();
 			while ($strFile = readdir($objDirectory)) {
 				if (strtolower(substr($strFile, strlen($strFile) - 8)) == '.inc.php')
-					require(__INCLUDES__ . '/auto_includes/' . $strFile);
+					$strFileArray[] = __INCLUDES__ . '/auto_includes/' . $strFile;
 			}
+
+			asort($strFileArray);
+			foreach ($strFileArray as $strFile) require($strFile);
 		}
 
 		protected static function InitializeServerSignature() {
@@ -860,6 +864,14 @@
 		 */
 		public static function HtmlEntities($strText) {
 			return htmlentities($strText, ENT_COMPAT, QApplication::$EncodingType);
+		}
+
+		/**
+		 * For development purposes, this static method outputs the QcodoInfo page
+		 * @return void
+		 */
+		public static function QcodoInfo() {
+			require(__QCODO_CORE__ . '/framework/qcodo_info.inc.php');
 		}
 
   		/**
