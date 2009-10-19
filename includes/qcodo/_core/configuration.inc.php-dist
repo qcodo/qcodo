@@ -43,7 +43,7 @@
 	define ('__DEVTOOLS_CLI__', __DOCROOT__ . __SUBDIRECTORY__ . '/../cli');
 	define ('__INCLUDES__', __DOCROOT__ .  __SUBDIRECTORY__ . '/../includes');
 	define ('__QCODO__', __INCLUDES__ . '/qcodo');
-	define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo_core');
+	define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo/_core');
 	define ('__DATA_CLASSES__', __INCLUDES__ . '/data_classes');
 	define ('__DATAGEN_CLASSES__', __INCLUDES__ . '/data_classes/generated');
 	define ('__DATA_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls');

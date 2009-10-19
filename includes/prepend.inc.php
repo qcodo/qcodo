@@ -17,8 +17,8 @@
 		 *  3) Ensure that it is at least somewhat configured correctly
 		 * 
 		 * If you have not done so, be sure to copy either one of the following files:
-		 * 	includes/qcodo_core/configuration.inc.php-dist or
-		 * 	includes/qcodo_core/configuration.inc.php-full
+		 * 	includes/qcodo/_core/configuration.inc.php-dist or
+		 * 	includes/qcodo/_core/configuration.inc.php-full
 		 * to includes/configuration.inc.php to set up your configuration constants file.
 		 * 
 		 * It is recommended that the configuration include file is in the same
@@ -30,7 +30,7 @@
 		 * all the constants are configured correctly.
 		 */
 		if (!file_exists(dirname(__FILE__) . '/configuration.inc.php'))
-			exit('error: configuration.inc.php missing from includes/ directory; copy includes/qcodo_core/configuration.inc.php-dist to the includes/ directory');
+			exit('error: configuration.inc.php missing from includes/ directory; copy includes/qcodo/_core/configuration.inc.php-dist to the includes/ directory');
 		require(dirname(__FILE__) . '/configuration.inc.php');
 		if (realpath(__FILE__) != realpath(__INCLUDES__ . '/prepend.inc.php'))
 			exit('error: __DOCROOT__ and/or __INCLUDES__ settings not valid in configuration.inc.php; update includes/configuration.inc.php with the correct settings');

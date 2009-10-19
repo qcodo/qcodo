@@ -47,7 +47,7 @@
 
 	// Load the User-defined QApplication class (check to see if it exists, first)
 	if (!file_exists(__INCLUDES__ . '/QApplication.class.php'))
-		exit('error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo_core/QApplication.class.php-dist to your includes/ directory');
+		exit('error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo/_core/QApplication.class.php-dist to your includes/ directory');
 	require(__INCLUDES__ . '/QApplication.class.php');
 
 	// Preload Other Framework Classes

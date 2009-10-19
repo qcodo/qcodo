@@ -103,7 +103,7 @@
 			define ('__QCODO__', __INCLUDES__ . '/qcodo');
 
 			// The Qcodo Core
-			define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo_core');
+			define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo/_core');
 
 			// Destination for Code Generated class files
 			define ('__DATA_CLASSES__', __INCLUDES__ . '/data_classes');

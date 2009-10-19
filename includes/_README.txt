@@ -10,7 +10,7 @@ information, docroot paths (including subfoldering and virtual directories),
 etc.  You must make modifications to this file to have it reflect the
 configuration of your system.
 
-See the inline documentation in qcodo_core/configuration.inc.php-full for more information.
+See the inline documentation in qcodo/_core/configuration.inc.php-full for more information.
 
 
 
@@ -45,7 +45,7 @@ The qcodo/ subdirectory contains the codebase for the qcodo framework, itself.
 
 	** Qcodo Core
 
-	The qcodo_core/ directory contains the "core" code that is not meant to be
+	The qcodo/_core/ directory contains the "core" code that is not meant to be
 	modified by most end users, excpet in cases where you are adding non-standard
 	functionality or making bug fixes, etc.
 
