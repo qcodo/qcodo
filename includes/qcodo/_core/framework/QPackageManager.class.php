@@ -26,6 +26,19 @@
 			'svn' => true
 		);
 
+		/**
+		 * In addition to any files OR folders that start with a period ("."), QPM will ignore any
+		 * files that are named in the following IgnoreFileArray
+		 * @var string[]
+		 */
+		protected $blnIgnoreFileArray = array(
+			'manifest/manifest.xml' => '__QCODO_CORE__',
+			'configuration.inc.php' => '__INCLUDES__',
+			'QApplication.class.php' => '__INCLUDES__',
+			'settings/codegen.xml' => '__DEVTOOLS_CLI__',
+			'settings/qpm.xml' => '__DEVTOOLS_CLI__'
+		);
+
 		protected function SetupManifestXml() {
 			$this->objManifestXml = new SimpleXMLElement(file_get_contents(__QCODO_CORE__ . '/manifest/manifest.xml'));
 		}

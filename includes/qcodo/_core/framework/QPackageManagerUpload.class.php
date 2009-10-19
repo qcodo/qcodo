@@ -308,6 +308,12 @@
 			if (array_key_exists($intInode, $this->intSeenInode)) throw new Exception('Somehow already visited file: ' . $strFullPath);
 			$this->intSeenInode[$intInode] = true;
 
+			// If in the list of "ignore", let's ignore it
+			$strRelativePath = $objDirectoryToken->GetRelativePathForFile($strFullPath);
+			if (array_key_exists($strRelativePath, $this->blnIgnoreFileArray) &&
+				($this->blnIgnoreFileArray[$strRelativePath] == $objDirectoryToken->Token))
+				return;
+
 			// Calculate the MD5
 			$strMd5 = md5_file($strFullPath);
 
