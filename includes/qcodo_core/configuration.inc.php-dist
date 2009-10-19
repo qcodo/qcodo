@@ -1,17 +1,15 @@
 <?php
-	// This is the "Pro" version of configuration.inc.php, without any comments, and restructured in a way
-	// that should make sense for most pro-users of Qcodo
-	
-	// As always, feel free to use, change or ignore.
+	// This is the "recommended" version of configuration.inc.php, without any comments, and restructured in a way
+	// that should make sense for most pro-users of Qcodo.
+
+	// To use, simply rename or copy this file to includes/configuration.inc.php, and begin making modifications
+	// to the configuration constants as it makes sense for your PHP and docroot installation.
 
 	define('SERVER_INSTANCE', 'dev');
 
 	switch (SERVER_INSTANCE) {
 		case 'dev':
-		case 'test':
-		case 'stage':
-		case 'prod':
-			define ('__DOCROOT__', '/home/qcodo/wwwroot');
+			define ('__DOCROOT__', '/var/www/qcodo/www');
 			define ('__VIRTUAL_DIRECTORY__', '');
 			define ('__SUBDIRECTORY__', '');
 
@@ -19,18 +17,27 @@
 				'adapter' => 'MySqli5',
 				'server' => 'localhost',
 				'port' => null,
-				'database' => 'test',
+				'database' => 'qcodo',
 				'username' => 'root',
 				'password' => '',
 				'profiling' => false)));
+			break;
+
+		case 'test':
+			break;
+
+		case 'stage':
+			break;
+
+		case 'prod':
 			break;
 	}
 
 	define('ALLOW_REMOTE_ADMIN', false);
 	define ('__URL_REWRITE__', 'none');
 
-	define ('__DEVTOOLS_CLI__', __DOCROOT__ . __SUBDIRECTORY__ . '/../_devtools_cli');
-	define ('__INCLUDES__', __DOCROOT__ .  __SUBDIRECTORY__ . '/includes');
+	define ('__DEVTOOLS_CLI__', __DOCROOT__ . __SUBDIRECTORY__ . '/../cli');
+	define ('__INCLUDES__', __DOCROOT__ .  __SUBDIRECTORY__ . '/../includes');
 	define ('__QCODO__', __INCLUDES__ . '/qcodo');
 	define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo/_core');
 	define ('__DATA_CLASSES__', __INCLUDES__ . '/data_classes');
@@ -38,11 +45,12 @@
 	define ('__DATA_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls');
 	define ('__DATAGEN_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls/generated');
 
-	define ('__DEVTOOLS__', __SUBDIRECTORY__ . '/_devtools');
 	define ('__FORM_DRAFTS__', __SUBDIRECTORY__ . '/drafts');
 	define ('__PANEL_DRAFTS__', __SUBDIRECTORY__ . '/drafts/dashboard');
 
-	// We don't want "Examples", and we don't want to download them during qcodo_update
+	// Examples and Devtools are deprecated as of 0.4.0, but these constants are still here to
+	// support any QPM packages that may still want to use them
+	define ('__DEVTOOLS__', null);
 	define ('__EXAMPLES__', null);
 
 	define ('__JS_ASSETS__', __SUBDIRECTORY__ . '/assets/js');

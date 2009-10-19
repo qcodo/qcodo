@@ -1,4 +1,11 @@
 <?php
+	// This is the "full" version of configuration.inc.php, complete with full comments inline in the configuration file.
+	// While it is recommended (for ease of code readability) to use the recommended version of configuration.inc.php-dist,
+	// this file can be useful for newer users of Qcodo.
+
+	// To use, simply rename or copy this file to includes/configuration.inc.php, and begin making modifications
+	// to the configuration constants as it makes sense for your PHP and docroot installation.
+
 	// The Server Instance constant is used to help ease web applications with multiple environments.
 	// Feel free to use, change or ignore.
 	define('SERVER_INSTANCE', 'dev');
@@ -57,7 +64,7 @@
 			 *		__VIRTUAL_DIRECTORY__ is defined as '/~my_user'
 			 *		__SUBDIRECTORY__ is defined as '/qcodo'
 			 */
-			define ('__DOCROOT__', '/var/www/qcodo/wwwroot');
+			define ('__DOCROOT__', '/var/www/qcodo/www');
 			define ('__VIRTUAL_DIRECTORY__', '');
 			define ('__SUBDIRECTORY__', '');
 
@@ -71,7 +78,7 @@
 
 			// Constant for the DevTools (Command Line Interface) Directory
 			// (We're assuming it's at one level above __DOCROOT__... but feel free to specify any absolute path
-			define ('__DEVTOOLS_CLI__', __DOCROOT__ . __SUBDIRECTORY__ . '/../_devtools_cli');
+			define ('__DEVTOOLS_CLI__', __DOCROOT__ . __SUBDIRECTORY__ . '/../cli');
 
 
 			/* Absolute File Paths for Internal Directories
@@ -87,8 +94,8 @@
 			 * in defining your other directory constants.)
 			 */
 
-			// General Includes (the location of the Prepend and Configuration includes files, and the Manifest XML)
-			define ('__INCLUDES__', __DOCROOT__ .  __SUBDIRECTORY__ . '/includes');
+			// General Includes (the location of the Prepend and Configuration includes files)
+			define ('__INCLUDES__', __DOCROOT__ .  __SUBDIRECTORY__ . '/../includes');
 
 			// The Qcodo Directories
 			// Includes subdirectories for Qcodo Customizations in CodeGen and QForms, i18n PO files, QCache storage, etc.
@@ -120,15 +127,16 @@
 			 * Note that this is NOT required.  Feel free to use or ignore.)
 			 */
 
-			// Location of the Qcodo-specific web-based development tools, like codegen.php
-			define ('__DEVTOOLS__', __SUBDIRECTORY__ . '/_devtools');
-
 			// Destination for generated form drafts and panel drafts
 			define ('__FORM_DRAFTS__', __SUBDIRECTORY__ . '/drafts');
 			define ('__PANEL_DRAFTS__', __SUBDIRECTORY__ . '/drafts/dashboard');
 
+			// Examples and Devtools are deprecated as of 0.4.0, but these constants are still here to
+			// support any QPM packages that may still want to use them
 			// Location of the Examples site
-			define ('__EXAMPLES__', __SUBDIRECTORY__ . '/examples');
+			define ('__EXAMPLES__', null);
+			// Location of the Qcodo-specific web-based development tools, like codegen.php
+			define ('__DEVTOOLS__', null);
 
 			// Location of Qcodo-specific Web Assets (JavaScripts, CSS, Images, and PHP Pages/Popups)
 			define ('__JS_ASSETS__', __SUBDIRECTORY__ . '/assets/js');

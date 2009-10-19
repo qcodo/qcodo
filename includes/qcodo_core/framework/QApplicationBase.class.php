@@ -112,6 +112,12 @@
 		public static $EncodingType = 'UTF-8';
 
 		/**
+		 * Specify whether or not PHP Session should be enabled
+		 * @var boolean EnableSession
+		 */
+		public static $EnableSession = true;
+
+		/**
 		 * An array of Database objects, as initialized by QApplication::InitializeDatabaseConnections()
 		 *
 		 * @var DatabaseBase[] Database
@@ -341,29 +347,53 @@
 		 */
 		public static function Initialize() {
 			// Basic Initailization Routines
-			QApplication::InitializeCliMode();
-			QApplication::InitializeOutputBuffering();
 			QApplication::InitializeErrorHandling();
-			QApplication::InitializeServerAddress();
+			QApplication::InitializeCliMode();
 			QApplication::InitializeScriptInfo();
-			QApplication::InitializeRequestUri();
-			QApplication::InitializeBrowserType();
 
-			// Preload all required "Prepload" Class Files
-			foreach (QApplication::$PreloadedClassFile as $strClassFile)
-				require($strClassFile);
+			// Initialization for CLI
+			if (QApplication::$CliMode) {
+				QApplication::InitializeForCli();
 
-			// Perform initialize routine for CLI calls (if applicable)
-			if (QApplication::$CliMode) QApplication::InitializeForCli();
+			// Initialization for WebApp
+			} else {
+				QApplication::InitializeOutputBuffering();
+				QApplication::InitializeServerAddress();
+				QApplication::InitializeRequestUri();
+				QApplication::InitializeBrowserType();
+				QApplication::IntiailizeServerSignature();
+				QApplication::InitializePhpSession();
+			}
 
-			// Finally, Initialize the Database Connections
+			// Next, Initialize the Database Connections and Session
 			QApplication::InitializeDatabaseConnections();
+
+			// Then Preload all required "Prepload" Class Files
+			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
+
+			// Finally, go through any other auto_includes that this application requires
+			QApplication::InitializeAutoIncludes();
+		}
+
+		protected static function InitializeAutoIncludes() {
+			$objDirectory = opendir(__INCLUDES__ . '/auto_includes');
+			while ($strFile = readdir($strFile)) {
+				if (strtolower(substr($strFile, strlen($strFile, 8))) == '.inc.php')
+					require(__INCLUDES__ . '/auto_includes/' . $strFile);
+			}
+		}
+
+		protected static function InitializeServerSignature() {
+			header(sprintf('X-Powered-By: PHP/%s; Qcodo/%s', PHP_VERSION, QCODO_VERSION));
+		}
+
+		protected static function InitializeOutputBuffering() {
+			ob_start('__ob_callback');
 		}
 		
-		protected static function InitializeOutputBuffering() {
-			if (!QApplication::$CliMode) {
-				ob_start('__ob_callback');
-			}
+		protected static function InitializePhpSession() {
+			// Go ahead and start the PHP session if we have set EnableSession to true
+			if (QApplication::$EnableSession) session_start();
 		}
 
 		protected static function InitializeForCli() {

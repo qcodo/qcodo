@@ -58,9 +58,10 @@
 		}
 
 		////////////////////////////
-		// QApplication Customizations (e.g. EncodingType, etc.)
+		// QApplication Customizations (e.g. EncodingType, Disallowing PHP Session, etc.)
 		////////////////////////////
 		// public static $EncodingType = 'ISO-8859-1';
+		// public static $EnableSession = false;
 
 		////////////////////////////
 		// Additional Static Methods

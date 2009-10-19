@@ -1,58 +1,53 @@
 <?php
 	if (!defined('__PREPEND_INCLUDED__')) {
-		// Ensure prepend.inc is only executed once
+		// Ensure prepend.inc.php is only executed once
 		define('__PREPEND_INCLUDED__', 1);
 
 
-		///////////////////////////////////
-		// Define Server-specific constants
-		///////////////////////////////////	
+		/////////////////////////////////
+		// Load in the Configuration File
+		/////////////////////////////////
 		/*
-		 * This assumes that the configuration include file is in the same directory
-		 * as this prepend include file.  For security reasons, you can feel free
-		 * to move the configuration file anywhere you want.  But be sure to provide
-		 * a relative or absolute path to the file.
+		 * configuration.inc.php should store any and all server-specific configuration
+		 * settings and constants for your Qcodo-based application.
+		 * 
+		 * If you have not done so, be sure to copy either one of the following files:
+		 * 	includes/qcodo_core/configuration.inc.php-dist or
+		 * 	includes/qcodo_core/configuration.inc.php-full
+		 * to includes/configuration.inc.php to set up your configuration constants file.
+		 * 
+		 * It is recommended that the configuration include file is in the same
+		 * directory as this prepend include file.  But if you want to move the
+		 * configuration file anywhere you want, be sure to provide a relative or
+		 * absolute path to the file.
 		 */
 		require(dirname(__FILE__) . '/configuration.inc.php');
 
 
-		//////////////////////////////
-		// Include the Qcodo Framework
-		//////////////////////////////
+		///////////////////////////
+		// Load the Qcodo Framework
+		///////////////////////////
 		require(__QCODO_CORE__ . '/qcodo.inc.php');
 
 
-		//////////////////////////////////////////////
-		// Define and Initialize the Application Class
-		//////////////////////////////////////////////
+		///////////////////////////////////////////////
+		// Define and Initialize the QApplication Class
+		///////////////////////////////////////////////
 		require(__QCODO__ . '/QApplication.class.php');
 		QApplication::Initialize();
 
 
-		////////////////////////////////////////////////////////
-		// Start Session Handler for Non-CLI Calls (if required)
-		////////////////////////////////////////////////////////
-		if (!QApplication::$CliMode) session_start();
+		///////////////////////////////////////////////////////////////////////////////
+		// Custom Global Functions, Other Include Files, and any Additional Setup Tasks
+		///////////////////////////////////////////////////////////////////////////////
 
-
-		//////////////////////////
-		// Custom Global Functions
-		//////////////////////////	
-		// NOTE: Define any custom global functions (if any) here...
-
-
-		////////////////
-		// Include Files
-		////////////////
-		// NOTE: Include any other include files (if any) here...
-
-
-		/////////////////////////
-		// Additioanl Setup Tasks
-		/////////////////////////
-		// NOTE: Include any other setup tasks (if any) here...
-
-		// Setup Internationalization and Localization (if applicable)
-		// QApplication::InitializeI18n();
+		/*
+		 * In general, it iS *NOT* recommended that any other calls be put here in prepend.inc.php
+		 * 
+		 * If any custom defined functions, include files or setup is still required at this
+		 * point, it is recommended that those calls be put in its own .inc.php include file, and that it
+		 * be placed in the includes/auto_includes directory.  Files in there will be loaded/run in alphabetical
+		 * order during QApplication::Initialize()
+		 */
 	}
 ?>
