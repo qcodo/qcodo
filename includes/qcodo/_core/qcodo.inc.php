@@ -72,6 +72,7 @@
 	QApplicationBase::$ClassFile['qrssimage'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';
 	QApplicationBase::$ClassFile['qrsscategory'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';
 	QApplicationBase::$ClassFile['qrssitem'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';
+	QApplicationBase::$ClassFile['qerrorlogviewer'] = __QCODO_CORE__ . '/framework/QErrorLogViewer.class.php';
 	QApplicationBase::$ClassFile['qemailserver'] = __QCODO_CORE__ . '/framework/QEmailServer.class.php';
 	QApplicationBase::$ClassFile['qemailmessage'] = __QCODO_CORE__ . '/framework/QEmailServer.class.php';
 	QApplicationBase::$ClassFile['qmimetype'] = __QCODO_CORE__ . '/framework/QMimeType.class.php';
