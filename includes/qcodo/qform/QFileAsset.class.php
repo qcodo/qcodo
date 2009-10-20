@@ -6,7 +6,7 @@
 			parent::__construct($objParentObject, $strControlId);
 
 			// Setup Default Properties
-			$this->strTemplate = __DOCROOT__ . __PHP_ASSETS__ . '/_core/QFileAsset.tpl.php';
+			$this->strTemplate = __QCODO_CORE__ . '/assets/QFileAsset.tpl.php';
 			$this->DialogBoxCssClass = 'fileassetDbox';
 			$this->UploadText = QApplication::Translate('Upload');
 			$this->CancelText = QApplication::Translate('Cancel');

@@ -14,7 +14,7 @@
 			$this->strFileUploadCallback = $strFileUploadCallback;
 
 			// Setup the Dialog Box, itself
-			$this->strTemplate = __DOCROOT__ . __PHP_ASSETS__ . '/_core/QFileAssetDialog.tpl.php';
+			$this->strTemplate = __QCODO_CORE__ . '/assets/QFileAssetDialog.tpl.php';
 			$this->blnDisplay = false;
 			$this->blnMatteClickable = false;
 
