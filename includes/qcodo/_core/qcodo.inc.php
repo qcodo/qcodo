@@ -31,16 +31,14 @@
 	 */
 
 	// Versioning Information
-	define('QCODO_VERSION', '0.4.1');
+	define('QCODO_VERSION', '0.4.2');
 
 	// Preload Required Framework Classes
 	require(__QCODO_CORE__ . '/framework/QBaseClass.class.php');
 	require(__QCODO_CORE__ . '/framework/QExceptions.class.php');
 	require(__QCODO_CORE__ . '/framework/QType.class.php');
 	require(__QCODO_CORE__ . '/framework/QApplicationBase.class.php');
-
-	// Setup the Error Handler
-	require(__QCODO_CORE__ . '/error/error.inc.php');
+	require(__QCODO_CORE__ . '/framework/QErrorHandler.class.php');
 
 	// Load in the "Core" Functions
 	require(__QCODO_CORE__ . '/framework/_functions.inc.php');
@@ -50,16 +48,11 @@
 		exit('error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo/_core/QApplication.class.php-dist to your includes/ directory');
 	require(__INCLUDES__ . '/QApplication.class.php');
 
-	// Preload Other Framework Classes
+	// Load the Core Database Class
 	require(__QCODO_CORE__ . '/framework/QDatabaseBase.class.php');
-	if (version_compare(PHP_VERSION, '5.2.0', '<'))
-		// Use the Legacy (Pre-5.2.0) QDateTime class
-		require(__QCODO_CORE__ . '/framework/QDateTime.legacy.class.php');
-	else
-		// Use the New QDateTime class (which extends PHP DateTime)
-		require(__QCODO_CORE__ . '/framework/QDateTime.class.php');
 
-	// Define Classes to be Preloaded on QApplication::Initialize()
+	// Define Other Classes to be Preloaded on QApplication::Initialize()
+	QApplicationBase::$PreloadedClassFile['qdatetime'] = (version_compare(PHP_VERSION, '5.2.0', '<')) ? (__QCODO_CORE__ . '/framework/QDateTime.legacy.class.php') : (__QCODO_CORE__ . '/framework/QDateTime.class.php');
 	QApplicationBase::$PreloadedClassFile['_enumerations'] = __QCODO_CORE__ . '/qform/_enumerations.inc.php';
 	QApplicationBase::$PreloadedClassFile['qcontrolbase'] = __QCODO_CORE__ . '/qform/QControlBase.class.php';
 	QApplicationBase::$PreloadedClassFile['qcontrol'] = __QCODO__ . '/qform/QControl.class.php';

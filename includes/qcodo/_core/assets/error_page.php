@@ -33,7 +33,7 @@
 			// Reset the Buffer
 			while(ob_get_level()) ob_end_clean();
 			header("HTTP/1.1 500 Internal Server Error");
-			require(__DOCROOT__ . ERROR_FRIENDLY_PAGE_PATH);		
+			require(ERROR_FRIENDLY_PAGE_PATH);		
 		}
 	}
 ?>

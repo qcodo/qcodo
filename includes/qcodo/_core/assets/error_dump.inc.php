@@ -1,28 +1,11 @@
 <?php
-	/*
-	 * error_page include file
-	 * 
-	 * expects the following variables to be set:
-	 *	$__exc_strType
-	 *	$__exc_strMessage
-	 *	$__exc_strObjectType
-	 *	$__exc_strFilename
-	 *	$__exc_intLineNumber
-	 *	$__exc_strStackTrace
-	 *
-	 * optional:
-	 *	$__exc_strRenderedPage
-	 *  $__exc_objErrorAttributeArray
+	/**
+	 * Qcodo Error Dump
 	 */
-
-	$__exc_strMessageBody = htmlentities($__exc_strMessage);
-	$__exc_strMessageBody = str_replace(" ", "&nbsp;", str_replace("\n", "<br/>\n", $__exc_strMessageBody));
-	$__exc_strMessageBody = str_replace(":&nbsp;", ": ", $__exc_strMessageBody);
-	$__exc_objFileArray = file($__exc_strFilename);
 ?>
 <html>
 	<head>
-		<title>PHP <?php _p($__exc_strType); ?> - <?php _p($__exc_strMessage); ?></title>
+		<title>PHP <?php _p(QErrorHandler::$Type); ?> - <?php _p(QErrorHandler::$Message); ?></title>
 		<style>
 			body { font-family: 'Arial' 'Helvetica' 'sans-serif'; font-size: 11px; }
 			a:link, a:visited { text-decoration: none; }
@@ -44,7 +27,7 @@
 
 	<table border="0" cellspacing="0" width="100%">
 		<tr>
-			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php _p($__exc_strType); ?> in PHP Script<br /></span><?php _p($_SERVER["PHP_SELF"]); ?></div></td>
+			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php _p(QErrorHandler::$Type); ?> in PHP Script<br /></span><?php _p($_SERVER["PHP_SELF"]); ?></div></td>
 			<td nowrap="nowrap" class="headingRight">
 				<b>PHP Version:</b> <?php _p(PHP_VERSION); ?>;&nbsp;&nbsp;<b>Zend Engine Version:</b> <?php _p(zend_version()); ?>;&nbsp;&nbsp;<b>Qcodo Version:</b> <?php _p(QCODO_VERSION); ?><br />
 				<?php if (array_key_exists('OS', $_SERVER)) printf('<b>Operating System:</b> %s;&nbsp;&nbsp;', $_SERVER['OS']); ?><b>Application:</b> <?php _p($_SERVER['SERVER_SOFTWARE']); ?>;&nbsp;&nbsp;<b>Server Name:</b> <?php _p($_SERVER['SERVER_NAME']); ?><br />
@@ -53,17 +36,17 @@
 	</table>
 	
 	<div class="page">
-		<span class="title"><?php _p($__exc_strMessageBody, false); ?></span><br />
+		<span class="title"><?php _p(QErrorHandler::$MessageBody, false); ?></span><br />
 		<form method="post" action="<?php _p(__VIRTUAL_DIRECTORY__ . __PHP_ASSETS__) ;?>/_core/error_already_rendered_page.php" target="blank" name="rendered"><input type="hidden" name="strHtml" value=""></form>
 
-			<b><?php _p($__exc_strType); ?> Type:</b>&nbsp;&nbsp;
-			<?php _p($__exc_strObjectType); ?>
+			<b><?php _p(QErrorHandler::$Type); ?> Type:</b>&nbsp;&nbsp;
+			<?php _p(QErrorHandler::$ObjectType); ?>
 			<br /><br />
 
 <?php
-			if (isset($__exc_strRenderedPage)) {
+			if (isset(QErrorHandler::$RenderedPage)) {
 ?>
-				<script type="text/javascript">RenderedPage = "<?php _p(PrepDataForScript($__exc_strRenderedPage), false); ?>";</script>
+				<script type="text/javascript">RenderedPage = "<?php _p(QErrorHandler::PrepDataForScript(QErrorHandler::$RenderedPage), false); ?>";</script>
 				<b>Rendered Page:</b>&nbsp;&nbsp;
 				<a href="javascript:RenderPage(RenderedPage)">Click here</a> to view contents able to be rendered</a>
 				<br /><br />
@@ -71,47 +54,48 @@
 			}
 ?>
 			<b>Source File:</b>&nbsp;&nbsp;
-			<?php _p($__exc_strFilename); ?>
+			<?php _p(QErrorHandler::$Filename); ?>
 			&nbsp;&nbsp;&nbsp;&nbsp;<b>Line:</b>&nbsp;&nbsp;
-			<?php _p($__exc_intLineNumber); ?>
+			<?php _p(QErrorHandler::$LineNumber); ?>
 			<br /><br />
 
 			<div class="code">
 <?php
 						_p('<pre>', false);
-						for ($__exc_intLine = max(1, $__exc_intLineNumber - 5); $__exc_intLine <= min(count($__exc_objFileArray), $__exc_intLineNumber + 5); $__exc_intLine++) {
-							if ($__exc_intLineNumber == $__exc_intLine)
-								printf("<font color=red>Line %s:    %s</font>", $__exc_intLine, htmlentities($__exc_objFileArray[$__exc_intLine - 1]));
+						for ($__exc_IntLine = max(1, QErrorHandler::$LineNumber - 5); $__exc_IntLine <= min(count(QErrorHandler::$FileLinesArray), QErrorHandler::$LineNumber + 5); $__exc_IntLine++) {
+							if (QErrorHandler::$LineNumber == $__exc_IntLine)
+								printf("<font color=red>Line %s:    %s</font>", $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 							else
-								printf("Line %s:    %s", $__exc_intLine, htmlentities($__exc_objFileArray[$__exc_intLine - 1]));
+								printf("Line %s:    %s", $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 						}
 						_p('</pre>', false);
+						unset($__exc_IntLine);
 ?>
 			</div><br />
 			
 <?php
-			if (isset($__exc_objErrorAttributeArray))
-				foreach ($__exc_objErrorAttributeArray as $__exc_objErrorAttribute) {
-					printf("<b>%s:</b>&nbsp;&nbsp;", $__exc_objErrorAttribute->Label);
-					$__exc_strJavascriptLabel = str_replace(" ", "", $__exc_objErrorAttribute->Label);
-					if ($__exc_objErrorAttribute->MultiLine) {
+			if (isset(QErrorHandler::$ErrorAttributeArray))
+				foreach (QErrorHandler::$ErrorAttributeArray as QErrorHandler::$ErrorAttribute) {
+					printf("<b>%s:</b>&nbsp;&nbsp;", QErrorHandler::$ErrorAttribute->Label);
+					QErrorHandler::$JavascriptLabel = str_replace(" ", "", QErrorHandler::$ErrorAttribute->Label);
+					if (QErrorHandler::$ErrorAttribute->MultiLine) {
 						printf("\n<a href=\"javascript:ToggleHidden('%s')\">Show/Hide</a>",
-							$__exc_strJavascriptLabel);
+							QErrorHandler::$JavascriptLabel);
 						printf('<br /><br /><div id="%s" class="code" style="Display: none;"><pre>%s</pre></div><br />',
-							$__exc_strJavascriptLabel,
-							htmlentities($__exc_objErrorAttribute->Contents));
+							QErrorHandler::$JavascriptLabel,
+							htmlentities(QErrorHandler::$ErrorAttribute->Contents));
 					} else
-						printf("%s\n<br /><br />\n", htmlentities($__exc_objErrorAttribute->Contents));
+						printf("%s\n<br /><br />\n", htmlentities(QErrorHandler::$ErrorAttribute->Contents));
 				}
 ?>
 
 			<b>Call Stack:</b>
 			<br><br>
 			<div class="code">
-				<pre><?php _p($__exc_strStackTrace); ?></pre>
+				<pre><?php _p(QErrorHandler::$StackTrace); ?></pre>
 			</div><br />
 
-			<b>Variable Dump:</b>&nbsp;&nbsp;
+			<b>Global Variables Dump:</b>&nbsp;&nbsp;
 			<a href="javascript:ToggleHidden('VariableDump')">Show/Hide</a>
 			<br /><br />
 			<div id="VariableDump" class="code" style="Display: none;">
@@ -148,7 +132,7 @@
 								$__exc_StrVarExport = htmlentities(var_export($__exc_ObjVariableArray[$__exc_Key], true));
 
 							$__exc_StrToDisplay .= sprintf("  <a href=\"javascript:RenderPage(%s)\" title=\"%s\">%s</a>\n", $__exc_Key, $__exc_StrVarExport, $__exc_Key);
-							$__exc_StrToScript .= sprintf("  %s = \"<pre>%s</pre>\";\n", $__exc_Key, PrepDataForScript($__exc_StrVarExport));
+							$__exc_StrToScript .= sprintf("  %s = \"<pre>%s</pre>\";\n", $__exc_Key, QErrorHandler::PrepDataForScript($__exc_StrVarExport));
 						} catch (Exception $__exc_objExcOnVarDump) {
 							$__exc_StrToDisplay .= sprintf("  Fatal error:  Nesting level too deep - recursive dependency?\n", $__exc_objExcOnVarDump->Message);
 						}
@@ -159,10 +143,30 @@
 				printf('<script type="text/javascript">%s</script>', $__exc_StrToScript);
 ?>
 			</div><br />
-
 			<hr width="100%" size="1" color="#dddddd" />
-			<center><i><?php _p($__exc_strType); ?> Report Generated:&nbsp;&nbsp;<?php _p(date('l, F j Y, g:i:s A')); ?></i></center>
+			<center><em>
+				<?php _p(QErrorHandler::$Type); ?> Report Generated:&nbsp;&nbsp;<?php _p(QErrorHandler::$DateTimeOfError); ?>
+				<br/>
+<?php if (QErrorHandler::$FileNameOfError) { ?>
+				<?php _p(QErrorHandler::$Type); ?> Report Logged:&nbsp;&nbsp;<?php _p(QErrorHandler::$FileNameOfError); ?>
+<?php } else { ?>
+				<?php _p(QErrorHandler::$Type); ?> Report NOT Logged
+<?php } ?>
+			</em></center>
 		</font>
 	</div>
 	</body>
 </html>
+
+<?php if (QErrorHandler::$FileNameOfError) { ?>
+<!--qcodo--<error valid="true">
+<type><?php _p(QErrorHandler::$Type); ?></type>
+<title><?php _p(QErrorHandler::$Message); ?></title>
+<datetime><?php _p(QErrorHandler::$DateTimeOfError); ?></datetime>
+<isoDateTime><?php _p(QErrorHandler::$IsoDateTimeOfError); ?></isoDateTime>
+<filename><?php _p(QErrorHandler::$FileNameOfError); ?></filename>
+<script><?php _p($_SERVER["PHP_SELF"]); ?></script>
+<server><?php _p($_SERVER['SERVER_NAME']); ?></server>
+<agent><?php _p($_SERVER['HTTP_USER_AGENT']); ?></agent>
+</error>-->
+<?php } ?>

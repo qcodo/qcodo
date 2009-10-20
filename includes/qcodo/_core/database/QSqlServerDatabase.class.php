@@ -165,9 +165,7 @@
 			// Connect to the Database Server
 
 			// Because the MSSQL extension throws warnings, we want to avoid them
-			set_error_handler('QcodoHandleError', 0);
-
-			$this->objMsSql = mssql_connect($strServer, $strUsername, $strPassword, true);
+			$this->objMsSql = @mssql_connect($strServer, $strUsername, $strPassword, true);
 
 			if (!$this->objMsSql) {
 				$objException = new QSqlServerDatabaseException('Unable to connect to Database: ' . mssql_get_last_message(), -1, null);
@@ -180,9 +178,6 @@
 				$objException->IncrementOffset();
 				throw $objException;
 			}
-			
-			// Restore the error handler to the original
-			restore_error_handler();
 
 			// Update Connected Flag
 			$this->blnConnectedFlag = true;
@@ -225,11 +220,9 @@
 
 			// Because the MSSQL extension throws warnings, we want to make our mssql_query
 			// call around no error handler
-			set_error_handler('QcodoHandleError', 0);
 			// To Avoid Long String Truncation
-			mssql_query('SET TEXTSIZE 65536', $this->objMsSql);
-			$objResult = mssql_query($strQuery, $this->objMsSql);
-			restore_error_handler();
+			@mssql_query('SET TEXTSIZE 65536', $this->objMsSql);
+			$objResult = @mssql_query($strQuery, $this->objMsSql);
 			if (!$objResult)
 				throw new QSqlServerDatabaseException(mssql_get_last_message(), 0, $strQuery);
 
@@ -258,9 +251,7 @@
 
 			// Because the MSSQL extension throws warnings, we want to make our mssql_query
 			// call around no error handler
-			set_error_handler('QcodoHandleError', 0);
-			$objResult = mssql_query($strNonQuery, $this->objMsSql);
-			restore_error_handler();
+			$objResult = @mssql_query($strNonQuery, $this->objMsSql);
 
 			if (!$objResult)
 				throw new QSqlServerDatabaseException(mssql_get_last_message(), 0, $strNonQuery);

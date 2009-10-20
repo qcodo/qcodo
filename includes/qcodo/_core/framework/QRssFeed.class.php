@@ -151,11 +151,7 @@
 			$strToReturn .= sprintf("		<title>%s</title>\r\n", ($this->strTitle) ? $this->strTitle : $strTitle);
 			$strToReturn .= sprintf("		<link>%s</link>\r\n", ($this->strLink) ? $this->strLink : $strLink);
 
-			$intErrorLevel = error_reporting(0);
-			set_error_handler('QcodoHandleError', 0);
-			$objImageSize = getimagesize($this->strUrl);
-			restore_error_handler();
-			error_reporting($intErrorLevel);
+			$objImageSize = @getimagesize($this->strUrl);
 
 			if ($objImageSize) {
 				$strToReturn .= sprintf("		<width>%s</width>\r\n", $objImageSize[0]);

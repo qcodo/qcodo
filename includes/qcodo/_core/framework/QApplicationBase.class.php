@@ -209,8 +209,8 @@
 		 * @return void
 		 */
 		protected static function InitializeErrorHandling() {
-			set_error_handler('QcodoHandleError');
-			set_exception_handler('QcodoHandleException');
+			set_error_handler('__qcodo_handle_error');
+			set_exception_handler('__qcodo_handle_exception');
 		}
 
 		/**
@@ -405,7 +405,7 @@
 		}
 
 		protected static function InitializeOutputBuffering() {
-			ob_start('__ob_callback');
+			ob_start('__qcodo_ob_callback');
 		}
 		
 		protected static function InitializePhpSession() {
@@ -542,7 +542,7 @@
 				throw new QCallerException('Error handler is already currently overridden.  Cannot override twice.  Call RestoreErrorHandler before calling SetErrorHandler again.');
 			if (!$strName) {
 				// No Error Handling is wanted -- simulate a "On Error, Resume" type of functionality
-				set_error_handler('QcodoHandleError', 0);
+				set_error_handler('__qcodo_handle_error', 0);
 				QApplicationBase::$intStoredErrorLevel = error_reporting(0);
 			} else {
 				set_error_handler($strName, $intLevel);
@@ -871,7 +871,7 @@
 		 * @return void
 		 */
 		public static function QcodoInfo() {
-			require(__QCODO_CORE__ . '/framework/qcodo_info.inc.php');
+			require(__QCODO_CORE__ . '/assets/qcodo_info.inc.php');
 		}
 
   		/**
@@ -889,7 +889,6 @@
 			printf('<li>__VIRTUAL_DIRECTORY__ = "%s"</li>', __VIRTUAL_DIRECTORY__);
 			printf('<li>__INCLUDES__ = "%s"</li>', __INCLUDES__);
 			printf('<li>__QCODO_CORE__ = "%s"</li>', __QCODO_CORE__);
-			printf('<li>ERROR_PAGE_PATH = "%s"</li>', ERROR_PAGE_PATH);
 			printf('<li>PHP Include Path = "%s"</li>', get_include_path());
 			printf('<li>QApplication::$DocumentRoot = "%s"</li>', QApplication::$DocumentRoot);
 			printf('<li>QApplication::$EncodingType = "%s"</li>', QApplication::$EncodingType);

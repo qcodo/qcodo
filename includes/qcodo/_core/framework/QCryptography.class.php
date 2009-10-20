@@ -89,12 +89,7 @@
 			// Create the IV
 			if (self::$RandomSource != MCRYPT_RAND) {
 				// Ignore All Warnings
-				set_error_handler('QcodoHandleError', 0);
-				$intCurrentLevel = error_reporting();
-				error_reporting(0);
-				$strIv = mcrypt_create_iv($intIvSize, self::$RandomSource);
-				error_reporting($intCurrentLevel);
-				restore_error_handler();
+				$strIv = @mcrypt_create_iv($intIvSize, self::$RandomSource);
 
 				// If the RandomNumGenerator didn't work, we revert back to using MCRYPT_RAND
 				if (strlen($strIv) != $intIvSize) {
@@ -187,12 +182,7 @@
 		public function __destruct() {
 			if ($this->objMcryptModule) {
 				// Ignore All Warnings
-				set_error_handler('QcodoHandleError', 0);
-				$intCurrentLevel = error_reporting();
-				error_reporting(0);
-				mcrypt_module_close($this->objMcryptModule);
-				error_reporting($intCurrentLevel);
-				restore_error_handler();
+				@mcrypt_module_close($this->objMcryptModule);
 			}
 		}
 	}
