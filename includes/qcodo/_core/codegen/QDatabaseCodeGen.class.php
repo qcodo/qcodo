@@ -1056,9 +1056,9 @@
 			
 			// Add Constraint
 			$strPattern .= '(add[\s]+)?(constraint[\s]+';
-			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternKeyName . ')[\]\`\'\"]?[\s]+)?';
+			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternKeyName . ')[\]\`\'\"]?[\s]+)?[\s]*';
 			// Foreign Key
-			$strPattern .= 'foreign[\s]+key[\s]*\(';
+			$strPattern .= 'foreign[\s]+key[\s]*(' . $this->strPatternKeyName . ')[\s]*\(';
 			$strPattern .= '([^)]+)\)[\s]*';
 			// References
 			$strPattern .= 'references[\s]+';
@@ -1070,11 +1070,11 @@
 			// Perform the RegExp
 			preg_match($strPattern, $strLine, $strMatches);
 
-			if (count($strMatches) == 8) {
-				$strColumnName = trim($strMatches[5]);
-				$strReferenceTableName = trim($strMatches[6]);
-				$strReferenceColumnName = trim($strMatches[7]);
-				$strFkName = $strMatches[4];
+			if (count($strMatches) == 9) {
+				$strColumnName = trim($strMatches[6]);
+				$strReferenceTableName = trim($strMatches[7]);
+				$strReferenceColumnName = trim($strMatches[8]);
+				$strFkName = $strMatches[5];
 				if (!$strFkName)
 					$strFkName = sprintf('virtualfk_%s_%s', $strTableName, $strColumnName);
 
