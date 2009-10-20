@@ -32,16 +32,16 @@
 			objImage.src = objWrapper.hoverImageSource;
 			objImage.width = intWidth;
 			objImage.height = intHeight;
-		}
+		};
 
 		objWrapper.handleMouseOut = function(objEvent) {
 			objEvent = qcodo.handleEvent(objEvent);
 			var objControl = this;
 			var objWrapper = objControl.wrapper;
-			var objImage = objWrapper.imageElement
+			var objImage = objWrapper.imageElement;
 
 			objImage.src = objWrapper.standardImageSource;
-		}
+		};
 
 		// Preload
 		var objHoverImage = document.createElement("img");
@@ -50,7 +50,7 @@
 		// Setup Event Handlers
 		objControl.onmouseover = objWrapper.handleMouseOver;
 		objControl.onmouseout = objWrapper.handleMouseOut;
-	}
+	};
 
 
 

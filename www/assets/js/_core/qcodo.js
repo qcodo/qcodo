@@ -175,8 +175,8 @@
 
 					// Make the callback
 					qc.pA(strFormId, strControlId, 'QClickEvent', strHashData, null);
-				}
-			}
+				};
+			};
 
 
 
@@ -320,7 +320,7 @@
 			this.colorRgbString = function(intRgbArray) {
 				return "#" + qcodo.hexFromInt(intRgbArray[0]) + qcodo.hexFromInt(intRgbArray[1]) + qcodo.hexFromInt(intRgbArray[2]);
 			};
-		}
+		};
 	};
 
 

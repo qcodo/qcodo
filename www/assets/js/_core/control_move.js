@@ -45,13 +45,13 @@
 						if (!this.childNodes[intIndex].originalX) {
 							this.childNodes[intIndex].originalX = this.childNodes[intIndex].offsetLeft;
 							this.childNodes[intIndex].originalY = this.childNodes[intIndex].offsetTop;
-						}
+						};
 
 						this.childNodes[intIndex].style.left = this.childNodes[intIndex].originalX - this.scrollLeft + "px";
 						this.childNodes[intIndex].style.top = this.childNodes[intIndex].originalY - this.scrollTop + "px";
-					}
-				}
-			}*/
+					};
+				};
+			};*/
 
 
 
@@ -510,7 +510,7 @@
 //										if (objDropWrapper.style.position != 'absolute') {
 										var objAbsolutePosition = objDropWrapper.getAbsolutePosition();
 										objDropWrapper.setDropZoneMaskAbsolutePosition(objAbsolutePosition.x, objAbsolutePosition.y);
-//										}
+//										};
 								};
 								blnFoundTarget = true;
 							};

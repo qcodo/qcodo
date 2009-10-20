@@ -189,7 +189,7 @@
 				intNewX -= objControl.offsetLeft;
 				intNewY -= objControl.offsetTop;
 				objControl = objControl.offsetParent;
-			}
+			};
 
 			if (blnBindToParent) {
 				if (this.parentNode.nodeName.toLowerCase() != 'form') {
@@ -199,8 +199,8 @@
 
 					intNewX = Math.min(intNewX, this.offsetParent.offsetWidth - this.offsetWidth);
 					intNewY = Math.min(intNewY, this.offsetParent.offsetHeight - this.offsetHeight);
-				}
-			}
+				};
+			};
 			
 			qc.logObject(intNewX + " x " + intNewY);
 */

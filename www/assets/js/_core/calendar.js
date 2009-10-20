@@ -24,7 +24,7 @@
 		objControl.showCalendar = function() {
 			if (qcodo.openCalendar) {
 				qcodo.getControl(qcodo.openCalendar).hideCalendar();
-			}
+			};
 
 			qcodo.openCalendar = objControl.id;
 
