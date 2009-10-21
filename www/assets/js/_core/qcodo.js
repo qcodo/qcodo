@@ -320,7 +320,7 @@
 			this.colorRgbString = function(intRgbArray) {
 				return "#" + qcodo.hexFromInt(intRgbArray[0]) + qcodo.hexFromInt(intRgbArray[1]) + qcodo.hexFromInt(intRgbArray[2]);
 			};
-		};
+		}
 	};
 
 
