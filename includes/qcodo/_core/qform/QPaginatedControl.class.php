@@ -87,29 +87,28 @@
 
 				case "LimitClause":
 					if ($this->objPaginator) {
-						// If Paginator PageNumber is set to "LastPage", then set it to the total PageCount
-						if ($this->objPaginator->PageNumber == QPaginatedControl::LastPage) {
-							$this->objPaginator->PageNumber = $this->objPaginator->PageCount;
-						}
-
-						$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
-						return QQ::LimitInfo($this->objPaginator->ItemsPerPage, $intOffset);
+						return QQ::LimitInfo($this->objPaginator->ItemsPerPage, $this->ItemOffset);
 					}
 					return null;
 
 				case "LimitInfo":
+					if ($this->objPaginator) {
+						return $this->ItemOffset . ',' . $this->objPaginator->ItemsPerPage;
+					}
+					return null;
+
+				case "ItemCount": return count($this->objDataSource);
+
+				case "ItemOffset":
 					if ($this->objPaginator) {
 						// If Paginator PageNumber is set to "LastPage", then set it to the total PageCount
 						if ($this->objPaginator->PageNumber == QPaginatedControl::LastPage) {
 							$this->objPaginator->PageNumber = $this->objPaginator->PageCount;
 						}
 
-						$intOffset = ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
-						return $intOffset . ',' . $this->objPaginator->ItemsPerPage;
+						return ($this->objPaginator->PageNumber - 1) * $this->objPaginator->ItemsPerPage;
 					}
 					return null;
-
-				case "ItemCount": return count($this->objDataSource);
 
 				case 'PageNumber':
 					if ($this->objPaginator)
