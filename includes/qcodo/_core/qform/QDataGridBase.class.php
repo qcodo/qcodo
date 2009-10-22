@@ -509,7 +509,7 @@
 		protected function GetHeaderRowHtml() {
 			$objHeaderStyle = $this->objRowStyle->ApplyOverride($this->objHeaderRowStyle);
 
-			$strToReturn = sprintf("  <tr %s>\r\n", $objHeaderStyle->GetAttributes());
+			$strToReturn = sprintf("  <tr id=\"%s_rowh\" %s>\r\n", $this->strControlId, $objHeaderStyle->GetAttributes());
 			$intColumnIndex = 0;
 			if ($this->objColumnArray) foreach ($this->objColumnArray as $objColumn) {
 				if ($objColumn->OrderByClause) {						
@@ -527,7 +527,7 @@
 						$this->objHeaderLinkStyle->GetAttributes(),
 						$strName);
 				} else
-					$strToReturn .= sprintf("    <th %s>%s</th>\r\n", $this->objHeaderRowStyle->GetAttributes(), $objColumn->Name);
+					$strToReturn .= sprintf("    <th id=\"%s_rowh_%s\" %s>%s</th>\r\n", $this->strControlId, $intColumnIndex, $this->objHeaderRowStyle->GetAttributes(), $objColumn->Name);
 				$intColumnIndex++;
 			}
 			$strToReturn .= "  </tr>\r\n";
@@ -541,6 +541,7 @@
 
 			// Iterate through the Columns
 			$strColumnsHtml = '';
+			$intColumnIndex = 0;
 			foreach ($this->objColumnArray as $objColumn) {
 				try {
 					$strHtml = $this->ParseColumnHtml($objColumn, $objObject);
@@ -556,7 +557,8 @@
 					$objExc->IncrementOffset();
 					throw $objExc;
 				}
-				$strColumnsHtml .= sprintf("    <td %s>%s</td>\r\n", $objColumn->GetAttributes(), $strHtml);
+				$strColumnsHtml .= sprintf("    <td id=\"%s_row%s_%s\" %s>%s</td>\r\n", $this->strControlId, $this->intCurrentRowIndex, $intColumnIndex, $objColumn->GetAttributes(), $strHtml);
+				$intColumnIndex++;
 			}
 
 			// Apply AlternateRowStyle (if applicable)
