@@ -414,6 +414,11 @@
 		}
 
 		protected static function InitializeForCli() {
+			// We should only run through this logic if we are specifically running
+			// a CLI script through the Qcodo CLI Runner Wrapper (e.g. "qcodo" or "qcodo.bat")
+			if (!array_key_exists('QCODO_CLI_RUNNER', $_SERVER) || !$_SERVER['QCODO_CLI_RUNNER'])
+				return;
+
 			// Did we ask for a script to be run?
 			if (!array_key_exists(1, $_SERVER['argv']) ||
 				(substr($_SERVER['argv'][1], 0, 1) == '-')) {

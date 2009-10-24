@@ -1,4 +1,9 @@
-<?php 
+<?php
+	// Tell QApplication that we are running as a Qcodo CLI Runner/Wrapper
+	// so that it properly sets up QApplication::$ScriptFilename on QApplication::InitializeForCli()
+	$_SERVER['QCODO_CLI_RUNNER'] = true;
+
+
 	/*
 	 * The following line should require() the prepend.inc.php file
 	 * in your includes directory.  This can either be a relative
