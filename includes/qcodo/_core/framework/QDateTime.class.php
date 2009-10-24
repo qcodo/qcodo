@@ -223,7 +223,15 @@
 		 * @param string $strFormat the format of the date
 		 * @return string the formatted date as a string
 		 */
-		public function __toString($strFormat = null) {
+		public function __toString() {
+			// For PHP 5.3 Compatability
+			$strArgumentArray = func_get_args();
+
+			if (count($strArgumentArray) >= 1)
+				$strFormat = $strArgumentArray[0];
+			else
+				$strFormat = null;
+
 			$this->ReinforceNullProperties();
 			if (is_null($strFormat))
 				$strFormat = QDateTime::$DefaultFormat;
@@ -345,7 +353,10 @@
 			return parent::format($strFormat);
 		}
 
-		public function setTime($intHour, $intMinute, $intSecond) {
+		public function setTime($intHour, $intMinute, $intSecond = null) {
+			// For compatibility with PHP 5.3
+			if (is_null($intSecond)) $intSecond = 0;
+
 			// If HOUR or MINUTE is NULL...
 			if (is_null($intHour) || is_null($intMinute)) {
 				parent::setTime($intHour, $intMinute, $intSecond);
@@ -508,13 +519,17 @@
 			return new QDateTimeSpan($intDifference);
 		}
 
-		public function Add(QDateTimeSpan $dtsSpan){
-			// Get this DateTime timestamp
-			$intTimestamp = $this->Timestamp;
+		public function Add($dtsSpan){
+			if ($dtsSpan instanceof QDateTimeSpan) {
+				// Get this DateTime timestamp
+				$intTimestamp = $this->Timestamp;
 
-			// And add the Span Second count to it
-			$this->Timestamp = $this->Timestamp + $dtsSpan->Seconds;
-			return $this;
+				// And add the Span Second count to it
+				$this->Timestamp = $this->Timestamp + $dtsSpan->Seconds;
+				return $this;
+			} else if ($dtsSpan instanceof DateInterval) {
+				return parent::add($dtsSpan);
+			}
 		}
 
 		public function AddSeconds($intSeconds){
