@@ -351,7 +351,17 @@
 			$strNewClass = sprintf('<?php class %sWrapper extends %s { ', $this->strClassName, $this->strClassName);
 
 			foreach ($this->objMethodArray as $objMethod) {
-				$strNewClass .= sprintf('public function %s() { $objArgs = func_get_args(); ', $objMethod->Name);
+				$strParameterArray = array();
+				foreach ($objMethod->GetAllParameters() as $objParameter) {
+					$strParameterDefinition = sprintf('%s %s$%s',
+						($objParameter->IsObject() || $objParameter->Type == QType::DateTime) ? $objParameter->Type : '',
+						($objParameter->Reference) ? '&' : '',
+						$objParameter->Name
+					);
+					$strParameterArray[] = trim($strParameterDefinition);
+				}
+
+				$strNewClass .= sprintf('public function %s(%s) { $objArgs = func_get_args(); ', $objMethod->Name, implode(', ', $strParameterArray));
 
 				// Setup Input/Output Parameter Lists
 				$strInputParameterArray = array();
