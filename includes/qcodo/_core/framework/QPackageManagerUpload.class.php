@@ -152,17 +152,21 @@
 				$strText = '  ' . str_replace("\r\n", "\r\n  ", $strText);
 				$strToReturn .= $strText . "\r\n\r\n";
 
-				$strToReturn .= "new files to be included in this QPM package:\r\n";
-				foreach ($this->objNewFileArray as $objFile) {
-					$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+				if (count($this->objNewFileArray)) {
+					$strToReturn .= "new files to be included in this QPM package:\r\n";
+					foreach ($this->objNewFileArray as $objFile) {
+						$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+					}
+					$strToReturn .= "\r\n";
 				}
-				$strToReturn .= "\r\n";
-
-				$strToReturn .= "changed files to be included in this QPM package:\r\n";
-				foreach ($this->objChangedFileArray as $objFile) {
-					$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+				
+				if (count($this->objChangedFileArray)) {
+					$strToReturn .= "changed files to be included in this QPM package:\r\n";
+					foreach ($this->objChangedFileArray as $objFile) {
+						$strToReturn .= sprintf("  %-16s  %s\r\n", $objFile->DirectoryToken, $objFile->Path);
+					}
+					$strToReturn .= "\r\n";
 				}
-				$strToReturn .= "\r\n";
 			}
 			return $strToReturn;
 		}
@@ -194,7 +198,9 @@
 				print $this->GetVersionMismatchWarningText();
 			}
 
-			if (!$this->blnLive) {
+			if (!count($this->objNewFileArray) && !count($this->objChangedFileArray)) {
+				print "error: no new or altered files in your local Qcodo installation to package\r\n";	
+			} else if (!$this->blnLive) {
 				print $this->GetNonLiveText();
 			} else if (($this->blnVersionMatch || $this->blnForce) &&
 						($this->blnValidCredential) &&
@@ -239,14 +245,14 @@
 			$strQpmXml .= "\r\n";
 			$strQpmXml .= '</qpm>';
 
-			print "result:\r\n";
-
 			if (function_exists('gzuncompress')) {
 				$blnGzCompress = true;
 				$strQpmXml = gzcompress($strQpmXml, 9);
 			} else {
 				$blnGzCompress = false;
 			}
+
+			print "Uploading QPM package (" . strlen($strQpmXml) . " bytes)...\r\n";
 
 			$strEndpoint = substr(QPackageManager::QpmServiceEndpoint, strlen('http://'));
 			$strHost = substr($strEndpoint, 0, strpos($strEndpoint, '/'));

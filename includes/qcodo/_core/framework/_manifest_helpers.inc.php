@@ -29,7 +29,44 @@
 		public function GetFullPath() {
 			return $this->DirectoryTokenObject->GetFullPath() . '/' . $this->Path;
 		}
+
+		public static function DownloadFileFromWebWithStatusOutput($strUrl) {
+			$objFile = fopen($strUrl, 'r');
+			$strMetaDataArray = stream_get_meta_data($objFile);
+			$intContentLength = null;
+			foreach ($strMetaDataArray['wrapper_data'] as $strHeader) {
+				$strHeader = strtolower($strHeader);
+				if (strpos($strHeader, 'content-length: ') === 0) {
+					$intContentLength = intval(substr($strHeader, 16));
+				}
+			}
+			if (!$intContentLength) {
+				return null;
+			}
+			print 'Downloading package (' . $intContentLength . ' bytes)...';
+			print "\r\n";
+
+			$strData = null;
+			$strLinePrint = null;
+			for ($intIndex = 0; $intIndex < $intContentLength; $intIndex++) {
+				if (($intIndex % 1024) == 0) {
+					print (str_repeat(chr(8), strlen($strLinePrint)));
+					$intPercent = floor(($intIndex / $intContentLength) * 100);
+					$strLinePrint = sprintf('%s%% [%-50s] %s',
+						$intPercent, str_repeat('=', floor($intPercent / 2)) . '>', $intIndex);
+					print $strLinePrint;
+				}
 		
+				$strData .= fgetc($objFile);
+			}
+			fclose($objFile);
+
+			print (str_repeat(chr(8) . ' ' . chr(8), strlen($strLinePrint)));
+			print "Done.\r\n\r\n";
+
+			return $strData;
+		}
+
 		/**
 		 * Given FileXml from a QPM package definition, this will return a valid QFileInManifest object for that XML element
 		 * @param SimpleXMLElement $objFileXml
