@@ -6,3 +6,4 @@
 /cli/settings/*.xml
 /includes/configuration.inc.php
 /includes/QApplication.class.php
+/includes/qcodo/_core/manifest/*.xml
