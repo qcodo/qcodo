@@ -29,12 +29,13 @@
 			qcodo.openCalendar = objControl.id;
 
 			var strPositionArray = this.wrapper.getAbsolutePosition();
-			this.calendarPane.style.left = strPositionArray.x + "px";
-			this.calendarPane.style.top = strPositionArray.y + "px";
 			this.calendarPane.style.position = "absolute";
 			this.calendarPane.style.zIndex = 10;
 			this.calendarPane.style.display = "block";
 			this.drawCalendar(0, 0);
+
+			// Figure Out the Position and Set It
+			this.wrapper.setAbsolutePosition(strPositionArray.x, strPositionArray.y);
 		};
 
 		objControl.setDate = function(intYear, intMonth, intDay) {
