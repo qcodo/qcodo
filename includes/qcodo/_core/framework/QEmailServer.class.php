@@ -283,32 +283,31 @@
 				fwrite($objResource, sprintf("Cc: %s\r\n", $objMessage->Cc));
 
 			// Send: Content-Type Header (if applicable)
-			$semi_random = md5(time());			
-			$strBoundary = sprintf('==qcodo_qemailserver_multipart_boundary____x%sx', $semi_random);
-			
+
+			// First, setup boundaries (may be needed if multipart)
+			$strBoundary = sprintf('==qcodo_mp_mixed_boundary_%s', md5(microtime()));
+			$strAltBoundary = sprintf('==qcodo_mp_alt_boundary_%s', md5(microtime()));
+
 			// Send: Other Headers (if any)
 			foreach ($objArray = $objMessage->HeaderArray as $strKey => $strValue)
 				fwrite($objResource, sprintf("%s: %s\r\n", $strKey, $strValue));			
-			
+
 			// if we are adding an html or files to the message we need these headers.
 			if ($objMessage->HasFiles || $objMessage->HtmlBody)  {
 				fwrite($objResource, "MIME-Version: 1.0\r\n");
 				fwrite($objResource, sprintf("Content-Type: multipart/mixed;\r\n boundary=\"%s\"\r\n", $strBoundary));
 				fwrite($objResource, sprintf("This is a multipart message in MIME format.\r\n\r\n", $strBoundary));
 				fwrite($objResource, sprintf("--%s\r\n", $strBoundary));				
-				
-			}					
-			
-			$strAltBoundary = sprintf('==qcodo_qemailserver_alternative_boundary____x%sx', $semi_random);
-						   
+			}
+
+
 			// Send: Body
-			
+
 			// Setup Encoding Type (use QEmailServer if specified, otherwise default to QApplication's)
 			if (!($strEncodingType = QEmailServer::$EncodingType))
 				$strEncodingType = QApplication::$EncodingType;
-				
+
 			if ($objMessage->HtmlBody) {
-				
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
@@ -325,7 +324,7 @@
 				fwrite($objResource, "\r\n\r\n");
 				
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
-			} elseif($objMessage->HasFiles) {
+			} else if($objMessage->HasFiles) {
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));				
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
@@ -335,7 +334,7 @@
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
 			} else
 				fwrite($objResource, "\r\n" . $objMessage->Body);
-			
+
 			// Send: File Attachments
 			if($objMessage->HasFiles) {
 				foreach ($objArray = $objMessage->FileArray as $objFile) {
