@@ -6,11 +6,6 @@
 	 * callbacks to PHP functionality (global magic methods) or to other Qcodo methods.
 	 */
 
-	// Default PHP Autoloader callback
-	function __autoload($strClassName) {
-		return QApplication::Autoload($strClassName);
-	}
-
 	// Default Qcodo output buffering callback	
 	function __qcodo_ob_callback($strBuffer) {
 		return QApplication::OutputPage($strBuffer);

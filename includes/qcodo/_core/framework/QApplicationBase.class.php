@@ -378,6 +378,9 @@
 				QApplication::InitializePhpSession();
 			}
 
+			// Next, Initialize PHP AutoLoad Functionality
+			QApplication::InitializeAutoload();
+
 			// Next, Initialize the Database Connections
 			QApplication::InitializeDatabaseConnections();
 
@@ -386,6 +389,10 @@
 
 			// Finally, go through any other auto_includes that this application requires
 			QApplication::InitializeAutoIncludes();
+		}
+
+		protected static function InitializeAutoload() {
+			spl_autoload_register(array('QApplication', 'Autoload'));
 		}
 
 		protected static function InitializeAutoIncludes() {
