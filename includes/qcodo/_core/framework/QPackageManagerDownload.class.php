@@ -126,15 +126,15 @@
 			// Does this file currently exist in the filesystem?
 
 			// Yep
-			if ($objFile->Inode) {
+			if ($objFile->RealPath) {
 				
 				// Does this file match the version with that in the QPM -- if so, add it to the "overwrite" array
 				if ($objFile->IsMd5MatchWithFilesystem()) {
 					$this->objOverwriteFileArray[] = $objFile;
 
 				// Or does the file match the version with that in the Manifest (if applicable) -- if so, add it to the "overwrite" array
-				} else if (array_key_exists($objFile->Inode, $this->objFileArrayByInode) &&
-							$this->objFileArrayByInode[$objFile->Inode]->IsMd5MatchWithFilesystem()) {
+				} else if (array_key_exists($objFile->RealPath, $this->objFileArrayByRealPath) &&
+							$this->objFileArrayByRealPath[$objFile->RealPath]->IsMd5MatchWithFilesystem()) {
 					$this->objOverwriteFileArray[] = $objFile;
 
 				// Otherwise, it doesn't match anything -- therefore, we will be modifying the local copy

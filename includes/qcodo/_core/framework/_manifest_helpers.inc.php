@@ -1,5 +1,5 @@
 <?php
-	class QDirectoryToken {
+	class QDirectoryToken extends QBaseClass {
 		public $Token;
 		public $RelativeFlag;
 		public $CoreFlag;
@@ -18,8 +18,8 @@
 		}
 	}
 
-	class QFileInManifest {
-		public $Inode;
+	class QFileInManifest extends QBaseClass {
+		public $RealPath;
 		public $DirectoryToken;
 		public $Path;
 		public $Md5;
@@ -86,7 +86,7 @@
 			}
 
 			if (is_file($objFile->GetFullPath()))
-				$objFile->Inode = fileinode($objFile->GetFullPath());
+				$objFile->RealPath = realpath($objFile->GetFullPath());
 
 			$objFile->Base64Data = (string) $objFileXml;
 			return $objFile;

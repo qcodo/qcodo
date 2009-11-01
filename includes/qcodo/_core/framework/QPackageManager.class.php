@@ -8,7 +8,7 @@
 		protected $blnForce;
 
 		protected $objDirectoryArray;
-		protected $objFileArrayByInode;
+		protected $objFileArrayByRealPath;
 		protected $objManifestXml;
 
 		protected $strManifestVersion;
@@ -55,7 +55,7 @@
 		}
 
 		protected function SetupFileArray() {
-			$this->objFileArrayByInode = array();
+			$this->objFileArrayByRealPath = array();
 			foreach ($this->objManifestXml->files->file as $objFileXml) {
 				$objFileInManifest = new QFileInManifest();
 				$objFileInManifest->DirectoryToken = (string) $objFileXml['directoryToken'];
@@ -66,9 +66,9 @@
 
 				// Make sure this is valid and in-use DirectoryToken and that this file exists
 				if (constant($objFileInManifest->DirectoryTokenObject->Token) && file_exists($objFileInManifest->GetFullPath())) {
-					$objFileInManifest->Inode = fileinode($objFileInManifest->GetFullPath());
-					if ($objFileInManifest->Inode)
-						$this->objFileArrayByInode[$objFileInManifest->Inode] = $objFileInManifest;
+					$objFileInManifest->RealPath = realpath($objFileInManifest->GetFullPath());
+					if ($objFileInManifest->RealPath)
+						$this->objFileArrayByRealPath[$objFileInManifest->RealPath] = $objFileInManifest;
 				}
 			}
 		}
