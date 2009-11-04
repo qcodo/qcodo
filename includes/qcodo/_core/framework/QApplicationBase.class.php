@@ -256,7 +256,7 @@
 			QApplication::$ScriptName = $_SERVER['SCRIPT_NAME'];
 			
 			// Ensure both are set, or we'll have to abort
-			if ((!QApplication::$ScriptFilename) || (!QApplication::$ScriptName)) {
+			if (!QApplication::$ScriptFilename) {
 				throw new Exception('Error on QApplication::Initialize() - ScriptFilename or ScriptName was not set');
 			}
 
