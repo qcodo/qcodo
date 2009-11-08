@@ -1204,6 +1204,8 @@
 				case "Enabled":
 					try {
 						$this->blnEnabled = QType::Cast($mixValue, QType::Boolean);
+						$this->strValidationError = null;
+						$this->strWarning = null;
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
@@ -1236,6 +1238,8 @@
 				case "Visible":
 					try {
 						$this->blnVisible = QType::Cast($mixValue, QType::Boolean);
+						$this->strValidationError = null;
+						$this->strWarning = null;
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();

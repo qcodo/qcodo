@@ -236,9 +236,8 @@
 					// Reset the modified/rendered flags and the validation
 					// in ALL controls
 					$objControl->ResetFlags();
-					$objControl->ValidationReset();
 				}
-
+				
 				// Trigger Run Event (if applicable)
 				$objClass->Form_Run();
 
@@ -281,7 +280,7 @@
 				// Trigger Create Event (if applicable)
 				$objClass->Form_Create();
 			}
-
+			
 			// Trigger PreRender Event (if applicable)
 			$objClass->Form_PreRender();
 
@@ -457,7 +456,6 @@
 
 			// close Command collection
 			$strToReturn .= '</commands>';
-
 			$strContents = trim(ob_get_contents());
 
 			if (strtolower(substr($strContents, 0, 5)) == 'debug') {
@@ -684,6 +682,7 @@
 			$blnToReturn = true;
 
 			// Check the Control Itself
+			$objControl->ValidationReset();
 			if (!$objControl->Validate()) {
 				$objControl->MarkAsModified();
 				$blnToReturn = false;
@@ -784,11 +783,13 @@
 							// Get all the children of ParentObject
 							foreach ($this->GetChildControls($objParentObject) as $objControl)
 								// Only Enabled and Visible and Rendered controls that are children of ParentObject should be validated
-								if (($objControl->Visible) && ($objControl->Enabled) && ($objControl->RenderMethod) && ($objControl->OnPage))
+								if (($objControl->Visible) && ($objControl->Enabled) && ($objControl->RenderMethod) && ($objControl->OnPage)) {
+									$objControl->ValidationReset();
 									if (!$objControl->Validate()) {
 										$objControl->MarkAsModified();
 										$blnValid = false;
 									}
+								}
 
 						// No Validation Requested
 						} else {}
