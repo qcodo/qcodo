@@ -45,10 +45,11 @@
 						$this->intIndentWidth,
 						$strSubNodeHtml);
 				} else {
-					$strSubNodeHtml = sprintf('<div id="%s_sub" style="margin-left: %spx; display: none;"><span class="%s" style="cursor: auto;">Loading...</span></div>',
+					$strSubNodeHtml = sprintf('<div id="%s_sub" style="margin-left: %spx; display: none;"><span class="%s" style="cursor: auto;">%s</span></div>',
 						$strItemId,
 						$this->intIndentWidth,
-						$this->strItemCssStyle
+						$this->strItemCssStyle,
+						QApplication::Translate('Loading...')
 					);
 
 					$strCommand = sprintf('onclick="treenavToggleImage(\'%s\'); qc.pA(\'%s\', \'%s\', \'QTreeNav_Expand\', \'%s\')"',
