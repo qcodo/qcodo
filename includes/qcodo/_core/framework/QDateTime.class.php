@@ -236,19 +236,6 @@
 			if (is_null($strFormat))
 				$strFormat = QDateTime::$DefaultFormat;
 
-			/*
-				(?(?=D)([D]+)|
-					(?(?=M)([M]+)|
-						(?(?=Y)([Y]+)|
-							(?(?=h)([h]+)|
-								(?(?=m)([m]+)|
-									(?(?=s)([s]+)|
-										(?(?=z)([z]+)|
-											(?(?=t)([t]+)|
-				))))))))
-			*/
-
-//			$strArray = preg_split('/([^D^M^Y^h^m^s^z^t])+/', $strFormat);
 			preg_match_all('/(?(?=D)([D]+)|(?(?=M)([M]+)|(?(?=Y)([Y]+)|(?(?=h)([h]+)|(?(?=m)([m]+)|(?(?=s)([s]+)|(?(?=z)([z]+)|(?(?=t)([t]+)|))))))))/', $strFormat, $strArray);
 			$strArray = $strArray[0];
 			$strToReturn = '';

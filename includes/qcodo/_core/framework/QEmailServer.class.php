@@ -129,7 +129,7 @@
 
 			if (QEmailServer::$TestMode) {
 				// Open up a File Resource to the TestModeDirectory
-				$strArray = split(' ', microtime());
+				$strArray = explode(' ', microtime());
 				$strFileName = sprintf('%s/email_%s%s.txt', QEmailServer::$TestModeDirectory, $strArray[1], substr($strArray[0], 1));
 				$objResource = fopen($strFileName, 'w');
 				if (!$objResource)
