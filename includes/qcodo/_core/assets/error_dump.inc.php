@@ -27,7 +27,7 @@
 
 	<table border="0" cellspacing="0" width="100%">
 		<tr>
-			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php _p(QErrorHandler::$Type); ?> in PHP Script<br /></span><?php _p($_SERVER["PHP_SELF"]); ?></div></td>
+			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php _p(QErrorHandler::$Type); ?> in PHP Script<br /></span><?php _p($_SERVER["PHP_SELF"]); ?></td>
 			<td nowrap="nowrap" class="headingRight">
 				<b>PHP Version:</b> <?php _p(PHP_VERSION); ?>;&nbsp;&nbsp;<b>Zend Engine Version:</b> <?php _p(zend_version()); ?>;&nbsp;&nbsp;<b>Qcodo Version:</b> <?php _p(QCODO_VERSION); ?><br />
 				<?php if (array_key_exists('OS', $_SERVER)) printf('<b>Operating System:</b> %s;&nbsp;&nbsp;', $_SERVER['OS']); ?><b>Application:</b> <?php _p($_SERVER['SERVER_SOFTWARE']); ?>;&nbsp;&nbsp;<b>Server Name:</b> <?php _p($_SERVER['SERVER_NAME']); ?><br />
@@ -48,7 +48,7 @@
 ?>
 				<script type="text/javascript">RenderedPage = "<?php _p(QErrorHandler::PrepDataForScript(QErrorHandler::$RenderedPage), false); ?>";</script>
 				<b>Rendered Page:</b>&nbsp;&nbsp;
-				<a href="javascript:RenderPage(RenderedPage)">Click here</a> to view contents able to be rendered</a>
+				<a href="javascript:RenderPage(RenderedPage)">Click here</a> to view contents able to be rendered
 				<br /><br />
 <?php
 			}
@@ -153,7 +153,6 @@
 				<?php _p(QErrorHandler::$Type); ?> Report NOT Logged
 <?php } ?>
 			</em></center>
-		</font>
 	</div>
 	</body>
 </html>
