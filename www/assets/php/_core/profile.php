@@ -1,4 +1,4 @@
-<?php
+x<?php
 	require(dirname(__FILE__) . '/../_require_prepend.inc.php');
 	$intDatabaseIndex = $_POST['intDatabaseIndex'];
 	$strProfileData = $_POST['strProfileData'];
@@ -13,18 +13,18 @@
 	<head>
 		<title>Qcodo Development Framework - Database Profiling Tool</title>
 		<style>
-			body { font-family: 'Arial' 'Helvetica' 'sans-serif'; font-size: 14px; }
+			body { font-family: 'Arial', 'Helvetica', 'sans-serif'; font-size: 14px; }
 			a:link, a:visited { text-decoration: none; }
 			a:hover { text-decoration: underline; }
 
-			pre { font-family: 'Lucida Console' 'Courier New' 'Courier' 'monospaced'; font-size: 11px; line-height: 13px; }
+			pre { font-family: 'Lucida Console', 'Courier New', 'Courier', 'monospaced'; font-size: 11px; line-height: 13px; }
 			.page { padding: 10px; }
 
 			.headingLeft {
 				background-color: #446644;
 				color: #ffffff;
 				padding: 10px 0px 10px 10px;
-				font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif';
+				font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif';
 				font-size: 18px;
 				font-weight: bold;
 				width: 70%;
@@ -35,17 +35,17 @@
 				background-color: #446644;
 				color: #ffffff;
 				padding: 0px 10px 10px 10px;
-				font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif';
+				font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif';
 				font-size: 10px;
 				width: 30%;
 				vertical-align: middle;
 				text-align: right;
 			}
-			.title { font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 19px; font-style: italic; color: #330055; }
+			.title { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 19px; font-style: italic; color: #330055; }
 			.code { background-color: #f4eeff; padding: 1px 10px 1px 10px; }
 			
-			.function { font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 12px; font-weight: bold; }
-			.function_details { font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 10px; color: #777777; }
+			.function { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 12px; font-weight: bold; }
+			.function_details { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 10px; color: #777777; }
 		</style>
 		<script type="text/javascript">
 			function Toggle(spanId) {
