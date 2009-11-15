@@ -521,7 +521,9 @@
 
 					$this->strActionParameter = $intColumnIndex;
 
-					$strToReturn .= sprintf("    <th %s><a href=\"\" %s%s>%s</a></th>\r\n",
+					$strToReturn .= sprintf("    <th id=\"%s_rowh_%s\" %s><a href=\"\" %s%s>%s</a></th>\r\n",
+						$this->strControlId,
+						$intColumnIndex,
 						$this->objHeaderRowStyle->GetAttributes(),
 						$this->GetActionAttributes(),
 						$this->objHeaderLinkStyle->GetAttributes(),
