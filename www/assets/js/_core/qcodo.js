@@ -138,12 +138,18 @@
 				this.registerFormHiddenElement("Qform__FormCheckableControls", strFormId);
 			};
 
-			this.registerFormHiddenElement = function(strId, strFormId) {
+			this.registerFormHiddenElement = function(strId, mixForm) {
+				var objForm;
+				if (typeof(mixForm) == 'string')
+					objForm = document.getElementById(mixForm);
+				else
+					objForm = mixForm;
+
 				var objHiddenElement = document.createElement("input");
 				objHiddenElement.type = "hidden";
 				objHiddenElement.id = strId;
 				objHiddenElement.name = strId;
-				document.getElementById(strFormId).appendChild(objHiddenElement);
+				objForm.appendChild(objHiddenElement);
 			};
 
 			this.wrappers = new Array();
