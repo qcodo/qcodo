@@ -104,6 +104,41 @@
 		}
 
 		/**
+		 * Given an integer that represents a byte size, this will return a string
+		 * displaying the value in bytes, KB, MB, GB, TB or PB
+		 * @param integer $intBytes
+		 * @return string
+		 */
+		public static function GetByteSize($intBytes, $intNumberOfTenths = 1) {
+			if (is_null($intBytes)) return 'n/a';
+			if ($intBytes == 0) return '0 bytes';
+
+			$strToReturn = '';
+			if ($intBytes < 0) {
+				$intBytes = $intBytes * -1;
+				$strToReturn .= '-';
+			}
+
+			if ($intBytes == 1)
+				$strToReturn ='1 byte';
+			else if ($intBytes < 1024)
+				$strToReturn .= $intBytes . ' bytes';
+			else if ($intBytes < (1024 * 1024))
+				$strToReturn .= sprintf('%.' . $intNumberOfTenths . 'f KB', $intBytes / (1024));
+			else if ($intBytes < (1024 * 1024 * 1024))
+				$strToReturn .= sprintf('%.' . $intNumberOfTenths . 'f MB', $intBytes / (1024*1024));
+			else if ($intBytes < (1024 * 1024 * 1024 * 1024))
+				$strToReturn .= sprintf('%.' . $intNumberOfTenths . 'f GB', $intBytes / (1024*1024*1024));
+			else if ($intBytes < (1024 * 1024 * 1024 * 1024 * 1024))
+				$strToReturn .= sprintf('%.' . $intNumberOfTenths . 'f TB', $intBytes / (1024*1024*1024*1024));
+			else
+				$strToReturn .= sprintf('%.' . $intNumberOfTenths . 'f PB', $intBytes / (1024*1024*1024*1024*1024));
+
+			return $strToReturn;
+		}
+
+
+		/**
 		 * Similar to strpos(haystack, needle, [offset]) except "needle" can be a regular expression as well.
 		 * Will only work if both the first and last character of "needle" is "/", signifying a regexp-based search.
 		 *
