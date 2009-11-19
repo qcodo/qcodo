@@ -98,7 +98,7 @@
 		div.renderWithName div.required { font-weight: bold; text-transform: uppercase; }
 		div.renderWithName div.left span.instructions { font: 10px 'Verdana', 'Arial', 'Helvetica'; color: #999; font-style: italic; text-transform: none;}
 
-		div.renderWithName div.right { }
+		div.renderWithName div.right { float: left; }
 		div.renderWithName div.right span.error { margin-left: 15px; font: 10px 'Verdana', 'Arial', 'Helvetica'; color: #600;}
 
 
