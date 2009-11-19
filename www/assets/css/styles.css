@@ -93,7 +93,8 @@
 	 * Styles for Custom Render Functions as defined in QControl.class.php
 	 */
 
-	div.renderWithName { padding: 4px 0 4px 0; overflow: auto; height: 100%; }
+	div.renderWithName { padding: 4px 0; height: 100%; clear: both; _zoom: 1; }
+	div.renderWithName:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 		div.renderWithName div.left { float: left; width: 200px; margin-right: 25px; }
 		div.renderWithName div.required { font-weight: bold; text-transform: uppercase; }
 		div.renderWithName div.left span.instructions { font: 10px 'Verdana', 'Arial', 'Helvetica'; color: #999; font-style: italic; text-transform: none;}
