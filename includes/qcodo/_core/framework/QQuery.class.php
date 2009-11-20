@@ -330,13 +330,10 @@
 	class QQAssociationNode extends QQBaseNode {
 		public function __construct($objParentNode) {
 			$this->objParentNode = $objParentNode;
-			if ($objParentNode) {
-				if (version_compare(PHP_VERSION, '5.1.0') == -1)
-					$this->strRootTableName = $objParentNode->__get('_RootTableName');
-				else
-					$this->strRootTableName = $objParentNode->_RootTableName;
-			} else
-				$this->strRootTableName = $strName;
+			if (version_compare(PHP_VERSION, '5.1.0') == -1)
+				$this->strRootTableName = $objParentNode->__get('_RootTableName');
+			else
+				$this->strRootTableName = $objParentNode->_RootTableName;
 		}
 
 		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
