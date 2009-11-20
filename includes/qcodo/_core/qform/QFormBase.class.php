@@ -14,7 +14,7 @@
 		protected $objDefaultWaitIcon = null;
 
 		protected $strFormAttributeArray = array();
-
+		
 		protected $strIncludedJavaScriptFileArray = array();
 		protected $strIgnoreJavaScriptFileArray = array();
 
@@ -868,7 +868,6 @@
 			$strStyleSheetArray = array();
 
 			// Iterate through the form's ControlArray to Define FormAttributes and additional JavaScriptIncludes
-			$this->strFormAttributeArray = array();
 
 			foreach ($this->GetAllControls() as $objControl) {
 				// Include any JavaScripts?  The control would have a
@@ -1047,6 +1046,34 @@
 			}
 
 			return $objToReturn;
+		}
+
+		/**
+		 * Allows you to set or clear custom attributes on the <form> tag, itself, e.g. things like
+		 * autocomplete=false, etc.
+		 * @param string $strName the name of the attribute
+		 * @param string $strValue the value of the attribute, or NULL if you no longer want the attribute
+		 * @return void
+		 */
+		public function SetCustomAttribute($strName, $strValue) {
+			if (!is_null($strValue)) {
+				$this->strFormAttributeArray[$strName] = $strValue;
+			} else {
+				$this->strFormAttributeArray[$strName] = null;
+				unset($this->strFormAttributeArray[$strName]);
+			}
+		}
+
+		/**
+		 * Looks up the custom attribute by name, returning NULL if not set
+		 * @param string $strName
+		 * @return string
+		 */
+		public function GetCustomAttribute($strName) {
+			if ((is_array($this->strFormAttributeArray)) && (array_key_exists($strName, $this->strFormAttributeArray)))
+				return $this->strFormAttributeArray[$strName];
+			else
+				return null;
 		}
 
 		protected function RenderEnd($blnDisplayOutput = true) {
