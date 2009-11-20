@@ -15,21 +15,30 @@
 			this.IE = 1;
 			this.IE_6_0 = 2;
 			this.IE_7_0 = 4;
+			this.IE_8_0 = 8;
 
-			this.FIREFOX = 8;
-			this.FIREFOX_1_0 = 16;
-			this.FIREFOX_1_5 = 32;
-			this.FIREFOX_2_0 = 64;
+			this.FIREFOX = 16;
+			this.FIREFOX_1_0 = 32;
+			this.FIREFOX_1_5 = 64;
+			this.FIREFOX_2_0 = 128;
+			this.FIREFOX_3_0 = 256;
+			this.FIREFOX_3_5 = 512;
 
-			this.SAFARI = 128;
-			this.SAFARI_2_0 = 256;
-			this.SAFARI_3_0 = 512;
+			this.SAFARI = 1024;
+			this.SAFARI_2_0 = 2048;
+			this.SAFARI_3_0 = 4096;
+			this.SAFARI_4_0 = 8192;
 
-			this.MACINTOSH = 1024;
+			this.CHROME = 16384;
+			this.CHROME_2_0 = 32768;
+			this.CHROME_3_0 = 65536;
+			this.CHROME_4_0 = 131072;
 
-			this.UNSUPPORTED = 2048;
+			this.MACINTOSH = 262144;
 
-			// INTERNET EXPLORER (supporting versions 6.0 and 7.0)
+			this.UNSUPPORTED = 524288;
+
+			// INTERNET EXPLORER (supporting versions 6.0, 7.0 and 8.0)
 			if (navigator.userAgent.toLowerCase().indexOf("msie") >= 0) {
 				this._intBrowserType = this.IE;
 
@@ -37,10 +46,12 @@
 					this._intBrowserType = this._intBrowserType | this.IE_6_0;
 				else if (navigator.userAgent.toLowerCase().indexOf("msie 7.0") >= 0)
 					this._intBrowserType = this._intBrowserType | this.IE_7_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("msie 8.0") >= 0)
+					this._intBrowserType = this._intBrowserType | this.IE_7_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
-			// FIREFOX (supporting versions 1.0, 1.5 and 2.0)
+			// FIREFOX (supporting versions 1.0, 1.5, 2.0, 3.0 and 3.5)
 			} else if ((navigator.userAgent.toLowerCase().indexOf("firefox") >= 0) || (navigator.userAgent.toLowerCase().indexOf("iceweasel") >= 0)) {
 				this._intBrowserType = this.FIREFOX;
 				var strUserAgent = navigator.userAgent.toLowerCase();
@@ -52,17 +63,37 @@
 					this._intBrowserType = this._intBrowserType | this.FIREFOX_1_5;
 				else if (strUserAgent.indexOf("firefox/2.0") >= 0)
 					this._intBrowserType = this._intBrowserType | this.FIREFOX_2_0;
+				else if (strUserAgent.indexOf("firefox/3.0") >= 0)
+					this._intBrowserType = this._intBrowserType | this.FIREFOX_3_0;
+				else if (strUserAgent.indexOf("firefox/3.5") >= 0)
+					this._intBrowserType = this._intBrowserType | this.FIREFOX_3_5;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
-			// SAFARI (supporting version 2.0 and eventually 3.0)
+			// CHROME (not yet supported)
+			} else if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {
+				this._intBrowserType = this.CHROME;
+				this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
+
+				if (navigator.userAgent.toLowerCase().indexOf("chrome/2.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.CHROME_2_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("chrome/3.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.CHROME_3_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("chrome/4.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.CHROME_4_0;
+				else
+					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
+
+			// SAFARI (supporting version 2.0, 3.0 and 4.0)
 			} else if (navigator.userAgent.toLowerCase().indexOf("safari") >= 0) {
 				this._intBrowserType = this.SAFARI;
 				
 				if (navigator.userAgent.toLowerCase().indexOf("safari/41") >= 0)
 					this._intBrowserType = this._intBrowserType | this.SAFARI_2_0;
-				else if (navigator.userAgent.toLowerCase().indexOf("safari/52") >= 0)
+				else if (navigator.userAgent.toLowerCase().indexOf("version/3.") >= 0)
 					this._intBrowserType = this._intBrowserType | this.SAFARI_3_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("version/4.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.SAFARI_4_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 

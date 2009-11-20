@@ -303,7 +303,7 @@
 			if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
 				$strUserAgent = trim(strtolower($_SERVER['HTTP_USER_AGENT']));
 
-				// INTERNET EXPLORER (supporting versions 6.0 and 7.0)
+				// INTERNET EXPLORER (supporting versions 6.0, 7.0 and 8.0)
 				if (strpos($strUserAgent, 'msie') !== false) {
 					QApplication::$BrowserType = QBrowserType::InternetExplorer;
 
@@ -311,10 +311,12 @@
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_6_0;
 					else if (strpos($strUserAgent, 'msie 7.0') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_7_0;
+					else if (strpos($strUserAgent, 'msie 8.0') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_8_0;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
-				// FIREFOX (supporting versions 1.0, 1.5 and 2.0)
+				// FIREFOX (supporting versions 1.0, 1.5, 2.0, 3.0 and 3.5)
 				} else if ((strpos($strUserAgent, 'firefox') !== false) || (strpos($strUserAgent, 'iceweasel') !== false)) {
 					QApplication::$BrowserType = QBrowserType::Firefox;
 					$strUserAgent = str_replace('iceweasel/', 'firefox/', $strUserAgent);
@@ -325,17 +327,37 @@
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Firefox_1_5;
 					else if (strpos($strUserAgent, 'firefox/2.0') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Firefox_2_0;
+					else if (strpos($strUserAgent, 'firefox/3.0') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Firefox_3_0;
+					else if (strpos($strUserAgent, 'firefox/3.5') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Firefox_3_5;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
-				// SAFARI (supporting version 2.0 and eventually 3.0)
+				// CHROME (not yet supported)
+				} else if (strpos($strUserAgent, 'chrome') !== false) {
+					QApplication::$BrowserType = QBrowserType::Chrome;
+					QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
+
+					if (strpos($strUserAgent, 'chrome/2.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_2_0;
+					else if (strpos($strUserAgent, 'chrome/3.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_3_0;
+					else if (strpos($strUserAgent, 'chrome/4.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_4_0;
+					else
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
+
+				// SAFARI (supporting version 2.0, 3.0 and 4.0)
 				} else if (strpos($strUserAgent, 'safari') !== false) {
 					QApplication::$BrowserType = QBrowserType::Safari;
 
 					if (strpos($strUserAgent, 'safari/41') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_2_0;
-					else if (strpos($strUserAgent, 'safari/52') !== false)
+					else if (strpos($strUserAgent, 'version/3.') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_3_0;
+					else if (strpos($strUserAgent, 'version/4.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_4_0;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
@@ -929,18 +951,27 @@
 		const InternetExplorer = 1;
 		const InternetExplorer_6_0 = 2;
 		const InternetExplorer_7_0 = 4;
+		const InternetExplorer_8_0 = 8;
+		
+		const Firefox = 16;
+		const Firefox_1_0 = 32;
+		const Firefox_1_5 = 64;
+		const Firefox_2_0 = 128;
+		const Firefox_3_0 = 256;
+		const Firefox_3_5 = 512;
+		
+		const Safari = 1024;
+		const Safari_2_0 = 2048;
+		const Safari_3_0 = 4096;
+		const Safari_4_0 = 8192;
+		
+		const Chrome = 16384;
+		const Chrome_2_0 = 32768;
+		const Chrome_3_0 = 65536;
+		const Chrome_4_0 = 131072;
 
-		const Firefox = 8;
-		const Firefox_1_0 = 16;
-		const Firefox_1_5 = 32;
-		const Firefox_2_0 = 64;
+		const Macintosh = 262144;
 
-		const Safari = 128;
-		const Safari_2_0 = 256;
-		const Safari_3_0 = 512;
-
-		const Macintosh = 1024;
-
-		const Unsupported = 2048;
+		const Unsupported = 524288;
 	}
 ?>
