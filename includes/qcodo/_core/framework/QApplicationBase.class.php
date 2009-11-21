@@ -209,7 +209,7 @@
 		 * @return void
 		 */
 		protected static function InitializeErrorHandling() {
-			set_error_handler('__qcodo_handle_error');
+			set_error_handler('__qcodo_handle_error', error_reporting());
 			set_exception_handler('__qcodo_handle_exception');
 		}
 
