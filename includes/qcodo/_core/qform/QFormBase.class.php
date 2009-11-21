@@ -949,15 +949,30 @@
 				$strScriptArray = explode(',', $strJavaScriptFileList);
 
 				// Iterate through the list of JavaScriptFiles to Include...
-				foreach ($strScriptArray as $strScript)
-					if ($strScript = trim($strScript)) 
+				foreach ($strScriptArray as $strScript) {
+					if ($strScript = trim($strScript)) {
+						$blnIncludeFlag = true;
 
-						// Include it if we're NOT ignoring it and it has NOT already been included
-						if ((array_search($strScript, $this->strIgnoreJavaScriptFileArray) === false) &&
-							!array_key_exists($strScript, $this->strIncludedJavaScriptFileArray)) {
+						// Do NOT include if it has already been included
+						if (array_key_exists($strScript, $this->strIncludedJavaScriptFileArray))
+							$blnIncludeFlag = false;
+
+						// Do NOT include if it is _core and we are ignoring ALL _core AND this script is in _core
+						if ((array_search('_core', $this->strIgnoreJavaScriptFileArray) !== false) &&
+							(substr($strScript, 0, 5) == '_core'))
+							$blnIncludeFlag = false;
+
+						// Do NOT include if this script is in the IgnoreJavaScriptFileArray
+						if (array_search($strScript, $this->strIgnoreJavaScriptFileArray) !== false)
+							$blnIncludeFlag = false;
+
+						// Process if we are including
+						if ($blnIncludeFlag) {
 							$strArrayToReturn[$strScript] = $strScript;
 							$this->strIncludedJavaScriptFileArray[$strScript] = true;
 						}
+					}
+				}
 			}
 
 			if (count($strArrayToReturn))
