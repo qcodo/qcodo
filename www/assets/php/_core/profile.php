@@ -1,4 +1,4 @@
-x<?php
+<?php
 	require(dirname(__FILE__) . '/../_require_prepend.inc.php');
 	$intDatabaseIndex = $_POST['intDatabaseIndex'];
 	$strProfileData = $_POST['strProfileData'];
