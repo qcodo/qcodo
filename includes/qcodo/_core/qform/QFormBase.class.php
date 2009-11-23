@@ -373,7 +373,7 @@
 				// Include any StyleSheets?  The control would have a
 				// comma-delimited list of stylesheet files to include (if applicable)
 				if ($strScriptArray = $this->ProcessStyleSheetList($objControl->StyleSheets))
-					$strStyleSheetToAddArray = array_merge($strStyleSheetArray, $strScriptArray);
+					$strStyleSheetToAddArray = array_merge($strStyleSheetToAddArray, $strScriptArray);
 
 				// Form Attributes?
 				if ($objControl->FormAttributes) {
@@ -1148,7 +1148,7 @@
 				// Include any StyleSheets?  The control would have a
 				// comma-delimited list of stylesheet files to include (if applicable)
 				if ($strScriptArray = $this->ProcessStyleSheetList($objControl->StyleSheets))
-					$strStyleSheetToAddArray = array_merge($strStyleSheetArray, $strScriptArray);
+					$strStyleSheetToAddArray = array_merge($strStyleSheetToAddArray, $strScriptArray);
 
 				// Form Attributes?
 				if ($objControl->FormAttributes) {
