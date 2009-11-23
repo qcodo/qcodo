@@ -110,7 +110,7 @@
 		 * @return string
 		 */
 		public static function GetByteSize($intBytes, $intNumberOfTenths = 1) {
-			if (is_null($intBytes)) return 'n/a';
+			if (is_null($intBytes)) return QApplication::Translate('n/a');
 			if ($intBytes == 0) return '0 bytes';
 
 			$strToReturn = '';
