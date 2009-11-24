@@ -342,7 +342,7 @@
 					fwrite($objResource, sprintf("Content-Type: %s;\r\n", $objFile->MimeType ));
 					fwrite($objResource, sprintf("      name=\"%s\"\r\n", $objFile->FileName ));
 					fwrite($objResource, "Content-Transfer-Encoding: base64\r\n");
-					fwrite($objResource, "Content-Length: %s\r\n", strlen($objFile->EncodedFileData));
+					fwrite($objResource, sprintf("Content-Length: %s\r\n", strlen($objFile->EncodedFileData)));
 					fwrite($objResource, "Content-Disposition: attachment;\r\n");
 					fwrite($objResource, sprintf("      filename=\"%s\"\r\n\r\n", $objFile->FileName));
 					fwrite($objResource, $objFile->EncodedFileData);
