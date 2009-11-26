@@ -92,7 +92,7 @@
 	  	 * @var string[] array of directories to be excluded in codegen
 		 * @access protected
 		 */  						
-		protected static $strDirectoriesToExcludeArray = array('.svn','.cvs','.git');
+		protected static $strDirectoriesToExcludeArray = array('.','..','.svn','.cvs','.git');
 
 		public static function GetSettingsXml() {
 			$strCrLf = "\r\n";
@@ -263,8 +263,7 @@
 			// Go through standard templates first
 			$objDirectory = opendir($strTemplatePath);
 			while ($strModuleName = readdir($objDirectory))
-				if (($strModuleName != '.') && ($strModuleName != '..') && 
-					(!in_array($strModuleName,self::$strDirectoriesToExcludeArray)) &&
+				if ((!in_array($strModuleName,self::$strDirectoriesToExcludeArray)) &&
 					is_dir($strTemplatePath . '/' . $strModuleName)) {
 
 					// We're in a valid Module -- look for any _*.tpl template files
@@ -279,8 +278,7 @@
 			if (is_dir($strTemplatePathCustom)) {
 				$objDirectory = opendir($strTemplatePathCustom);
 				while ($strModuleName = readdir($objDirectory))
-					if (($strModuleName != '.') && ($strModuleName != '..') &&
-                                            (!in_array($strModuleName,self::$strDirectoriesToExcludeArray)) &&
+					if ((!in_array($strModuleName,self::$strDirectoriesToExcludeArray)) &&        
 						is_dir($strTemplatePathCustom . '/' . $strModuleName)) {
 						$objModuleDirectory = opendir($strTemplatePathCustom . '/' . $strModuleName);
 						while ($strFilename = readdir($objModuleDirectory))
