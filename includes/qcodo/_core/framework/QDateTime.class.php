@@ -508,9 +508,6 @@
 
 		public function Add($dtsSpan){
 			if ($dtsSpan instanceof QDateTimeSpan) {
-				// Get this DateTime timestamp
-				$intTimestamp = $this->Timestamp;
-
 				// And add the Span Second count to it
 				$this->Timestamp = $this->Timestamp + $dtsSpan->Seconds;
 				return $this;
