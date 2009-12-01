@@ -1214,8 +1214,35 @@
 		public function __toString() {
 			return 'QQLimitInfo Clause';
 		}
+		public function __get($strName) {
+			switch ($strName) {
+				case 'MaxRowCount': return $this->intMaxRowCount;
+				case 'Offset': return $this->intOffset;
+
+				default:
+					try {
+						return parent::__get($strName);
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+			}
+		}
+		public function __set($strName, $mixValue) {
+			switch ($strName) {
+				case 'MaxRowCount':
+					try {
+						return ($this->intMaxRowCount = QType::Cast($mixValue, QType::Integer));
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+				case 'Offset':
+					try {
+						return ($this->intOffset = QType::Cast($mixValue, QType::Integer));
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+				default:
+					try {
+						return (parent::__set($strName, $mixValue));
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+			}
+		}
 	}
-	
+
 	class QQExpandVirtualNode extends QQClause {
 		protected $objNode;
 		public function __construct(QQVirtualNode $objNode) {
