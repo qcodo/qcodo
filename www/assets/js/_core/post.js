@@ -18,7 +18,7 @@
 		for (var strControlId in qcodo.controlModifications)
 			for (var strProperty in qcodo.controlModifications[strControlId])
 				strToReturn += strControlId + " " + strProperty + " " + qcodo.controlModifications[strControlId][strProperty] + "\n";
-		qcodo.controlModifications = new Array();
+		qcodo.controlModifications = {};
 		return strToReturn;
 	};
 

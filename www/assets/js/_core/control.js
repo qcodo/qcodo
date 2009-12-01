@@ -24,7 +24,7 @@
 // Register Control - General
 /////////////////////////////
 	
-	qcodo.controlModifications = new Array();
+	qcodo.controlModifications = {};
 	qcodo.javascriptStyleToQcodo = new Array();
 	qcodo.javascriptStyleToQcodo["backgroundColor"] = "BackColor";
 	qcodo.javascriptStyleToQcodo["borderColor"] = "BorderColor";
@@ -41,7 +41,7 @@
 
 	qcodo.recordControlModification = function(strControlId, strProperty, strNewValue) {
 		if (!qcodo.controlModifications[strControlId])
-			qcodo.controlModifications[strControlId] = new Array();
+			qcodo.controlModifications[strControlId] = {};
 		qcodo.controlModifications[strControlId][strProperty] = strNewValue;	
 	};
 
