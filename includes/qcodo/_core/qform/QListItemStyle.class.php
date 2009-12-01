@@ -133,7 +133,7 @@
 			}
 			
 			if ($strStyle)
-				$strToReturn .= sprintf('style="%s" ', $strStyle);
+				$strToReturn .= sprintf(' style="%s" ', $strStyle);
 			
 			return $strToReturn;
 		}
