@@ -81,7 +81,7 @@
 
 		<table border="0" cellspacing="0" width="100%">
 			<tr>
-				<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall">Qcodo Development Framework <?= QCODO_VERSION ?><br /></span>Database Profiling Tool</div></td>
+				<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall">Qcodo Development Framework <?= QCODO_VERSION ?><br /></span>Database Profiling Tool</td>
 				<td nowrap="nowrap" class="headingRight">
 					<b>Database Index:</b> <?php _p($intDatabaseIndex); ?>;&nbsp;&nbsp;<b>Database Type:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Adapter); ?><br />
 					<b>Database Server:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Server); ?>;&nbsp;&nbsp;<b>Database Name:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Database); ?><br />
