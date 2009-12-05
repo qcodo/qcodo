@@ -74,19 +74,22 @@
 			</div><br />
 			
 <?php
-			if (isset(QErrorHandler::$ErrorAttributeArray))
-				foreach (QErrorHandler::$ErrorAttributeArray as QErrorHandler::$ErrorAttribute) {
-					printf("<b>%s:</b>&nbsp;&nbsp;", QErrorHandler::$ErrorAttribute->Label);
-					QErrorHandler::$JavascriptLabel = str_replace(" ", "", QErrorHandler::$ErrorAttribute->Label);
-					if (QErrorHandler::$ErrorAttribute->MultiLine) {
+			if (isset(QErrorHandler::$ErrorAttributeArray)) {
+				foreach (QErrorHandler::$ErrorAttributeArray as $__exc_ObjErrorAttribute) {
+					printf("<b>%s:</b>&nbsp;&nbsp;", $__exc_ObjErrorAttribute->Label);
+					$__exc_StrJavascriptLabel = str_replace(" ", "", $__exc_ObjErrorAttribute->Label);
+					if ($__exc_ObjErrorAttribute->MultiLine) {
 						printf("\n<a href=\"javascript:ToggleHidden('%s')\">Show/Hide</a>",
-							QErrorHandler::$JavascriptLabel);
+							$__exc_StrJavascriptLabel);
 						printf('<br /><br /><div id="%s" class="code" style="Display: none;"><pre>%s</pre></div><br />',
-							QErrorHandler::$JavascriptLabel,
-							htmlentities(QErrorHandler::$ErrorAttribute->Contents));
+							$__exc_StrJavascriptLabel,
+							htmlentities($__exc_ObjErrorAttribute->Contents));
 					} else
-						printf("%s\n<br /><br />\n", htmlentities(QErrorHandler::$ErrorAttribute->Contents));
+						printf("%s\n<br /><br />\n", htmlentities($__exc_ObjErrorAttribute->Contents));
 				}
+				unset($__exc_StrJavascriptLabel);
+				unset($__exc_ObjErrorAttribute);
+			}
 ?>
 
 			<b>Call Stack:</b>
