@@ -16,11 +16,12 @@
 		protected $strClassSuffix;
 
 		// Errors and Warnings
-		protected $strErrors;
+		protected $strErrors;		 		
 
 		// PHP Reserved Words.  They make up:
 		// Invalid Type names -- these are reserved words which cannot be Type names in any user type table
 		// Invalid Table names -- these are reserved words which cannot be used as any table name
+		//please refer to : http://php.net/manual/en/reserved.php
 	        const PhpReservedWords = 'new, null, break, return, switch, self, case, const, clone, continue, declare, default, echo, else, elseif, empty, exit, eval, if, try, throw, catch, public, private, protected, function, extends, foreach, for, while, do, var, class, static, abstract, isset, unset, implements, interface, instanceof, include, include_once, require, require_once, abstract, and, or, xor, array, list, false, true, global, parent, print, exception, namespace, goto, final, endif, endswitch, enddeclare, endwhile, use, as, endfor, endforeach, this';
 
 		// Relative Paths (from __QCODO_CORE__) to the CORE Template and Subtemplate Directories
@@ -86,6 +87,12 @@
 		protected static $TemplateEscapeEndLength;
 		
 		public static $RootErrors = '';
+
+		/**
+	  	 * @var string[] array of directories to be excluded in codegen
+		 * @access protected
+		 */  						
+		protected static $DirectoriesToExcludeArray = array('.','..','.svn','cvs','.git');
 
 		public static function GetSettingsXml() {
 			$strCrLf = "\r\n";
@@ -256,8 +263,7 @@
 			// Go through standard templates first
 			$objDirectory = opendir($strTemplatePath);
 			while ($strModuleName = readdir($objDirectory))
-				if (($strModuleName != '.') && ($strModuleName != '..') &&
-					($strModuleName != 'SVN') && ($strModuleName != 'CVS') &&
+				if ((!in_array(strtolower($strModuleName),array_map('strtolower', QCodeGen::$DirectoriesToExcludeArray))) &&
 					is_dir($strTemplatePath . '/' . $strModuleName)) {
 
 					// We're in a valid Module -- look for any _*.tpl template files
@@ -272,8 +278,7 @@
 			if (is_dir($strTemplatePathCustom)) {
 				$objDirectory = opendir($strTemplatePathCustom);
 				while ($strModuleName = readdir($objDirectory))
-					if (($strModuleName != '.') && ($strModuleName != '..') &&
-						($strModuleName != 'SVN') && ($strModuleName != 'CVS') &&
+					if ((!in_array(strtolower($strModuleName),array_map('strtolower', QCodeGen::$DirectoriesToExcludeArray))) &&
 						is_dir($strTemplatePathCustom . '/' . $strModuleName)) {
 						$objModuleDirectory = opendir($strTemplatePathCustom . '/' . $strModuleName);
 						while ($strFilename = readdir($objModuleDirectory))
@@ -1157,3 +1162,4 @@
 		}
 	}
 ?>
+
