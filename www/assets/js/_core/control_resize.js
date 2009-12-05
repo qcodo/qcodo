@@ -12,7 +12,7 @@
 		objWrapper.resizeLowerControls = new Array();
 
 		if (!objWrapper.handle) {
-			if (qcodo.isBrowser(qcodo.SAFARI))
+			if (qcodo.isBrowser(qcodo.SAFARI) || qcodo.isBrowser(qcodo.CHROME))
 				qcodo.registerControlHandle(objControl, 'move');
 			else if (qcodo.isBrowser(qcodo.IE)) {
 				if (objWrapper.resizeDirectionVertical)
