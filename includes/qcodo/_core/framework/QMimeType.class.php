@@ -18,7 +18,7 @@
 		const Pdf = 'application/pdf';
 		const PlainText = 'text/plain';
 		const Png = 'image/png';
-		const RichText = 'text/richtext';
+		const RichText = 'text/rtf';
 		const Quicktime = 'video/quicktime';
 		const WavAudio = 'audio/x-wav';
 		const Xml = 'text/xml';
