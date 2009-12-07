@@ -123,9 +123,6 @@
 			// Create a new shell FileAsset for this panel
 			$this->File = null;
 			$this->Refresh();
-
-			// Temporary fix for Double DBox Render issue after Delete/Reupload
-			QApplication::ExecuteJavaScript('document.getElementById(document.getElementById("Qform__FormId").value).removeChild(document.getElementById("' . $this->dlgFileAsset->ControlId . '_ctl"));');
 		}
 
 		public function __get($strName) {
