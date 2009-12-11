@@ -424,7 +424,7 @@
 	class QCrossScriptingException extends QCallerException {
 		public function __construct($strControlId) {
 			parent::__construct("Cross Scripting Violation: Potential cross script injection in Control \"" .
-				$strControlId . "\"\r\nTo allow any input on this TextBox control, set CrossScripting to QCrossScripting::Alow", 2);
+				$strControlId . "\"\r\nTo allow any input on this TextBox control, set CrossScripting to QCrossScripting::Allow", 2);
 		}
 	}
 ?>
