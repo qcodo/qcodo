@@ -127,6 +127,7 @@
 	QApplicationBase::$ClassFile['qfileasset'] = __QCODO__ . '/qform/QFileAsset.class.php';
 	QApplicationBase::$ClassFile['qfileassetbase'] = __QCODO_CORE__ . '/qform/QFileAssetBase.class.php';
 	QApplicationBase::$ClassFile['qfileassetdialog'] = __QCODO_CORE__ . '/qform/QFileAssetDialog.class.php';
+	QApplicationBase::$ClassFile['qfileuploader'] = __QCODO_CORE__ . '/qform/QFileUploader.class.php';
 
 	QApplicationBase::$ClassFile['qcontrollabel'] = __QCODO_CORE__ . '/qform/QControlLabel.class.php';
 
