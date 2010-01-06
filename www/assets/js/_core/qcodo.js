@@ -156,17 +156,20 @@
 		// QForm-related functionality
 		/////////////////////////////
 
-			this.registerForm = function() {
-				// "Lookup" the QForm's FormId
-				var strFormId = document.getElementById("Qform__FormId").value;
-
+			this.registerForm = function(strFormId, strFormState) {
 				// Register the Various Hidden Form Elements needed for QForms
+				this.registerFormHiddenElement("Qform__FormId", strFormId);
+				this.registerFormHiddenElement("Qform__FormState", strFormId);
 				this.registerFormHiddenElement("Qform__FormControl", strFormId);
 				this.registerFormHiddenElement("Qform__FormEvent", strFormId);
 				this.registerFormHiddenElement("Qform__FormParameter", strFormId);
 				this.registerFormHiddenElement("Qform__FormCallType", strFormId);
 				this.registerFormHiddenElement("Qform__FormUpdates", strFormId);
 				this.registerFormHiddenElement("Qform__FormCheckableControls", strFormId);
+				
+				// Set the QForm's FormId and FormState
+				document.getElementById("Qform__FormId").value = strFormId;
+				document.getElementById("Qform__FormState").value = strFormState;
 			};
 
 			this.registerFormHiddenElement = function(strId, mixForm) {
@@ -185,12 +188,25 @@
 
 			this.wrappers = new Array();
 
+			this.registerAssetLocations = function(strJsAssets, strPhpAssets, strCssAssets, strImageAssets) {
+				qc.jsAssets = strJsAssets;
+				qc.phpAssets = strPhpAssets;
+				qc.cssAssets = strCssAssets;
+				qc.imageAssets = strImageAssets;
+			};
+
 
 
 		////////////////////////////////////
 		// URL Hash Processing
 		////////////////////////////////////
 			this.processHashCurrent = null;
+
+			this.registerHashProcessor = function(strControlId, intPollingInterval) {
+				qc.processHashCurrent = null;
+				setInterval("qc.processHash('" + strControlId + "');", intPollingInterval);
+			};
+
 			this.processHash = function(strControlId) {
 				// Get the Hash Value
 				var strUrl = new String(document.location);
@@ -368,3 +384,5 @@
 
 	var qc = qcodo;
 	qc.initialize();
+	qc.regAL = qcodo.registerAssetLocations;
+	qc.regHP = qcodo.registerHashProcessor;
