@@ -1183,19 +1183,17 @@
 					$strEndScript = 'qc.loadJavaScriptFile("' . $strScript . '", null); ';
 			}
 
-			// Next, add qcodo includes path
-			$strEndScript = sprintf('qc.jsAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __JS_ASSETS__) . $strEndScript;
-			$strEndScript = sprintf('qc.phpAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __PHP_ASSETS__) . $strEndScript;
-			$strEndScript = sprintf('qc.cssAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __CSS_ASSETS__) . $strEndScript;
-			$strEndScript = sprintf('qc.imageAssets = "%s"; ', __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__) . $strEndScript;
+			// Setup qcodo includes path
+			$strAssetsScript = sprintf('qc.regAL("%s", "%s", "%s", "%s");',
+				__VIRTUAL_DIRECTORY__ . __JS_ASSETS__,
+				__VIRTUAL_DIRECTORY__ . __PHP_ASSETS__,
+				__VIRTUAL_DIRECTORY__ . __CSS_ASSETS__,
+				__VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__);
 
 			// And lastly, add a Hash Processor (if any and if applicable)
 			if ($this->pxyUrlHashProxy && (QApplication::$RequestMode != QRequestMode::Ajax)) {
-				$strEndScript .= sprintf('setInterval("qc.processHash(\'%s\')", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
+				$strEndScript .= sprintf('qc.regHP("%s", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
 			}
-
-			// Create Final EndScript Script
-			$strEndScript = sprintf('<script type="text/javascript">qc.registerForm(); %s</script>', $strEndScript);
 
 			// Persist Controls (if applicable)
 			foreach ($this->objPersistentControlArray as $objControl)
@@ -1204,16 +1202,13 @@
 			// Clone Myself
 			$objForm = clone($this);
 
-			// Render HTML
-			$strToReturn = "\r\n<div style=\"display: none;\">\r\n\t";
-			$strToReturn .= sprintf('<input type="hidden" name="Qform__FormState" id="Qform__FormState" value="%s" />', QForm::Serialize($objForm));
-
-			$strToReturn .= "\r\n\t";
-			$strToReturn .= sprintf('<input type="hidden" name="Qform__FormId" id="Qform__FormId" value="%s" />', $this->strFormId);
-			$strToReturn .= "\r\n</div>\r\n";
+			// Create Final EndScript Script
+			$strEndScript = sprintf("<script type=\"text/javascript\">\r\n/* Qcodo v%s */\r\nqcodo.registerForm(\"%s\", \"%s\");\r\n%s\r\n%s\r\n</script>", QCODO_VERSION, $this->strFormId, QForm::Serialize($objForm), $strAssetsScript, $strEndScript);
 
 			// The Following "Hidden Form Variables" are no longer explicitly rendered in HTML, but are now
 			// added to the DOM by the Qcodo JavaScript Library method qc.initialize():
+			// * Qform__FormId
+			// * Qform__FormState
 			// * Qform__FormControl
 			// * Qform__FormEvent
 			// * Qform__FormParameter
@@ -1221,6 +1216,8 @@
 			// * Qform__FormUpdates
 			// * Qform__FormCheckableControls
 
+			// Render EndHtml
+			$strToReturn = null;
 			foreach ($this->GetAllControls() as $objControl)
 				if ($objControl->Rendered)
 					$strToReturn .= $objControl->GetEndHtml();
@@ -1253,7 +1250,7 @@
 		 */
 		public function SetUrlHashProcessor($strMethodName, $objParentControl = null, $intUrlHashPollingInterval = 250) {
 			if (!$this->pxyUrlHashProxy)
-				$this->pxyUrlHashProxy = new QControlProxy($this);
+				$this->pxyUrlHashProxy = new QControlProxy($this, 'pxyHashFor' . $this->strFormId);
 
 			// Setup Values
 			$this->intUrlHashPollingInterval = $intUrlHashPollingInterval;
