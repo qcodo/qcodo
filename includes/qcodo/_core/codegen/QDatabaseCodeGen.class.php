@@ -318,20 +318,11 @@
 											(substr($strLine, 0, 2) != '//') &&
 											(substr($strLine, 0, 2) != '--') &&
 											(substr($strLine, 0, 1) != '#')) {
-											$strLine = str_replace('	', ' ', $strLine);
-											$strLine = str_replace('        ', ' ', $strLine);
-											$strLine = str_replace('       ', ' ', $strLine);
-											$strLine = str_replace('      ', ' ', $strLine);
-											$strLine = str_replace('     ', ' ', $strLine);
-											$strLine = str_replace('    ', ' ', $strLine);
-											$strLine = str_replace('   ', ' ', $strLine);
-											$strLine = str_replace('  ', ' ', $strLine);
-											$strLine = str_replace('  ', ' ', $strLine);
-											$strLine = str_replace('  ', ' ', $strLine);
-											$strLine = str_replace('  ', ' ', $strLine);
-											$strLine = str_replace('  ', ' ', $strLine);
-
-											$strCommand .= $strLine . ' ';
+											// Cleanup and Normalize Whitespace
+											$strLine = str_replace("\r", ' ', $strLine);
+											while (strpos($strLine, '  ') !== false) 
+												$strLine = str_replace('  ', ' ', $strLine);
+											$strCommand .= trim($strLine) . ' ';
 										}
 									}
 
@@ -730,7 +721,6 @@
 					$objPkColumn->Indexed = true;
 				}
 			}
-//if ($strTableName == 'campus_job') exit(var_dump($objPkColumn));
 
 			// Iterate though each Index that exists in this table, set any Columns's "Index" property
 			// to TRUE if they are a single-column index
@@ -1051,21 +1041,29 @@
 
 			// Start
 			$strPattern = '/alter[\s]+table[\s]+';
+
 			// Table Name
 			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternTableName . ')[\]\`\'\"]?[\s]+';
-			
-			// Add Constraint
-			$strPattern .= '(add[\s]+)?(constraint[\s]+';
-			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternKeyName . ')[\]\`\'\"]?[\s]+)?[\s]*';
-			// Foreign Key
-			$strPattern .= 'foreign[\s]+key[\s]*(' . $this->strPatternKeyName . ')[\s]*\(';
-			$strPattern .= '([^)]+)\)[\s]*';
-			// References
+
+			// Modification Command (e.g. "add constraint" or "add foreign key")
+			$strPattern .= '(add[\s]+constraint|add[\s]+foreign[\s]+key)';
+
+            // Key Name (optional)
+			$strPattern .= '([\s]+[\[\`\'\"]?(' . $this->strPatternKeyName . ')[\]\`\'\"]?)?[\s]*';
+
+			// Foreign Key Column
+			$strPattern .= '(foreign[\s]+key[\s]*)?';
+			$strPattern .= '\(' . '([^)]+)' . '\)[\s]*';
+
+			// References Table
 			$strPattern .= 'references[\s]+';
-			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternTableName . ')[\]\`\'\"]?[\s]*\(';
-			$strPattern .= '([^)]+)\)[\s]*';
-			// End
-			$strPattern .= '/';
+			$strPattern .= '[\[\`\'\"]?(' . $this->strPatternTableName . ')[\]\`\'\"]?[\s]*';
+
+			// References Column
+			$strPattern .= '\(' . '([^)]+)' . '\)[\s]*';
+
+            // End
+            $strPattern .= '/';
 
 			// Perform the RegExp
 			preg_match($strPattern, $strLine, $strMatches);
@@ -1074,16 +1072,7 @@
 				$strColumnName = trim($strMatches[6]);
 				$strReferenceTableName = trim($strMatches[7]);
 				$strReferenceColumnName = trim($strMatches[8]);
-				$strFkName = $strMatches[5];
-				if (!$strFkName)
-					$strFkName = sprintf('virtualfk_%s_%s', $strTableName, $strColumnName);
-
-				if ((strpos($strColumnName, ',') !== false) ||
-					(strpos($strReferenceColumnName, ',') !== false)) {
-					$this->strErrors .= sprintf("Relationships Script has a foreign key definition with multiple columns: %s (Multiple-columned FKs are not supported by the code generator)\r\n", $strLine);
-					$this->strRelationshipLinesSql[$strLine] = null;
-					return null;
-				}
+				$strFkName = $strMatches[4];
 
 				// Cleanup strColumnName nad strreferenceColumnName
 				$strColumnName = str_replace("'", '', $strColumnName);
@@ -1104,6 +1093,16 @@
 				$strReferenceColumnName = str_replace(' ', '', $strReferenceColumnName);
 				$strReferenceColumnName = str_replace("\r", '', $strReferenceColumnName);
 				$strReferenceColumnName = str_replace("\n", '', $strReferenceColumnName);
+
+				if (!$strFkName)
+					$strFkName = sprintf('virtualfk_%s_%s', $strTableName, $strColumnName);
+
+				if ((strpos($strColumnName, ',') !== false) ||
+					(strpos($strReferenceColumnName, ',') !== false)) {
+					$this->strErrors .= sprintf("Relationships Script has a foreign key definition with multiple columns: %s (Multiple-columned FKs are not supported by the code generator)\r\n", $strLine);
+					$this->strRelationshipLinesSql[$strLine] = null;
+					return null;
+				}
 
 				if (strtolower($strTableName) == trim($strMatches[1])) {
 					$this->strRelationshipLinesSql[$strLine] = null;
