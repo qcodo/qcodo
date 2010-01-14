@@ -1,7 +1,7 @@
 <?php
 /**
  * PDO_PGSQL database driver
- * @author Marcos Sánchez [marcosdsanchez at thinkclear dot ar]
+ * @author Marcos Sánchez [marcosdsanchez at thinkclear dot com dot ar]
  */
 class QPostgreSqlPdoDatabase extends QPdoDatabase {
     const Adapter = 'PostgreSQL PDO Database Adapter';

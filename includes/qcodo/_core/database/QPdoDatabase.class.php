@@ -2,7 +2,7 @@
 /**
  * PDO Generic database driver
  * @abstract
- * @author Marcos Sánchez [marcosdsanchez at thinkclear dot ar]
+ * @author Marcos Sánchez [marcosdsanchez at thinkclear dot com dot ar]
  */
 abstract class QPdoDatabase extends QDatabaseBase {
     const Adapter = 'Generic PDO Adapter (Abstract)';
