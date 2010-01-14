@@ -50,6 +50,7 @@
 
 	// Load the Core Database Class
 	require(__QCODO_CORE__ . '/framework/QDatabaseBase.class.php');
+        require(__QCODO_CORE__ . '/database/QPdoDatabase.class.php');
 
 	// Define Other Classes to be Preloaded on QApplication::Initialize()
 	QApplicationBase::$PreloadedClassFile['qdatetime'] = (version_compare(PHP_VERSION, '5.2.0', '<')) ? (__QCODO_CORE__ . '/framework/QDateTime.legacy.class.php') : (__QCODO_CORE__ . '/framework/QDateTime.class.php');
