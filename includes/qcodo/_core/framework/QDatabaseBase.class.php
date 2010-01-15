@@ -128,7 +128,6 @@
 			if ($this->blnEnableProfiling) {
 				// Dereference-ize Backtrace Information
 				$objDebugBacktrace = debug_backtrace();
-				$objDebugBacktrace = unserialize(serialize($objDebugBacktrace));
 
 				// Get Rid of Unnecessary Backtrace Info
 				$intLength = count($objDebugBacktrace);

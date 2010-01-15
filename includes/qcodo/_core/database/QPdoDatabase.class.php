@@ -50,42 +50,7 @@ abstract class QPdoDatabase extends QDatabaseBase {
     public function Close() {
         $this->objPdo = null;
     }
-
-    
-    protected function LogQuery($strQuery) {
-        if ($this->blnEnableProfiling) {
-            // Dereference-ize Backtrace Information
-            $objDebugBacktrace = debug_backtrace();
-
-            // Get Rid of Unnecessary Backtrace Info
-            $intLength = count($objDebugBacktrace);
-            for ($intIndex = 0; $intIndex < $intLength; $intIndex++) {
-                if (($intIndex < 2) || ($intIndex > 3))
-                    $objDebugBacktrace[$intIndex] = 'BackTrace ' . $intIndex;
-                else {
-                    if (array_key_exists('args', $objDebugBacktrace[$intIndex])) {
-                        $intInnerLength = count($objDebugBacktrace[$intIndex]['args']);
-                        for ($intInnerIndex = 0; $intInnerIndex < $intInnerLength; $intInnerIndex++)
-                            if (($objDebugBacktrace[$intIndex]['args'][$intInnerIndex] instanceof QQClause) ||
-                                    ($objDebugBacktrace[$intIndex]['args'][$intInnerIndex] instanceof QQCondition))
-                                $objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = sprintf("[%s]", $objDebugBacktrace[$intIndex]['args'][$intInnerIndex]->__toString());
-                            else if (is_null($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]))
-                                $objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = 'null';
-                            else if (gettype($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == 'integer')
-                                $objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = $objDebugBacktrace[$intIndex]['args'][$intInnerIndex];
-                            else if (gettype($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == 'object')
-                                $objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = 'Object';
-                            else
-                                $objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = sprintf("'%s'", $objDebugBacktrace[$intIndex]['args'][$intInnerIndex]);
-                    }
-                }
-            }
-
-            // Push it onto the profiling information array
-            array_push($this->strProfileArray, $objDebugBacktrace);
-            array_push($this->strProfileArray, $strQuery);
-        }
-    }
+        
 
     public function TransactionBegin() {
         $this->objPdo->beginTransaction();
