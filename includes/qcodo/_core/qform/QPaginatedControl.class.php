@@ -3,6 +3,7 @@
 		// APPEARANCE
 		protected $strNoun;
 		protected $strNounPlural;
+		protected $strNoDataHtml;
 
 		// BEHAVIOR
 		protected $objPaginator = null;
@@ -66,6 +67,7 @@
 				// APPEARANCE
 				case "Noun": return $this->strNoun;
 				case "NounPlural": return $this->strNounPlural;
+				case "NoDataHtml": return $this->strNoDataHtml;
 
 				// BEHAVIOR
 				case "Paginator": return $this->objPaginator;
@@ -155,6 +157,14 @@
 				case "NounPlural":
 					try {
 						return ($this->strNounPlural = QType::Cast($mixValue, QType::String));
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+				case "NoDataHtml":
+					try {
+						return ($this->strNoDataHtml = QType::Cast($mixValue, QType::String));
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();

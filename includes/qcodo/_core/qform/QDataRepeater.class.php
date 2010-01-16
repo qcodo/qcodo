@@ -24,33 +24,44 @@
 			if ($strStyle)
 				$strStyle = sprintf('style="%s"', $strStyle);
 
-			// Iterate through everything
-			$this->intCurrentItemIndex = 0;
-			$strEvalledItems = '';
-			$strToReturn = '';
-			if (($this->strTemplate) && ($this->objDataSource)) {
-				global $_FORM;
-				global $_CONTROL;
-				global $_ITEM;
-				$_FORM = $this->objForm;
-				$objCurrentControl = $_CONTROL;
-				$_CONTROL = $this;
-
-				foreach ($this->objDataSource as $objObject) {
-					$_ITEM = $objObject;
-					$strEvalledItems .= $this->objForm->EvaluateTemplate($this->strTemplate);
-					$this->intCurrentItemIndex++;
-				}
-
+			// Display the "NoHtml" if no data
+			if (!$this->objDataSource || !count($this->objDataSource)) {
 				$strToReturn = sprintf('<%s id="%s" %s%s>%s</%s>',
 					$this->strTagName,
 					$this->strControlId,
 					$this->GetAttributes(),
 					$strStyle,
-					$strEvalledItems,
+					$this->strNoDataHtml,
 					$this->strTagName);
+			} else {
+				// Iterate through everything
+				$this->intCurrentItemIndex = 0;
+				$strEvalledItems = '';
+				$strToReturn = '';
+				if ($this->strTemplate) {
+					global $_FORM;
+					global $_CONTROL;
+					global $_ITEM;
+					$_FORM = $this->objForm;
+					$objCurrentControl = $_CONTROL;
+					$_CONTROL = $this;
 
-				$_CONTROL = $objCurrentControl;
+					foreach ($this->objDataSource as $objObject) {
+						$_ITEM = $objObject;
+						$strEvalledItems .= $this->objForm->EvaluateTemplate($this->strTemplate);
+						$this->intCurrentItemIndex++;
+					}
+
+					$strToReturn = sprintf('<%s id="%s" %s%s>%s</%s>',
+						$this->strTagName,
+						$this->strControlId,
+						$this->GetAttributes(),
+						$strStyle,
+						$strEvalledItems,
+						$this->strTagName);
+
+					$_CONTROL = $objCurrentControl;
+				}
 			}
 
 			$this->objDataSource = null;
