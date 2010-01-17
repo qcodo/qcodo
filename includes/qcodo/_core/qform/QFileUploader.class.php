@@ -9,7 +9,9 @@
 		protected $strFileName;
 		protected $intFileSize;
 		protected $strMimeType;
-		
+
+		protected $strTemporaryUploadFolder = '/tmp';
+
 		protected $strCssClass = 'fileUploader';
 		
 		/**
@@ -108,6 +110,12 @@
 			$this->strFileName = $_FILES[$this->strControlId . '_ctlflc']['name'];
 			$this->intFileSize = $_FILES[$this->strControlId . '_ctlflc']['size'];
 			$this->strMimeType = $_FILES[$this->strControlId . '_ctlflc']['type'];
+
+			// Save the File in a slightly more permanent temporary location
+			$strTempFilePath = $this->strTemporaryUploadFolder . '/' . basename($this->strFilePath) . rand(1000, 9999);
+			copy($this->strFilePath, $strTempFilePath);
+			$this->strFilePath = $strTempFilePath;
+
 			$this->Refresh();
 		}
 
@@ -134,6 +142,7 @@
 				case 'FileName': return $this->strFileName;
 				case 'FileSize': return $this->intFileSize;
 				case 'MimeType': return $this->strMimeType;
+				case 'TemporaryUploadFolder': return $this->strTemporaryUploadFolder;
 
 				default:
 					try {
@@ -165,6 +174,11 @@
 				case 'FileName': 
 					try {
 						return ($this->strFileName = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+
+				case 'TemporaryUploadFolder':
+					try {
+						return ($this->strTemporaryUploadFolder = QType::Cast($mixValue, QType::String));
 					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
 
 				default:

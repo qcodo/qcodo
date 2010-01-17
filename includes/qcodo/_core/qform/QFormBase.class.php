@@ -681,18 +681,20 @@
 			// Initially Assume Validation is True
 			$blnToReturn = true;
 
-			// Recursive call on Child Controls
-			foreach ($objControl->GetChildControls() as $objChildControl)
-				// Only Enabled and Visible and Rendered controls should be validated
-				if (($objChildControl->Visible) && ($objChildControl->Enabled) && ($objChildControl->RenderMethod) && ($objChildControl->OnPage))
-					if (!$this->ValidateControlAndChildren($objChildControl))
-						$blnToReturn = false;
+			if ($objControl->Visible && $objControl->Enabled && $objControl->Display) {
+				// Recursive call on Child Controls
+				foreach ($objControl->GetChildControls() as $objChildControl)
+					// Only Enabled and Visible and Rendered controls should be validated
+					if (($objChildControl->Visible) && ($objChildControl->Enabled) && ($objChildControl->RenderMethod) && ($objChildControl->OnPage))
+						if (!$this->ValidateControlAndChildren($objChildControl))
+							$blnToReturn = false;
 
-			// Check the Control Itself
-			$objControl->ValidationReset();
-			if (!$objControl->Validate()) {
-				$objControl->MarkAsModified();
-				$blnToReturn = false;
+				// Check the Control Itself
+				$objControl->ValidationReset();
+				if (!$objControl->Validate()) {
+					$objControl->MarkAsModified();
+					$blnToReturn = false;
+				}
 			}
 
 			return $blnToReturn;
