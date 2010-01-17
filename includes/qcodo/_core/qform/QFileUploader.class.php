@@ -23,7 +23,19 @@
 		 * will be performed in this method.
 		 * @return boolean
 		 */
-		public function Validate() {return true;}
+		public function Validate() {
+			$this->strValidationError = null;
+			if ($this->blnRequired) {
+				if (!$this->strFilePath) {
+					if ($this->strName)
+						$this->strValidationError = sprintf('%s is required', $this->strName);
+					else
+						$this->strValidationError = 'Required';
+					return false;
+				}
+			}
+			return true;
+		}
 
 		/**
 		 * Get the HTML for this Control.
@@ -91,6 +103,7 @@
 		}
 
 		public function HandleFileUploaded($strFormId, $strControlId, $strParameter) {
+			$this->strValidationError = null;
 			$this->strFilePath = $_FILES[$this->strControlId . '_ctlflc']['tmp_name'];
 			$this->strFileName = $_FILES[$this->strControlId . '_ctlflc']['name'];
 			$this->intFileSize = $_FILES[$this->strControlId . '_ctlflc']['size'];
