@@ -595,7 +595,7 @@
 			restore_error_handler();
 			QApplication::$intStoredErrorLevel = null;
 		}
-		private static $intStoredErrorLevel = null;
+		protected static $intStoredErrorLevel = null;
 
 		/**
 		 * Same as mkdir but correctly implements directory recursion.

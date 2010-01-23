@@ -13,7 +13,7 @@
 					$strLinkUrl .= '?<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) {%><%= $objColumn->VariableName %>=<?=urlencode($_ITEM-><%=$objColumn->PropertyName%>)?>&<%}%><%-%>';
 					break;
 				case QMetaControlArgumentType::PathInfo:
-					$strLinkUrl .= '<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) {%>/<?=urlencode($_ITEM-><%=$objColumn->PropertyName%>)?><%}%>';
+					$strLinkUrl .= '<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) {%>/<?=str_replace("+","%20",urlencode($_ITEM-><%=$objColumn->PropertyName%>))?><%}%>';
 					break;
 				default:
 					throw new QCallerException('Unable to pass arguments with this intArgumentType: ' . $intArgumentType);
