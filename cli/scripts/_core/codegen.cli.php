@@ -2,7 +2,7 @@
 	/**
 	 * Codegen Qcodo CLI file
 	 * Part of the Qcodo Development Framework
-	 * Copyright (c) 2005-2009, Quasidea Development, LLC
+	 * Copyright (c) 2005-2010, Quasidea Development, LLC
 	 */
 
 	// Setup the Parameters for codegen
