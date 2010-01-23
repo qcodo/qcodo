@@ -78,7 +78,6 @@
 					$strFileContent = substr($strFileContent, 0, strlen($strFileContent) - 3);
 					$strContent .= $strFileContent;
 				} else {
-					// $strFile = qcodo_error_2009-10-20_114539_69546400.html
 					$strDate = substr($strFile, 12, 10) . ' ' . substr($strFile, 23, 2) . ':' . substr($strFile, 25, 2) . ':' . substr($strFile, 27, 2);
 					$strContent .= '<error valid="false"><filename>' . $strFile . '</filename><isoDateTime>' . $strDate . '</isoDateTime></error>';
 				}
