@@ -1,0 +1,23 @@
+# Virtual "Foreign Key" Relationships Script for the sample Examples Database (MyISAM version)
+# Relationships are defined as:
+#     table1.column1 => table2.column2
+# where column1 is a FK to column2
+
+
+# Login Table
+login.person_id => person.id
+
+
+# Project Table
+project.manager_person_id => person.id
+project.project_status_type_id => project_status_type.id
+
+
+# TeamMember/Project Association
+team_member_project_assn.person_id => person.id
+team_member_project_assn.project_id => project.id
+
+
+# Related Project Association (Graph)
+related_project_assn.project_id => project.id
+related_project_assn.child_project_id => project.id

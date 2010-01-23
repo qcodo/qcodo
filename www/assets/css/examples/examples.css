@@ -1,0 +1,72 @@
+	body, td { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px;}
+	body {
+		background-color: white;
+		margin: 0px 0px 0px 0px;
+	}
+	th {text-align: left}
+	.bodyLink { color: #885533; }
+	a:link, a:visited { text-decoration: none; }
+	a:hover { text-decoration: underline; }
+	pre { font-family: 'Lucida Console' 'Courier New' 'Courier' 'monospaced'; font-size: 11px; line-height: 13px; }
+	.page { padding: 10px; }
+
+	.headingLeft { background-color: #663311; color: #ffffff; padding: 5px 0px 5px 5px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold; width: 70%; vertical-align: middle; }
+	.headingLeftSmall { font-size: 10px; }
+	.headingLeftGray { color: #aa6622; }
+	.headingRight { background-color: #663311; color: #ffffff; padding: 0px 5px 5px 5px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; width: 30%; vertical-align: bottom; text-align: right; }
+	.headingLink { color: #ffffff; }
+	.title { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 22px; font-weight: bold; color: #774422; }
+	.code { background-color: #f4eeff; padding: 1px 10px 1px 10px; font: 11px 'lucida console', 'courier new', courier, monospaced; overflow: auto; width: 950px; height: 600px;}
+
+	.instructions { background-color: #ffeedd; padding: 20px; width: 800px; margin-left: 20px; margin-bottom: 20px; line-height: 20px; height: 300px; overflow: auto;}
+	.instructions_main { background-color: #ffeedd; padding: 20px; width: 800px; margin-left: 20px; margin-bottom: 20px; line-height: 20px; }
+	.instruction_title { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 22px; font-weight: bold; color: #774422; margin-bottom: 20px;}
+
+	.warning { color: #aa0000; }
+	
+	.textbox { width: 250px; font: 12px Verdana, Arial, Helvetica, sans-serif; }
+	.listbox { width: 250px; font: 12px Verdana, Arial, Helvetica, sans-serif; }
+	.button { font: 10px Verdana, Arial, Helvetica, sans-serif; }
+
+	.paginator_inactive_step { font-weight: bold; color: #aaaaaa; }
+	.paginator_active_step { font-weight: bold; color: #000000; text-decoration: none; }
+	.paginator_page { text-decoration: none; color: #000000; padding: 0px 4px 0px 4px; }
+	.paginator_selected_page { font-weight: bold; background-color: #ddccff; padding: 0px 4px 0px 4px; border: 1px; border-style: solid; }
+
+	.treenav_item {cursor: pointer; padding: 2px; font: 10px verdana;}
+	.treenav_item_selected {background-color: #eeccff;}
+	.treenav_item_hover {background-color: #ffffcc;}
+	
+	.renamer_item { padding: 2px; cursor: pointer; }
+	.renamer_item_selected { background-color: lightblue; }
+
+	.textbox_panel { padding: 10px 0px 10px 0px; width: 300px; height: 250px; background-color: #ddbbdd; text-align: center; }
+
+	.top_nav { font: 13px 'Trebuchet MS' 'Arial' 'Helvetica' 'Sans-Serif'; color: white; }
+
+	.top_nav_selected { font: 13px 'Trebuchet MS' 'Arial' 'Helvetica' 'Sans-Serif'; font-weight: bold; color: gold; }
+	.top_member_nav { font: 10px 'Trebuchet MS' 'Verdana' 'Arial' 'Helvetica' 'Sans-Serif'; color: white; }
+
+	.main_navigator { text-align: center; background-color: #113366; padding: 5px; color: #ffcc99; }
+	.main_navlink { color: #ffcc99; font-weight: normal; }
+	.main_navselected { color: #ffffff; font-weight: bold; text-transform: uppercase; }
+	.main_info {font: 12px arial, helvetica, sans-serif; font-style: italic; padding: 10px 100px 10px 100px; background-color: #ddeeff;}
+
+	.selectedStyle {background-color: #ffaacc;}
+	.treenav {background-color: #eeeeee; width: 300px; height: 400px; overflow: auto; position: absolute; top: 430px; left: 70px; padding: 10px;}
+
+	.codeDisplay {background-color: #eeddff; width: 400px; height: 400px; overflow: auto; position: absolute; top: 430px; left: 400px; padding: 10px;}
+
+	.data_repeater_example {background-color:#eeffdd;padding:10px;width:200px;border-width:1px;border-style:solid;border-color:black;float:left;margin:5px;}
+	.tc {width: 200px; height: 100px; border: 1px; border-style: solid; border-color: #ddddff; color: #ddddff; font: 20px arial; font-weight: bold; text-align: center; vertical-align: middle;}
+
+	.panelDefault {width:400px;height:400px;background-color:#efefef;border-width:1px;border-style:solid;float:left;overflow:auto;}
+	.panelRight {margin-left: 5px;}
+	.projectTitle {font: 24px Georgia, Times New Roman, Serif; font-weight: bold; width: 100%;}
+
+	.file_asset_dbox { border: 1px solid #1c4a8c; background-color: #fff; padding: 20px; width: 400px; overflow: auto; }
+	.file_asset_dbox h1 { margin: 0; }
+	.file_asset_dbox input { padding: 3px; margin-right: 5px; }
+
+	.file_asset a {color: black;}
+	.file_asset_icon {border-width: 2px; border-style: solid; border-color: #147;}
