@@ -572,15 +572,15 @@
 		 * @param integer $intLevel if a error handler function is defined, then the new error reporting level (if any)
 		 */
 		public static function SetErrorHandler($strName, $intLevel = null) {
-			if (!is_null(QApplicationBase::$intStoredErrorLevel))
+			if (!is_null(QApplication::$intStoredErrorLevel))
 				throw new QCallerException('Error handler is already currently overridden.  Cannot override twice.  Call RestoreErrorHandler before calling SetErrorHandler again.');
 			if (!$strName) {
 				// No Error Handling is wanted -- simulate a "On Error, Resume" type of functionality
 				set_error_handler('__qcodo_handle_error', 0);
-				QApplicationBase::$intStoredErrorLevel = error_reporting(0);
+				QApplication::$intStoredErrorLevel = error_reporting(0);
 			} else {
 				set_error_handler($strName, $intLevel);
-				QApplicationBase::$intStoredErrorLevel = -1;
+				QApplication::$intStoredErrorLevel = -1;
 			}
 		}
 
@@ -588,12 +588,12 @@
 		 * Restores the temporarily overridden default error handling mechanism back to the default.
 		 */
 		public static function RestoreErrorHandler() {
-			if (is_null(QApplicationBase::$intStoredErrorLevel))
+			if (is_null(QApplication::$intStoredErrorLevel))
 				throw new QCallerException('Error handler is not currently overridden.  Cannot reset something that was never overridden.');
-			if (QApplicationBase::$intStoredErrorLevel != -1)
-				error_reporting(QApplicationBase::$intStoredErrorLevel);
+			if (QApplication::$intStoredErrorLevel != -1)
+				error_reporting(QApplication::$intStoredErrorLevel);
 			restore_error_handler();
-			QApplicationBase::$intStoredErrorLevel = null;
+			QApplication::$intStoredErrorLevel = null;
 		}
 		private static $intStoredErrorLevel = null;
 
@@ -614,7 +614,7 @@
 				return true;
 
 			// Check to make sure the parent(s) exist, or create if not
-			if (!QApplicationBase::MakeDirectory(dirname($strPath), $intMode))
+			if (!QApplication::MakeDirectory(dirname($strPath), $intMode))
 				return false;
 
 			// Create the current node/directory, and return its result
@@ -825,7 +825,7 @@
 					// Update Cache-Control setting
 					header('Cache-Control: ' . QApplication::$CacheControl);
 
-					$strScript = QApplicationBase::RenderJavaScript(false);
+					$strScript = QApplication::RenderJavaScript(false);
 
 					if ($strScript)
 						return sprintf('%s<script type="text/javascript">%s</script>', $strBuffer, $strScript);
