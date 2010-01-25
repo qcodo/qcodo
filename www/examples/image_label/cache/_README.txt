@@ -1,0 +1,1 @@
+This folder is to store cached images created by the QImageLabel example.
