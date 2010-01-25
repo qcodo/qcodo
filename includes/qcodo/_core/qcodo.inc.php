@@ -49,8 +49,7 @@
 	require(__INCLUDES__ . '/QApplication.class.php');
 
 	// Load the Core Database Class
-	require(__QCODO_CORE__ . '/framework/QDatabaseBase.class.php');
-        require(__QCODO_CORE__ . '/database/QPdoDatabase.class.php');
+	require(__QCODO_CORE__ . '/framework/QDatabaseBase.class.php');        
 
 	// Define Other Classes to be Preloaded on QApplication::Initialize()
 	QApplicationBase::$PreloadedClassFile['qdatetime'] = (version_compare(PHP_VERSION, '5.2.0', '<')) ? (__QCODO_CORE__ . '/framework/QDateTime.legacy.class.php') : (__QCODO_CORE__ . '/framework/QDateTime.class.php');
@@ -168,6 +167,8 @@
 	QApplicationBase::$ClassFile['qwaiticon'] = __QCODO_CORE__ . '/qform/QWaitIcon.class.php';
 	QApplicationBase::$ClassFile['qcontrolgrouping'] = __QCODO_CORE__ . '/qform/QControlGrouping.class.php';
 	QApplicationBase::$ClassFile['qdropzonegrouping'] = __QCODO_CORE__ . '/qform/QDropZoneGrouping.class.php';
+
+	QApplicationBase::$ClassFile['qpdodatabase'] = __QCODO_CORE__ . '/database/QPdoDatabase.class.php';
 
 	// Finally, load in any generated classpaths or type-based classpaths constants files
 	if (__DATAGEN_CLASSES__) {
