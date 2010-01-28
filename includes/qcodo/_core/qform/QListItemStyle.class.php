@@ -42,7 +42,10 @@
 		protected $strForeColor = null;
 		protected $strHeight = null;
 		protected $strWidth = null;
-
+		
+		protected $strAltText = null;
+		protected $strToolTip = null;
+		
 		public function ApplyOverride(QListItemStyle $objOverrideStyle) {
 			$objNewStyle = clone $this;
 
@@ -133,9 +136,27 @@
 			}
 			
 			if ($strStyle)
-				$strToReturn .= sprintf(' style="%s" ', $strStyle);
-			
-			return $strToReturn;
+				$strToReturn .= sprintf('style="%s" ', $strStyle);
+			if ($this->strToolTip)
+				$strToReturn .= sprintf('title="%s" ', QApplication::HtmlEntities($this->strToolTip));
+			if ($this->strAltText)
+				$strToReturn .= sprintf('alt="%s" ', QApplication::HtmlEntities($this->strAltText));
+
+			return ' ' . $strToReturn;
+		}
+
+		public function GetNonStyleAttributes() {
+			$strToReturn = null;
+
+			if ($this->strToolTip)
+				$strToReturn .= sprintf('title="%s" ', QApplication::HtmlEntities($this->strToolTip));
+			if ($this->strAltText)
+				$strToReturn .= sprintf('alt="%s" ', QApplication::HtmlEntities($this->strAltText));
+
+			if ($strToReturn)
+				return ' ' . $strToReturn;
+			else
+				return null;
 		}
 
 		/////////////////////////
@@ -158,6 +179,9 @@
 				case "ForeColor": return $this->strForeColor;
 				case "Height": return $this->strHeight;
 				case "Width": return $this->strWidth;
+				
+				case "AltText": return $this->strAltText;
+				case "ToolTip": return $this->strToolTip;
 
 				default:
 					try {
@@ -289,6 +313,23 @@
 				case "Width":
 					try {
 						$this->strWidth = QType::Cast($mixValue, QType::String);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}					
+
+				case "AltText":
+					try {
+						$this->strAltText = QType::Cast($mixValue, QType::String);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}					
+				case "ToolTip":
+					try {
+						$this->strToolTip = QType::Cast($mixValue, QType::String);
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
