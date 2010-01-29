@@ -90,8 +90,6 @@
 
 			$strCustomAttributes = $this->GetCustomAttributes();
 
-			$strActions = $this->GetActionAttributes();
-
 			if ($this->intCellPadding >= 0)
 				$strCellPadding = sprintf('cellpadding="%s" ', $this->intCellPadding);
 			else
@@ -163,6 +161,9 @@
 							$strLabelAttributes = null;
 							$strCheckboxAttributes = null;
 						}
+
+						$this->strActionParameter = $intIndex;
+						$strActions = $this->GetActionAttributes();
 
 						if ($this->strTextAlign == QTextAlign::Left) {
 							$strToReturn .= sprintf('<td>%s<label for="%s[%s]" %s>%s</label><input id="%s[%s]" name="%s[%s]" type="checkbox" %s%s%s%s%s />%s</td>',
