@@ -13,7 +13,13 @@
 		protected $strTemporaryUploadFolder = '/tmp';
 
 		protected $strCssClass = 'fileUploader';
-		
+
+		protected $strFileUploadedCallbackMethod;
+		protected $objFileUploadedCallbackObject;
+
+		protected $strFileRemovedCallbackMethod;
+		protected $objFileRemovedCallbackObject;
+
 		/**
 		 * If this control needs to update itself from the $_POST data, the logic to do so
 		 * will be performed in this method.
@@ -104,6 +110,14 @@
 			$this->pxyRemoveFile->AddAction(new QClickEvent(), new QTerminateAction());
 		}
 
+		/**
+		 * Used internally by Qcodo to handle the javascript-based post call to update form and control
+		 * state when a file has been uploaded.  This will also make a call to any FileUploadedCallback if one was set.
+		 * @param string $strFormId
+		 * @param string $strControlId
+		 * @param string $strParameter
+		 * @return void
+		 */
 		public function HandleFileUploaded($strFormId, $strControlId, $strParameter) {
 			$this->strValidationError = null;
 			$this->strFilePath = $_FILES[$this->strControlId . '_ctlflc']['tmp_name'];
@@ -117,14 +131,42 @@
 			$this->strFilePath = $strTempFilePath;
 
 			$this->Refresh();
+			if ($this->strFileUploadedCallbackMethod) call_user_func(array($this->objFileUploadedCallbackObject, $this->strFileUploadedCallbackMethod));
 		}
 
+		/**
+		 * Used internally by Qcodo to handle the javascript-based post call to update form and control
+		 * state when a file has been removed.  This will also make a call to any FileRemovedCallback if one was set.
+		 * @param string $strFormId
+		 * @param string $strControlId
+		 * @param string $strParameter
+		 * @return void
+		 */
 		public function HandleFileRemoved($strFormId, $strControlId, $strParameter) {
 			$this->strFilePath = null;
 			$this->strFileName = null;
 			$this->intFileSize = null;
 			$this->strMimeType = null;
 			$this->Refresh();
+			if ($this->strFileRemovedCallbackMethod) call_user_func(array($this->objFileRemovedCallbackObject, $this->strFileRemovedCallbackMethod));
+		}
+		
+		public function SetFileUploadedCallback($objCallbackObject, $strCallbackMethod) {
+			$this->objFileUploadedCallbackObject = $objCallbackObject;
+			$this->strFileUploadedCallbackMethod = $strCallbackMethod;
+		}
+
+		public function SetFileRemovedCallback($objCallbackObject, $strCallbackMethod) {
+			$this->objFileRemovedCallbackObject = $objCallbackObject;
+			$this->strFileRemovedCallbackMethod = $strCallbackMethod;
+		}
+
+		/**
+		 * Used to remove a previously-set file to this FileUploader control
+		 * @return void
+		 */
+		public function RemoveFile() {
+			$this->HandleFileRemoved(null, null, null);
 		}
 
 		// For any HTML code that needs to be rendered at the END of the QForm when this control is INITIALLY rendered.
