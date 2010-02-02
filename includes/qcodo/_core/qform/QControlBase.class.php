@@ -851,8 +851,12 @@
 			$strToReturn = "";
 
 			foreach ($this->GetChildControls() as $objControl)
-				if (!$objControl->Rendered)
-					$strToReturn .= $objControl->Render($blnDisplayOutput);
+				if (!$objControl->Rendered) {
+					$strRenderMethod = 'Render';
+					if ($objControl->RenderMethod)
+						$strRenderMethod = $objControl->RenderMethod;
+					$strToReturn .= $objControl->$strRenderMethod($blnDisplayOutput);
+				}
 
 			if ($blnDisplayOutput) {
 				print($strToReturn);
@@ -1345,6 +1349,14 @@
 				case "Name":
 					try {
 						$this->strName = QType::Cast($mixValue, QType::String);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+				case "RenderMethod":
+					try {
+						$this->strRenderMethod = QType::Cast($mixValue, QType::String);
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
