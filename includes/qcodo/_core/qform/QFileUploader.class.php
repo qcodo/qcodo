@@ -209,8 +209,10 @@
 					if (!is_file($strFile))
 						throw new QCallerException('File does not exist: ' . $strFile);
 
-					$this->intFileSize = filesize($strFile);
-					$this->strFilePath = $strFile;
+					$strNewFilePath = $this->strTemporaryUploadFolder . '/' . md5(microtime());
+					copy($strFile, $strNewFilePath);
+					$this->intFileSize = filesize($strNewFilePath);
+					$this->strFilePath = $strNewFilePath;
 					return $strFile;
 
 				case 'FileName': 
