@@ -344,7 +344,7 @@
 				// BEHAVIOR
 				case "CrossScripting":
 					try {
-						$this->strCrossScripting = QType::Cast($mixValue, QType::Boolean);
+						$this->strCrossScripting = QType::Cast($mixValue, QType::String);
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
