@@ -1,6 +1,6 @@
 # Qcodo Distributed Language File
 # for Spanish (Generic)
-# Contributed by Nino Dafonte <nino.dafonte@gmail.com>
+# Contributed by Nino Dafonte <nino.dafonte@gmail.com> and marcosdsanchez @ thinkclear dot com dot ar
 
 
 # For QTextBoxBase controls
@@ -16,16 +16,16 @@ MsgId ""
 "Tags &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; and &lt;http://...&gt; are allowed.  "
 "Use ** at the beginning of any line for a bulleted list."
 MsgStr ""
-"Etiquetas &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; y &lt;http://...&gt; están permitidas.  "
+"Etiquetas &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; y &lt;http://...&gt; estÃ¡n permitidas.  "
 "Use ** al comienzo de cada linea para una lista por puntos."
 
 
 # For QPaginatedControl controls
 MsgId "item"
-MsgStr "artículo"
+MsgStr "artÃ­culo"
 
 MsgId "items"
-MsgStr "artículos"
+MsgStr "artÃ­culos"
 
 
 # For QListBox and QCalendar controls
@@ -101,7 +101,7 @@ MsgId "Delete"
 MsgStr "Borrar"
 
 MsgId "Are you SURE you want to DELETE this %s?"
-MsgStr "¿Está SEGURO de querer BORRAR este %s?"
+MsgStr "Â¿EstÃ¡ SEGURO de querer BORRAR este %s?"
 
 
 # For the form_drafts/index.php page
@@ -113,3 +113,16 @@ MsgStr "Mostrar Lista"
 
 MsgId "Create New"
 MsgStr "Crear Nuevo"
+
+#For the QDateTimePicker control
+msgid "Jan"
+msgstr "Ene"
+
+msgid "Apr"
+msgstr "Abr"
+
+msgid "Aug"
+msgstr "Ago"
+
+msgid "Dec"
+msgstr "Dic"
