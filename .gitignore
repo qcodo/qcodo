@@ -12,3 +12,4 @@ nbproject/*
 /includes/data_meta_controls
 /www/drafts/dashboard/*Panel*
 /www/drafts/*_*
+.tmp_*
