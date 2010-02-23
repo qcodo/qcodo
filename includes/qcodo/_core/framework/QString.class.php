@@ -12,7 +12,7 @@
 		 * @return void
 		 */
 		public final function __construct() {
-			throw new CallerException('String should never be instantiated.  All methods and variables are publically statically accessible.');
+			throw new CallerException('QString class should never be instantiated.  All methods and variables are publically statically accessible.');
 		}
 
 		/**
