@@ -60,8 +60,9 @@
 			// Return the HTML
 			$strHtml = null;
 			if (!$this->strFilePath) {
-				$strHtml .= sprintf('<input type="button" class="button" id="%s_button" value="Browse..."/>', $this->strControlId);
-
+				$strHtml .= sprintf('<input type="button" class="button" id="%s_button" value="Browse"/>', $this->strControlId);
+				$strHtml .= sprintf('<span id="%s_ospan"></span>', $this->strControlId);
+				
 				$strHtml .= sprintf('<div class="progress" id="%s_progress" style="display: none;">', $this->strControlId);
 				$strHtml .= sprintf('<div class="size" id="%s_size">n/a</div>', $this->strControlId);
 

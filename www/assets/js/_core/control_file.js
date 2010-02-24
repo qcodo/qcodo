@@ -20,31 +20,48 @@
 		objWrapper.progress.fill = document.getElementById(objControl.id + "_fill");
 
 		// Setup the Nested DIV and INPUT FILE form element
-		var objOuterDiv = document.createElement("div");
-		objOuterDiv.style.position = 'absolute';
-		objOuterDiv.style.overflow = 'hidden';
-		objOuterDiv.style.top = objWrapper.button.offsetTop + "px";
-		objOuterDiv.style.left = objWrapper.button.offsetLeft + "px";
-		objOuterDiv.style.height = objWrapper.button.offsetHeight + "px";
-		objOuterDiv.style.width = objWrapper.button.offsetWidth + "px";
-		objOuterDiv.style.opacity = 0;
-		objWrapper.appendChild(objOuterDiv);
-
+		var objOuterDiv = document.getElementById(objControl.id + "_ospan");
 		var objInnerDiv = document.createElement("div");
-		objInnerDiv.style.cssFloat = "left";
-		objInnerDiv.style.overflow = "hidden";
-		objInnerDiv.style.width = "70px";
-		objInnerDiv.style.height = objOuterDiv.style.height;
-
 		var objFileControl = document.createElement("input");
+		objFileControl.type = "file";
+		objOuterDiv.appendChild(objInnerDiv);
+		objInnerDiv.appendChild(objFileControl);
+
+		objOuterDiv.style.width = "0px";
+		objOuterDiv.style.height = "0px";
+		objOuterDiv.style.position = "absolute";
+		objOuterDiv.style.display = "inline";
+		objOuterDiv.style.overflow = "visible";
+
+		objInnerDiv.style.width = objWrapper.button.offsetWidth + "px";
+		objInnerDiv.style.height = objWrapper.button.offsetHeight + "px";
+		objInnerDiv.style.position = "relative";
+		objInnerDiv.style.left = (0 - objWrapper.button.offsetWidth) + "px";
+		objInnerDiv.style.overflow = "hidden";
+		objInnerDiv.style.opacity = 0;
+		objInnerDiv.style.filter = "alpha(opacity=0)";
+
 		objFileControl.id = strFileControlId;
 		objFileControl.name = strFileControlId;
-		objFileControl.type = "file";
-		objFileControl.style.height = objOuterDiv.style.height;
-		objFileControl.style.position = 'relative';
-		objFileControl.style.left = '-155px';
-		objInnerDiv.appendChild(objFileControl);
-		objOuterDiv.appendChild(objInnerDiv);
+		objFileControl.style.position = "relative";
+
+		// We need to take into account the "textbox by the browse button" in a <input type="file"> control
+		// basically we need to shift everything over to the left so that we're only looking at the button and not the textbox
+		if (qcodo.isBrowser(qcodo.IE)) {
+			// IE
+			objFileControl.style.left = "-120px";
+		} else if (qcodo.isBrowser(qcodo.FIREFOX)) {
+			if (qcodo.isBrowser(qcodo.MACINTOSH)) {
+				// Firefox for Mac
+				objFileControl.style.left = "-141px";
+				objFileControl.style.top = "-2px";
+			} else {
+				// Firefox for Windows
+				objFileControl.style.left = "-100px";
+			}
+		} else {
+			// Safari doesn't need any adjustments
+		}
 
 		objWrapper.fileControl = objFileControl;
 		objWrapper.fileControl.wrapper = objWrapper;
