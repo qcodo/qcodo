@@ -417,6 +417,18 @@
 			spl_autoload_register(array('QApplication', 'Autoload'));
 		}
 
+		/**
+		 * This is called during the Initialization stage of the Qcodo application -- it will go
+		 * through the /includes/auto_includes directory and find any and all *.inc.php files in there
+		 * and include them one at a time in alphabetical order.
+		 * 
+		 * This will do the search as a convenience for development.
+		 * 
+		 * In production, for performance reasons, it would be advantageous to override this method in QApplication.class.php
+		 * and make calls to require() or require_once() on each file you want to include explicitly, thus alleviating
+		 * the need to process the directory on each and every hit
+		 * @return void
+		 */
 		protected static function InitializeAutoIncludes() {
 			$objDirectory = opendir(__INCLUDES__ . '/auto_includes');
 			$strFileArray = array();
@@ -429,6 +441,13 @@
 			foreach ($strFileArray as $strFile) require($strFile);
 		}
 
+		/**
+		 * Qcodo is placed into the server signature for metrics purposes.  For those that are concerned
+		 * about any potential security risks with placing the Qcodo version information into the server signature,
+		 * you can simply override this method in QApplication.class.php to prevent Qcodo from automatically
+		 * placing itself into the server signature.
+		 * @return void
+		 */
 		protected static function InitializeServerSignature() {
 			header(sprintf('X-Powered-By: PHP/%s; Qcodo/%s', PHP_VERSION, QCODO_VERSION));
 		}
