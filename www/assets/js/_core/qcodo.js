@@ -157,29 +157,25 @@
 		/////////////////////////////
 
 			this.registerForm = function(strFormId, strFormState) {
+				var objForm = document.getElementById(strFormId);
+
 				// Register the Various Hidden Form Elements needed for QForms
-				this.registerFormHiddenElement("Qform__FormId", strFormId);
-				this.registerFormHiddenElement("Qform__FormState", strFormId);
-				this.registerFormHiddenElement("Qform__FormControl", strFormId);
-				this.registerFormHiddenElement("Qform__FormEvent", strFormId);
-				this.registerFormHiddenElement("Qform__FormParameter", strFormId);
-				this.registerFormHiddenElement("Qform__FormCallType", strFormId);
-				this.registerFormHiddenElement("Qform__FormUpdates", strFormId);
-				this.registerFormHiddenElement("Qform__FormCheckableControls", strFormId);
+				this.registerFormHiddenElement("Qform__FormId", objForm, document);
+				this.registerFormHiddenElement("Qform__FormState", objForm, document);
+				this.registerFormHiddenElement("Qform__FormControl", objForm, document);
+				this.registerFormHiddenElement("Qform__FormEvent", objForm, document);
+				this.registerFormHiddenElement("Qform__FormParameter", objForm, document);
+				this.registerFormHiddenElement("Qform__FormCallType", objForm, document);
+				this.registerFormHiddenElement("Qform__FormUpdates", objForm, document);
+				this.registerFormHiddenElement("Qform__FormCheckableControls", objForm, document);
 				
 				// Set the QForm's FormId and FormState
 				document.getElementById("Qform__FormId").value = strFormId;
 				document.getElementById("Qform__FormState").value = strFormState;
 			};
 
-			this.registerFormHiddenElement = function(strId, mixForm) {
-				var objForm;
-				if (typeof(mixForm) == 'string')
-					objForm = document.getElementById(mixForm);
-				else
-					objForm = mixForm;
-
-				var objHiddenElement = document.createElement("input");
+			this.registerFormHiddenElement = function(strId, objForm, objDocument) {
+				var objHiddenElement = objDocument.createElement("input");
 				objHiddenElement.type = "hidden";
 				objHiddenElement.id = strId;
 				objHiddenElement.name = strId;
