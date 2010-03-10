@@ -15,7 +15,8 @@
 		_p('The Qcodo Web-based CodeGen tool expects the codegen settings <strong>"codegen.xml"</strong> file to be located at <br/><br/><strong>', false);
 		_p($strSettingsPath);
 		_p('</strong><br/><br/>', false);
-		_p('Either ensure that the <strong>"codegen.xml"</strong> exists there or update <strong>' . __FILE__ . '</strong> to reflect the correct path.', false);
+		_p('Either ensure that the <strong>"codegen.xml"</strong> exists there (recommended) or alternatively to update ', false);
+		_p('<strong>' . __FILE__ . '</strong> to reflect the correct path (not as recommended).', false);
 		exit();
 	}
 
