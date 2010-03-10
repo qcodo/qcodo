@@ -35,8 +35,9 @@
 			this.CHROME_4_0 = 131072;
 
 			this.MACINTOSH = 262144;
+			this.IPHONE = 524288;
 
-			this.UNSUPPORTED = 524288;
+			this.UNSUPPORTED = 1048576;
 
 			// INTERNET EXPLORER (supporting versions 6.0, 7.0 and 8.0)
 			if (navigator.userAgent.toLowerCase().indexOf("msie") >= 0) {
@@ -104,6 +105,10 @@
 			// MACINTOSH?
 			if (navigator.userAgent.toLowerCase().indexOf("macintosh") >= 0)
 				this._intBrowserType = this._intBrowserType | this.MACINTOSH;
+
+			// IPHONE?
+			if (navigator.userAgent.toLowerCase().indexOf("iphone") >= 0)
+				this._intBrowserType = this._intBrowserType | this.IPHONE;
 
 
 

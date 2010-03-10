@@ -368,6 +368,10 @@
 				// MACINTOSH?
 				if (strpos($strUserAgent, 'macintosh') !== false)
 					QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Macintosh;
+
+				// IPHONE?
+				if (strpos($strUserAgent, 'iphone') !== false)
+					QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Iphone;
 			}
 		}
 
@@ -990,7 +994,8 @@
 		const Chrome_4_0 = 131072;
 
 		const Macintosh = 262144;
+		const Iphone = 524288;
 
-		const Unsupported = 524288;
+		const Unsupported = 1048576;
 	}
 ?>

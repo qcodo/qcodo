@@ -55,6 +55,14 @@
 			return "";
 	};
 
+	qcodo.interceptSubmit = function(event, strControlId) {
+		var objControl = document.getElementById(strControlId);
+		event.keyCode = 13;
+		if (objControl.onkeypress) objControl.onkeypress(event);
+		else if (objControl.onkeydown) objControl.onkeydown(event);
+		objControl.blur();
+	};
+
 	qcodo.ajaxQueue = new Array();
 
 	qcodo.postAjax = function(strForm, strControl, strEvent, strParameter, strWaitIconControlId) {

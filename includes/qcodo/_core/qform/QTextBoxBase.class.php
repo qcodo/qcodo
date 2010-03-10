@@ -59,6 +59,13 @@
 
 			$this->strLabelForTooLong = QApplication::Translate('%s must have at most %s characters');
 			$this->strLabelForTooLongUnnamed = QApplication::Translate('Must have at most %s characters');
+
+			// When tapping into a text field on the iphone, the "Go" button on the keyboard causes a
+			// form.submit() to be called which Qcodo will need to intercept
+			if (QApplication::IsBrowser(QBrowserType::Iphone)) {
+				$this->AddAction(new QFocusEvent(), new QJavaScriptAction(sprintf("qc.getW('%s').startTextboxFormSubmitOverride('%s');", $this->strControlId, $this->strControlId)));
+				$this->AddAction(new QBlurEvent(), new QJavaScriptAction(sprintf("qc.getW('%s').endTextboxFormSubmitOverride('%s');", $this->strControlId, $this->strControlId)));
+			}
 		}
 
 
