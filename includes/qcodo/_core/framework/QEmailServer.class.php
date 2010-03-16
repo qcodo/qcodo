@@ -276,9 +276,13 @@
 			fwrite($objResource, sprintf("To: %s\r\n", $objMessage->To));
 			fwrite($objResource, sprintf("From: %s\r\n", $objMessage->From));
 
+			// Setup Encoding Type (use QEmailServer if specified, otherwise default to QApplication's)
+			if (!($strEncodingType = QEmailServer::$EncodingType))
+				$strEncodingType = QApplication::$EncodingType;
+
 			// Send: Optional Headers
 			if ($objMessage->Subject)
-				fwrite($objResource, sprintf("Subject: %s\r\n", $objMessage->Subject));
+				fwrite($objResource, sprintf("Subject: =?%s?Q?%s?=\r\n", $strEncodingType, QEmailUtils::QuotedPrintableEncode($objMessage->Subject)));
 			if ($objMessage->Cc)
 				fwrite($objResource, sprintf("Cc: %s\r\n", $objMessage->Cc));
 
@@ -300,27 +304,21 @@
 				fwrite($objResource, sprintf("--%s\r\n", $strBoundary));				
 			}
 
-
 			// Send: Body
-
-			// Setup Encoding Type (use QEmailServer if specified, otherwise default to QApplication's)
-			if (!($strEncodingType = QEmailServer::$EncodingType))
-				$strEncodingType = QApplication::$EncodingType;
-
 			if ($objMessage->HtmlBody) {
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
-				fwrite($objResource, sprintf("Content-Transfer-Encoding: 7bit\r\n\r\n"));
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
 
-				fwrite($objResource, $objMessage->Body);
+				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));								
 		
-				fwrite($objResource, $objMessage->HtmlBody);
+				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->HtmlBody));
 				fwrite($objResource, "\r\n\r\n");
 				
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
@@ -328,12 +326,15 @@
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));				
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
-				fwrite($objResource, sprintf("Content-Transfer-Encoding: 7bit\r\n\r\n"));
-				fwrite($objResource, $objMessage->Body);
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
+				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
-			} else
-				fwrite($objResource, "\r\n" . $objMessage->Body);
+			} else {
+				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
+				fwrite($objResource, "\r\n" . QEmailUtils::QuotedPrintableEncode($objMessage->Body));
+			}
 
 			// Send: File Attachments
 			if($objMessage->HasFiles) {
@@ -543,6 +544,29 @@
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
+		}
+	}
+
+	/**
+	 * An abstract utility class to handle various email related tasks.  All methods
+	 * are statically available.
+	 */
+	abstract class QEmailUtils {
+
+		/**
+		 * Encodes given 8 bit string to a quoted-printable string,
+		 * @param string $strString
+		 * @return encoded string
+		 */
+		public static function QuotedPrintableEncode($strString) {
+			if ( function_exists('quoted_printable_encode') )
+				$strText = quoted_printable_encode($strString);
+			else
+			    $strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
+
+			preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
+			$strText = implode( '=' . "\r\n", $arrMatch[0] );
+			return $strText;
 		}
 	}
 ?>
