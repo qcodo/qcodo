@@ -60,7 +60,8 @@
 			// Return the HTML
 			$strHtml = null;
 			if (!$this->strFilePath) {
-				$strHtml .= sprintf('<input type="button" class="button" id="%s_button" value="Browse..."/>', $this->strControlId);
+				$strHtml .= sprintf('<input type="button" class="button" id="%s_button" value="Browse"/>', $this->strControlId);
+				$strHtml .= sprintf('<span id="%s_ospan"><iframe id="%s_iframe" scrolling="no" style="display: none;"></iframe></span>', $this->strControlId, $this->strControlId);
 
 				$strHtml .= sprintf('<div class="progress" id="%s_progress" style="display: none;">', $this->strControlId);
 				$strHtml .= sprintf('<div class="size" id="%s_size">n/a</div>', $this->strControlId);
@@ -73,7 +74,7 @@
 				$strHtml .= '<div class="cancel"><a href="#">Cancel</a></div>';
 				$strHtml .= '</div>';
 			} else {
-				$strHtml .= sprintf('<strong>%s</strong> (%s) &nbsp; <a href="#" %s>Remove</a></div>',
+				$strHtml .= sprintf('<strong>%s</strong> (%s) &nbsp; <a href="#" %s>Remove</a>',
 					$this->strFileName, QString::GetByteSize($this->intFileSize), $this->pxyRemoveFile->RenderAsEvents(null, false));
 			}
 
@@ -131,7 +132,9 @@
 			$this->strFilePath = $strTempFilePath;
 
 			$this->Refresh();
-			if ($this->strFileUploadedCallbackMethod) call_user_func(array($this->objFileUploadedCallbackObject, $this->strFileUploadedCallbackMethod));
+			if ($this->strFileUploadedCallbackMethod) call_user_func_array(
+				array($this->objFileUploadedCallbackObject, $this->strFileUploadedCallbackMethod),
+				array($this->objForm->FormId, $this->strControlId, $this->strActionParameter));
 		}
 
 		/**
@@ -148,7 +151,9 @@
 			$this->intFileSize = null;
 			$this->strMimeType = null;
 			$this->Refresh();
-			if ($this->strFileRemovedCallbackMethod) call_user_func(array($this->objFileRemovedCallbackObject, $this->strFileRemovedCallbackMethod));
+			if ($this->strFileRemovedCallbackMethod) call_user_func_array(
+				array($this->objFileRemovedCallbackObject, $this->strFileRemovedCallbackMethod),
+				array($this->objForm->FormId, $this->strControlId, $this->strActionParameter));
 		}
 		
 		public function SetFileUploadedCallback($objCallbackObject, $strCallbackMethod) {

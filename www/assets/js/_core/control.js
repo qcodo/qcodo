@@ -337,6 +337,20 @@
 				qcodo.setTimeout(objWrapper.id, "qc.getC('" + objWrapper.id + "').blinkHelper()", 20);
 			};
 		};
+
+		// Overrides default behavior of some textboxes calling form.submit() - mainly for Textboxes
+		objWrapper.startTextboxFormSubmitOverride = function(strControlId) {
+			var objForm = document.getElementById(document.getElementById("Qform__FormId").value);
+			objForm.onsubmit = function() {
+				qcodo.interceptSubmit(event, strControlId);
+				return false;
+			};
+		};
+
+		objWrapper.endTextboxFormSubmitOverride = function(strControlId) {
+			var objForm = document.getElementById(document.getElementById("Qform__FormId").value);
+			objForm.onsubmit = null;
+		};
 	};
 
 	qcodo.registerControlArray = function(mixControlArray) {

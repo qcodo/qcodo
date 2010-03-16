@@ -119,3 +119,17 @@ MsgStr "View List"
 
 MsgId "Create New"
 MsgStr "Create New"
+
+
+#For the QDateTimePicker control
+msgid "Jan"
+msgstr "Jan"
+
+msgid "Apr"
+msgstr "Apr"
+
+msgid "Aug"
+msgstr "Aug"
+
+msgid "Dec"
+msgstr "Dec"

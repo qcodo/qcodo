@@ -31,7 +31,7 @@
 	 */
 
 	// Versioning Information
-	define('QCODO_VERSION', '0.4.11');
+	define('QCODO_VERSION', '0.4.14');
 
 	// Preload Required Framework Classes
 	require(__QCODO_CORE__ . '/framework/QBaseClass.class.php');
@@ -90,6 +90,7 @@
 	QApplicationBase::$ClassFile['qcliparameterprocessor'] = __QCODO_CORE__ . '/framework/QCliParameterProcessor.class.php';
 
 	QApplicationBase::$ClassFile['qcodegen'] = __QCODO__ . '/codegen/QCodeGen.class.php';
+	QApplicationBase::$ClassFile['qdatagen'] = __QCODO_CORE__ . '/framework/QDataGen.class.php';
 
 	QApplicationBase::$ClassFile['qpackagemanager'] = __QCODO_CORE__ . '/framework/QPackageManager.class.php';
 	QApplicationBase::$ClassFile['qpackagemanagerdownload'] = __QCODO_CORE__ . '/framework/QPackageManagerDownload.class.php';

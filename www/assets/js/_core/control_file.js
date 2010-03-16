@@ -11,6 +11,7 @@
 		var objWrapper = objControl.wrapper;
 
 		var strFileControlId = objWrapper.id + "flc";
+		var objForm = document.getElementById(document.getElementById("Qform__FormId").value);
 
 		objWrapper.uniqueHash = strUniqueHash;
 		objWrapper.button = document.getElementById(objControl.id + "_button");
@@ -18,79 +19,112 @@
 		objWrapper.progress.size = document.getElementById(objControl.id + "_size");
 		objWrapper.progress.status = document.getElementById(objControl.id + "_status");
 		objWrapper.progress.fill = document.getElementById(objControl.id + "_fill");
+		objWrapper.iframe = document.getElementById(objControl.id + "_iframe");
 
+
+		// Setup the Outer Span
+		var objOuterSpan = document.getElementById(objControl.id + "_ospan");
+		objOuterSpan.style.width = "0px";
+		objOuterSpan.style.height = "0px";
+		objOuterSpan.style.position = "absolute";
+		objOuterSpan.style.display = "inline";
+		objOuterSpan.style.overflow = "visible";
+		objOuterSpan.style.margin = 0;
+		objOuterSpan.style.padding = 0;
+		objOuterSpan.style.border = 0;
+		
+		// Setup the iFrame
+		var objFupIframe = objWrapper.iframe;
+		objFupIframe.style.width = objWrapper.button.offsetWidth + "px";
+		objFupIframe.style.height = objWrapper.button.offsetHeight + "px";
+		objFupIframe.style.border = 0;
+		objFupIframe.style.padding = 0;
+		objFupIframe.style.margin = 0;
+		
+		objFupIframe.style.display = "inline";
+		objFupIframe.style.position = "relative";
+		objFupIframe.style.left = "-" + objWrapper.button.offsetWidth + "px";
+		objFupIframe.style.opacity = 0;
+		objFupIframe.style.filter = "alpha(opacity=0)";
+		objFupIframe.style.overflow = "hidden";
+
+		var objFrameDoc = objFupIframe.contentDocument;
+		if ((objFrameDoc == undefined) || (!objFrameDoc))
+			objFrameDoc = objFupIframe.contentWindow.document;
+		objWrapper.frameDoc = objFrameDoc;
+
+		var strFormId = objWrapper.id + "form";
+		var strFileControlId = objWrapper.id + "flc";
+		objFrameDoc.open();
+		objFrameDoc.writeln('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
+		objFrameDoc.writeln('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>');
+		objFrameDoc.writeln('<body style="margin: 0; padding: 0;"><form method="post" action="' + strPostBack + '" enctype="multipart/form-data" id="' + strFormId + '">');
+		objFrameDoc.writeln('<div id="' + objControl.id + '_iframediv"></div>');
+		objFrameDoc.writeln('<input type="hidden" name="APC_UPLOAD_PROGRESS" value="' + objWrapper.uniqueHash + '" />');
+		objFrameDoc.writeln('<input type="hidden" name="Qform__FormState" id="Qform__FormState" value="" />');			
+		objFrameDoc.writeln('<input type="hidden" name="Qform__FormId" id="Qform__FormId" value="' + objForm.id + '" />');
+		objFrameDoc.writeln('</form></body></html>');
+		objFrameDoc.close();
+
+		var objFrameForm = objFrameDoc.getElementById(strFormId);
+		qcodo.registerFormHiddenElement("Qform__FormControl", objFrameForm, objFrameDoc);
+		qcodo.registerFormHiddenElement("Qform__FormEvent", objFrameForm, objFrameDoc);
+		qcodo.registerFormHiddenElement("Qform__FormParameter", objFrameForm, objFrameDoc);
+		qcodo.registerFormHiddenElement("Qform__FormCallType", objFrameForm, objFrameDoc);
+		qcodo.registerFormHiddenElement("Qform__FormUpdates", objFrameForm, objFrameDoc);
+		qcodo.registerFormHiddenElement("Qform__FormCheckableControls", objFrameForm, objFrameDoc);
+	
 		// Setup the Nested DIV and INPUT FILE form element
-		var objOuterDiv = document.createElement("div");
-		objOuterDiv.style.position = 'absolute';
-		objOuterDiv.style.overflow = 'hidden';
-		objOuterDiv.style.top = objWrapper.button.offsetTop + "px";
-		objOuterDiv.style.left = objWrapper.button.offsetLeft + "px";
-		objOuterDiv.style.height = objWrapper.button.offsetHeight + "px";
-		objOuterDiv.style.width = objWrapper.button.offsetWidth + "px";
-		objOuterDiv.style.opacity = 0;
-		objWrapper.appendChild(objOuterDiv);
+		var objIframeDiv = objFrameDoc.getElementById(objControl.id + "_iframediv");
+		var objFileControl = objFrameDoc.createElement("input");
+		objFileControl.type = "file";
+		objIframeDiv.appendChild(objFileControl);
 
-		var objInnerDiv = document.createElement("div");
-		objInnerDiv.style.cssFloat = "left";
-		objInnerDiv.style.overflow = "hidden";
-		objInnerDiv.style.width = "70px";
-		objInnerDiv.style.height = objOuterDiv.style.height;
+		objIframeDiv.style.width = objWrapper.button.offsetWidth + "px";
+		objIframeDiv.style.height = objWrapper.button.offsetHeight + "px";
+		objIframeDiv.style.overflow = "hidden";
 
-		var objFileControl = document.createElement("input");
+		objFileControl.style.position = "relative";
 		objFileControl.id = strFileControlId;
 		objFileControl.name = strFileControlId;
-		objFileControl.type = "file";
-		objFileControl.style.height = objOuterDiv.style.height;
-		objFileControl.style.position = 'relative';
-		objFileControl.style.left = '-155px';
-		objInnerDiv.appendChild(objFileControl);
-		objOuterDiv.appendChild(objInnerDiv);
+		objFileControl.style.left = "-155px";
 
+		// We need to take into account the "textbox by the browse button" in a <input type="file"> control
+		// basically we need to shift everything over to the left so that we're only looking at the button and not the textbox
+		if (qcodo.isBrowser(qcodo.IE)) {
+			// IE
+			objFileControl.style.left = "-158px";
+			objFileControl.style.top = "-2px";
+		} else if (qcodo.isBrowser(qcodo.FIREFOX)) {
+			if (qcodo.isBrowser(qcodo.MACINTOSH)) {
+				// Firefox for Mac
+				objFileControl.style.left = "-155px";
+				objFileControl.style.top = "-2px";
+			} else {
+				// Firefox for Windows
+				objFileControl.style.left = "-146px";
+			};
+		} else {
+			// Safari doesn't need any adjustments
+		};
+
+		// Save References to Objects
+		objWrapper.iframe.wrapper = objWrapper;
+		objWrapper.frameForm = objFrameForm;
 		objWrapper.fileControl = objFileControl;
 		objWrapper.fileControl.wrapper = objWrapper;
-		objWrapper.fileControlParent = objInnerDiv;
 
 		objWrapper.executeSubmit = function() {
 			var objWrapper = this.wrapper;
 			var objForm = document.getElementById(document.getElementById("Qform__FormId").value);
-			var objFupIframe = document.createElement("iframe");
-			objFupIframe.id = objWrapper.id + "ifrm";
-//			objFupIframe.style.border = '5px solid black';
-			objFupIframe.style.display = "none";
-			objForm.appendChild(objFupIframe);
-			objWrapper.frame = objFupIframe;
 
+			objWrapper.iframe.style.display = "none";
 			objWrapper.button.style.display = "none";
 			objWrapper.progress.style.display = "block";
 
-			var objFrameDoc = objFupIframe.contentDocument;
-			if ((objFrameDoc == undefined) || (!objFrameDoc))
-				objFrameDoc = objFupIframe.contentWindow.document;
-			objWrapper.frameDoc = objFrameDoc;
-
-			var strFormId = objWrapper.id + "form";
-			var strFileControlId = objWrapper.id + "flc";
-			objFrameDoc.open();
-			objFrameDoc.writeln('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
-			objFrameDoc.writeln('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>');
-			objFrameDoc.writeln('<body><form method="post" action="' + strPostBack + '" enctype="multipart/form-data" id="' + strFormId + '">');
-			objFrameDoc.writeln('<input type="hidden" name="APC_UPLOAD_PROGRESS" value="' + objWrapper.uniqueHash + '" />');
-			objFrameDoc.writeln('<input type="hidden" name="Qform__FormState" id="Qform__FormState" value="" />');			
-			objFrameDoc.writeln('<input type="hidden" name="Qform__FormId" id="Qform__FormId" value="' + objForm.id + '" />');
-			objFrameDoc.writeln('</form></body></html>');
-			objFrameDoc.close();
-
-			var objFrameForm = objFrameDoc.getElementById(strFormId);
-			qcodo.registerFormHiddenElement("Qform__FormControl", objFrameForm);
-			qcodo.registerFormHiddenElement("Qform__FormEvent", objFrameForm);
-			qcodo.registerFormHiddenElement("Qform__FormParameter", objFrameForm);
-			qcodo.registerFormHiddenElement("Qform__FormCallType", objFrameForm);
-			qcodo.registerFormHiddenElement("Qform__FormUpdates", objFrameForm);
-			qcodo.registerFormHiddenElement("Qform__FormCheckableControls", objFrameForm);
-
-			objWrapper.fileControlParent.removeChild(objWrapper.fileControl);
-			objFrameForm.appendChild(objWrapper.fileControl);
-			objWrapper.fileControl.style.position = null;
+			// Get the FrameDoc and FrameForm
+			var objFrameDoc = objWrapper.frameDoc;
+			var objFrameForm = objWrapper.frameForm;
 
 			objFrameForm.Qform__FormState.value = objForm.Qform__FormState.value;
 			objFrameForm.Qform__FormControl.value = objWrapper.control.id;
@@ -101,7 +135,12 @@
 			objFrameForm.Qform__FormUpdates.value = qcodo.formUpdates();
 			objFrameForm.Qform__FormCheckableControls.value = qcodo.formCheckableControls(objForm.id, "Ajax");
 
-			objWrapper.frame.onload = objWrapper.response;
+			if (qcodo.isBrowser(qcodo.IE)) {
+				objWrapper.iframe.onreadystatechange = function() { if (this.readyState == "complete") this.wrapper.response(); };
+			} else {
+				objWrapper.iframe.onload = objWrapper.response;
+			};
+
 			objWrapper.isUploading = true;
 			setTimeout('document.getElementById("' + objWrapper.id + '").getStatus();', 1000);
 			objFrameForm.submit();
@@ -109,17 +148,21 @@
 		};
 
 		objWrapper.response = function() {
+			if (!objWrapper.isUploading) return;
+
 			objWrapper.isUploading = false;
-			var  objFupIframe = document.getElementById(objWrapper.id + "ifrm");
+			var  objFupIframe = objWrapper.iframe;
 			var objFrameDoc = objFupIframe.contentDocument;
 			if ((objFrameDoc == undefined) || (!objFrameDoc))
 				objFrameDoc = objFupIframe.contentWindow.document;
 			var objIframeResponse = new Object();
-			objIframeResponse.responseXML = objFrameDoc;
-			qcodo.handleAjaxResponse(null, objIframeResponse);
 
-			var objForm = document.getElementById(document.getElementById("Qform__FormId").value);
-			objForm.removeChild(objFupIframe);
+			if (objFrameDoc.XMLDocument)
+				objIframeResponse.responseXML = objFrameDoc.XMLDocument;
+			else
+				objIframeResponse.responseXML = objFrameDoc;
+
+			qcodo.handleAjaxResponse(null, objIframeResponse);
 		};
 
 		objWrapper.fileControl.onchange = objWrapper.executeSubmit;
@@ -146,7 +189,7 @@
 			if (objWrapper.getStatusRequest.readyState == 4) {
 				if (objWrapper.isUploading) {
 					var objXmlDoc = objWrapper.getStatusRequest.responseXML;
-					if (objXmlDoc) {
+					if (objXmlDoc && objXmlDoc.getElementsByTagName('uploadData') && objXmlDoc.getElementsByTagName('uploadData').length) {
 						var objUploadData = objXmlDoc.getElementsByTagName('uploadData')[0];
 
 						objWrapper.progress.size.innerHTML = objUploadData.getAttribute('total');
