@@ -75,6 +75,7 @@
 	QApplicationBase::$ClassFile['qerrorlogviewer'] = __QCODO_CORE__ . '/framework/QErrorLogViewer.class.php';
 	QApplicationBase::$ClassFile['qemailserver'] = __QCODO_CORE__ . '/framework/QEmailServer.class.php';
 	QApplicationBase::$ClassFile['qemailmessage'] = __QCODO_CORE__ . '/framework/QEmailServer.class.php';
+	QApplicationBase::$ClassFile['qemailutils'] = __QCODO_CORE__ . '/framework/QEmailServer.class.php';
 	QApplicationBase::$ClassFile['qmimetype'] = __QCODO_CORE__ . '/framework/QMimeType.class.php';
 	QApplicationBase::$ClassFile['qdatetime'] = __QCODO_CORE__ . '/framework/QDateTime.class.php';
 	QApplicationBase::$ClassFile['qstring'] = __QCODO_CORE__ . '/framework/QString.class.php';

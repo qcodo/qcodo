@@ -102,7 +102,7 @@
 				(strpos($strAddresses, "\n") !== false))
 				return null;
 
-			preg_match_all ("/[a-zA-Z0-9_.+-]+[@][\-a-zA-Z0-9_.]+/", $strAddresses, $strAddressArray);
+			preg_match_all("/[a-zA-Z0-9_.+-]+[@][\-a-zA-Z0-9_.]+/", $strAddresses, $strAddressArray);
 			if ((is_array($strAddressArray)) &&
 				(array_key_exists(0, $strAddressArray)) &&
 				(is_array($strAddressArray[0])) &&
@@ -568,5 +568,40 @@
 			$strText = implode( '=' . "\r\n", $arrMatch[0] );
 			return $strText;
 		}
+
+        /**
+         * Validates given email address
+         * @param strEmail
+         * @return boolean
+         */
+        public static function ValidateEmail($strEmail) {
+
+            $arrEmail = explode('@', $strEmail);
+
+			// Check if @ is missing, domain or local part is missing or address contains more than one @
+			if(count($arrEmail) != 2)
+				return false;
+
+            // Check total address, local portion and domain length
+            if(QString::IsLengthBeetween($strEmail, 3, 256) == false)
+				return false;
+            if(QString::IsLengthBeetween($arrEmail[0], 1, 64) == false)
+				return false;
+            if(QString::IsLengthBeetween($arrEmail[1], 1, 255) == false)
+				return false;
+
+			/*
+			 * Futher testing is done trough RegExp, it is not 100% compiliant with RFC 2822.
+			 * If recognizes following borderline cases of correct email addresses as invalid:
+			 * "[[ test ]]"@example.com
+			 * test."test"@example.com
+			 * "test@test"@example.com
+			 * test@[123.123.123.123]
+			 */
+			if(!preg_match('/^[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/',	strtolower($strEmail)))
+				return false;
+
+            return true;
+        }
 	}
 ?>
