@@ -144,39 +144,61 @@ MsgId "AJAX Dashboard"
 MsgStr "AJAX Dashboard"
 
 
-#For the QDateTimePicker control
+#For the QDateTime class and QDateTimePicker control
 msgid "Jan"
 msgstr "Jan"
+msgid "January"
+msgstr "January"
 
 msgid "Feb"
 msgstr "Feb"
+msgid "February"
+msgstr "February"
 
 msgid "Mar"
 msgstr "Mar"
+msgid "March"
+msgstr "March"
 
 msgid "Apr"
 msgstr "Apr"
+msgid "April"
+msgstr "April"
 
 msgid "May"
 msgstr "May"
 
 msgid "Jun"
 msgstr "Jun"
+msgid "June"
+msgstr "June"
 
 msgid "Jul"
 msgstr "Jul"
+msgid "July"
+msgstr "July"
 
 msgid "Aug"
 msgstr "Aug"
+msgid "August"
+msgstr "August"
 
 msgid "Sep"
 msgstr "Sep"
+msgid "September"
+msgstr "September"
 
 msgid "Oct"
 msgstr "Oct"
+msgid "October"
+msgstr "October"
 
 msgid "Nov"
 msgstr "Nov"
+msgid "November"
+msgstr "November"
 
 msgid "Dec"
 msgstr "Dec"
+msgid "December"
+msgstr "December"

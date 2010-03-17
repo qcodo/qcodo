@@ -256,10 +256,10 @@
 							$strToReturn .= parent::format('m');
 							break;
 						case 'MMM':
-							$strToReturn .= parent::format('M');
+							$strToReturn .= QApplication::Translate(parent::format('M'));
 							break;
 						case 'MMMM':
-							$strToReturn .= parent::format('F');
+							$strToReturn .= QApplication::Translate(parent::format('F'));
 							break;
 			
 						case 'D':
