@@ -1,0 +1,182 @@
+# Qcodo Distributed Language File
+# for Polish
+# Contributed by klucznik, wpozar
+
+
+# For QTextBoxBase controls
+MsgId "%s is required"
+MsgStr "To pole jest wymagane"
+
+MsgId "Required"
+MsgStr "Wymagane"
+
+MsgId "%s must have at least %s characters"
+MsgStr "To pole musi mieć przynajmniej %s znaków"
+
+MsgId "Must have at least %s characters"
+MsgStr "Przynajmniej %s znaków"
+
+
+# For QWriteBox controls
+MsgId ""
+"Tags &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; and &lt;http://...&gt; are allowed.  "
+"Use ** at the beginning of any line for a bulleted list."
+MsgStr ""
+"Dozwolone znaczniki to &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; oraz &lt;http://...&gt;.  "
+"Aby otrzymać listę nienumerowan&oacute; użyj ** na pocz&oacute;tku lini."
+
+
+# For QPaginatedControl controls
+MsgId "item"
+MsgStr "rekord"
+
+MsgId "items"
+MsgStr "rekordy"
+
+
+# For QListBox and QCalendar controls
+MsgId "Reset"
+MsgStr "Wyczyść zaznaczenie"
+
+
+# For ListBoxes in Generated Forms
+MsgId "- Select One -"
+MsgStr "- Wybierz -"
+
+
+# For QIntegerTextBox and QFloatTextBox controls
+MsgId "Invalid Integer"
+MsgStr "Niepoprawna liczba całkowita"
+
+MsgId "Invalid Float"
+MsgStr "Niepoprawna liczba zmiennoprzecinkowa"
+
+MsgId "Value must be less than %s"
+MsgStr "Wartość musi być mniejsza niż %s"
+
+MsgId "Value must be greater than %s"
+MsgStr "Wartość musi być większa niż %s"
+
+MsgId "Invalid e-mail address"
+MsgStr "Niepoprawny adress e-mail"
+
+
+# For QDataGrid controls
+MsgId "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
+MsgStr "<b>Wynik:</b>&nbsp;Ogl&oacute;dasz&nbsp;%s&nbsp;%s-%s&nbsp;z&nbsp;%s."
+
+MsgId "<b>Results:</b> No %s found."
+MsgStr "<b>Wynik:</b> Brak znalezionych."
+
+MsgId "<b>Results:</b> 1 %s found."
+MsgId_Plural "<b>Results:</b> %s %s found."
+MsgStr[0] "<b>Wynik:</b> znaleziono 1."
+MsgStr[1] "<b>Wynik:</b> znaleziono %s."
+
+
+# For QPaginator controls
+MsgId "Previous"
+MsgStr "Poprzednia"
+
+MsgId "Next"
+MsgStr "Następna"
+
+
+# For the List FormDraft Include template
+MsgId "List All"
+MsgStr "Pokaż wszystkie"
+
+MsgId "Create a New"
+MsgStr "Dodaj"
+
+MsgId "Go to \"Form Drafts\""
+MsgStr "Przejdź do \"Form Drafts\""
+
+MsgId "Go to \"Panel Drafts\""
+MsgStr "Przejdź do \"Panel Drafts\""
+
+MsgId "Form Drafts"
+MsgStr "Szkice Formularzy"
+
+MsgId "Panel Drafts"
+MsgStr "Szkice Paneli"
+
+
+# For the Edit FormBase class template
+MsgId "Create"
+MsgStr "Dodaj"
+
+MsgId "Edit"
+MsgStr "Edytuj"
+
+MsgId "Save"
+MsgStr "Zapisz"
+
+MsgId "Cancel"
+MsgStr "Anuluj"
+
+MsgId "Delete"
+MsgStr "Usuń"
+
+MsgId "Are you SURE you want to DELETE this %s?"
+MsgStr "Czy NA PEWNO chcesz USUNĄĆ %s?"
+
+
+# For the form_drafts/index.php page
+MsgId "List of Form Drafts"
+MsgStr "Lista Form Drafts"
+
+MsgId "View List"
+MsgStr "Zobacz listę"
+
+MsgId "Create New"
+MsgStr "Dodaj"
+
+MsgId "Go to Dashboard"
+MsgStr "Idź do Dashboard"
+
+
+# For form_drafts/dashboard/index.php page
+MsgId "Select a Class to View/Edit"
+MsgStr "Wybierz klasę do pokazania lub edycji"
+
+MsgId "AJAX Dashboard"
+MsgStr "AJAX Dashboard"
+
+
+#For the QDateTimePicker control
+msgid "Jan"
+msgstr "Sty"
+
+msgid "Feb"
+msgstr "Lut"
+
+msgid "Mar"
+msgstr "Mar"
+
+msgid "Apr"
+msgstr "Kwi"
+
+msgid "May"
+msgstr "Maj"
+
+msgid "Jun"
+msgstr "Cze"
+
+msgid "Jul"
+msgstr "Lip"
+
+msgid "Aug"
+msgstr "Sie"
+
+msgid "Sep"
+msgstr "Wrz"
+
+msgid "Oct"
+msgstr "Paź"
+
+msgid "Nov"
+msgstr "Lis"
+
+msgid "Dec"
+msgstr "Gru"
