@@ -57,6 +57,8 @@ MsgStr "Value must be less than %s"
 MsgId "Value must be greater than %s"
 MsgStr "Value must be greater than %s"
 
+MsgId "Invalid e-mail address"
+MsgStr "Invalid e-mail address"
 
 # For QDataGrid controls
 MsgId "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
