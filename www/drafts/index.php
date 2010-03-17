@@ -31,12 +31,13 @@
 	// Sort the list of objects
 	ksort($strObjectArray);
 
-	$strPageTitle = 'List of Form Drafts';
+	$strPageTitle = QApplication::Translate('List of Form Drafts');
 	require(__INCLUDES__ . '/header.inc.php');
 ?>
 
 	<div id="titleBar">
-		<h2>Qcodo Development Framework <?php _p(QCODO_VERSION) ?></h2>
+		<h2 id="right"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __PANEL_DRAFTS__) ?>/index.php">&laquo; <?php _t('Go to "Panel Drafts"'); ?></a></h2>
+		<h2><?php _t('Form Drafts') ?></h2>
 		<h1><?php _t('List of Form Drafts') ?></h1>
 	</div>
 
@@ -49,8 +50,8 @@
 		}
 ?>
 		<p>&nbsp;</p>
-		<h1>Panel Drafts &ldquo;AJAX Dashboard&rdquo;</h1>
-		<p class="create"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __PANEL_DRAFTS__) ?>">Go to Dashboard</a></p>
+		<h1><?php _t('Panel Drafts') ?></h1>
+		<p class="create"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __PANEL_DRAFTS__) ?>"><?php _t('Go to "Panel Drafts"') ?></a></p>
 	</div>
 
 <?php require (__INCLUDES__ . '/footer.inc.php'); ?>

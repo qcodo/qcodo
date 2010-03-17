@@ -121,7 +121,7 @@
 		p.create a { text-decoration: none; color: #337; font-weight: bold; }
 		p.create a:hover { text-decoration: underline; }
 
-	div#draftList { }
+	div#draftList { clear: both; }
 		div#draftList h1 { margin: 0; font: 20px 'Georgia', 'Times New Roman', 'Times'; font-weight: bold; }
 		div#draftList p { margin-top: 6px; margin-bottom: 18px;}
 

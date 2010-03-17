@@ -7,7 +7,6 @@
 	QApplication::CheckRemoteAdmin();
 
 
-
 	// Let's "magically" determine the list of genereated Class Panel Drafts by
 	// just traversing through this directory, looking for "*ListPanel.class.php" and "*EditPanel.class.php"
 
@@ -25,7 +24,6 @@
 	}
 
 
-
 	class Dashboard extends QForm {
 		protected $lstClassNames;
 
@@ -35,7 +33,7 @@
 
 		protected function Form_Create() {
 			$this->pnlTitle = new QPanel($this);
-			$this->pnlTitle->Text = 'AJAX Dashboard';
+			$this->pnlTitle->Text = QApplication::Translate('AJAX Dashboard');
 
 			$this->pnlList = new QPanel($this, 'pnlList');
 			$this->pnlList->AutoRenderChildren = true;
@@ -45,7 +43,7 @@
 			$this->pnlEdit->Visible = false;
 
 			$this->lstClassNames = new QListBox($this);
-			$this->lstClassNames->AddItem('- Select One -', null);
+			$this->lstClassNames->AddItem(QApplication::Translate('- Select One -'), null);
 
 			// Use the strClassNameArray as magically determined above to aggregate the listbox of classes
 			// Obviously, this should be modified if you want to make a custom dashboard
@@ -64,9 +62,6 @@
 		protected function Form_Validate() {
 			// By default, we report that Custom Validations passed
 			$blnToReturn = true;
-
-			// Custom Validation Rules
-			// TODO: Be sure to set $blnToReturn to false if any custom validation fails!
 
 			$blnFocused = false;
 			foreach ($this->GetErrorControls() as $objControl) {

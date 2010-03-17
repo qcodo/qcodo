@@ -60,6 +60,7 @@ MsgStr "Value must be greater than %s"
 MsgId "Invalid e-mail address"
 MsgStr "Invalid e-mail address"
 
+
 # For QDataGrid controls
 MsgId "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
 MsgStr "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
@@ -90,6 +91,15 @@ MsgStr "Create a New"
 
 MsgId "Go to \"Form Drafts\""
 MsgStr "Go to \"Form Drafts\""
+
+MsgId "Go to \"Panel Drafts\""
+MsgStr "Go to \"Panel Drafts\""
+
+MsgId "Form Drafts"
+MsgStr "Form Drafts"
+
+MsgId "Panel Drafts"
+MsgStr "Panel Drafts"
 
 
 # For the Edit FormBase class template
@@ -122,16 +132,51 @@ MsgStr "View List"
 MsgId "Create New"
 MsgStr "Create New"
 
+MsgId "Go to Dashboard"
+MsgStr "Go to Dashboard"
+
+
+# For form_drafts/dashboard/index.php page
+MsgId "Select a Class to View/Edit"
+MsgStr "Select a Class to View/Edit"
+
+MsgId "AJAX Dashboard"
+MsgStr "AJAX Dashboard"
+
 
 #For the QDateTimePicker control
 msgid "Jan"
 msgstr "Jan"
 
+msgid "Feb"
+msgstr "Feb"
+
+msgid "Mar"
+msgstr "Mar"
+
 msgid "Apr"
 msgstr "Apr"
 
+msgid "May"
+msgstr "May"
+
+msgid "Jun"
+msgstr "Jun"
+
+msgid "Jul"
+msgstr "Jul"
+
 msgid "Aug"
 msgstr "Aug"
+
+msgid "Sep"
+msgstr "Sep"
+
+msgid "Oct"
+msgstr "Oct"
+
+msgid "Nov"
+msgstr "Nov"
 
 msgid "Dec"
 msgstr "Dec"
