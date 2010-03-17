@@ -198,5 +198,20 @@
 				return strrpos($strHaystack, $strNeedle, $intOffset);
 			}
 		}
+
+        /**
+         * Checks if text length is between given bounds
+         * @param strString Text to be checked
+         * @param intMinimumLength Minimum acceptable length
+         * @param intMaximumLength Maximum acceptable length
+         * @return boolean
+         */
+        public static function IsLengthBeetween($strString, $intMinimumLength, $intMaximumLength) {
+            $intStringLength = strlen($strString);
+            if (($intStringLength < $intMinimumLength) || ($intStringLength > $intMaximumLength))
+				return false;
+            else
+				return true;
+		}
 	}
 ?>
