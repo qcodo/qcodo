@@ -112,8 +112,21 @@
 		 */
 		public function EnableProfiling() {
 			// Only perform profiling initialization if profiling is not yet enabled
-			if (!$this->blnEnableProfiling) {
+			if ($this->blnEnableProfiling == false) {
 				$this->blnEnableProfiling = true;
+				$this->strProfileArray = array();
+			}
+		}
+
+		/**
+		 * Allows for the disabling of DB profiling while in middle of the script
+		 *
+		 * @return void
+		 */
+		public function DisableProfiling() {
+			// Turn offprofiling only if profiling is enabled
+			if ($this->blnEnableProfiling == true) {
+				$this->blnEnableProfiling = false;
 				$this->strProfileArray = array();
 			}
 		}
