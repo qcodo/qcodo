@@ -16,6 +16,12 @@ MsgStr "To pole musi mieć przynajmniej %s znaków"
 MsgId "Must have at least %s characters"
 MsgStr "Przynajmniej %s znaków"
 
+MsgId "%s must have at most %s characters"
+MsgStr "Nie więcej niż %s znaków"
+
+MsgId "Must have at most %s characters"
+MsgStr "Nie więcej niż %s znaków"
+
 
 # For QWriteBox controls
 MsgId ""

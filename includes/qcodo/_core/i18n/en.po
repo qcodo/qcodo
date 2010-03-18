@@ -16,6 +16,12 @@ MsgStr "%s must have at least %s characters"
 MsgId "Must have at least %s characters"
 MsgStr "Must have at least %s characters"
 
+MsgId "%s must have at most %s characters"
+MsgStr "%s must have at most %s characters"
+
+MsgId "Must have at most %s characters"
+MsgStr "Must have at most %s characters"
+
 
 # For QWriteBox controls
 MsgId ""
