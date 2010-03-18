@@ -82,6 +82,14 @@ MsgId "Next"
 MsgStr "Następna"
 
 
+# For meta DataGrids
+MsgId "true"
+MsgStr "tak"
+
+MsgId "false"
+MsgStr "nie"
+
+
 # For the List FormDraft Include template
 MsgId "List All"
 MsgStr "Pokaż wszystkie"

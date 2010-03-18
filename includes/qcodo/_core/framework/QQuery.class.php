@@ -186,12 +186,6 @@
 		//////////////////
 		// Helpers for Orm-generated DataGrids
 		//////////////////
-		protected function GetDataGridHtmlHelper($strNodeLabelArray, $intIndex) {
-			if (($intIndex + 1) == count($strNodeLabelArray))
-				return $strNodeLabelArray[$intIndex];
-			else
-				return sprintf('(%s ? %s : null)', $strNodeLabelArray[$intIndex], $this->GetDataGridHtmlHelper($strNodeLabelArray, $intIndex + 1));
-		}
 		public function GetDataGridHtml() {
 			// Array-ify Node Hierarchy
 			$objNodeArray = array();
@@ -209,24 +203,63 @@
 				throw new Exception('Invalid QQNode to GetDataGridHtml on');
 
 			// Simple Two-Step Node
-			else if (count($objNodeArray) == 2)
-				$strToReturn = '$_ITEM->' . $objNodeArray[1]->strPropertyName;
+			else if (count($objNodeArray) == 2) {
+				return $this->GetDataGridHtmlHelper(
+					'$_ITEM->' . $objNodeArray[1]->strPropertyName,
+					$objNodeArray[1]->strType,
+					$this->strClassName);
+			}
 
 			// Complex N-Step Node
 			else {
 				$strNodeLabelArray[0] = '$_ITEM->' . $objNodeArray[1]->strPropertyName;
-				for ($intIndex = 2; $intIndex < count($objNodeArray); $intIndex++) {
+				for ($intIndex = 2; $intIndex < count($objNodeArray); $intIndex++)
 					$strNodeLabelArray[$intIndex - 1] = $strNodeLabelArray[$intIndex - 2] . '->' . $objNodeArray[$intIndex]->strPropertyName;
-				}
 
-				$strToReturn = $this->GetDataGridHtmlHelper($strNodeLabelArray, 0);
+				$strNodeTypeArray[0] = $objNodeArray[1]->strType;
+				for ($intIndex = 2; $intIndex < count($objNodeArray); $intIndex++)
+					$strNodeTypeArray[$intIndex - 1] = $objNodeArray[$intIndex]->strType;
+
+				$strToReturn = $this->GetDataGridHtmlComplexHelper($strNodeLabelArray, $strNodeTypeArray, 0);
 			}
-
-			if (class_exists($this->strClassName))
-				return sprintf('(%s) ? %s->__toString() : null;', $strToReturn, $strToReturn);
-
 			return $strToReturn;
 		}
+
+		protected function GetDataGridHtmlComplexHelper($strNodeLabelArray, $strNodeTypeArray, $intIndex) {
+			if (($intIndex + 1) == count($strNodeLabelArray))  {
+				return $this->GetDataGridHtmlHelper(
+					$strNodeLabelArray[$intIndex],
+					$strNodeTypeArray[$intIndex],
+					$this->strClassName);
+			}
+			else
+				return sprintf('(%s ? %s : null)', $strNodeLabelArray[$intIndex], $this->GetDataGridHtmlComplexHelper($strNodeLabelArray, $strNodeTypeArray, $intIndex + 1));
+		}
+
+		protected function GetDataGridHtmlHelper($strPropertyName, $strType, $strClassName ) {
+			$strToReturn = $strPropertyName;
+			switch ($strType) {
+				case 'QDateTime':
+					return sprintf('(%s) ? (
+							%s->IsTimeNull()
+							? %s->__toString(QDateTime::FormatDisplayDate)
+							: (
+								%s->IsDateNull()
+								? %s->__toString(QDateTime::FormatDisplayTime)
+								: %s->__toString(QDateTime::FormatDisplayDateTime)
+							)
+							) : null', $strToReturn, $strToReturn, $strToReturn, $strToReturn, $strToReturn, $strToReturn);
+
+				case 'boolean':
+					return sprintf('(%s) ? QApplication::Translate(\'true\') : QApplication::Translate(\'false\') ', $strToReturn);
+				default:
+					if (class_exists($strClassName))
+						return sprintf('(%s) ? %s->__toString() : null;', $strToReturn, $strToReturn);
+					else
+						return $strToReturn;
+			}
+		}
+
 		public function GetDataGridOrderByNode() {
 			if ($this instanceof QQReverseReferenceNode)
 				return $this->_PrimaryKeyNode;
