@@ -104,7 +104,6 @@
 				$this->strProfileArray = array();
 		}
 
-
 		/**
 		 * Allows for the enabling of DB profiling while in middle of the script
 		 *
@@ -124,7 +123,7 @@
 		 * @return void
 		 */
 		public function DisableProfiling() {
-			// Turn offprofiling only if profiling is enabled
+			// Turn off profiling only if profiling is enabled
 			if ($this->blnEnableProfiling == true) {
 				$this->blnEnableProfiling = false;
 				$this->strProfileArray = array();
