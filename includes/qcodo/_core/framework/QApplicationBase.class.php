@@ -924,6 +924,31 @@
 		}
 
 		/**
+		 * If profiling is enabled diplay profiling information and used memory
+		 * @return void
+		 */
+		public static function DisplayProfilingInfo() {
+			if (QDatabaseBase::IsAnyDatabaseProfilingEnabled()) {
+				echo '<style type="text/css">div#profiling { padding: 5px; text-align: left; margin: 1em auto; border: 1px solid #888888; width: 800px; }</style>';
+
+				echo '<br/><div id="profiling">';
+				foreach (QApplication::$Database as $objDb) {
+					if($objDb->EnableProfiling == true)
+						$objDb->OutputProfiling();
+				}
+				echo 'memory_get_peak_usage: ',  QString::GetByteSize(memory_get_peak_usage(true)), ' / ', ini_get('memory_limit'), '<br/>';
+				echo 'max_execution_time: ', ini_get('max_execution_time'), '&nbsp;s<br/>';
+				echo 'max_input_time: ', ini_get('max_input_time'), '&nbsp;s<br/>';
+				echo 'upload_max_filesize: ', ini_get('upload_max_filesize'), '<br/>';
+
+				if (ini_get('safe_mode')) echo('<font color="red">safe_mode need to be disabled</font><br/>');
+				if (ini_get('magic_quotes_gpc')) echo('<font color="red">magic_quotes_gpc need to be disabled</font><br/>');
+				if (ini_get('magic_quotes_runtime')) echo('<font color="red">magic_quotes_runtime need to be disabled</font><br/>');
+				echo '</div>';
+			}
+		}
+
+		/**
 		 * For development purposes, this static method outputs the QcodoInfo page
 		 * @return void
 		 */

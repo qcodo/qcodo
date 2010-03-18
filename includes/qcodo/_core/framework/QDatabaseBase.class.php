@@ -132,6 +132,21 @@
 		}
 
 		/**
+		 * Checks if any database configured has profiling turned on
+		 * @return boolean
+		 */
+		public static function IsAnyDatabaseProfilingEnabled() {
+			$blnEnabled = false;
+
+			foreach (QApplication::$Database as $objDb) {
+				if($objDb->EnableProfiling == true)
+					$blnEnabled = true;
+			}
+
+			return $blnEnabled;
+		}
+
+		/**
 		 * If EnableProfiling is on, then log the query to the profile array
 		 *
 		 * @param string $strQuery
