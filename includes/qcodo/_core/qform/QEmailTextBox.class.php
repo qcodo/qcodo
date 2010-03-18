@@ -8,6 +8,8 @@
 		///////////////////////////
 
 		protected $strLabelForInvalid;
+		protected $intMaxLength = 256;
+		protected $intMinLength = 3;
 
 		//////////
 		// Methods
