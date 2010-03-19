@@ -114,6 +114,22 @@
 			// so return null
 			return null;
 		}
+		
+		/**
+		 * Encodes given 8 bit string to a quoted-printable string,
+		 * @param string $strString
+		 * @return encoded string
+		 */
+		private static function QuotedPrintableEncode($strString) {
+			if ( function_exists('quoted_printable_encode') )
+				$strText = quoted_printable_encode($strString);
+			else
+			    $strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
+
+			preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
+			$strText = implode( '=' . "\r\n", $arrMatch[0] );
+			return $strText;
+		}
 
 		/**
 		 * Sends a message out via SMTP according to the server, ip, etc. preferences
@@ -282,7 +298,7 @@
 
 			// Send: Optional Headers
 			if ($objMessage->Subject)
-				fwrite($objResource, sprintf("Subject: =?%s?Q?%s?=\r\n", $strEncodingType, QEmailUtils::QuotedPrintableEncode($objMessage->Subject)));
+				fwrite($objResource, sprintf("Subject: =?%s?Q?%s?=\r\n", $strEncodingType, self::QuotedPrintableEncode($objMessage->Subject)));
 			if ($objMessage->Cc)
 				fwrite($objResource, sprintf("Cc: %s\r\n", $objMessage->Cc));
 
@@ -311,14 +327,14 @@
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
 
-				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->Body));
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));								
 		
-				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->HtmlBody));
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->HtmlBody));
 				fwrite($objResource, "\r\n\r\n");
 				
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
@@ -327,13 +343,13 @@
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
-				fwrite($objResource, QEmailUtils::QuotedPrintableEncode($objMessage->Body));
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
 			} else {
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
-				fwrite($objResource, "\r\n" . QEmailUtils::QuotedPrintableEncode($objMessage->Body));
+				fwrite($objResource, "\r\n" . self::QuotedPrintableEncode($objMessage->Body));
 			}
 
 			// Send: File Attachments
@@ -552,22 +568,6 @@
 	 * are statically available.
 	 */
 	abstract class QEmailUtils {
-
-		/**
-		 * Encodes given 8 bit string to a quoted-printable string,
-		 * @param string $strString
-		 * @return encoded string
-		 */
-		public static function QuotedPrintableEncode($strString) {
-			if ( function_exists('quoted_printable_encode') )
-				$strText = quoted_printable_encode($strString);
-			else
-			    $strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
-
-			preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
-			$strText = implode( '=' . "\r\n", $arrMatch[0] );
-			return $strText;
-		}
 
         /**
          * Validates given email address
