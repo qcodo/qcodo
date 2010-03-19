@@ -574,7 +574,7 @@
          * @param strEmail
          * @return boolean
          */
-        public static function ValidateEmail($strEmail) {
+        public static function IsEmailValid($strEmail) {
 
             $arrEmail = explode('@', $strEmail);
 

@@ -22,7 +22,7 @@
 
 		public function Validate() {
 			if (parent::Validate()) {
-				if( QEmailUtils::ValidateEmail($this->strText) == false ) {
+				if( QEmailUtils::IsEmailValid($this->strText) == false ) {
 					$this->strValidationError = $this->strLabelForInvalid;
 					return false;
 				}
