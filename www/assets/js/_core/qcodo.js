@@ -202,10 +202,11 @@
 		// URL Hash Processing
 		////////////////////////////////////
 			this.processHashCurrent = null;
+			this.processHashIntervalId = null;
 
 			this.registerHashProcessor = function(strControlId, intPollingInterval) {
 				qc.processHashCurrent = null;
-				setInterval("qc.processHash('" + strControlId + "');", intPollingInterval);
+				this.processHashIntervalId = setInterval("qc.processHash('" + strControlId + "');", intPollingInterval);
 			};
 
 			this.processHash = function(strControlId) {
@@ -230,6 +231,12 @@
 					// Make the callback
 					qc.pA(strFormId, strControlId, 'QClickEvent', strHashData, null);
 				};
+			};
+
+			this.clearHashProcessor = function() {
+				if (this.processHashIntervalId) {
+					clearInterval(this.processHashIntervalId);
+				}
 			};
 
 
@@ -387,3 +394,4 @@
 	qc.initialize();
 	qc.regAL = qcodo.registerAssetLocations;
 	qc.regHP = qcodo.registerHashProcessor;
+	qc.clrHP = qcodo.clearHashProcessor;

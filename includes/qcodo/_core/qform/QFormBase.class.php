@@ -1270,6 +1270,16 @@
 			$strMethod = $this->strUrlHashMethod;
 			$objObject->$strMethod(); 
 		}
+		
+		/**
+		 * Stops polling of URL hash processor
+		 * @return void
+		 */
+		public function ClearUrlHashProcessor() {
+			if ($this->pxyUrlHashProxy) {
+				QApplication::ExecuteJavaScript('qc.clrHP();');	
+			}
+		}
 	}
 
 	function __QForm_EvaluateTemplate_ObHandler($strBuffer) {
