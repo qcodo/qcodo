@@ -923,12 +923,19 @@
 			return htmlentities($strText, ENT_COMPAT, QApplication::$EncodingType);
 		}
 
-		/**
-		 * If profiling is enabled diplay profiling information and used memory
+		/** This function displays helpful development info like queries sent to database and memory usage.
+		 * By default it shows only if database profiling is enabled in any configured database connections.
+		 *
+		 * If forced to show when profiling is disabled you can monitor qcodo memory usage more accurately,
+		 * as collecting database profiling information tends to noticeable bigger memory consumption.
+		 *
+		 * @param object $blnForceDisplay [optional] force it to show regardless of profiling
 		 * @return void
 		 */
-		public static function DisplayProfilingInfo() {
-			if (QDatabaseBase::IsAnyDatabaseProfilingEnabled()) {
+		public static function DisplayProfilingInfo( $blnForceDisplay = false ) {
+
+			//show only when profiling is enabled or if forced to
+			if (QDatabaseBase::IsAnyDatabaseProfilingEnabled() || $blnForceDisplay ) {
 				echo '<style type="text/css">div#profiling { padding: 5px; text-align: left; margin: 1em auto; border: 1px solid #888888; width: 800px; }</style>';
 
 				echo '<br/><div id="profiling">';
