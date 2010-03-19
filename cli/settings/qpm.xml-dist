@@ -3,7 +3,7 @@
 <!--
 	This XML file defines the settings used when running any of the
 	Qcodo Package Manger (QPM) related utilities.  To use, make a copy of this
-	file and name it settings_qpm.xml in your cli directory, and
+	file and name it qpm.xml in your settings directory, and
 	edit the values for your Qcodo.com website credentials.
 -->
 	<qcodoWebsite password=""/>

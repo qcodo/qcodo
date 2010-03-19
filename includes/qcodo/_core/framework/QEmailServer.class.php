@@ -97,24 +97,53 @@
 		public static function GetEmailAddresses($strAddresses) {
 			$strAddressArray = null;
 
-			// Address Lines cannot have any linebreaks
-			if ((strpos($strAddresses, "\r") !== false) ||
-				(strpos($strAddresses, "\n") !== false))
-				return null;
+			// Define the ATEXT-based DOT-ATOM pattern which defines the LOCAL-PART of
+			// an ADDRESS-SPEC in RFC 2822
+			$strDotAtomPattern = "[a-zA-Z0-9\\!\\#\\$\\%\\&\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~\\.]+";
 
-			preg_match_all("/[a-zA-Z0-9_.+-]+[@][\-a-zA-Z0-9_.]+/", $strAddresses, $strAddressArray);
-			if ((is_array($strAddressArray)) &&
-				(array_key_exists(0, $strAddressArray)) &&
-				(is_array($strAddressArray[0])) &&
-				(array_key_exists(0, $strAddressArray[0]))) {
-				return $strAddressArray[0];
+			// Define the Domain pattern, defined by the allowable domain names in the DNS Root Zone of the internet
+			// Note that this is stricter than what RFC 2822 allows in DCONTENT, because we assume developers are
+			// wanting to send email over the internet, and not using it for a completely closed intranet with a
+			// non-DNS Root Zone compliant domain name infrastructure.
+			$strDomainPattern = '(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?';
+
+			// The RegExp Pattern to Use
+			$strPattern = sprintf('/%s@%s/', $strDotAtomPattern, $strDomainPattern);
+
+			// See how many address candidates we have
+			$strCandidates = explode(',', $strAddresses);
+
+			foreach ($strCandidates as $strCandidate) {
+				if (preg_match($strPattern, $strCandidate, $strCandidateArray) &&
+					(count($strCandidateArray) == 1)) {
+						$strCandidate = $strCandidateArray[0];
+						$strParts = explode('@', $strCandidate);
+
+						// Validate String Lengths, and add to AddressArray if Valid
+						if (QString::IsLengthBeetween($strCandidate, 3, 256) &&
+							QString::IsLengthBeetween($strParts[0], 1, 64) &&
+							QString::IsLengthBeetween($strParts[1], 1, 255))
+							$strAddressArray[] = $strCandidate;
+				}
 			}
-			
-			// If we're here, then no addresses were found in $strAddress
-			// so return null
-			return null;
+
+			if (count($strAddressArray))
+				return $strAddressArray;
+			else
+				return null;
 		}
-		
+
+		/**
+		 * This will check to see if an email address is considered "Valid" according to RFC 2822.
+		 * It utilizes the GetEmailAddresses static method, which does the actual logic work of checking.
+		 * @param string $strEmailAddress
+		 * @return boolean
+		 */
+		public static function IsEmailValid($strEmailAddress) {
+			$strEmailAddressArray = QEmailServer::GetEmailAddresses($strEmailAddress);
+			return ((count($strEmailAddressArray) == 1) && ($strEmailAddressArray[0] == $strEmailAddress));  
+		}
+
 		/**
 		 * Encodes given 8 bit string to a quoted-printable string,
 		 * @param string $strString
@@ -124,7 +153,7 @@
 			if ( function_exists('quoted_printable_encode') )
 				$strText = quoted_printable_encode($strString);
 			else
-			    $strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
+				$strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
 
 			preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
 			$strText = implode( '=' . "\r\n", $arrMatch[0] );
@@ -305,8 +334,8 @@
 			// Send: Content-Type Header (if applicable)
 
 			// First, setup boundaries (may be needed if multipart)
-			$strBoundary = sprintf('==qcodo_mp_mixed_boundary_%s', md5(microtime()));
-			$strAltBoundary = sprintf('==qcodo_mp_alt_boundary_%s', md5(microtime()));
+			$strBoundary = sprintf('qcodo_mixed_boundary_%s', md5(microtime()));
+			$strAltBoundary = sprintf('qcodo_alt_boundary_%s', md5(microtime()));
 
 			// Send: Other Headers (if any)
 			foreach ($objArray = $objMessage->HeaderArray as $strKey => $strValue)
@@ -357,11 +386,11 @@
 				foreach ($objArray = $objMessage->FileArray as $objFile) {
 					fwrite($objResource, sprintf("--%s\r\n", $strBoundary));
 					fwrite($objResource, sprintf("Content-Type: %s;\r\n", $objFile->MimeType ));
-					fwrite($objResource, sprintf("      name=\"%s\"\r\n", $objFile->FileName ));
+					fwrite($objResource, sprintf("	  name=\"%s\"\r\n", $objFile->FileName ));
 					fwrite($objResource, "Content-Transfer-Encoding: base64\r\n");
 					fwrite($objResource, sprintf("Content-Length: %s\r\n", strlen($objFile->EncodedFileData)));
 					fwrite($objResource, "Content-Disposition: attachment;\r\n");
-					fwrite($objResource, sprintf("      filename=\"%s\"\r\n\r\n", $objFile->FileName));
+					fwrite($objResource, sprintf("	  filename=\"%s\"\r\n\r\n", $objFile->FileName));
 					fwrite($objResource, $objFile->EncodedFileData);
 //					foreach (explode("\n", $objFile->EncodedFileData) as $strLine) {
 //						$strLine = trim($strLine);
@@ -561,47 +590,5 @@
 				throw $objExc;
 			}
 		}
-	}
-
-	/**
-	 * An abstract utility class to handle various email related tasks.  All methods
-	 * are statically available.
-	 */
-	abstract class QEmailUtils {
-
-        /**
-         * Validates given email address
-         * @param strEmail
-         * @return boolean
-         */
-        public static function IsEmailValid($strEmail) {
-
-            $arrEmail = explode('@', $strEmail);
-
-			// Check if @ is missing, domain or local part is missing or address contains more than one @
-			if(count($arrEmail) != 2)
-				return false;
-
-            // Check total address, local portion and domain length
-            if(QString::IsLengthBeetween($strEmail, 3, 256) == false)
-				return false;
-            if(QString::IsLengthBeetween($arrEmail[0], 1, 64) == false)
-				return false;
-            if(QString::IsLengthBeetween($arrEmail[1], 1, 255) == false)
-				return false;
-
-			/*
-			 * Futher testing is done trough RegExp, it is not 100% compiliant with RFC 2822.
-			 * If recognizes following borderline cases of correct email addresses as invalid:
-			 * "[[ test ]]"@example.com
-			 * test."test"@example.com
-			 * "test@test"@example.com
-			 * test@[123.123.123.123]
-			 */
-			if(!preg_match('/^[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/',	strtolower($strEmail)))
-				return false;
-
-            return true;
-        }
 	}
 ?>
