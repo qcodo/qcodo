@@ -98,8 +98,8 @@
 			// By default, we report that Custom Validations passed
 			$blnToReturn = true;
 
-			// Custom Validation Rules
-			// TODO: Be sure to set $blnToReturn to false if any custom validation fails!
+			// Custom validation rules goes here 
+			// Be sure to set $blnToReturn to false if any custom validation fails!
 
 			$blnFocused = false;
 			foreach ($this->GetErrorControls() as $objControl) {

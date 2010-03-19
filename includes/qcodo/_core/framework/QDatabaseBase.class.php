@@ -104,7 +104,6 @@
 				$this->strProfileArray = array();
 		}
 
-
 		/**
 		 * Allows for the enabling of DB profiling while in middle of the script
 		 *
@@ -112,10 +111,38 @@
 		 */
 		public function EnableProfiling() {
 			// Only perform profiling initialization if profiling is not yet enabled
-			if (!$this->blnEnableProfiling) {
+			if ($this->blnEnableProfiling == false) {
 				$this->blnEnableProfiling = true;
 				$this->strProfileArray = array();
 			}
+		}
+
+		/**
+		 * Allows for the disabling of DB profiling while in middle of the script
+		 *
+		 * @return void
+		 */
+		public function DisableProfiling() {
+			// Turn off profiling only if profiling is enabled
+			if ($this->blnEnableProfiling == true) {
+				$this->blnEnableProfiling = false;
+				$this->strProfileArray = array();
+			}
+		}
+
+		/**
+		 * Checks if any database configured has profiling turned on
+		 * @return boolean
+		 */
+		public static function IsAnyDatabaseProfilingEnabled() {
+			$blnEnabled = false;
+
+			foreach (QApplication::$Database as $objDb) {
+				if($objDb->EnableProfiling == true)
+					$blnEnabled = true;
+			}
+
+			return $blnEnabled;
 		}
 
 		/**

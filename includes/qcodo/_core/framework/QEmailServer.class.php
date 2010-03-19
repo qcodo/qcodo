@@ -97,22 +97,67 @@
 		public static function GetEmailAddresses($strAddresses) {
 			$strAddressArray = null;
 
-			// Address Lines cannot have any linebreaks
-			if ((strpos($strAddresses, "\r") !== false) ||
-				(strpos($strAddresses, "\n") !== false))
-				return null;
+			// Define the ATEXT-based DOT-ATOM pattern which defines the LOCAL-PART of
+			// an ADDRESS-SPEC in RFC 2822
+			$strDotAtomPattern = "[a-zA-Z0-9\\!\\#\\$\\%\\&\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~\\.]+";
 
-			preg_match_all ("/[a-zA-Z0-9_.+-]+[@][\-a-zA-Z0-9_.]+/", $strAddresses, $strAddressArray);
-			if ((is_array($strAddressArray)) &&
-				(array_key_exists(0, $strAddressArray)) &&
-				(is_array($strAddressArray[0])) &&
-				(array_key_exists(0, $strAddressArray[0]))) {
-				return $strAddressArray[0];
+			// Define the Domain pattern, defined by the allowable domain names in the DNS Root Zone of the internet
+			// Note that this is stricter than what RFC 2822 allows in DCONTENT, because we assume developers are
+			// wanting to send email over the internet, and not using it for a completely closed intranet with a
+			// non-DNS Root Zone compliant domain name infrastructure.
+			$strDomainPattern = '(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?';
+
+			// The RegExp Pattern to Use
+			$strPattern = sprintf('/%s@%s/', $strDotAtomPattern, $strDomainPattern);
+
+			// See how many address candidates we have
+			$strCandidates = explode(',', $strAddresses);
+
+			foreach ($strCandidates as $strCandidate) {
+				if (preg_match($strPattern, $strCandidate, $strCandidateArray) &&
+					(count($strCandidateArray) == 1)) {
+						$strCandidate = $strCandidateArray[0];
+						$strParts = explode('@', $strCandidate);
+
+						// Validate String Lengths, and add to AddressArray if Valid
+						if (QString::IsLengthBeetween($strCandidate, 3, 256) &&
+							QString::IsLengthBeetween($strParts[0], 1, 64) &&
+							QString::IsLengthBeetween($strParts[1], 1, 255))
+							$strAddressArray[] = $strCandidate;
+				}
 			}
-			
-			// If we're here, then no addresses were found in $strAddress
-			// so return null
-			return null;
+
+			if (count($strAddressArray))
+				return $strAddressArray;
+			else
+				return null;
+		}
+
+		/**
+		 * This will check to see if an email address is considered "Valid" according to RFC 2822.
+		 * It utilizes the GetEmailAddresses static method, which does the actual logic work of checking.
+		 * @param string $strEmailAddress
+		 * @return boolean
+		 */
+		public static function IsEmailValid($strEmailAddress) {
+			$strEmailAddressArray = QEmailServer::GetEmailAddresses($strEmailAddress);
+			return ((count($strEmailAddressArray) == 1) && ($strEmailAddressArray[0] == $strEmailAddress));  
+		}
+
+		/**
+		 * Encodes given 8 bit string to a quoted-printable string,
+		 * @param string $strString
+		 * @return encoded string
+		 */
+		private static function QuotedPrintableEncode($strString) {
+			if ( function_exists('quoted_printable_encode') )
+				$strText = quoted_printable_encode($strString);
+			else
+				$strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
+
+			preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
+			$strText = implode( '=' . "\r\n", $arrMatch[0] );
+			return $strText;
 		}
 
 		/**
@@ -276,17 +321,21 @@
 			fwrite($objResource, sprintf("To: %s\r\n", $objMessage->To));
 			fwrite($objResource, sprintf("From: %s\r\n", $objMessage->From));
 
+			// Setup Encoding Type (use QEmailServer if specified, otherwise default to QApplication's)
+			if (!($strEncodingType = QEmailServer::$EncodingType))
+				$strEncodingType = QApplication::$EncodingType;
+
 			// Send: Optional Headers
 			if ($objMessage->Subject)
-				fwrite($objResource, sprintf("Subject: %s\r\n", $objMessage->Subject));
+				fwrite($objResource, sprintf("Subject: =?%s?Q?%s?=\r\n", $strEncodingType, self::QuotedPrintableEncode($objMessage->Subject)));
 			if ($objMessage->Cc)
 				fwrite($objResource, sprintf("Cc: %s\r\n", $objMessage->Cc));
 
 			// Send: Content-Type Header (if applicable)
 
 			// First, setup boundaries (may be needed if multipart)
-			$strBoundary = sprintf('==qcodo_mp_mixed_boundary_%s', md5(microtime()));
-			$strAltBoundary = sprintf('==qcodo_mp_alt_boundary_%s', md5(microtime()));
+			$strBoundary = sprintf('qcodo_mixed_boundary_%s', md5(microtime()));
+			$strAltBoundary = sprintf('qcodo_alt_boundary_%s', md5(microtime()));
 
 			// Send: Other Headers (if any)
 			foreach ($objArray = $objMessage->HeaderArray as $strKey => $strValue)
@@ -300,27 +349,21 @@
 				fwrite($objResource, sprintf("--%s\r\n", $strBoundary));				
 			}
 
-
 			// Send: Body
-
-			// Setup Encoding Type (use QEmailServer if specified, otherwise default to QApplication's)
-			if (!($strEncodingType = QEmailServer::$EncodingType))
-				$strEncodingType = QApplication::$EncodingType;
-
 			if ($objMessage->HtmlBody) {
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
-				fwrite($objResource, sprintf("Content-Transfer-Encoding: 7bit\r\n\r\n"));
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
 
-				fwrite($objResource, $objMessage->Body);
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType));
 				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));								
 		
-				fwrite($objResource, $objMessage->HtmlBody);
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->HtmlBody));
 				fwrite($objResource, "\r\n\r\n");
 				
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
@@ -328,23 +371,26 @@
 				fwrite($objResource, sprintf("Content-Type: multipart/alternative;\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary));				
 				fwrite($objResource, sprintf("--%s\r\n", $strAltBoundary));
 				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
-				fwrite($objResource, sprintf("Content-Transfer-Encoding: 7bit\r\n\r\n"));
-				fwrite($objResource, $objMessage->Body);
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
+				fwrite($objResource, self::QuotedPrintableEncode($objMessage->Body));
 				fwrite($objResource, "\r\n\r\n");
 				fwrite($objResource, sprintf("--%s--\r\n", $strAltBoundary));
-			} else
-				fwrite($objResource, "\r\n" . $objMessage->Body);
+			} else {
+				fwrite($objResource, sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType));
+				fwrite($objResource, sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n"));
+				fwrite($objResource, "\r\n" . self::QuotedPrintableEncode($objMessage->Body));
+			}
 
 			// Send: File Attachments
 			if($objMessage->HasFiles) {
 				foreach ($objArray = $objMessage->FileArray as $objFile) {
 					fwrite($objResource, sprintf("--%s\r\n", $strBoundary));
 					fwrite($objResource, sprintf("Content-Type: %s;\r\n", $objFile->MimeType ));
-					fwrite($objResource, sprintf("      name=\"%s\"\r\n", $objFile->FileName ));
+					fwrite($objResource, sprintf("	  name=\"%s\"\r\n", $objFile->FileName ));
 					fwrite($objResource, "Content-Transfer-Encoding: base64\r\n");
 					fwrite($objResource, sprintf("Content-Length: %s\r\n", strlen($objFile->EncodedFileData)));
 					fwrite($objResource, "Content-Disposition: attachment;\r\n");
-					fwrite($objResource, sprintf("      filename=\"%s\"\r\n\r\n", $objFile->FileName));
+					fwrite($objResource, sprintf("	  filename=\"%s\"\r\n\r\n", $objFile->FileName));
 					fwrite($objResource, $objFile->EncodedFileData);
 //					foreach (explode("\n", $objFile->EncodedFileData) as $strLine) {
 //						$strLine = trim($strLine);

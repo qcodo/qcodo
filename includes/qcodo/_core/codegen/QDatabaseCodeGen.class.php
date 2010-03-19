@@ -360,13 +360,11 @@
 
 			// Ensure DB Profiling is DISABLED on this DB
 			if ($this->objDb->EnableProfiling) {
-				$this->strErrors = 'FATAL ERROR: Code generator cannot analyze the database at index ' . $this->intDatabaseIndex . ' while DB Profiling is enabled.';
-				return;
+				$this->objDb->DisableProfiling();
 			}
 
 			// Get the list of Tables as a string[]
 			$strTableArray = $this->objDb->GetTables();
-
 
 			// ITERATION 1: Simply create the Table and TypeTable Arrays
 			if ($strTableArray) foreach ($strTableArray as $strTableName) {

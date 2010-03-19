@@ -1,26 +1,26 @@
 # Qcodo Distributed Language File
-# for English (default)
-
+# for Polish
+# Contributed by klucznik, wpozar
 
 
 # For QTextBoxBase controls
 MsgId "%s is required"
-MsgStr "%s is required"
+MsgStr "To pole jest wymagane"
 
 MsgId "Required"
-MsgStr "Required"
+MsgStr "Wymagane"
 
 MsgId "%s must have at least %s characters"
-MsgStr "%s must have at least %s characters"
+MsgStr "To pole musi mieć przynajmniej %s znaków"
 
 MsgId "Must have at least %s characters"
-MsgStr "Must have at least %s characters"
+MsgStr "Przynajmniej %s znaków"
 
 MsgId "%s must have at most %s characters"
-MsgStr "%s must have at most %s characters"
+MsgStr "Nie więcej niż %s znaków"
 
 MsgId "Must have at most %s characters"
-MsgStr "Must have at most %s characters"
+MsgStr "Nie więcej niż %s znaków"
 
 
 # For QWriteBox controls
@@ -28,131 +28,131 @@ MsgId ""
 "Tags &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; and &lt;http://...&gt; are allowed.  "
 "Use ** at the beginning of any line for a bulleted list."
 MsgStr ""
-"Tags &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; and &lt;http://...&gt; are allowed.  "
-"Use ** at the beginning of any line for a bulleted list."
+"Dozwolone znaczniki to &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; oraz &lt;http://...&gt;.  "
+"Aby otrzymać listę nienumerowan&#261; użyj ** na pocz&#261;tku lini."
 
 
 # For QPaginatedControl controls
 MsgId "item"
-MsgStr "item"
+MsgStr "rekord"
 
 MsgId "items"
-MsgStr "items"
+MsgStr "rekordy"
 
 
 # For QListBox and QCalendar controls
 MsgId "Reset"
-MsgStr "Reset"
+MsgStr "Wyczyść zaznaczenie"
 
 
 # For ListBoxes in Generated Forms
 MsgId "- Select One -"
-MsgStr "- Select One -"
+MsgStr "- Wybierz -"
 
 
 # For QIntegerTextBox and QFloatTextBox controls
 MsgId "Invalid Integer"
-MsgStr "Invalid Integer"
+MsgStr "Niepoprawna liczba całkowita"
 
 MsgId "Invalid Float"
-MsgStr "Invalid Float"
+MsgStr "Niepoprawna liczba zmiennoprzecinkowa"
 
 MsgId "Value must be less than %s"
-MsgStr "Value must be less than %s"
+MsgStr "Wartość musi być mniejsza niż %s"
 
 MsgId "Value must be greater than %s"
-MsgStr "Value must be greater than %s"
+MsgStr "Wartość musi być większa niż %s"
 
 MsgId "Invalid e-mail address"
-MsgStr "Invalid e-mail address"
+MsgStr "Niepoprawny adress e-mail"
 
 
 # For QDataGrid controls
 MsgId "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
-MsgStr "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
+MsgStr "<b>Wynik:</b>&nbsp;Ogl&#261;dasz&nbsp;%s&nbsp;%s-%s&nbsp;z&nbsp;%s."
 
 MsgId "<b>Results:</b> No %s found."
-MsgStr "<b>Results:</b> No %s found."
+MsgStr "<b>Wynik:</b> Brak znalezionych."
 
 MsgId "<b>Results:</b> 1 %s found."
 MsgId_Plural "<b>Results:</b> %s %s found."
-MsgStr[0] "<b>Results:</b> 1 %s found."
-MsgStr[1] "<b>Results:</b> %s %s found."
+MsgStr[0] "<b>Wynik:</b> znaleziono 1."
+MsgStr[1] "<b>Wynik:</b> znaleziono %s."
 
 
 # For QPaginator controls
 MsgId "Previous"
-MsgStr "Previous"
+MsgStr "Poprzednia"
 
 MsgId "Next"
-MsgStr "Next"
+MsgStr "Następna"
 
 
 # For meta DataGrids
 MsgId "true"
-MsgStr "true"
+MsgStr "tak"
 
 MsgId "false"
-MsgStr "false"
+MsgStr "nie"
 
 
 # For the List FormDraft Include template
 MsgId "List All"
-MsgStr "List All"
+MsgStr "Pokaż wszystkie"
 
 MsgId "Create a New"
-MsgStr "Create a New"
+MsgStr "Dodaj"
 
 MsgId "Go to \"Form Drafts\""
-MsgStr "Go to \"Form Drafts\""
+MsgStr "Przejdź do \"Form Drafts\""
 
 MsgId "Go to \"Panel Drafts\""
-MsgStr "Go to \"Panel Drafts\""
+MsgStr "Przejdź do \"Panel Drafts\""
 
 MsgId "Form Drafts"
-MsgStr "Form Drafts"
+MsgStr "Szkice Formularzy"
 
 MsgId "Panel Drafts"
-MsgStr "Panel Drafts"
+MsgStr "Szkice Paneli"
 
 
 # For the Edit FormBase class template
 MsgId "Create"
-MsgStr "Create"
+MsgStr "Dodaj"
 
 MsgId "Edit"
-MsgStr "Edit"
+MsgStr "Edytuj"
 
 MsgId "Save"
-MsgStr "Save"
+MsgStr "Zapisz"
 
 MsgId "Cancel"
-MsgStr "Cancel"
+MsgStr "Anuluj"
 
 MsgId "Delete"
-MsgStr "Delete"
+MsgStr "Usuń"
 
 MsgId "Are you SURE you want to DELETE this %s?"
-MsgStr "Are you SURE you want to DELETE this %s?"
+MsgStr "Czy NA PEWNO chcesz USUNĄĆ %s?"
 
 
 # For the form_drafts/index.php page
 MsgId "List of Form Drafts"
-MsgStr "List of Form Drafts"
+MsgStr "Lista Form Drafts"
 
 MsgId "View List"
-MsgStr "View List"
+MsgStr "Zobacz listę"
 
 MsgId "Create New"
-MsgStr "Create New"
+MsgStr "Dodaj"
 
 MsgId "Go to Dashboard"
-MsgStr "Go to Dashboard"
+MsgStr "Idź do Dashboard"
 
 
 # For form_drafts/dashboard/index.php page
 MsgId "Select a Class to View/Edit"
-MsgStr "Select a Class to View/Edit"
+MsgStr "Wybierz klasę do pokazania lub edycji"
 
 MsgId "AJAX Dashboard"
 MsgStr "AJAX Dashboard"
@@ -160,59 +160,59 @@ MsgStr "AJAX Dashboard"
 
 #For the QDateTime class and QDateTimePicker control
 msgid "Jan"
-msgstr "Jan"
+msgstr "Sty"
 msgid "January"
-msgstr "January"
+msgstr "Styczeń"
 
 msgid "Feb"
-msgstr "Feb"
+msgstr "Lut"
 msgid "February"
-msgstr "February"
+msgstr "Luty"
 
 msgid "Mar"
 msgstr "Mar"
 msgid "March"
-msgstr "March"
+msgstr "Marzec"
 
 msgid "Apr"
-msgstr "Apr"
+msgstr "Kwi"
 msgid "April"
-msgstr "April"
+msgstr "Kwiecień"
 
 msgid "May"
-msgstr "May"
+msgstr "Maj"
 
 msgid "Jun"
-msgstr "Jun"
+msgstr "Cze"
 msgid "June"
-msgstr "June"
+msgstr "Czerwiec"
 
 msgid "Jul"
-msgstr "Jul"
+msgstr "Lip"
 msgid "July"
-msgstr "July"
+msgstr "Lipiec"
 
 msgid "Aug"
-msgstr "Aug"
+msgstr "Sie"
 msgid "August"
-msgstr "August"
+msgstr "Sierpień"
 
 msgid "Sep"
-msgstr "Sep"
+msgstr "Wrz"
 msgid "September"
-msgstr "September"
+msgstr "Wrzesień"
 
 msgid "Oct"
-msgstr "Oct"
+msgstr "Paź"
 msgid "October"
-msgstr "October"
+msgstr "Październik"
 
 msgid "Nov"
-msgstr "Nov"
+msgstr "Lis"
 msgid "November"
-msgstr "November"
+msgstr "Listopad"
 
 msgid "Dec"
-msgstr "Dec"
+msgstr "Gru"
 msgid "December"
-msgstr "December"
+msgstr "Grudzień"

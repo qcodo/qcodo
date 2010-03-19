@@ -1,0 +1,103 @@
+<?php
+	/*
+	 * The following line should require() the prepend.inc.php file
+	 * in your includes directory.  This can either be a relative
+	 * or an absolute path, but it is recommended to use a relative
+	 * path, especially for systems that use multiple instances of Qcodo.
+	 * Feel free to modify as needed.
+	 */
+	require(dirname(__FILE__) . '/../../includes/prepend.inc.php');
+	
+    require_once('PHPUnit/Framework.php');
+	
+    class QDateTimeTest extends PHPUnit_Framework_TestCase {
+    	
+		protected $dttOne;
+		protected $dttTwo;
+		protected $arrTimes;
+		protected $arrDates;
+		protected $arrDatetimes;
+		
+		protected function setUp() { 
+	        $this->dttOne = new QDateTime();
+	        $this->dttTwo = new QDateTime();
+	        $this->arrTimes = array( new QDateTime('00:00:00'), new QDateTime('06:35:00'), new QDateTime('23:59:59'));
+	        $this->arrDates = array( new QDateTime('1980-06-13'), new QDateTime('today'));
+	        $this->arrDatetimes = array( new QDateTime('1980-06-13 04:34'), new QDateTime(QDateTime::Now) );
+	    } 
+		
+		protected function tearDown() {
+		    $this->dttOne = null;
+	        $this->dttTwo = null;
+		}
+		
+        public function testEmpty() {
+            $this->assertTrue($this->dttOne->IsDateNull());
+            $this->assertTrue($this->dttOne->IsTimeNull());
+            $this->assertTrue($this->dttTwo->IsDateNull());
+            $this->assertTrue($this->dttTwo->IsTimeNull());
+			
+            $this->assertTrue($this->dttOne->IsEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsEarlierThan($this->dttTwo));
+            $this->assertTrue($this->dttOne->IsEarlierOrEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsLaterThan($this->dttTwo));
+            $this->assertTrue($this->dttOne->IsLaterOrEqualTo($this->dttTwo));
+        }
+		
+        public function testCompareDatetimeAndTime() {
+			$this->dttOne->setTime(0,0,3);
+       		$this->dttTwo->setDate(2000, 1, 1);
+			$this->dttTwo->setTime(0,0,2);
+			
+            $this->assertTrue($this->dttOne->IsDateNull());
+            $this->assertFalse($this->dttOne->IsTimeNull());
+            $this->assertFalse($this->dttTwo->IsDateNull());
+            $this->assertFalse($this->dttTwo->IsTimeNull());
+			
+            $this->assertFalse($this->dttOne->IsEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsEarlierThan($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsEarlierOrEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsLaterThan($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsLaterOrEqualTo($this->dttTwo));
+        }
+		
+        public function testCompareDatetimeWithAddedMontAndTime() {
+			$this->dttOne->setTime(0,0,3);
+       		$this->dttTwo->setDate(2000, 1, 1);
+			$this->dttTwo->setTime(0,0,2);
+			$this->dttTwo->Month++;
+			
+            $this->assertTrue($this->dttOne->IsDateNull());
+            $this->assertFalse($this->dttOne->IsTimeNull());
+            $this->assertFalse($this->dttTwo->IsDateNull());
+            $this->assertFalse($this->dttTwo->IsTimeNull());
+			
+            $this->assertFalse($this->dttOne->IsEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsEarlierThan($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsEarlierOrEqualTo($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsLaterThan($this->dttTwo));
+            $this->assertFalse($this->dttOne->IsLaterOrEqualTo($this->dttTwo));
+        }
+		
+        public function testTimes() {
+        	foreach ($this->arrTimes as $dtt) {
+	            $this->assertTrue($dtt->IsDateNull());
+	            $this->assertFalse($dtt->IsTimeNull());
+	        }
+		}
+		
+        public function testDates() {
+        	foreach ($this->arrDates as $dtt) {
+	            $this->assertFalse($dtt->IsDateNull());
+	            $this->assertTrue($dtt->IsTimeNull());
+	        }
+		}
+		
+        public function testDatetimes() {
+        	foreach ($this->arrDatetimes as $dtt) {
+	            $this->assertFalse($dtt->IsDateNull());
+	            $this->assertFalse($dtt->IsTimeNull());
+	        }
+		}
+	}
+?>

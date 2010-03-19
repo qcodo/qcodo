@@ -924,6 +924,40 @@
 		}
 
 		/**
+		 * This function displays helpful development info like queries sent to database and memory usage.
+		 * By default it shows only if database profiling is enabled in any configured database connections.
+		 * 
+		 * If forced to show when profiling is disabled you can monitor qcodo memory usage more accurately,
+		 * as collecting database profiling information tends to noticeable bigger memory consumption.
+		 * 
+		 * @param boolean $blnForceDisplay optional parameter, set true to always display info even if DB profiling is disabled
+		 * @return void
+		 */
+		public static function DisplayProfilingInfo($blnForceDisplay = false) {
+			if (QDatabaseBase::IsAnyDatabaseProfilingEnabled() || $blnForceDisplay) {
+				print('<br clear="all"/><div style="padding: 5px; text-align: left; margin: 1em auto; border: 1px solid #888888; width: 800px;">');
+
+				// Output DB Profiling Data
+				foreach (QApplication::$Database as $objDb) {
+					if($objDb->EnableProfiling == true) $objDb->OutputProfiling();
+				}
+
+				// Output runtime statistics
+				print('memory_get_peak_usage: ' . QString::GetByteSize(memory_get_peak_usage(true)) . ' / ' . ini_get('memory_limit') . '<br/>');
+				print('max_execution_time: ' . ini_get('max_execution_time') . '&nbsp;s<br/>');
+				print('max_input_time: ' . ini_get('max_input_time') . '&nbsp;s<br/>');
+				print('upload_max_filesize: ' . ini_get('upload_max_filesize') . '<br/>');
+
+				// Output any other PHPINI issues
+				if (ini_get('safe_mode')) print('<font color="red">safe_mode need to be disabled</font><br/>');
+				if (ini_get('magic_quotes_gpc')) print('<font color="red">magic_quotes_gpc need to be disabled</font><br/>');
+				if (ini_get('magic_quotes_runtime')) print('<font color="red">magic_quotes_runtime need to be disabled</font><br/>');
+
+				print('</div>');
+			}
+		}
+
+		/**
 		 * For development purposes, this static method outputs the QcodoInfo page
 		 * @return void
 		 */

@@ -12,7 +12,7 @@
 		 * @return void
 		 */
 		public final function __construct() {
-			throw new CallerException('String should never be instantiated.  All methods and variables are publically statically accessible.');
+			throw new CallerException('QString class should never be instantiated.  All methods and variables are publically statically accessible.');
 		}
 
 		/**
@@ -174,9 +174,9 @@
 
 		/**
 		 * A better version of strrpos which also allows for the use of RegExp-based matching
-		 * @param $strHaystack the text content to search through
-		 * @param $strNeedle either a plain-text item or a regexp pattern item to search for - if regexp used, this will update as the actual string of the content found
-		 * @param $intOffset optional position offset
+		 * @param string $strHaystack the text content to search through
+		 * @param string $strNeedle either a plain-text item or a regexp pattern item to search for - if regexp used, this will update as the actual string of the content found
+		 * @param integer $intOffset optional position offset
 		 * @return mixed the position number OR false if not found
 		 */
 		public static function StringReversePosition($strHaystack, &$strNeedle, $intOffset = null) {
@@ -197,6 +197,21 @@
 			} else {
 				return strrpos($strHaystack, $strNeedle, $intOffset);
 			}
+		}
+
+		/**
+		 * Checks if text length is between given bounds
+		 * @param string $strString Text to be checked
+		 * @param integer $intMinimumLength Minimum acceptable length
+		 * @param integer $intMaximumLength Maximum acceptable length
+		 * @return boolean
+		 */
+		public static function IsLengthBeetween($strString, $intMinimumLength, $intMaximumLength) {
+			$intStringLength = strlen($strString);
+			if (($intStringLength < $intMinimumLength) || ($intStringLength > $intMaximumLength))
+				return false;
+			else
+				return true;
 		}
 	}
 ?>

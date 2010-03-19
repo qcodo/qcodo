@@ -21,7 +21,12 @@
 		// Methods
 		//////////
 		public function __construct($objParentObject, $strControlId = null) {
-			parent::__construct($objParentObject, $strControlId);
+			try {
+				parent::__construct($objParentObject, $strControlId);
+			} catch (QCallerException $objExc) {
+				$objExc->IncrementOffset();
+				throw $objExc;
+			}
 
 			$this->strLabelForInvalid = QApplication::Translate('Invalid Integer');
 			$this->strLabelForLess = QApplication::Translate('Value must be less than %s');

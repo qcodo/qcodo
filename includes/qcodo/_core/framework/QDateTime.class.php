@@ -256,10 +256,10 @@
 							$strToReturn .= parent::format('m');
 							break;
 						case 'MMM':
-							$strToReturn .= parent::format('M');
+							$strToReturn .= QApplication::Translate(parent::format('M'));
 							break;
 						case 'MMMM':
-							$strToReturn .= parent::format('F');
+							$strToReturn .= QApplication::Translate(parent::format('F'));
 							break;
 			
 						case 'D':
@@ -757,44 +757,4 @@
       void DateTime::setTimezone(DateTimeZone object)
       - Sets the timezone for the DateTime object
 */
-
-/* Some quick and dirty test harnesses
-	$dtt1 = new QDateTime();
-	$dtt2 = new QDateTime();
-	printTable($dtt1, $dtt2);
-	$dtt2->setDate(2000, 1, 1);
-	$dtt1->setTime(0,0,3);
-	$dtt2->setTime(0,0,2);
-//	$dtt2->Month++;
-	printTable($dtt1, $dtt2);
-
-	function printTable($dtt1, $dtt2) {
-		print('<table border="1" cellpadding="2"><tr><td>');
-		printDate($dtt1);
-		print('</td><td>');
-		printDate($dtt2);
-		print ('</td></tr>');
-		
-		print ('<tr><td colspan="2" align="center">IsEqualTo: <b>' . (($dtt1->IsEqualTo($dtt2)) ? 'Yes' : 'No') . '</b></td></tr>');
-		print ('<tr><td colspan="2" align="center">IsEarlierThan: <b>' . (($dtt1->IsEarlierThan($dtt2)) ? 'Yes' : 'No') . '</b></td></tr>');
-		print ('<tr><td colspan="2" align="center">IsLaterThan: <b>' . (($dtt1->IsLaterThan($dtt2)) ? 'Yes' : 'No') . '</b></td></tr>');
-		print ('<tr><td colspan="2" align="center">IsEarlierOrEqualTo: <b>' . (($dtt1->IsEarlierOrEqualTo($dtt2)) ? 'Yes' : 'No') . '</b></td></tr>');
-		print ('<tr><td colspan="2" align="center">IsLaterOrEqualTo: <b>' . (($dtt1->IsLaterOrEqualTo($dtt2)) ? 'Yes' : 'No') . '</b></td></tr>');
-		print('</table>');
-	}
-	
-	function printDate($dtt) {
-		print ('Time Null: ' . (($dtt->IsTimeNull()) ? 'Yes' : 'No'));
-		print ('<br/>');
-		print ('Date Null: ' . (($dtt->IsDateNull()) ? 'Yes' : 'No'));
-		print ('<br/>');
-		print ('Date: ' . $dtt->__toString(QDateTime::FormatDisplayDateTimeFull));
-		print ('<br/>');
-		print ('Month: ' . $dtt->Month . '<br/>');
-		print ('Day: ' . $dtt->Day . '<br/>');
-		print ('Year: ' . $dtt->Year . '<br/>');
-		print ('Hour: ' . $dtt->Hour . '<br/>');
-		print ('Minute: ' . $dtt->Minute . '<br/>');
-		print ('Second: ' . $dtt->Second . '<br/>');
-	}*/
 ?>

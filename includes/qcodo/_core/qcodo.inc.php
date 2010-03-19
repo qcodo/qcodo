@@ -153,6 +153,7 @@
 	QApplicationBase::$ClassFile['qfloattextbox'] = __QCODO_CORE__ . '/qform/QFloatTextBox.class.php';
 	QApplicationBase::$ClassFile['qintegertextbox'] = __QCODO_CORE__ . '/qform/QIntegerTextBox.class.php';
 	QApplicationBase::$ClassFile['qwritebox'] = __QCODO_CORE__ . '/qform/QWriteBox.class.php';
+	QApplicationBase::$ClassFile['qemailtextbox'] = __QCODO_CORE__ . '/qform/QEmailTextBox.class.php';
 
 	QApplicationBase::$ClassFile['qpaginatedcontrol'] = __QCODO_CORE__ . '/qform/QPaginatedControl.class.php';
 	QApplicationBase::$ClassFile['qpaginatorbase'] = __QCODO_CORE__ . '/qform/QPaginatorBase.class.php';
