@@ -99,44 +99,40 @@
 
 			// Define the ATEXT-based DOT-ATOM pattern which defines the LOCAL-PART of
 			// an ADDRESS-SPEC in RFC 2822
-			$strDotAtomPattern = "[a-ZA-Z0-9\\!\\#\\$\\%\\&\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~\\.]";
+			$strDotAtomPattern = "[a-zA-Z0-9\\!\\#\\$\\%\\&\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~\\.]+";
 
 			// Define the Domain pattern, defined by the allowable domain names in the DNS Root Zone of the internet
 			// Note that this is stricter than what RFC 2822 allows in DCONTENT, because we assume developers are
 			// wanting to send email over the internet, and not using it for a completely closed intranet with a
 			// non-DNS Root Zone compliant domain name infrastructure.
-			$strDomainPattern = "[a-zA-Z0-9\\-\\.]";
+			$strDomainPattern = '(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?';
+
+			// The RegExp Pattern to Use
+			$strPattern = sprintf('/%s@%s/', $strDotAtomPattern, $strDomainPattern);
 
 			// See how many address candidates we have
-			$strPattern = sprintf('/%s+@%s+/', $strDotAtomPattern, $strDomainPattern);
-			preg_match_all($strPattern, $strAddresses, $strCandidateArray);
+			$strCandidates = explode(',', $strAddresses);
 
-			if ((is_array($strCandidateArray)) &&
-				(array_key_exists(0, $strCandidateArray)) &&
-				(is_array($strCandidateArray[0])) &&
-				(array_key_exists(0, $strCandidateArray[0]))) {
-				$strAddressArray = array();
-				foreach ($strCandidateArray[0] as $strCandidate) {
-					$strParts = explode('@', $strCandidate);
+			foreach ($strCandidates as $strCandidate) {
+				if (preg_match($strPattern, $strCandidate, $strCandidateArray) &&
+					(count($strCandidateArray) == 1)) {
+						$strCandidate = $strCandidateArray[0];
+						$strParts = explode('@', $strCandidate);
 
-					// Validate String Lengths, and add to AddressArray if Valid
-					if (QString::IsLengthBeetween($strCandidate, 3, 256) &&
-						QString::IsLengthBeetween($strParts[0], 1, 64) &&
-						QString::IsLengthBeetween($strParts[1], 1, 255))
-						$strAddressArray[] = $strCandidate;
+						// Validate String Lengths, and add to AddressArray if Valid
+						if (QString::IsLengthBeetween($strCandidate, 3, 256) &&
+							QString::IsLengthBeetween($strParts[0], 1, 64) &&
+							QString::IsLengthBeetween($strParts[1], 1, 255))
+							$strAddressArray[] = $strCandidate;
 				}
-
-				if (count($strAddressArray))
-					return $strAddressArray;
-				else
-					return null;
 			}
 
-			// If we're here, then no addresses were found in $strAddress
-			// so return null
-			return null;
+			if (count($strAddressArray))
+				return $strAddressArray;
+			else
+				return null;
 		}
-		
+
 		/**
 		 * This will check to see if an email address is considered "Valid" according to RFC 2822.
 		 * It utilizes the GetEmailAddresses static method, which does the actual logic work of checking.
