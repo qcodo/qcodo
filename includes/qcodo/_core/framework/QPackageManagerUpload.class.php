@@ -55,8 +55,8 @@
 
 			// If they didn't specify it, then check to see if the default location one exists
 			if (!$this->strSettingsFilePath) {
-				if (is_file(__DEVTOOLS_CLI__ . '/settings_qpm.xml'))
-					$this->strSettingsFilePath = __DEVTOOLS_CLI__ . '/settings_qpm.xml';
+				if (is_file(__DEVTOOLS_CLI__ . '/settings/qpm.xml'))
+					$this->strSettingsFilePath = __DEVTOOLS_CLI__ . '/settings/qpm.xml';
 				else
 					return;
 			}
