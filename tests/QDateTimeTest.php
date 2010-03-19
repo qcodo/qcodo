@@ -6,7 +6,7 @@
 	 * path, especially for systems that use multiple instances of Qcodo.
 	 * Feel free to modify as needed.
 	 */
-	require(dirname(__FILE__) . '/../includes/prepend.inc.php');
+	require(dirname(__FILE__) . '/../../includes/prepend.inc.php');
 	
     require_once('PHPUnit/Framework.php');
 	
