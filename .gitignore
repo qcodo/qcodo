@@ -13,3 +13,6 @@ nbproject/*
 /www/drafts/dashboard/*Panel*
 /www/drafts/*_*
 .tmp_*
+/includes/qcodo/cache/i18n/*
+/tests/PHPUnit/*
+/tests/phpunit.php
