@@ -15,14 +15,19 @@
 		// Methods
 		//////////
 		public function __construct($objParentObject, $strControlId = null) {
-			parent::__construct($objParentObject, $strControlId);
+			try {
+				parent::__construct($objParentObject, $strControlId);
+			} catch (QCallerException $objExc) {
+				$objExc->IncrementOffset();
+				throw $objExc;
+			}
 
 			$this->strLabelForInvalid = QApplication::Translate('Invalid e-mail address');
 		}
 
 		public function Validate() {
 			if (parent::Validate()) {
-				if( QEmailUtils::IsEmailValid($this->strText) == false ) {
+				if (!QEmailServer::IsEmailValid($this->strText)) {
 					$this->strValidationError = $this->strLabelForInvalid;
 					return false;
 				}
