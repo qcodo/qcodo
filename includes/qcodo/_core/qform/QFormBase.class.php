@@ -26,7 +26,12 @@
 		private $strUrlHashMethod = null;
 		private $objUrlHashParentObject = null;
 		protected $strUrlHash;
-		
+
+		private $pxyPollingProxy = null;
+		private $intPollingInterval = null;
+		private $strPollingMethod = null;
+		private $objPollingParentObject = null;
+
 		protected $strPreviousRequestMode = false;
 		protected $strHtmlIncludeFilePath;
 		protected $strCssClass;
@@ -1192,9 +1197,14 @@
 				__VIRTUAL_DIRECTORY__ . __CSS_ASSETS__,
 				__VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__);
 
-			// And lastly, add a Hash Processor (if any and if applicable)
+			// Add a Hash Processor (if any and if applicable)
 			if ($this->pxyUrlHashProxy && (QApplication::$RequestMode != QRequestMode::Ajax)) {
 				$strEndScript .= sprintf('qc.regHP("%s", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
+			}
+
+			// And lastly, add a Polling Processor (if any and if applicable)
+			if ($this->pxyPollingProxy && (QApplication::$RequestMode != QRequestMode::Ajax)) {
+				$strEndScript .= sprintf('qc.regPP("%s",%s); ', $this->pxyPollingProxy->ControlId, $this->intPollingInterval);
 			}
 
 			// Persist Controls (if applicable)
@@ -1279,6 +1289,41 @@
 			if ($this->pxyUrlHashProxy) {
 				QApplication::ExecuteJavaScript('qc.clrHP();');	
 			}
+		}
+
+		/**
+		 * Adds polling to the QForm
+		 * @param string $strMethodName name of the event handling method to be called 
+		 * @param Object $objParentControl optional object that contains the method
+		 * @param integer $intPollingInterval the interval (in ms) the polling will occur (optional, default is 2500ms)
+		 * @return void
+		 */
+		public function SetPollingProcessor($strMethodName, $objParentControl = null, $intPollingInterval = 2500) {
+			if (!$this->pxyPollingProxy)
+				$this->pxyPollingProxy = new QControlProxy($this, 'pxyPollingFor' . $this->strFormId);
+
+			// Setup Values
+			$this->intPollingInterval = $intPollingInterval;
+			$this->strPollingMethod = $strMethodName;
+			$this->objPollingParentObject = $objParentControl;
+
+			// Setup the Control Proxy
+			$this->pxyPollingProxy->RemoveAllActions(QClickEvent::EventName);
+			$this->pxyPollingProxy->AddAction(new QClickEvent(), new QAjaxAction('Polling_Process'));
+		}
+
+		protected function Polling_Process($strFormId, $strControlId) {
+			$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
+			$strMethod = $this->strPollingMethod;
+			$objObject->$strMethod();
+		}
+
+		/**
+		 * Stops polling of polling processor
+		 * @return void
+		 */
+		public function ClearPollingProcessor() {
+			QApplication::ExecuteJavaScript('qc.clrPP();');
 		}
 	}
 
