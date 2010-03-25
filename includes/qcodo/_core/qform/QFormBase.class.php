@@ -1313,9 +1313,12 @@
 		}
 
 		protected function Polling_Process($strFormId, $strControlId) {
-			$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
-			$strMethod = $this->strPollingMethod;
-			$objObject->$strMethod();
+			if ($this->pxyPollingProxy) {
+				$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
+				$strMethod = $this->strPollingMethod;
+				$objObject->$strMethod();
+				QApplication::ExecuteJavascript(sprintf('qc.regPP("%s",%s);',$this->pxyPollingProxy->ControlId,$this->intPollingInterval));
+			}
 		}
 
 		/**
@@ -1323,7 +1326,10 @@
 		 * @return void
 		 */
 		public function ClearPollingProcessor() {
-			QApplication::ExecuteJavaScript('qc.clrPP();');
+			$this->pxyPollingProxy = null;
+			$this->intPollingInterval = null;
+			$this->strPollingMethod = null;
+			$this->objPollingParentObject = null;
 		}
 	}
 
