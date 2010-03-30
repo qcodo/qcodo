@@ -142,7 +142,10 @@
 				// Valid Value String
 				if ($intTimestamp) {
 					// To deal with "Tues" and date skipping bug in PHP 5.2
-					parent::__construct(date('Y-m-d H:i:s', parent::format('U')));
+					if ($objTimeZone)
+						parent::__construct(date('Y-m-d H:i:s', parent::format('U')), $objTimeZone);
+					else
+						parent::__construct(date('Y-m-d H:i:s', parent::format('U')));
 
 					// We MUST assume that Date isn't null
 					$this->blnDateNull = false;
