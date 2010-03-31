@@ -203,13 +203,23 @@
 		////////////////////////////////////
 			this.processHashCurrent = null;
 			this.processHashIntervalId = null;
+			this.processHashControlId = null;
 
 			this.registerHashProcessor = function(strControlId, intPollingInterval) {
 				qc.processHashCurrent = null;
-				this.processHashIntervalId = setInterval("qc.processHash('" + strControlId + "');", intPollingInterval);
+				qc.processHashControlId = strControlId;
+
+				//use native event
+				if ( 'onhashchange' in window )
+					window.onhashchange = this.processHash;
+				else
+					this.processHashIntervalId = setInterval("qc.processHash();", intPollingInterval);
+
+				//fire processor once to process hash on load instantly not waiting for interval
+				this.processHash();
 			};
 
-			this.processHash = function(strControlId) {
+			this.processHash = function() {
 				// Get the Hash Value
 				var strUrl = new String(document.location);
 
@@ -225,7 +235,7 @@
 					var strHashData = qc.getHashContent();
 
 					// Make the callback
-					qc.pA(strFormId, strControlId, 'QClickEvent', strHashData, null);
+					qc.pA(strFormId, qc.processHashControlId, 'QClickEvent', strHashData, null);
 				};
 			};
 
@@ -238,9 +248,12 @@
 			};
 
 			this.clearHashProcessor = function() {
-				if (this.processHashIntervalId) {
+				//clear native event
+				if ( 'onhashchange' in window )
+					window.onhashchange = null;
+
+				if (this.processHashIntervalId)
 					clearInterval(this.processHashIntervalId);
-				}
 			};
 
 		////////////////////////////////////
