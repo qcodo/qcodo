@@ -239,7 +239,20 @@
 				}
 			};
 
+		////////////////////////////////////
+		// Polling Processing
+		////////////////////////////////////
+			this.registerPollingProcessor = function(strControlId, intPollingInterval) {
+				setTimeout("qc.processPolling('" + strControlId + "');", intPollingInterval);
+			};
 
+			this.processPolling = function(strControlId) {
+				// Get Info Needed for the Control Proxy call
+				var strFormId = document.getElementById("Qform__FormId").value;
+
+				// Make the callback
+				qc.pA(strFormId, strControlId, 'QClickEvent');
+			};
 
 		////////////////////////////////////
 		// Mouse Drag Handling Functionality
@@ -395,3 +408,4 @@
 	qc.regAL = qcodo.registerAssetLocations;
 	qc.regHP = qcodo.registerHashProcessor;
 	qc.clrHP = qcodo.clearHashProcessor;
+	qc.regPP = qcodo.registerPollingProcessor;
