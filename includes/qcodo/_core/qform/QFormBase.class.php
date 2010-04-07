@@ -1312,12 +1312,12 @@
 			$this->pxyPollingProxy->AddAction(new QClickEvent(), new QAjaxAction('Polling_Process'));
 		}
 
-		protected function Polling_Process($strFormId, $strControlId) {
+		protected function Polling_Process($strFormId, $strControlId, $strParameter) {
 			if ($this->pxyPollingProxy) {
 				$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
 				$strMethod = $this->strPollingMethod;
 				$objObject->$strMethod();
-				QApplication::ExecuteJavascript(sprintf('qc.regPP("%s",%s);',$this->pxyPollingProxy->ControlId,$this->intPollingInterval));
+				QApplication::ExecuteJavascript(sprintf('qc.regPP("%s", %s);', $this->pxyPollingProxy->ControlId, $this->intPollingInterval));
 			}
 		}
 
