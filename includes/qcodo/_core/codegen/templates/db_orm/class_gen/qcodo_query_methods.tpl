@@ -110,6 +110,63 @@
 		}
 
 		/**
+		 * Static Qcodo query method to issue a query and get a cursor to progressively fetch its results.
+		 * Uses BuildQueryStatment to perform most of the work.
+		 * @param QQCondition $objConditions any conditions on the query, itself
+		 * @param QQClause[] $objOptionalClausees additional optional QQClause objects for this query
+		 * @param mixed[] $mixParameterArray a array of name-value pairs to perform PrepareStatement with
+		 * @return QDatabaseResultBase the cursor resource instance
+		 */
+		public static function QueryCursor(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+			// Get the query statement
+			try {
+				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
+			} catch (QCallerException $objExc) {
+				$objExc->IncrementOffset();
+				throw $objExc;
+			}
+
+			// Perform the query
+			$objDbResult = $objQueryBuilder->Database->Query($strQuery);
+		
+			// Return the results cursor
+			$objDbResult->QueryBuilder = $objQueryBuilder;
+			return $objDbResult;
+		}
+
+		/**
+		 * Static Qcodo method to fetch and instantiate a result from a query cursor.
+		 * @param QDatabaseResultBase $objDbResult cursor resource
+		 * @return <%= $objTable->ClassName %> next row resulting from the query
+		 */
+		public static function FetchCursor(QDatabaseResultBase $objDbResult) {
+			$objToReturn = null;
+
+			// If blank resultset, then return empty result
+			if (!$objDbResult)
+				return $objToReturn;
+
+			// If empty resultset, then return empty result
+			$objDbRow = $objDbResult->GetNextRow();
+			if (!$objDbRow)
+				return $objToReturn;
+
+			$strColumnAliasArray = $objDbResult->QueryBuilder->ColumnAliasArray;
+			if (!$strColumnAliasArray)
+				$strColumnAliasArray = array();
+
+			// Load up the return result with a row
+			$strExpandAsArrayNodes = $objDbResult->QueryBuilder->ExpandAsArrayNodes;
+			if ($strExpandAsArrayNodes) {
+				$objToReturn = <%= $objTable->ClassName %>::InstantiateDbRow($objDbRow, null, $strExpandAsArrayNodes, null, $strColumnAliasArray);
+			} else {
+				$objToReturn = <%= $objTable->ClassName %>::InstantiateDbRow($objDbRow, null, null, null, $strColumnAliasArray);
+			}
+
+			return $objToReturn;
+		}
+
+		/**
 		 * Static Qcodo Query method to query for a count of <%= $objTable->ClassName %> objects.
 		 * Uses BuildQueryStatment to perform most of the work.
 		 * @param QQCondition $objConditions any conditions on the query, itself

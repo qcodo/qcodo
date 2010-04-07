@@ -372,6 +372,9 @@
 	}
 
 	abstract class QDatabaseResultBase extends QBaseClass {
+		// Allow to attach a QQueryBuilder object to use the result object as cursor resource for cursor queries.
+		protected $objQueryBuilder;
+
 		abstract public function FetchArray();
 		abstract public function FetchRow();
 		abstract public function FetchField();
@@ -383,8 +386,42 @@
 		abstract public function GetRows();
 
 		abstract public function Close();
+
+		public function __get($strName) {
+			switch ($strName) {
+				case 'QueryBuilder':
+					return $this->objQueryBuilder;
+				default:
+					try {
+						return parent::__get($strName);
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+			}
+		}
+
+		public function __set($strName, $mixValue) {
+			switch ($strName) {
+				case 'QueryBuilder':
+					try {
+						return ($this->objQueryBuilder = QType::Cast($mixValue, 'QQueryBuilder'));
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+				default:
+					try {
+						return parent::__set($strName, $mixValue);
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+			}
+		}
+
 	}
-	
+
 	abstract class QDatabaseRowBase extends QBaseClass {
 		abstract public function GetColumn($strColumnName, $strColumnType = null);
 		abstract public function ColumnExists($strColumnName);
