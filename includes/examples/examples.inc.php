@@ -136,6 +136,7 @@
 			array_push(Examples::$Categories[$intIndex], '/other_controls/image.php Introduction to QImageControl');
 			array_push(Examples::$Categories[$intIndex], '/other_controls/datetime.php Date and DateTime-based QControls');
 			array_push(Examples::$Categories[$intIndex], '/other_controls/file_asset.php Combining Controls: A Better Way to Upload Files');
+			array_push(Examples::$Categories[$intIndex], '/other_controls/polling.php Periodically Updating Controls');
 
 			$intIndex++;
 			Examples::$Categories[$intIndex] = array();
