@@ -991,9 +991,13 @@
 			printf('<li>QApplication::$ServerAddress = "%s"</li>', QApplication::$ServerAddress);
 
 			if (QApplication::$Database) foreach (QApplication::$Database as $intKey => $objObject) {
-				printf('<li>QApplication::$Database[%s] = %s</li>', 
-					$intKey,
-					var_export(unserialize(constant('DB_CONNECTION_' . $intKey)), true));
+				$arrDb = unserialize(constant('DB_CONNECTION_' . $intKey));
+				
+				//don't display database username or password
+				unset($arrDb['username']);
+				unset($arrDb['password']);
+				
+				printf('<li>QApplication::$Database[%s] = %s</li>', $intKey, var_export($arrDb, true));
 			}
 			_p('</ul></div>', false);
 		}
