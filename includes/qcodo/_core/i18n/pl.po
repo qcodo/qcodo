@@ -63,8 +63,15 @@ MsgStr "Wartość musi być mniejsza niż %s"
 MsgId "Value must be greater than %s"
 MsgStr "Wartość musi być większa niż %s"
 
+
+# For QEmailTextbox control
 MsgId "Invalid e-mail address"
 MsgStr "Niepoprawny adress e-mail"
+
+
+# For QDateTimeTextBox
+MsgId "For example, \"Mar 20, 4:30pm\" or \"Mar 20\""
+MsgStr "For example, \"Mar 20, 4:30pm\" or \"Mar 20\""
 
 
 # For QDataGrid controls
