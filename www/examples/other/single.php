@@ -1,6 +1,6 @@
 <?php
 	require(dirname(__FILE__) . '/../_require_prepend.inc.php');
-	require(__INCLUDES__ . '/examples/examples.inc.php');
+	require_once(__INCLUDES__ . '/examples/examples.inc.php');
 
 	if (!isset($this)) {
 		// Define the Qform with all our Qcontrols
