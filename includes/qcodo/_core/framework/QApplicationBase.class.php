@@ -992,11 +992,10 @@
 
 			if (QApplication::$Database) foreach (QApplication::$Database as $intKey => $objObject) {
 				$arrDb = unserialize(constant('DB_CONNECTION_' . $intKey));
-				
-				//don't display database username or password
-				unset($arrDb['username']);
-				unset($arrDb['password']);
-				
+
+				// Don't display database password
+				$arrDb['password'] = '********';
+
 				printf('<li>QApplication::$Database[%s] = %s</li>', $intKey, var_export($arrDb, true));
 			}
 			_p('</ul></div>', false);
