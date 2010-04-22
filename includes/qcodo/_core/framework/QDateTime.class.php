@@ -77,6 +77,7 @@
 		}
 
 		/**
+		 * Constructs a new QDateTime from a integer-based timestamp value
 		 * @param integer $intTimestamp
 		 * @param DateTimeZone $objTimeZone
 		 * @return QDateTime
@@ -85,8 +86,20 @@
 			return new QDateTime(date('Y-m-d H:i:s', $intTimestamp), $objTimeZone);
 		}
 
-		public function __construct($mixValue = null, DateTimeZone $objTimeZone = null) {
+		/**
+		 * Constructs a new QDateTime as a time-only value.  Uses default QDateTime constructor
+		 * and simply nulls out the time value right afterward.
+		 * @param mixed $mixValue
+		 * @param DateTimeZone $objTimeZone
+		 * @return QDateTime
+		 */
+		public static function FromTimeOnly($mixValue = null, DateTimeZone $objTimeZone = null) {
+			$dttToReturn = new QDateTime($mixValue, $objTimeZone);
+			$dttToReturn->SetDate(null, null, null);
+			return $dttToReturn;
+		}
 
+		public function __construct($mixValue = null, DateTimeZone $objTimeZone = null) {
 			// Cloning from another QDateTime object
 			if ($mixValue instanceof QDateTime) {
 				if ($objTimeZone)

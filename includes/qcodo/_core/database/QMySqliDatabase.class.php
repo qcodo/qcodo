@@ -505,11 +505,9 @@
 					case QDatabaseFieldType::Date:
 					case QDatabaseFieldType::DateTime:
 						return new QDateTime($this->strColumnArray[$strColumnName]);
-						
+
 					case QDatabaseFieldType::Time:
-						$dttToReturn = new QDateTime($this->strColumnArray[$strColumnName]);
-						$dttToReturn->SetDate(null, null, null);
-						return $dttToReturn;
+						return QDateTime::FromTimeOnly($this->strColumnArray[$strColumnName]);
 
 					case QDatabaseFieldType::Float:
 						return QType::Cast($this->strColumnArray[$strColumnName], QType::Float);
