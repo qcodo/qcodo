@@ -5,7 +5,7 @@
 	 * Copyright (c) 2005-2010, Quasidea Development, LLC
 	 */
 
-	//execution timer
+	// Execution timer
 	$intStartTime = microtime();
 	$intStartTime = explode(' ', $intStartTime);
 	$intStartTime = $intStartTime[1] + $intStartTime[0];
@@ -52,20 +52,19 @@
 		foreach (QCodeGen::GenerateAggregate() as $strMessage) {
 			printf("%s\r\n\r\n", $strMessage);
 		}
+
+		$intEndTime = microtime();
+		$intEndTime = explode(" ", $intEndTime);
+		$intEndTime = $intEndTime[1] + $intEndTime[0];
+
+		printf('Codegen took %ss', round($intEndTime - $intStartTime, 2));
+		if (ini_get('max_execution_time')) printf(' (%ss maximum)', ini_get('max_execution_time'));
+		print "\r\n";
+
+		printf('Peak memory usage %s (%s maximum allocation)', QString::GetByteSize(memory_get_peak_usage(true)), ini_get('memory_limit'));
+		print "\r\n";
 	} catch (Exception $objExc) {
 		print 'error: ' . trim($objExc->getMessage()) . "\r\n";
 		exit(1);
 	}
-
-	$intEndTime = microtime();
-	$intEndTime = explode(" ", $intEndTime);
-	$intEndTime = $intEndTime[1] + $intEndTime[0];
-
-	echo 'Codegen took ', round($intEndTime - $intStartTime, 2), "s (";
-	if (ini_get('max_execution_time') == 0 )
-		echo 'no execution time limit';
-	else
-		echo 'maximum execution time ', ini_get('max_execution_time'), 's';
-	echo ").\n";
-	echo 'Peak memory usage was ', QString::GetByteSize(memory_get_peak_usage(true)), ' (', ini_get('memory_limit'), " maximum available).\n";
 ?>

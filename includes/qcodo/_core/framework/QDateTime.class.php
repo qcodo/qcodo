@@ -26,8 +26,10 @@
 
 		const FormatSoap = 'YYYY-MM-DDThhhh:mm:ss';
 
-		public static $DefaultFormat = QDateTime::FormatDisplayDate;
-		
+		public static $DefaultFormat = QDateTime::FormatDisplayDateTime;
+		public static $DefaultTimeOnlyFormat = QDateTime::FormatDisplayTime;
+		public static $DefaultDateOnlyFormat = QDateTime::FormatDisplayDate;
+
 		/**
 		 * Returns a new QDateTime object that's set to "Now"
 		 * Set blnTimeValue to true (default) for a DateTime, and set blnTimeValue to false for just a Date
@@ -186,6 +188,18 @@
 			parent::__construct($this->strSerializedData);
 		}
 
+		public function __toString() {
+			// For PHP 5.3 Compatability
+			$strArgumentArray = func_get_args();
+
+			if (count($strArgumentArray) >= 1)
+				$strFormat = $strArgumentArray[0];
+			else
+				$strFormat = null;
+
+			return $this->ToString($strFormat);
+		}
+
 		/**
 		 * Outputs the date as a string given the format strFormat.  By default,
 		 * it will return as QDateTime::FormatDisplayDate "MMM DD YYYY", e.g. Mar 20 1977.
@@ -226,18 +240,16 @@
 		 * @param string $strFormat the format of the date
 		 * @return string the formatted date as a string
 		 */
-		public function __toString() {
-			// For PHP 5.3 Compatability
-			$strArgumentArray = func_get_args();
-
-			if (count($strArgumentArray) >= 1)
-				$strFormat = $strArgumentArray[0];
-			else
-				$strFormat = null;
-
+		public function ToString($strFormat = null) {
 			$this->ReinforceNullProperties();
-			if (is_null($strFormat))
-				$strFormat = QDateTime::$DefaultFormat;
+			if (is_null($strFormat)) {
+				if ($this->IsTimeNull())
+					$strFormat = QDateTime::$DefaultDateOnlyFormat;
+				else if ($this->IsDateNull())
+					$strFormat = QDateTime::$DefaultTimeOnlyFormat;
+				else
+					$strFormat = QDateTime::$DefaultFormat;
+			}
 
 			preg_match_all('/(?(?=D)([D]+)|(?(?=M)([M]+)|(?(?=Y)([Y]+)|(?(?=h)([h]+)|(?(?=m)([m]+)|(?(?=s)([s]+)|(?(?=z)([z]+)|(?(?=t)([t]+)|))))))))/', $strFormat, $strArray);
 			$strArray = $strArray[0];
@@ -357,7 +369,12 @@
 			$intHour = QType::Cast($intHour, QType::Integer);
 			$intMinute = QType::Cast($intMinute, QType::Integer);
 			$intSecond = QType::Cast($intSecond, QType::Integer);
-			$this->blnTimeNull = false;
+
+			if (is_null($intHour))
+				$this->blnTimeNull = true;
+			else
+				$this->blnTimeNull = false;
+
 			parent::setTime($intHour, $intMinute, $intSecond);
 			return $this;
 		}
@@ -366,7 +383,12 @@
 			$intYear = QType::Cast($intYear, QType::Integer);
 			$intMonth = QType::Cast($intMonth, QType::Integer);
 			$intDay = QType::Cast($intDay, QType::Integer);
-			$this->blnDateNull = false;
+
+			if (is_null($intYear))
+				$this->blnDateNull = true;
+			else
+				$this->blnDateNull = false;
+
 			parent::setDate($intYear, $intMonth, $intDay);
 			return $this;
 		}
