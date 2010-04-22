@@ -19,8 +19,8 @@
 			$this->btnButton->Text = 'Stop Polling';
 			$this->btnButton->AddAction(new QClickEvent(), new QAjaxAction('btnButton_Click'));
 
-			// Set the Polling Processor with a one second recurrence interval
-			$this->SetPollingProcessor('UpdateTimer',null,1000);
+			// Set the Polling Processor - override the default with a one-second recurrence interval
+			$this->SetPollingProcessor('UpdateTimer', null, 1000);
 		}
 
 		// User-defined method to update the clock with the current time
@@ -30,7 +30,13 @@
 
 		// The "btnButton_Click" Event handler
 		protected function btnButton_Click($strFormId, $strControlId, $strParameter) {
-			$this->ClearPollingProcessor();
+			if ($this->IsPollingActive()) {
+				$this->ClearPollingProcessor();
+				$this->btnButton->Text = 'Start Polling';
+			} else {
+				$this->SetPollingProcessor('UpdateTimer', null, 1000);
+				$this->btnButton->Text = 'Stop Polling';
+			}
 		}
 	}
 

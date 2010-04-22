@@ -27,7 +27,6 @@
 			</td>
 			<td class="headingRight"><br/>
 				<b><a href="javascript:ViewSource(<?php _p(Examples::GetCategoryId() . ',' . Examples::GetExampleId()); ?>);" class="headingLink">View Source</a></b>
-<!--				<a href="#" onclick="window.open('http://localhost/validator/htdocs/check?uri=<?php _p(urlencode('http://qcodo/' . QApplication::$RequestUri)); ?>'); return false;" style="color: #ffffff;">Validate</a>-->
 				<br/>
 				<span class="headingLeftSmall">will open in a new window</span>
 			</td>

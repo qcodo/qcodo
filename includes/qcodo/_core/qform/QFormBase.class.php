@@ -1202,11 +1202,6 @@
 				$strEndScript .= sprintf('qc.regHP("%s", %s); ', $this->pxyUrlHashProxy->ControlId, $this->intUrlHashPollingInterval);
 			}
 
-			// And lastly, add a Polling Processor (if any and if applicable)
-			if ($this->pxyPollingProxy && (QApplication::$RequestMode != QRequestMode::Ajax)) {
-				$strEndScript .= sprintf('qc.regPP("%s",%s); ', $this->pxyPollingProxy->ControlId, $this->intPollingInterval);
-			}
-
 			// Persist Controls (if applicable)
 			foreach ($this->objPersistentControlArray as $objControl)
 				$objControl->Persist();
@@ -1294,7 +1289,7 @@
 		/**
 		 * Adds polling to the QForm
 		 * @param string $strMethodName name of the event handling method to be called 
-		 * @param Object $objParentControl optional object that contains the method
+		 * @param object $objParentControl optional object that contains the method (uses the QForm if none is specified)
 		 * @param integer $intPollingInterval the interval (in ms) the polling will occur (optional, default is 2500ms)
 		 * @return void
 		 */
@@ -1310,10 +1305,13 @@
 			// Setup the Control Proxy
 			$this->pxyPollingProxy->RemoveAllActions(QClickEvent::EventName);
 			$this->pxyPollingProxy->AddAction(new QClickEvent(), new QAjaxAction('Polling_Process'));
+
+			// Make the JS Call
+			QApplication::ExecuteJavascript(sprintf('qc.regPP("%s", %s);', $this->pxyPollingProxy->ControlId, $this->intPollingInterval));
 		}
 
 		protected function Polling_Process($strFormId, $strControlId, $strParameter) {
-			if ($this->pxyPollingProxy) {
+			if ($this->strPollingMethod) {
 				$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
 				$strMethod = $this->strPollingMethod;
 				$objObject->$strMethod();
@@ -1322,12 +1320,18 @@
 		}
 
 		/**
+		 * Returns whether or not Polling is currently active
+		 * @return boolean
+		 */
+		public function IsPollingActive() {
+			return (!is_null($this->strPollingMethod));
+		}
+
+		/**
 		 * Stops polling of polling processor
 		 * @return void
 		 */
 		public function ClearPollingProcessor() {
-			$this->pxyPollingProxy = null;
-			$this->intPollingInterval = null;
 			$this->strPollingMethod = null;
 			$this->objPollingParentObject = null;
 		}

@@ -19,7 +19,7 @@
 		be taken when setting the polling interval to avoid excessive server load.
 
 	</div>
-	<strong>The Current Time is:</strong><br/>
+	<strong>The time reported <em>on the server</em> is:</strong><br/>
 	<?php $this->lblMessage->Render(); ?>
 	<p><?php $this->btnButton->Render(); ?><p/>
 
