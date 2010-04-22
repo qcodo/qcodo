@@ -29,7 +29,7 @@ MsgId ""
 "Use ** at the beginning of any line for a bulleted list."
 MsgStr ""
 "Dozwolone znaczniki to &lt;b&gt; &lt;u&gt; &lt;i&gt; &lt;br&gt; &lt;code&gt; oraz &lt;http://...&gt;.  "
-"Aby otrzymać listę nienumerowan&#261; użyj ** na pocz&#261;tku lini."
+"Aby otrzymać listę nienumerowaną użyj ** na początku lini."
 
 
 # For QPaginatedControl controls
@@ -69,7 +69,7 @@ MsgStr "Niepoprawny adress e-mail"
 
 # For QDataGrid controls
 MsgId "<b>Results:</b>&nbsp;Viewing&nbsp;%s&nbsp;%s-%s&nbsp;of&nbsp;%s."
-MsgStr "<b>Wynik:</b>&nbsp;Ogl&#261;dasz&nbsp;%s&nbsp;%s-%s&nbsp;z&nbsp;%s."
+MsgStr "<b>Wynik:</b>&nbsp;Oglądasz&nbsp;%s&nbsp;%s-%s&nbsp;z&nbsp;%s."
 
 MsgId "<b>Results:</b> No %s found."
 MsgStr "<b>Wynik:</b> Brak znalezionych."
