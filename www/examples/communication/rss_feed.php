@@ -13,7 +13,8 @@
 			'http://examples.qcodo.com/examples/communication/rss.php/' . $objProject->Id,
 			$objProject->Description);
 	
-		$objItem->Author = $objProject->ManagerPerson->FirstName . ' ' . $objProject->ManagerPerson->LastName;
+		if ($objProject->ManagerPerson)
+			$objItem->Author = $objProject->ManagerPerson->FirstName . ' ' . $objProject->ManagerPerson->LastName;
 		$objItem->PubDate = $objProject->StartDate;
 		$objItem->Guid = $objItem->Link;
 		$objItem->GuidPermaLink = true;
