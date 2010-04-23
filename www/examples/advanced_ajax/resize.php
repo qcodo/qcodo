@@ -86,7 +86,7 @@
 			$this->pnlVerticalResizer->ResizeHandleMaximum = 220;
 			
 			// This is needed for IE
-			$this->pnlVerticalResizer->Text = '<img src="../images/spacer.png" width="1" height="1" alt=""/>';
+			$this->pnlVerticalResizer->Text = '<img src="' . __IMAGE_ASSETS__ . '/spacer.png" width="1" height="1" alt=""/>';
 
 			$this->pnlHorizontalResizer = new QPanel($this);
 			$this->pnlHorizontalResizer->Position = QPosition::Absolute;
