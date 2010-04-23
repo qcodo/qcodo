@@ -240,16 +240,7 @@
 			$strToReturn = $strPropertyName;
 			switch ($strType) {
 				case 'QDateTime':
-					return sprintf('(%s) ? (
-							%s->IsTimeNull()
-							? %s->__toString(QDateTime::FormatDisplayDate)
-							: (
-								%s->IsDateNull()
-								? %s->__toString(QDateTime::FormatDisplayTime)
-								: %s->__toString(QDateTime::FormatDisplayDateTime)
-							)
-							) : null', $strToReturn, $strToReturn, $strToReturn, $strToReturn, $strToReturn, $strToReturn);
-
+					return sprintf('(%s) ? %s->ToString() : null', $strToReturn, $strToReturn);
 				case 'boolean':
 					return sprintf('(%s) ? QApplication::Translate(\'true\') : QApplication::Translate(\'false\') ', $strToReturn);
 				default:
