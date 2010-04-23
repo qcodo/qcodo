@@ -10,7 +10,7 @@
 		protected function setUp() { 
 			$this->dttOne = new QDateTime();
 			$this->dttTwo = new QDateTime();
-			$this->arrTimes = array( new QDateTime('00:00:00'), new QDateTime('06:35:00'), new QDateTime('23:59:59'));
+			$this->arrTimes = array( QDateTime::FromTimeOnly('00:00:00'), QDateTime::FromTimeOnly('06:35:00'), QDateTime::FromTimeOnly('23:59:59'));
 			$this->arrDates = array( new QDateTime('1980-06-13'), new QDateTime('today'));
 			$this->arrDatetimes = array( new QDateTime('1980-06-13 04:34'), new QDateTime(QDateTime::Now) );
 		} 
