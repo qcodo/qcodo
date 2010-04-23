@@ -525,8 +525,10 @@
 
 					case QDatabaseFieldType::Date:
 					case QDatabaseFieldType::DateTime:
-					case QDatabaseFieldType::Time:
 						return new QDateTime($this->strColumnArray[$strColumnName]);
+
+					case QDatabaseFieldType::Time:
+						return QDateTime::FromTimeOnly($this->strColumnArray[$strColumnName]);
 
 					case QDatabaseFieldType::Float:
 						return QType::Cast($this->strColumnArray[$strColumnName], QType::Float);
