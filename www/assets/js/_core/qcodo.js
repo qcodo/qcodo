@@ -222,15 +222,19 @@
 					var strFormId = document.getElementById("Qform__FormId").value;
 
 					// Figure out the Hash data
-					var intPosition = strUrl.indexOf('#');
-					var strHashData = "";
-
-					if (intPosition > 0)
-						strHashData = strUrl.substring(intPosition + 1);
+					var strHashData = qc.getHashContent();
 
 					// Make the callback
 					qc.pA(strFormId, strControlId, 'QClickEvent', strHashData, null);
 				};
+			};
+
+			this.getHashContent = function() {
+				var intPosition = qc.processHashCurrent.indexOf('#');
+				var strHashData = "";
+
+				if (intPosition > 0) strHashData = qc.processHashCurrent.substring(intPosition + 1);
+				return strHashData;
 			};
 
 			this.clearHashProcessor = function() {
