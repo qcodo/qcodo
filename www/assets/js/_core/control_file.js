@@ -60,7 +60,7 @@
 		objFrameDoc.writeln('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>');
 		objFrameDoc.writeln('<body style="margin: 0; padding: 0;"><form method="post" action="' + strPostBack + '" enctype="multipart/form-data" id="' + strFormId + '">');
 		objFrameDoc.writeln('<div id="' + objControl.id + '_iframediv"></div>');
-		objFrameDoc.writeln('<input type="hidden" name="APC_UPLOAD_PROGRESS" value="' + objWrapper.uniqueHash + '" />');
+		objFrameDoc.writeln('<input type="hidden" name="APC_UPLOAD_PROGRESS" id="APC_UPLOAD_PROGRESS" value="' + objWrapper.uniqueHash + '" />');
 		objFrameDoc.writeln('<input type="hidden" name="Qform__FormState" id="Qform__FormState" value="" />');			
 		objFrameDoc.writeln('<input type="hidden" name="Qform__FormId" id="Qform__FormId" value="' + objForm.id + '" />');
 		objFrameDoc.writeln('</form></body></html>');
@@ -133,7 +133,6 @@
 			objFrameForm.Qform__FormParameter.value = 'foobar';
 			objFrameForm.Qform__FormCallType.value = "Ajax";
 			objFrameForm.Qform__FormUpdates.value = qcodo.formUpdates();
-			objFrameForm.Qform__FormCheckableControls.value = qcodo.formCheckableControls(objForm.id, "Ajax");
 
 			if (qcodo.isBrowser(qcodo.IE)) {
 				objWrapper.iframe.onreadystatechange = function() { if (this.readyState == "complete") this.wrapper.response(); };
