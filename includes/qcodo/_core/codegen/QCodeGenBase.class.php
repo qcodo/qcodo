@@ -1023,22 +1023,27 @@
 
 			// Rip out trailing "_assn" if applicable
 			$strAssociationTableName = str_replace($this->strAssociationTableSuffix, '', $strAssociationTableName);
-			
-			// Take out strTableName if applicable (both with and without underscores)
-			$strAssociationTableName = str_replace($strTableName, '', $strAssociationTableName);
-			$strTableName = str_replace('_', '', $strTableName);
-			$strAssociationTableName = str_replace($strTableName, '', $strAssociationTableName);
-			
-			// Take out strReferencedTableName if applicable (both with and without underscores)
-			$strAssociationTableName = str_replace($strReferencedTableName, '', $strAssociationTableName);
-			$strReferencedTableName = str_replace('_', '', $strReferencedTableName);
-			$strAssociationTableName = str_replace($strReferencedTableName, '', $strAssociationTableName);
+
+			// Take out strTableName and strReferencedTableName if applicable (both with and without underscores)
+			// Do this in order of table name length (longest first)
+			if (strlen($strReferencedTableName) > strlen($strTableName)) {
+				$strTableNameArray = array($strReferencedTableName, $strTableName);
+			} else {
+				$strTableNameArray = array($strTableName, $strReferencedTableName);
+			}
+
+			foreach ($strTableNameArray as $strTableName) {
+				// Take out both with and without underscores
+				$strAssociationTableName = str_replace($strTableName, '', $strAssociationTableName);
+				$strTableName = str_replace('_', '', $strTableName);
+				$strAssociationTableName = str_replace($strTableName, '', $strAssociationTableName);
+			}
 
 			// Change any double "__" to single "_"
 			$strAssociationTableName = str_replace("__", "_", $strAssociationTableName);
 			$strAssociationTableName = str_replace("__", "_", $strAssociationTableName);
 			$strAssociationTableName = str_replace("__", "_", $strAssociationTableName);
-			
+
 			// If we have nothing left or just a single "_" in AssociationTableName, return "Starting Point"
 			if (($strAssociationTableName == "_") || ($strAssociationTableName == ""))
 				return sprintf("%s%s%s",
