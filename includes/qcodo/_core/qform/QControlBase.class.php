@@ -949,13 +949,11 @@
 			$this->strWarning = null;
 		}
 
-		public function VarExport($blnReturn = true) {
+		public function PrepForVarExport() {
 			if ($this->objForm)
 				$this->objForm = $this->objForm->FormId;
 			if ($this->objParentControl)
 				$this->objParentControl = $this->objParentControl->ControlId;
-			if ($blnReturn)
-				return var_export($this, true);
 		}
 
 		/////////////////////////

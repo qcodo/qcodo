@@ -7,15 +7,15 @@
 	<head>
 		<title>PHP <?php _p(QErrorHandler::$Type); ?> - <?php _p(QErrorHandler::$Message); ?></title>
 		<style>
-			body { font-family: 'Arial' 'Helvetica' 'sans-serif'; font-size: 11px; }
+			body { font-family: 'Arial', 'Helvetica', 'sans-serif'; font-size: 11px; }
 			a:link, a:visited { text-decoration: none; }
 			a:hover { text-decoration: underline; }
-			pre { font-family: 'Lucida Console' 'Courier New' 'Courier' 'monospaced'; font-size: 11px; line-height: 13px; }
+			pre { font-family: 'Lucida Console', 'Courier New', 'Courier', 'monospaced'; font-size: 11px; line-height: 13px; }
 			.page { padding: 10px; }
-			.headingLeft { background-color: #440066; color: #ffffff; padding: 10px 0px 10px 10px; font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 18px; font-weight: bold; width: 70%; vertical-align: middle; }
+			.headingLeft { background-color: #440066; color: #ffffff; padding: 10px 0px 10px 10px; font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 18px; font-weight: bold; width: 70%; vertical-align: middle; }
 			.headingLeftSmall { font-size: 10px; }
-			.headingRight { background-color: #440066; color: #ffffff; padding: 0px 10px 10px 10px; font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 10px; width: 30%; vertical-align: middle; text-align: right; }
-			.title { font-family: 'Verdana' 'Arial' 'Helvetica' 'sans-serif'; font-size: 19px; font-style: italic; color: #330055; }
+			.headingRight { background-color: #440066; color: #ffffff; padding: 0px 10px 10px 10px; font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 10px; width: 30%; vertical-align: middle; text-align: right; }
+			.title { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 19px; font-style: italic; color: #330055; }
 			.code { background-color: #f4eeff; padding: 1px 10px 1px 10px; }
 		</style>
 		<script type="text/javascript">
@@ -64,7 +64,7 @@
 						_p('<pre>', false);
 						for ($__exc_IntLine = max(1, QErrorHandler::$LineNumber - 5); $__exc_IntLine <= min(count(QErrorHandler::$FileLinesArray), QErrorHandler::$LineNumber + 5); $__exc_IntLine++) {
 							if (QErrorHandler::$LineNumber == $__exc_IntLine)
-								printf("<font color=red>Line %s:    %s</font>", $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
+								printf('<span style="color: #f00;">Line %s:    %s</span>', $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 							else
 								printf("Line %s:    %s", $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 						}
@@ -107,10 +107,7 @@
 
 				// Dump All Variables
 				foreach ($GLOBALS as $__exc_Key => $__exc_Value) {
-					// TODO: Figure out why this is so strange
-					if (isset($__exc_Key))
-						if ($__exc_Key != "_SESSION")
-							global $$__exc_Key;
+					if (isset($__exc_Key)) global $$__exc_Key;
 				}
 
 				$__exc_ObjVariableArray = get_defined_vars();
@@ -120,7 +117,7 @@
 				$__exc_StrToDisplay = "";
 				$__exc_StrToScript = "";
 				foreach ($__exc_ObjVariableArrayKeys as $__exc_Key) {
-					if ((strpos($__exc_Key, "__exc_") === false) && (strpos($__exc_Key, "_DATE_") === false) && ($__exc_Key != "GLOBALS") && !($__exc_ObjVariableArray[$__exc_Key] instanceof QForm)) {
+					if ((strpos($__exc_Key, "__exc_") === false) && (strpos($__exc_Key, "_DATE_") === false) && ($__exc_Key != "GLOBALS")) {
 						try {
 							if (($__exc_Key == 'HTTP_SESSION_VARS') || ($__exc_Key == '_SESSION')) {
 								$__exc_ObjSessionVarArray = array();
@@ -129,10 +126,8 @@
 										$__exc_ObjSessionVarArray[$__exc_StrSessionKey] = $__exc_StrSessionValue;
 								}
 								$__exc_StrVarExport = htmlentities(var_export($__exc_ObjSessionVarArray, true));
-							} else if (($__exc_ObjVariableArray[$__exc_Key] instanceof QControl) || ($__exc_ObjVariableArray[$__exc_Key] instanceof QForm))
-								$__exc_StrVarExport = htmlentities($__exc_ObjVariableArray[$__exc_Key]->VarExport());
-							else
-								$__exc_StrVarExport = htmlentities(var_export($__exc_ObjVariableArray[$__exc_Key], true));
+							} else
+								$__exc_StrVarExport = QErrorHandler::VarExport($__exc_ObjVariableArray[$__exc_Key]);
 
 							$__exc_StrToDisplay .= sprintf("  <a href=\"javascript:RenderPage(%s)\" title=\"%s\">%s</a>\n", $__exc_Key, $__exc_StrVarExport, $__exc_Key);
 							$__exc_StrToScript .= sprintf("  %s = \"<pre>%s</pre>\";\n", $__exc_Key, QErrorHandler::PrepDataForScript($__exc_StrVarExport));

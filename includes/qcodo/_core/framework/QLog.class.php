@@ -80,12 +80,18 @@
 		 * @return void
 		 */
 		public static function LogObject($objObject, $intLogLevel = QLogLevel::Normal, $strLogModule = 'default') {
-			if ($objObject instanceof QForm)
-				$strMessage = 'Cannot log QForm object';
-			else if ($objObject instanceof QControl)
-				$strMessage = 'Cannot log QControl object "' . $objObject->ControlId. '"';
-			else
-				$strMessage = var_export(unserialize(serialize($objObject)), true);
+			if ($objObject instanceof QForm) {
+				$objObject = unserialize(serialize($objObject));
+				$strMessage = $objObject->PrepForVarExport(false);
+			} else if ($objObject instanceof QControl) {
+				$objObject = unserialize(serialize($objObject));
+				$strMessage = $objObject->PrepForVarExport(false);
+			}
+
+			ob_start();
+			var_dump($objObject);
+			$strMessage = ob_get_clean();
+			if (extension_loaded('xdebug')) $strMessage = strip_tags(html_entity_decode($strMessage));
 
 			try {
 				self::Log($strMessage, $intLogLevel, $strLogModule);
