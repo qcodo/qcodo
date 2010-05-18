@@ -88,6 +88,7 @@
 	QApplicationBase::$ClassFile['qlexer'] = __QCODO_CORE__ . '/framework/QLexer.class.php';
 	QApplicationBase::$ClassFile['qregex'] = __QCODO_CORE__ . '/framework/QRegex.class.php';
 	QApplicationBase::$ClassFile['qcliparameterprocessor'] = __QCODO_CORE__ . '/framework/QCliParameterProcessor.class.php';
+	QApplicationBase::$ClassFile['qlog'] = __QCODO_CORE__ . '/framework/QLog.class.php';
 
 	QApplicationBase::$ClassFile['qcodegen'] = __QCODO__ . '/codegen/QCodeGen.class.php';
 	QApplicationBase::$ClassFile['qdatagen'] = __QCODO_CORE__ . '/framework/QDataGen.class.php';
