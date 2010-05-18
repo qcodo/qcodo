@@ -49,6 +49,10 @@
 	define ('__DATA_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls');
 	define ('__DATAGEN_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls/generated');
 
+	define('__ERROR_LOG__', __DOCROOT__ . '/../error_log');
+	define('__QCODO_LOG__', __DOCROOT__ . '/../log');
+	define('__TEST_CASES__', __DOCROOT__ . '/../tests');
+
 	define ('__FORM_DRAFTS__', __SUBDIRECTORY__ . '/drafts');
 	define ('__PANEL_DRAFTS__', __SUBDIRECTORY__ . '/drafts/dashboard');
 
@@ -65,8 +69,9 @@
 	if ((function_exists('date_default_timezone_set')) && (!ini_get('date.timezone')))
 		date_default_timezone_set('America/Los_Angeles');
 
-	define('ERROR_LOG_PATH', null);
 	define('ERROR_LOG_FLAG', false);
 //	define('ERROR_FRIENDLY_PAGE_PATH', '/absolute/path/to/friendly_error_page.html');
 //	define('ERROR_FRIENDLY_AJAX_MESSAGE', 'Oops!  An error has occurred.\r\n\r\nThe error was logged, and we will take a look into this right away.');
+
+	define('QCODO_LOG_LEVEL', 6);
 ?>

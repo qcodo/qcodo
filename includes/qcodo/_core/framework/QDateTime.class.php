@@ -51,7 +51,7 @@
 
 		public static function NowToString($strFormat = null) {
 			$dttNow = new QDateTime(QDateTime::Now);
-			return $dttNow->__toString($strFormat);
+			return $dttNow->ToString($strFormat);
 		}
 		public function IsDateNull() {
 			return $this->blnDateNull;

@@ -111,6 +111,13 @@
 			define ('__DATA_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls');
 			define ('__DATAGEN_META_CONTROLS__', __INCLUDES__ . '/data_meta_controls/generated');
 
+			// Paths to System-Related folders for logging, test cases, etc.
+			// Note that these are defined at the very top level (sibling to the webroot folder), but can actually be set anywhere
+			define('__ERROR_LOG__', __DOCROOT__ . '/../error_log');
+			define('__QCODO_LOG__', __DOCROOT__ . '/../log');
+			define('__TEST_CASES__', __DOCROOT__ . '/../tests');
+
+
 
 			/* Relative File Paths for Web Accessible Directories
 			 *
@@ -191,16 +198,15 @@
 			if ((function_exists('date_default_timezone_set')) && (!ini_get('date.timezone')))
 				date_default_timezone_set('America/Los_Angeles');
 
-			// In order to log errors, you must first define the absolute filepath to a directory where you want to store the logged errors
-			define('ERROR_LOG_PATH', null);
-
-			// And then to log ALL errors that have occurred, set flag to TRUE
+			// To log ALL errors that have occurred, set flag to TRUE
 			define('ERROR_LOG_FLAG', false);
 
 			// To enable the display of "Friendly" error pages and messages, define them here
 //			define('ERROR_FRIENDLY_PAGE_PATH', '/absolute/path/to/friendly_error_page.html');
 //			define('ERROR_FRIENDLY_AJAX_MESSAGE', 'Oops!  An error has occurred.\r\n\r\nThe error was logged, and we will take a look into this right away.');
 
+			// Specify the minimum priority level to log -- use NUMERIC value found in QLogLevel in QLog.class.php
+			define('QCODO_LOG_LEVEL', 6);
 			break;
 	}
 ?>

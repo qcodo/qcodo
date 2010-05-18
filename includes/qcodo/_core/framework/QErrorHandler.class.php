@@ -54,7 +54,7 @@
 			$intTimestamp = $strParts[1];
 			QErrorHandler::$DateTimeOfError = date('l, F j Y, g:i:s.' . $strMicrotime . ' A T', $intTimestamp);
 			QErrorHandler::$IsoDateTimeOfError = date('Y-m-d H:i:s T', $intTimestamp);
-			if (defined('ERROR_LOG_PATH') && ERROR_LOG_PATH && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG)
+			if (defined('__ERROR_LOG__') && __ERROR_LOG__ && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG)
 				QErrorHandler::$FileNameOfError = sprintf('qcodo_error_%s_%s.html', date('Y-m-d_His', $intTimestamp), $strMicrotime);
 
 			// Generate the Error Dump
@@ -62,12 +62,12 @@
 			require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
 
 			// Do We Log???
-			if (defined('ERROR_LOG_PATH') && ERROR_LOG_PATH && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG) {
-				// Log to File in ERROR_LOG_PATH
+			if (defined('__ERROR_LOG__') && __ERROR_LOG__ && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG) {
+				// Log to File in __ERROR_LOG__
 				$strContents = ob_get_contents();
 
-				QApplication::MakeDirectory(ERROR_LOG_PATH, 0777);
-				$strFileName = sprintf('%s/%s', ERROR_LOG_PATH, QErrorHandler::$FileNameOfError);
+				QApplication::MakeDirectory(__ERROR_LOG__, 0777);
+				$strFileName = sprintf('%s/%s', __ERROR_LOG__, QErrorHandler::$FileNameOfError);
 				file_put_contents($strFileName, $strContents);
 				@chmod($strFileName, 0666);
 			}
