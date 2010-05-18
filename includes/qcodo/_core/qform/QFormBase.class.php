@@ -134,11 +134,9 @@
 		protected function Form_Validate() {return true;}
 		protected function Form_Exit() {}
 
-		public function VarExport($blnReturn = true) {
+		public function PrepForVarExport() {
 			if ($this->objControlArray) foreach ($this->objControlArray as $objControl)
-				$objControl->VarExport(false);
-			if ($blnReturn)
-				return var_export($this, true);
+				$objControl->PrepForVarExport();
 		}
 
 		public function IsCheckableControlRendered($strControlId) {

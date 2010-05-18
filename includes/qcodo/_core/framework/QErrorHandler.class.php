@@ -57,6 +57,12 @@
 			if (defined('__ERROR_LOG__') && __ERROR_LOG__ && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG)
 				QErrorHandler::$FileNameOfError = sprintf('qcodo_error_%s_%s.html', date('Y-m-d_His', $intTimestamp), $strMicrotime);
 
+			// Cleanup
+			unset($strMicrotime);
+			unset($strParts);
+			unset($strMicrotime);
+			unset($intTimestamp);
+
 			// Generate the Error Dump
 			if (!ob_get_level()) ob_start();
 			require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
@@ -235,6 +241,30 @@
 			}
 
 			QErrorHandler::Run();
+		}
+		
+		/**
+		 * A modified version of var_export to use var_dump via the output buffer, which
+		 * can better handle recursive structures.
+		 * @param mixed $mixData
+		 * @param boolean $blnHtmlEntities
+		 * @return string
+		 */
+		public static function VarExport($mixData, $blnHtmlEntities = true) {
+			if (($mixData instanceof QForm) || ($mixData instanceof QControl))
+				$mixData->PrepForVarExport();
+			ob_start();
+			var_dump($mixData);
+			
+			$strToReturn = ob_get_clean();
+
+			if ($blnHtmlEntities) {
+				if (!extension_loaded('xdebug')) $strToReturn = htmlentities($strToReturn);
+			} else {
+				if (extension_loaded('xdebug')) $strToReturn = strip_tags(html_entity_decode($strToReturn));
+			}
+
+			return $strToReturn;
 		}
 	}
 
