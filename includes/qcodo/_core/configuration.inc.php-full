@@ -115,9 +115,7 @@
 			// Note that these are defined at the very top level (sibling to the webroot folder), but can actually be set anywhere
 			define('__ERROR_LOG__', __DOCROOT__ . '/../error_log');
 			define('__QCODO_LOG__', __DOCROOT__ . '/../log');
-
 			define('__TEST_CASES__', __DOCROOT__ . '/../tests');
-			define('__TEST_CASES_CORE__', __DOCROOT__ . '/../tests/_core');
 
 
 
