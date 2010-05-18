@@ -138,4 +138,10 @@
 				"\r\nTo allow remote access to this script, set the ALLOW_REMOTE_ADMIN constant to TRUE\r\nor to \"" . $_SERVER['REMOTE_ADDR'] . '" in "configuration.inc.php".', 2);
 		}
 	}
+
+	class QInvalidFormStateException extends QCallerException {
+		public function __construct($strFormId) {
+			parent::__construct(sprintf('Invalid Form State Data for "%s" object (session may have been lost)', $strFormId), 2);
+		}
+	}
 ?>
