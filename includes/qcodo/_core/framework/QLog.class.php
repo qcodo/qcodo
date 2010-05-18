@@ -41,11 +41,8 @@
 		 * @return void
 		 */
 		public static function Log($strMessage, $intLogLevel = QLogLevel::Normal, $strLogModule = 'default') {
-			// Ensure Logging Level is Set Up
-			if (!defined('QCODO_LOG_LEVEL')) throw new QCallerException('QCODO_LOG_LEVEL must be defined before running QLog::Log');
-
 			// Cancel out if log level is too low
-			if ($intLogLevel > QCODO_LOG_LEVEL) return;
+			if ($intLogLevel > self::$MinimumLogLevel) return;
 
 			// Setup Log Path
 			if (!defined('__QCODO_LOG__')) throw new QCallerException('__QCODO_LOG__ must be defined before running QLog::Log');
