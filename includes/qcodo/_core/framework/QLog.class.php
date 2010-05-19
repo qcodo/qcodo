@@ -70,20 +70,18 @@
 		}
 
 		/**
-		 * Used to log a Data Class object.
-		 * 
-		 * This can NOT be used to log a QForm or QControl object.
-		 * 
+		 * Used to log an object.
+		 * QCodo Data objects, QForms and QControls are supported
+		 *
 		 * @param object $objObject
 		 * @param integer $intLogLevel
 		 * @param string $strLogModule
 		 * @return void
 		 */
 		public static function LogObject($objObject, $intLogLevel = QLogLevel::Normal, $strLogModule = 'default') {
-			if ($objObject instanceof QForm) {
-				$objObject = unserialize(serialize($objObject));
-				$strMessage = $objObject->PrepForVarExport(false);
-			} else if ($objObject instanceof QControl) {
+
+			// QForms and QControls get a special treatment because var_export cannot deal with recursion
+			if ($objObject instanceof QForm || $objObject instanceof QControl) {
 				$objObject = unserialize(serialize($objObject));
 				$strMessage = $objObject->PrepForVarExport(false);
 			}
