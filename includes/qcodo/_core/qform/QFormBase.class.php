@@ -1252,6 +1252,10 @@
 		 * @return void
 		 */
 		public function SetUrlHashProcessor($strMethodName, $objParentControl = null, $intUrlHashPollingInterval = 250) {
+			// Causes a bug if we try and explicitly specify a QForm
+			if ($objParentControl instanceof QForm)
+				throw new QCallerException('Parent Control cannot be a QForm object.  If the method parent is this QForm, simply pass in null.');
+
 			if (!$this->pxyUrlHashProxy)
 				$this->pxyUrlHashProxy = new QControlProxy($this, 'pxyHashFor' . $this->strFormId);
 
