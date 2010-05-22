@@ -216,3 +216,39 @@ msgid "Dec"
 msgstr "Gru"
 msgid "December"
 msgstr "Grudzień"
+
+
+msgid "Mon"
+msgstr "Pn"
+msgid "Monday"
+msgstr "Poniedziałek"
+
+msgid "Tue"
+msgstr "Wt"
+msgid "Tuesday"
+msgstr "Wtorek"
+
+msgid "Wed"
+msgstr "Śr"
+msgid "Wednesday"
+msgstr "Środa"
+
+msgid "Thu"
+msgstr "Cz"
+msgid "Thursday"
+msgstr "Czwartek"
+
+msgid "Fri"
+msgstr "Pt"
+msgid "Friday"
+msgstr "Piątek"
+
+msgid "Sat"
+msgstr "So"
+msgid "Saturday"
+msgstr "Sobota"
+
+msgid "Sun"
+msgstr "Nd"
+msgid "Sunday"
+msgstr "Niedziela"
