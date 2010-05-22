@@ -297,10 +297,10 @@
 							$strToReturn .= parent::format('d');
 							break;
 						case 'DDD':
-							$strToReturn .= parent::format('D');
+							$strToReturn .= QApplication::Translate(parent::format('D'));
 							break;
 						case 'DDDD':
-							$strToReturn .= parent::format('l');
+							$strToReturn .= QApplication::Translate(parent::format('l'));
 							break;
 			
 						case 'YY':
