@@ -4,11 +4,13 @@
 		protected $blnIsBlockElement = true;
 
 		protected $pxyRemoveFile;
+		protected $pxyCancelUpload;
 
 		protected $strFilePath;
 		protected $strFileName;
 		protected $intFileSize;
 		protected $strMimeType;
+		protected $strDownloadUrl;
 
 		protected $strTemporaryUploadFolder = '/tmp';
 
@@ -64,26 +66,29 @@
 				$strHtml .= sprintf('<span id="%s_ospan"><iframe id="%s_iframe" scrolling="no" style="display: none;"></iframe></span>', $this->strControlId, $this->strControlId);
 
 				$strHtml .= sprintf('<div class="progress" id="%s_progress" style="display: none;">', $this->strControlId);
-				$strHtml .= sprintf('<div class="size" id="%s_size">n/a</div>', $this->strControlId);
+				$strHtml .= sprintf('<div class="size" id="%s_size"><img src="%s/spinner_14.gif"/></div>', $this->strControlId, __IMAGE_ASSETS__);
 
 				$strHtml .= '<div class="bar">';
 				$strHtml .= sprintf('<div class="status" id="%s_status">Uploading...</div>', $this->strControlId);
 				$strHtml .= sprintf('<div class="fill" id="%s_fill"></div>', $this->strControlId);
 				$strHtml .= '</div>';
 
-				$strHtml .= '<div class="cancel"><a href="#">Cancel</a></div>';
+				$strHtml .= sprintf('<div class="cancel"><a href="#" %s>Cancel</a></div>', $this->pxyCancelUpload->RenderAsEvents(null, false));
 				$strHtml .= '</div>';
+			} else if ($this->strDownloadUrl) {
+				$strHtml .= sprintf('<strong><a href="%s">%s</a></strong> (%s) &nbsp; <a href="#" %s>Remove</a>',
+					$this->strDownloadUrl, $this->strFileName, QString::GetByteSize($this->intFileSize), $this->pxyRemoveFile->RenderAsEvents(null, false));
 			} else {
 				$strHtml .= sprintf('<strong>%s</strong> (%s) &nbsp; <a href="#" %s>Remove</a>',
 					$this->strFileName, QString::GetByteSize($this->intFileSize), $this->pxyRemoveFile->RenderAsEvents(null, false));
 			}
-
+			
 			return sprintf('<div id="%s" %s%s>%s</div>', $this->strControlId, $strAttributes, $strStyle, $strHtml);
 		}
 
 		public function GetEndScript() {
 			$strToReturn = parent::GetEndScript();
-			$strUniqueHash = md5(microtime() . rand(0, 1000000));
+			$strUniqueHash = substr(md5(microtime() . rand(0, 1000000)), 4, 16);
 
 			if (($this->blnVisible) && (!$this->strFilePath)) {
 				$strToReturn .= sprintf('qc.regFUP("%s", "%s", "%s"); ',
@@ -109,6 +114,10 @@
 			$this->pxyRemoveFile = new QControlProxy($this);
 			$this->pxyRemoveFile->AddAction(new QClickEvent(), new QAjaxControlAction($this, 'HandleFileRemoved'));
 			$this->pxyRemoveFile->AddAction(new QClickEvent(), new QTerminateAction());
+
+			$this->pxyCancelUpload = new QControlProxy($this);
+			$this->pxyCancelUpload->AddAction(new QClickEvent(), new QAjaxControlAction($this, 'HandleFileCancelled'));
+			$this->pxyCancelUpload->AddAction(new QClickEvent(), new QTerminateAction());
 		}
 
 		/**
@@ -150,12 +159,22 @@
 			$this->strFileName = null;
 			$this->intFileSize = null;
 			$this->strMimeType = null;
+			$this->strDownloadUrl = null;
 			$this->Refresh();
 			if ($this->strFileRemovedCallbackMethod) call_user_func_array(
 				array($this->objFileRemovedCallbackObject, $this->strFileRemovedCallbackMethod),
 				array($this->objForm->FormId, $this->strControlId, $this->strActionParameter));
 		}
-		
+
+		public function HandleFileCancelled($strFormId, $strControlId, $strParameter) {
+			$this->strFilePath = null;
+			$this->strFileName = null;
+			$this->intFileSize = null;
+			$this->strMimeType = null;
+			$this->strDownloadUrl = null;
+			$this->Refresh();
+		}
+
 		public function SetFileUploadedCallback($objCallbackObject, $strCallbackMethod) {
 			$this->objFileUploadedCallbackObject = $objCallbackObject;
 			$this->strFileUploadedCallbackMethod = $strCallbackMethod;
@@ -190,6 +209,7 @@
 				case 'FileSize': return $this->intFileSize;
 				case 'MimeType': return $this->strMimeType;
 				case 'TemporaryUploadFolder': return $this->strTemporaryUploadFolder;
+				case 'DownloadUrl': return $this->strDownloadUrl;
 
 				default:
 					try {
@@ -228,6 +248,11 @@
 				case 'TemporaryUploadFolder':
 					try {
 						return ($this->strTemporaryUploadFolder = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+
+				case 'DownloadUrl':
+					try {
+						return ($this->strDownloadUrl = QType::Cast($mixValue, QType::String));
 					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
 
 				default:
