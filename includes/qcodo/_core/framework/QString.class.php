@@ -213,5 +213,17 @@
 			else
 				return true;
 		}
+
+		/**
+		 * Given an underscore_separated_string, this will convert the string
+		 * to CamelCaseNotation.  Note that this will ignore any casing in the
+		 * underscore separated string.
+		 * 
+		 * @param string $strString
+		 * @return string
+		 */
+		public static function ConvertToCamelCase($strString) {
+			return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($strString))));
+		}
 	}
 ?>
