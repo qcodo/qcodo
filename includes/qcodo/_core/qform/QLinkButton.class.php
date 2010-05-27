@@ -16,6 +16,7 @@
 		protected $blnHtmlEntities = true;
 
 		protected $strLinkUrl = '#';
+		protected $strTarget = null;
 
 		//////////
 		// Methods
@@ -25,16 +26,25 @@
 			if ($strStyle)
 				$strStyle = sprintf('style="%s"', $strStyle);
 
-			$strToReturn = sprintf('<a href="%s" id="%s" %s%s>%s</a>',
+			$strToReturn = sprintf('<a href="%s" id="%s" %s%s%s>%s</a>',
 				$this->strLinkUrl,
 				$this->strControlId,
+				$this->GetTargetAtribute(),
 				$this->GetAttributes(),
 				$strStyle,
-				($this->blnHtmlEntities) ? 
-					QApplication::HtmlEntities($this->strText) :
-					$this->strText);
+				($this->blnHtmlEntities) ? QApplication::HtmlEntities($this->strText) : $this->strText);
 
 			return $strToReturn;
+		}
+
+		protected function GetTargetAtribute() {
+			switch ($this->strTarget) {
+				case QLinkTarget::Blank: return 'target="_blank" '; break;
+				case QLinkTarget::Self: return 'target="_self" '; break;
+				case QLinkTarget::Parent: return 'target="_parent" '; break;
+				case QLinkTarget::Top: return 'target="_top" '; break;
+				default: return '';
+			}
 		}
 
 		/////////////////////////
@@ -46,6 +56,7 @@
 				case "Text": return $this->strText;
 				case "HtmlEntities": return $this->blnHtmlEntities;
 				case 'LinkUrl': return $this->strLinkUrl;
+				case 'Target': return $this->strTarget;
 				default:
 					try {
 						return parent::__get($strName);
@@ -82,9 +93,27 @@
 						throw $objExc;
 					}
 
-				case 'LinkUrl': 
+				case 'LinkUrl':
 					try {
-						return ($this->strLinkUrl = QType::Cast($mixValue, QType::String));
+						$this->strLinkUrl = QType::Cast($mixValue, QType::String);
+						break;
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+
+				case 'Target':
+					try {
+						$strTarget = QType::Cast($mixValue, QType::String);
+
+						if (($strTarget == QLinkTarget::Blank) ||
+							($strTarget == QLinkTarget::Parent) ||
+							($strTarget == QLinkTarget::Self) ||
+							($strTarget == QLinkTarget::Top)
+						)
+							return $this->strTarget = $strTarget;
+
+						break;
 					} catch (QCallerException $objExc) {
 						$objExc->IncrementOffset();
 						throw $objExc;
@@ -100,5 +129,12 @@
 					break;
 			}
 		}
+	}
+
+	abstract class QLinkTarget {
+		const Blank = '_blank';
+		const Self = '_self';
+		const Parent = '_parent';
+		const Top = '_top';
 	}
 ?>
