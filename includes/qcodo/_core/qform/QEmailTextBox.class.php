@@ -9,7 +9,6 @@
 
 		protected $strLabelForInvalid;
 		protected $intMaxLength = 256;
-		protected $intMinLength = 3;
 
 		//////////
 		// Methods
@@ -26,13 +25,13 @@
 		}
 
 		public function Validate() {
-			if (parent::Validate()) {
-				if (!QEmailServer::IsEmailValid($this->strText)) {
-					$this->strValidationError = $this->strLabelForInvalid;
-					return false;
-				}
-			} else
+			if (!parent::Validate()) return false;
+
+			if (strlen(trim($this->strText)) &&
+				!QEmailServer::IsEmailValid($this->strText)) {
+				$this->strValidationError = $this->strLabelForInvalid;
 				return false;
+			}
 
 			$this->strValidationError = '';
 			return true;
