@@ -1,4 +1,6 @@
 <?php
+	require(dirname(__FILE__) . '/../_require_prepend.inc.php');
+
 	function CastToInt($strNumber) {
 		settype($strNumber, "int");
 		return $strNumber;
@@ -23,7 +25,7 @@
 	$strChangeCommand = sprintf('window.opener.document.forms["%s"].elements["%s"].value = "%s"; ',
 		$_GET["strFormId"],
 		$_GET["strId"],
-		date("M j Y", $intTimestamp));
+		QApplication::Translate(date("M j Y", $intTimestamp)));
 	$strChangeCommand .= sprintf('window.opener.document.forms["%s"].elements["%s_intTimestamp"].value = "%s"; ',
 		$_GET["strFormId"],
 		$_GET["strId"],
@@ -112,7 +114,7 @@
 <?php
 	for ($intMonth = 1; $intMonth <= 12; $intMonth++) {
 		$intTimestampLabel = mktime(0,0,0, $intMonth, 1, $intSelectedYear);
-		$strLabel = date("F", $intTimestampLabel);
+		$strLabel = QApplication::Translate(date("F", $intTimestampLabel));
 		$strSelected = ($intMonth == $intSelectedMonth) ? "selected" : "";
 		printf('<option value="%s" %s>%s</option>', $intTimestampLabel, $strSelected, $strLabel);
 	}

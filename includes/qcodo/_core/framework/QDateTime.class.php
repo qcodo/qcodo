@@ -31,6 +31,12 @@
 		public static $DefaultDateOnlyFormat = QDateTime::FormatDisplayDate;
 
 		/**
+		 * Specify whether or not to perform Translation while doing a ToString() call
+		 * @var boolean
+		 */
+		public static $Translate = false;
+
+		/**
 		 * Returns a new QDateTime object that's set to "Now"
 		 * Set blnTimeValue to true (default) for a DateTime, and set blnTimeValue to false for just a Date
 		 *
@@ -284,10 +290,10 @@
 							$strToReturn .= parent::format('m');
 							break;
 						case 'MMM':
-							$strToReturn .= QApplication::Translate(parent::format('M'));
+							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('M')) : parent::format('M');
 							break;
 						case 'MMMM':
-							$strToReturn .= QApplication::Translate(parent::format('F'));
+							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('F')) : parent::format('F');
 							break;
 			
 						case 'D':
@@ -297,10 +303,10 @@
 							$strToReturn .= parent::format('d');
 							break;
 						case 'DDD':
-							$strToReturn .= QApplication::Translate(parent::format('D'));
+							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('D')) : parent::format('D');
 							break;
 						case 'DDDD':
-							$strToReturn .= QApplication::Translate(parent::format('l'));
+							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('l')) : parent::format('l');
 							break;
 			
 						case 'YY':

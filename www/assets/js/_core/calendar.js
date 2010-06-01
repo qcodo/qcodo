@@ -5,8 +5,9 @@
 	qcodo.monthNames = new Array("January","February","March","April","May","June","July","August","September","October","November","December");
 	qcodo.monthNamesAbbreviated = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	qcodo.dayNames = new Array("Su","Mo","Tu","We","Th","Fr","Sa");
+	qcodo.dateTimeTranslated = false;
 
-	qcodo.registerCalendar = function(mixControl, strDtxControlId) {
+	qcodo.registerCalendar = function(mixControl, strDtxControlId, strTodayText, strCancelText, strNameArray) {
 		// Initialize the Event Handler
 		qcodo.handleEvent();
 
@@ -20,6 +21,20 @@
 		// Get CalendarPane and Hide it
 		objControl.calendarPane = document.getElementById(objControl.id + "_cal");
 		objControl.calendarPane.style.display = "none";
+
+		// Set Names
+		objControl.todayText = strTodayText;
+		objControl.cancelText = strCancelText;
+
+		if (strNameArray) {
+			for (var intMonth = 0; intMonth < 12; intMonth++) {
+				if (qcodo.monthNamesAbbreviated[intMonth] != strNameArray[1][intMonth])
+					qcodo.dateTimeTranslated = true;
+			};
+			qcodo.monthNames = strNameArray[0];
+			qcodo.monthNamesAbbreviated = strNameArray[1];
+			qcodo.dayNames = strNameArray[2];
+		};
 
 		objControl.showCalendar = function() {
 			if (qcodo.openCalendar) {
@@ -39,7 +54,14 @@
 		};
 
 		objControl.setDate = function(intYear, intMonth, intDay) {
-			this.dateTimeTextBox.value = qcodo.monthNamesAbbreviated[intMonth] + " " + intDay + " " + intYear;
+			if (qcodo.dateTimeTranslated) {
+				intMonth++;
+				if (intMonth < 10) {
+					intMonth = "0" + intMonth;
+				}
+				this.dateTimeTextBox.value = intYear + "-" + intMonth + "-" + intDay;
+			} else
+				this.dateTimeTextBox.value = qcodo.monthNamesAbbreviated[intMonth] + " " + intDay + " " + intYear;
 			this.hideCalendar();
 		};
 
@@ -129,8 +151,8 @@
 			strNavigator += '</div>';
 
 			var strOptions = '<div class="options">';
-			strOptions += '<a href="#" onclick="qc.getC(\'' + this.id + '\').setToToday(); return false;">&quot;Today&quot;</a> &nbsp; &nbsp; ';
-			strOptions += '<a href="#" onclick="qc.getC(\'' + this.id + '\').hideCalendar(); return false;">Cancel</a></div>';
+			strOptions += '<a href="#" onclick="qc.getC(\'' + this.id + '\').setToToday(); return false;">&quot;' + this.todayText + '&quot;</a> &nbsp; &nbsp; ';
+			strOptions += '<a href="#" onclick="qc.getC(\'' + this.id + '\').hideCalendar(); return false;">' + this.cancelText + '</a></div>';
 			
 			this.calendarPane.innerHTML = strNavigator + strCalendar + strOptions;
 		};

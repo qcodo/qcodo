@@ -114,15 +114,96 @@ MsgStr "Mostrar Lista"
 MsgId "Create New"
 MsgStr "Crear Nuevo"
 
-#For the QDateTimePicker control
+#For the QDateTime-Related Objects and Controls
+msgid "Today"
+msgstr "Hoy"
+
+msgid "January"
+msgstr "enero"
+
+msgid "February"
+msgstr "febrero"
+
+msgid "March"
+msgstr "marzo"
+
+msgid "April"
+msgstr "abril"
+
+msgid "May"
+msgstr "mayo"
+
+msgid "June"
+msgstr "junio"
+
+msgid "July"
+msgstr "julio"
+
+msgid "August"
+msgstr "agosto"
+
+msgid "September"
+msgstr "septiembre"
+
+msgid "October"
+msgstr "octubre"
+
+msgid "November"
+msgstr "noviembre"
+
+msgid "December"
+msgstr "diciembre"
+
 msgid "Jan"
-msgstr "Ene"
+msgstr "ene"
+
+msgid "Feb"
+msgstr "feb"
+
+msgid "Mar"
+msgstr "mar"
 
 msgid "Apr"
-msgstr "Abr"
+msgstr "abr"
+
+msgid "Jun"
+msgstr "jun"
+
+msgid "Jul"
+msgstr "jul"
 
 msgid "Aug"
-msgstr "Ago"
+msgstr "ago"
+
+msgid "Sep"
+msgstr "sep"
+
+msgid "Oct"
+msgstr "oct"
+
+msgid "Nov"
+msgstr "nov"
 
 msgid "Dec"
-msgstr "Dic"
+msgstr "dic"
+
+msgid "Sun"
+msgstr "dom"
+
+msgid "Mon"
+msgstr "lun"
+
+msgid "Tue"
+msgstr "mar"
+
+msgid "Wed"
+msgstr "mi&eacute;"
+
+msgid "Thu"
+msgstr "jue"
+
+msgid "Fri"
+msgstr "vie"
+
+msgid "Sat"
+msgstr "s&aacute;b"
