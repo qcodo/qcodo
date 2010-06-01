@@ -53,7 +53,39 @@
 		}
 		public function GetEndScript() {
 			$strToReturn = parent::GetEndScript();
-			$strToReturn .= 'qc.regCAL("' . $this->strControlId . '","' . $this->dtxLinkedControl->ControlId . '"); ';
+
+			if (QDateTime::$Translate) {
+				$strShortNameArray = array();
+				$strLongNameArray = array();
+				$strDayArray = array();
+				$dttMonth = new QDateTime('2000-01-01');
+				for ($intMonth = 1; $intMonth <= 12; $intMonth++) {
+					$dttMonth->Month = $intMonth;
+					$strShortNameArray[] = '"' . $dttMonth->ToString('MMM') . '"';
+					$strLongNameArray[] = '"' . $dttMonth->ToString('MMMM') . '"';
+				}
+				$dttDay = new QDateTime('Sunday');
+				for ($intDay = 1; $intDay <= 7; $intDay++) {
+					$strDay = $dttDay->ToString('DDD');
+
+					$strDay = html_entity_decode($strDay, ENT_COMPAT, QApplication::$EncodingType);
+					if (function_exists('mb_substr'))
+						$strDay = mb_substr($strDay, 0, 2);
+					else
+						// Attempt to account for multibyte day -- may not work if the third character is multibyte
+						$strDay = substr($strDay, 0, strlen($strDay) - 1);
+					$strDay = QApplication::HtmlEntities($strDay);
+					$strDayArray[] = '"' . $strDay . '"';
+					$dttDay->Day++;
+				}
+				$strArrays = sprintf('new Array(new Array(%s), new Array(%s), new Array(%s))',
+					implode(', ', $strLongNameArray), implode(', ', $strShortNameArray), implode(', ', $strDayArray));
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", %s); ',
+					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'), $strArrays);
+			} else {
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null); ',
+					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'));
+			}
 			return $strToReturn;
 		}
 

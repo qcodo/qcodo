@@ -8,7 +8,7 @@
 		protected $dttMinimum = null;
 		protected $dttMaximum = null;
 		
-		protected $strLabelForInvalid = QApplication::Translate('For example, "Mar 20, 4:30pm" or "Mar 20"');
+		protected $strLabelForInvalid = 'For example, "Mar 20, 4:30pm" or "Mar 20"';
 		protected $calLinkedControl;
 
 		//////////
@@ -61,7 +61,7 @@
 					$dttTest = QDateTimeTextBox::ParseForDateTimeValue($this->strText);
 
 					if (!$dttTest) {
-						$this->strValidationError = $this->strLabelForInvalid;
+						$this->strValidationError = QApplication::Translate($this->strLabelForInvalid);
 						return false;
 					}
 

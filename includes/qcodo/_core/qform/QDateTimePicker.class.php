@@ -131,16 +131,17 @@
 					$strMonthListbox = sprintf('<select name="%s_lstMonth" id="%s_lstMonth" class="month" %s%s>', $this->strControlId, $this->strControlId, $strAttributes, $strCommand);
 					if (!$this->blnRequired || $dttDateTime->IsDateNull())
 						$strMonthListbox .= '<option value="">--</option>';
+
+					$dttMonth = new QDateTime('2000-01-01');
 					for ($intMonth = 1; $intMonth <= 12; $intMonth++) {
 						if ((!$dttDateTime->IsDateNull() && ($dttDateTime->Month == $intMonth)) || ($this->intSelectedMonth == $intMonth))
 							$strSelected = ' selected="selected"';
 						else
 							$strSelected = '';
+
+						$dttMonth->Month = $intMonth;
 						$strMonthListbox .= sprintf('<option value="%s"%s>%s</option>',
-							$intMonth,
-							$strSelected,
-//							date('M', mktime(0, 0, 0, $intMonth, 1, 2000)));
-							QApplication::Translate(strftime("%b", mktime(0, 0, 0, $intMonth, 1, 2000))));
+							$intMonth, $strSelected, $dttMonth->ToString('MMM'));
 					}
 					$strMonthListbox .= '</select>';
 
