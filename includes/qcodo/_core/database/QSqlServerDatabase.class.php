@@ -684,6 +684,7 @@
 						break;
 					case 'varchar':
 					case 'nvarchar':
+					case 'sysname':
 						$this->strType = QDatabaseFieldType::VarChar;
 						break;
 					case 'text':
