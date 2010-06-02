@@ -31,7 +31,10 @@
 		public static $DateTimeOfError;
 		public static $FileNameOfError;
 		public static $IsoDateTimeOfError;
-		
+
+		public static $CliMode;
+		public static $CliReportWidth = 138;
+
 		protected static function Run() {
 			// Get the RenderedPage (if applicable)
 			if (ob_get_length()) {
@@ -65,8 +68,11 @@
 
 			// Generate the Error Dump
 			if (!ob_get_level()) ob_start();
-			require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
-
+			if (self::$CliMode)
+				require(__QCODO_CORE__ . '/assets/error_dump_cli.inc.php');
+			else
+				require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
+				
 			// Do We Log???
 			if (defined('__ERROR_LOG__') && __ERROR_LOG__ && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG) {
 				// Log to File in __ERROR_LOG__
@@ -172,7 +178,7 @@
 				return;
 	
 			// Setup the QErrorHandler Object
-			QErrorHandler::$Type = 'Exception';
+			QErrorHandler::$Type = 'Error';
 			QErrorHandler::$Message = $strErrorString;
 			QErrorHandler::$Filename = $strErrorFile;
 			QErrorHandler::$LineNumber = $intErrorLine;
