@@ -210,8 +210,8 @@
 		 */
 		protected static function InitializeErrorHandling() {
 			QErrorHandler::$CliMode = QApplication::$CliMode;
-			set_error_handler('__qcodo_handle_error', error_reporting());
-			set_exception_handler('__qcodo_handle_exception');
+			set_error_handler(array('QErrorHandler', 'HandleError'), error_reporting());
+			set_exception_handler(array('QErrorHandler', 'HandleException'));
 		}
 
 		/**
@@ -458,9 +458,9 @@
 		}
 
 		protected static function InitializeOutputBuffering() {
-			ob_start('__qcodo_ob_callback');
+			ob_start(array('QApplication', 'OutputPage'));
 		}
-		
+
 		protected static function InitializePhpSession() {
 			// Go ahead and start the PHP session if we have set EnableSession to true
 			if (QApplication::$EnableSession) session_start();

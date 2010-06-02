@@ -1,27 +1,8 @@
 <?php
 	/**
 	 * The following methods are the rare, few "core" functions used by Qcodo.
-	 * Please note that all core functions are prefixed with a "_".  Some methods
-	 * are actually prefixed with "__" or "__qcodo_" if they are intended to be
-	 * callbacks to PHP functionality (global magic methods) or to other Qcodo methods.
+	 * Please note that all core functions are prefixed with a "_".
 	 */
-
-	// Default Qcodo output buffering callback	
-	function __qcodo_ob_callback($strBuffer) {
-		return QApplication::OutputPage($strBuffer);
-	}
-
-	// Default Qcodo Exception Handler callback
-	function __qcodo_handle_exception(Exception $objException) {
-		return QErrorHandler::HandleException($objException);
-	}
-
-	// Default Qcodo Error Handler callback
-	function __qcodo_handle_error($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine) {
-		return QErrorHandler::HandleError($intErrorNumber, $strErrorString, $strErrorFile, $intErrorLine);
-	}
-
-
 
 	// Special Print Functions / Shortcuts
 	// NOTE: These are simply meant to be shortcuts to actual Qcodo functional
