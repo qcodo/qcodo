@@ -205,10 +205,11 @@
 
 		/**
 		 * Called by QApplication::Initialize() to setup error and exception handling
-		 * to use the Qcodo Error/Exception handler.  Only called for non-CLI calls.
+		 * to use the Qcodo Error/Exception handler.
 		 * @return void
 		 */
 		protected static function InitializeErrorHandling() {
+			QErrorHandler::$CliMode = QApplication::$CliMode;
 			set_error_handler('__qcodo_handle_error', error_reporting());
 			set_exception_handler('__qcodo_handle_exception');
 		}
@@ -388,6 +389,7 @@
 			// Basic Initailization Routines
 			QApplication::InitializeEnvironment();
 			QApplication::InitializeScriptInfo();
+			QApplication::InitializeErrorHandling();
 
 			// Perform Initialization for CLI
 			if (QApplication::$CliMode) {
@@ -395,7 +397,6 @@
 
 			// *OR* Perform Initializations for WebApp
 			} else {
-				QApplication::InitializeErrorHandling();
 				QApplication::InitializeOutputBuffering();
 				QApplication::InitializeServerAddress();
 				QApplication::InitializeRequestUri();
