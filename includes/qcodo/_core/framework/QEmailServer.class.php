@@ -25,13 +25,11 @@
 
 		/**
 		 * IP Address of the Originating Server (e.g. the IP address of this server)
-		 * used for the EHLO command in the SMTP protocol.  Defaults to the
-		 * QApplication::$ServerAddress variable, which uses the PHP $_SERVER
-		 * constants to determine the correct IP address.
+		 * used for the EHLO command in the SMTP protocol.
 		 *
 		 * @var string OriginatingServerIp
 		 */
-		public static $OriginatingServerIp;
+		public static $OriginatingServerIp = '127.0.0.1';
 
 		/**
 		 * Whether or not we are running in Test Mode.  Test Mode allows you
@@ -425,10 +423,6 @@
 				chmod($strFileName, 0777);
 		}
 	}
-
-	// PHP does not allow Static Class Variables to be set to non-constants.
-	// So we set QEmailServer's OriginatingServerIp to QApplication's ServerAddress here.
-	QEmailServer::$OriginatingServerIp = QApplication::$ServerAddress;
 
 	class QEmailException extends QCallerException {}
 	
