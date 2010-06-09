@@ -148,32 +148,6 @@
 	// * "SortInfo" (readonly) is what should be passed in to the SORT BY clause of the sql query that retrieves
 	//   the array of items from the database
 
-
-	// Due to the fact that DataGrid's will perform php eval's on anything that is back-ticked within each column/row's 
-	// DataGridColumn::HTML, we need to set up this special DataGridEvalHandleError error handler to correctly report
-	// errors that happen.
-	function DataGridEvalHandleError($__exc_errno, $__exc_errstr, $__exc_errfile, $__exc_errline) {
-		$__exc_objBacktrace = debug_backtrace();
-		for ($__exc_intIndex = 0; $__exc_intIndex < count($__exc_objBacktrace); $__exc_intIndex++) {
-			$__exc_objItem = $__exc_objBacktrace[$__exc_intIndex];
-
-			if ((strpos($__exc_errfile, "DataGrid.inc") !== false) &&
-				(strpos($__exc_objItem["file"], "DataGrid.inc") === false)) {
-				$__exc_errfile = $__exc_objItem["file"];
-				$__exc_errline = $__exc_objItem["line"];
-			} else if ((strpos($__exc_errfile, "Form.inc") !== false) &&
-				(strpos($__exc_objItem["file"], "Form.inc") === false)) {
-				$__exc_errfile = $__exc_objItem["file"];
-				$__exc_errline = $__exc_objItem["line"];
-			}
-		}
-
-		global $__exc_dtg_errstr;
-		if (isset($__exc_dtg_errstr) && ($__exc_dtg_errstr))
-			$__exc_errstr = sprintf("%s\n%s", $__exc_dtg_errstr, $__exc_errstr);
-		__qcodo_handle_error($__exc_errno, $__exc_errstr, $__exc_errfile, $__exc_errline);
-	}
-
 	abstract class QDataGridBase extends QPaginatedControl {
 		// APPEARANCE
 		protected $objAlternateRowStyle = null;
@@ -350,10 +324,9 @@
 				$strToken = trim($strToken);
 				
 				if ($strToken) {
-					// Because Eval doesn't utilize exception management, we need to do hack thru the PHP Error Handler
-					set_error_handler("DataGridEvalHandleError");
-					global $__exc_dtg_errstr;
-					$__exc_dtg_errstr = sprintf("Incorrectly formatted DataGridColumn HTML in %s: %s", $this->strControlId, $strHtml);
+					// Because Eval doesn't utilize exception management, we need to provide the QErrorHandler with additional
+					// information in case soething goes wrong
+					QErrorHandler::$AdditionalMessage = sprintf("Incorrectly formatted DataGridColumn HTML in %s '%s': %s", get_class($this), $this->strControlId, $strHtml);
 
 					try {
 						$strEvaledToken = eval(sprintf('return %s;', $strToken));
@@ -362,10 +335,8 @@
 						throw $objExc;
 					}
 
-					// Restore the original error handler
-					set_error_handler("__qcodo_handle_error");
-					$__exc_dtg_errstr = null;
-					unset($__exc_dtg_errstr);
+					// Clear additional information from error handler
+					QErrorHandler::$AdditionalMessage = null;
 				} else {
 					$strEvaledToken = '';
 				}
