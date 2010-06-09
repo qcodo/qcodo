@@ -93,6 +93,7 @@
 
 		public function Close() {
 			mysql_close($this->objDb);
+			$this->blnConnectedFlag = false;
 		}
 
 		public function GetFieldsForTable($strTableName) {

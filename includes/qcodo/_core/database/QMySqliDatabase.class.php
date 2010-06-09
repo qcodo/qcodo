@@ -135,6 +135,7 @@
 
 		public function Close() {
 			$this->objMySqli->close();
+			$this->blnConnectedFlag = false;
 		}
 		
 		public function TransactionBegin() {

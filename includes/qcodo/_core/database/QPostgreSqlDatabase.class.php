@@ -267,6 +267,7 @@
 		
 		public function Close() {
 			pg_close($this->objPgSql);
+			$this->blnConnectedFlag = false;
 		}
 		
 		public function TransactionBegin() {

@@ -50,6 +50,7 @@
 
 		public function Close() {
 			$this->objPdo = null;
+			$this->blnConnectedFlag = false;
 		}
 
 		public function TransactionBegin() {

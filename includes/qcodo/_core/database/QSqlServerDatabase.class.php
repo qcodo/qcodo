@@ -321,6 +321,7 @@
 
 		public function Close() {
 			mssql_close($this->objMsSql);
+			$this->blnConnectedFlag = false;
 		}
 		
 		public function TransactionBegin() {
