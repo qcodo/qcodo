@@ -30,6 +30,9 @@
 		<%@ meta_add_edit_column('objTable'); %>
 
 
+		<%@ bind_all_rows('objTable'); %>
+
+
 		<%@ meta_data_binder('objTable'); %>
 
 
