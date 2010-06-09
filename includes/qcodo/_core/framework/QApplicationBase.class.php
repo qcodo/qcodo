@@ -600,7 +600,7 @@
 				throw new QCallerException('Error handler is already currently overridden.  Cannot override twice.  Call RestoreErrorHandler before calling SetErrorHandler again.');
 			if (!$strName) {
 				// No Error Handling is wanted -- simulate a "On Error, Resume" type of functionality
-				set_error_handler('__qcodo_handle_error', 0);
+				set_error_handler(array('QErrorHandler', 'HandleError'), 0);
 				QApplication::$intStoredErrorLevel = error_reporting(0);
 			} else {
 				set_error_handler($strName, $intLevel);
