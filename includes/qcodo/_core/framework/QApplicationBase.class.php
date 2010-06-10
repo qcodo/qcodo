@@ -779,7 +779,7 @@
 				return;
 
 			// Are we localhost?
-			if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1')
+			if (substr($_SERVER['REMOTE_ADDR'],0,4) == '127.' || $_SERVER['REMOTE_ADDR'] == '::1')
 				return;
 
 			// Are we the correct IP?
