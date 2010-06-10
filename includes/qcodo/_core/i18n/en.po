@@ -139,8 +139,8 @@ MsgStr "Cancel"
 MsgId "Delete"
 MsgStr "Delete"
 
-MsgId "Are you SURE you want to DELETE this %s?"
-MsgStr "Are you SURE you want to DELETE this %s?"
+MsgId "Are you SURE you want to DELETE this"
+MsgStr "Are you SURE you want to DELETE this"
 
 
 # For the form_drafts/index.php page

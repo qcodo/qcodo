@@ -143,8 +143,8 @@ MsgStr "Cancelar"
 MsgId "Delete"
 MsgStr "Borrar"
 
-MsgId "Are you SURE you want to DELETE this %s?"
-MsgStr "¿Está SEGURO de querer BORRAR este %s?"
+MsgId "Are you SURE you want to DELETE this"
+MsgStr "¿Está SEGURO de querer BORRAR este"
 
 
 # For the form_drafts/index.php page
