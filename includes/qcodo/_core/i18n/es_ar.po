@@ -1,6 +1,6 @@
 # Qcodo Distributed Language File
-# for Spanish (Generic)
-# Contributed by Nino Dafonte <nino.dafonte@gmail.com> and marcosdsanchez @ thinkclear dot com dot ar
+# for Spanish (Argentina)
+# Contributed by marcosdsanchez @ thinkclear dot com dot ar
 
 
 # For QTextBoxBase controls
