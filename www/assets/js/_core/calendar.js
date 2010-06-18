@@ -62,6 +62,9 @@
 				this.dateTimeTextBox.value = intYear + "-" + intMonth + "-" + intDay;
 			} else
 				this.dateTimeTextBox.value = qcodo.monthNamesAbbreviated[intMonth] + " " + intDay + " " + intYear;
+			
+			if (this.dateTimeTextBox.onchange) this.dateTimeTextBox.onchange();
+			if (this.dateTimeTextBox.onblur) this.dateTimeTextBox.onblur();
 			this.hideCalendar();
 		};
 
