@@ -148,6 +148,7 @@
 			$objControl->objForm = null;
 			$objControl->objParentControl = null;
 			$objControl->strCachedActualFilePath = null;
+			$objControl->strCssClass = null;
 			$strData = serialize($objControl);
 			if (function_exists('gzcompress'))
 				$strData = base64_encode(gzcompress($strData, 9));
@@ -248,6 +249,30 @@
 					break;
 				default:
 					throw new Exception('Invalid Image Type');
+			}
+		}
+
+		/**
+		 * This will attempt to set an image path from a QFileUploader control, taking the temporary file
+		 * path AND mime type information into account.
+		 * @return void
+		 */
+		public function SetImagePathFromFileUploader(QFileUploader $fupImage) {
+			$this->strImagePath = realpath($fupImage->FilePath);
+			switch ($fupImage->MimeType) {
+				case 'image/jpg':
+				case 'image/jpeg':
+				case 'image/pjpeg':
+					$this->strSourceImageType = QImageType::Jpeg;
+					break;
+				case 'image/gif':
+					$this->strSourceImageType = QImageType::Gif;
+					break;
+				case 'image/png':
+					$this->strSourceImageType = QImageType::Png;
+					break;
+				default:
+					throw new QCallerException('Unable to process Image MimeType: ' . $fupImage->MimeType);
 			}
 		}
 
