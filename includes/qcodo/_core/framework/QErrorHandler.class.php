@@ -229,6 +229,15 @@
 				case E_USER_NOTICE:
 					QErrorHandler::$ObjectType = 'E_USER_NOTICE';
 					break;
+				case E_DEPRECATED:
+					QErrorHandler::$ObjectType = 'E_DEPRECATED';
+					break;
+				case E_USER_DEPRECATED:
+					QErrorHandler::$ObjectType = 'E_USER_DEPRECATED';
+					break;
+				case E_RECOVERABLE_ERROR:
+					QErrorHandler::$ObjectType = 'E_RECOVERABLE_ERROR';
+					break;
 				default:
 					QErrorHandler::$ObjectType = 'Unknown';
 					break;
