@@ -798,30 +798,33 @@
 
 		/**
 		 * Gets the value of the PathInfo item at index $intIndex.  Will return NULL if it doesn't exist.
+		 * If no $intIndex is given will return an array with PathInfo contents.
 		 *
 		 * The way PathInfo index is determined is, for example, given a URL '/folder/page.php/id/15/blue',
 		 * QApplication::PathInfo(0) will return 'id'
 		 * QApplication::PathInfo(1) will return '15'
 		 * QApplication::PathInfo(2) will return 'blue'
 		 *
-		 * @return void
+		 * @return mixed
 		 */
-		public static function PathInfo($intIndex) {
+		public static function PathInfo($intIndex = null) {
 			// TODO: Cache PathInfo
 			$strPathInfo = QApplication::$PathInfo;
-			
+
 			// Remove Trailing '/'
 			if (QString::FirstCharacter($strPathInfo) == '/')			
 				$strPathInfo = substr($strPathInfo, 1);
-			
+
 			$strPathInfoArray = explode('/', $strPathInfo);
+
+			if ($intIndex === null) return $strPathInfoArray;
 
 			if (array_key_exists($intIndex, $strPathInfoArray))
 				return $strPathInfoArray[$intIndex];
 			else
 				return null;
 		}
-		
+
 		public static $AlertMessageArray = array();
 		public static $JavaScriptArray = array();
 		public static $JavaScriptArrayHighPriority = array();
