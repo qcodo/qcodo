@@ -555,6 +555,13 @@
 		protected function GetControlHtml() {
 			$this->DataBind();
 
+			// Render NoDataHtml?
+			if ((!$this->objDataSource || !count($this->objDataSource)) &&
+				$this->strNoDataHtml) {
+				$this->objDataSource = null;
+				return $this->strNoDataHtml;
+			}
+
 			// Table Tag
 			$strStyle = $this->GetStyleAttributes();
 			if ($strStyle)
