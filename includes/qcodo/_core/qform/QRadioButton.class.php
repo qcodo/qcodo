@@ -1,12 +1,15 @@
 <?php
-	// This class will render an HTML Radio button.
-	// * "Text" is used to display text that is displayed next to the radio.  The text is rendered as
-	//   an html "Label For" the radio.
-	// * "TextAlign" specifies if "Text" should be displayed to the left or to the right of the radio.
-	// * "Checked" specifices whether or not the radio is selected
-	// * "GroupName" assigns the radio button into a radio button group (optional) so that no more than
-	//   one radio in that group may be selected at a time.
-
+	/**
+	 * This class will render an HTML Radio button.
+	 *
+	 * @package Controls
+	 *
+	 * @property string $Text is used to display text that is displayed next to the radio.  The text is rendered as an html "Label For" the radio
+	 * @property string $TextAlign specifies if "Text" should be displayed to the left or to the right of the radio.
+	 * @property string $GroupName assigns the radio button into a radio button group (optional) so that no more than one radio in that group may be selected at a time.
+	 * @property boolean $HtmlEntities
+	 * @property boolean $Checked specifices whether or not the radio is selected
+	 */
 	class QRadioButton extends QControl {
 		///////////////////////////
 		// Private Member Variables
