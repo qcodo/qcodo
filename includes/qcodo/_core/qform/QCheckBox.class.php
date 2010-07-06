@@ -1,10 +1,14 @@
 <?php
-	// This class will render an HTML Checkbox.
-	// * "Text" is used to display text that is displayed next to the checkbox.  The text is rendered as
-	//   an html "Label For" the checkbox.
-	// * "TextAlign" specifies if "Text" should be displayed to the left or to the right of the checkbox.
-	// * "Checked" specifices whether or not hte checkbox is checked
-
+	/**
+	 * This class will render an HTML Checkbox.
+	 *
+	 * @package Controls
+	 *
+	 * @property string $Text is used to display text that is displayed next to the checkbox.  The text is rendered as an html "Label For" the checkbox.
+	 * @property string $TextAlign specifies if "Text" should be displayed to the left or to the right of the checkbox.
+	 * @property boolean $Checked specifices whether or not hte checkbox is checked
+	 * @property boolean $HtmlEntities
+	 */
 	class QCheckBox extends QControl {
 		///////////////////////////
 		// Private Member Variables
