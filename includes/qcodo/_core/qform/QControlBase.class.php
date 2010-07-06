@@ -1,82 +1,72 @@
 <?php
-	// TODO: Update the SERIOUSLY OUT OF DATE documentation for Forms and Controls!!!
-	// ALL CONTROLS eventually inheret from this abstract Control class
-	// All controls must implement the following four abstract functions:
-	//	string Render()
-	//	string GetJavaScriptAction()
-	//	void ParsePostData()
-	//	bool Validate()
-
-	// Please see comments below, by each method, for more information about those methods
-	
-	// Control has many properties.  Please note that not every control will utilize every single one of these properties.
-	//
-	// Appearance properties dictate how the control should appear (e.g. font, color, borders, etc.)
-	//
-	// Behavior properties:
-	// * "AccessKey" allows you to specify what Alt-Letter combination will automatically focus that control on the form
-	// * "CausesValidation" flag says whether or not the form should run through its validation routine if this control
-	//   has a ServerAction defined and is acted upon
-	// * "Enabled" specifies whether or not this is enabled (it will grey out the control and make it inoperable if set to true)
-	// * "Required" specifies whether or not this is required (will cause a validation error if the form is trying to
-	//   be validated and this control is left blank)
-	// * "TabIndex" specifies the index/tab order on a form
-	// * "ToolTip" specifies the text to be displayed when the mouse is hovering over the control
-	// * "ValidationError" (readonly) is the string that contains the validation error (if applicable) or will be blank if
-	//   (1) the form did not undergo its validation routine or (2) this control had no error
-	// * "Visible" specifies whether or not the control should be rendered.  If "Visible" is false, calling Form::RenderControl
-	//   on this object will end up displaying nothing.  (Keep in mind that the control's "Render" method doesn't display
-	//   anything, it simply returns the HTML as a string which can then be printf'd... therefore, the control's render method
-	//   will still return the string of the html of the control even if Visible is set to false.
-	//
-	// Keep in mind that Controls that are not Enabled or not Visible will not go through the form's Validation routine.
-	//
-	// Layout properties:
-	// * "Height" is the height of the control.  Left as a string so that you can specify as "15" or things like "15px"
-	//	 "15em", "15pt", etc.
-	// * "Width" is the width of the control.
-	//
-	// The following Layout properties are used if the control is rendered "With Name" (e.g. Control::RenderWithName)
-	// See RenderWithName() for more information
-	// * "HtmlBefore" is HTML that is shown before the control, itself
-	// * "HtmlAfter" is HTML that is shown after the control, itself
-	// * "Instructions" is instructions that is shown next to the control's name label
-	// * "Warning" is warning text (looks like an error, but it can be user defined) that will be shown next to the control's
-	//   name label
-	//
-	// Misc Properties:
-	// * "Id" (readonly) is the Id of the control.  So $txtMyTextbox = new TextBox("txtMyTextbox") specifies that this Textbox
-	//   control's Id is "txtMyTextbox".  Please note that the Id in quotes MUST be the same as the object's variable name.
-	// * "FormId" (readonly) is the string of the form's id.
-	// * "Name" will display as the Control's name label when called by Control::RenderWithName
-	// * "Rendered" controlled by the Form to specify whether or not a specific control has been rendered on the page
-	//   This is to ensure that no single control is rendered twice on the same form.  (Bad bad bad things would happen
-	//   if the exact same control is rendered twice on the same form)
-	// * "ServerAction" is either TRUE *OR* the php function name that will be called if this control is "acted" upon.
-	//   To figure out how to 'act' upon a control, refer to the control's GetJavaScriptAction, which specifies whether
-	//   a control's action is 'onclick', 'onchange', etc.  If ServerAction is TRUE, it simply means that acting on that control
-	//   will casue the Form to PostBack.  If ServerAction is a specific php function name, that function will be called
-	//   during the postback process.  (See comments for "Form::RenderBegin()" at the top of Form.inc for more information)
-	//   Three parameters are always passed in to the php function that will be called:
-	//     - string strFormId (FormId of hte form in question)
-	//     - string strContorlId (ControLId of the control being acted upon)
-	//     - string strParameterId (optional, user-specified parameters that contain additional information)
-	//   Please note that within any php function, you do not immediately have access to the global variables, including
-	//   the controls and the forms, themselves.  For that reason, eval(Form::EventHandler) should always be called at the
-	//   top of every PHP Function which is a ServerAction in order to give you access to those global variables.
-	// * "ClientAction" is any client javascript that will be executed if this control is "acted" upon.
-	//
-	// If both a ClientAction **AND** ServerAction is defined on a control, the control will first execute the ClientAction.
-	// At any time if javascript in the clientaction does a "return false", the serveraction will NOT be executed.  This
-	// is useful for things like:
-	//		$btnDelete = new Button("btnDelete");
-	//		$frmForm = $frmForm->AddControl($btnDelete);
-	//		$btnDelete->ServerAction = "PerformDelete";
-	//		$btnDelete->ClientAction = "return confirm('Are you SURE you want to DELETE this item?')";
-	// This will cause the javascript pop up to first allow the user to confirm that s/he wants to delete.  If "Ok" is pressed,
-	// the form is posted-back, validation routine executed (if CausesValidation is true), and ServerAction will then kickoff.
-	// If "Cancel" is pressed, nothing will happen (the form will NOT post-back, no other actions will be executed).
-
+	/**
+	 * QControlBase is the base class of all QControls and shares their common properties
+	 *
+	 * Please note that not every control will utilize every single one of these properties.
+	 * Keep in mind that Controls that are not Enabled or not Visible will not go through the form's
+	 * Validation routine.
+	 * All Controls must implement the following abstract functions:
+	 * <ul>
+	 * 		<li>{@link QControlBase::GetControlHtml()}</li>
+	 * 		<li>{@link QControlBase::ParsePostData()}</li>
+	 * 		<li>{@link QControlBase::Validate()}</li>
+	 * </ul>
+	 *
+	 * @package Controls
+	 *
+	 * @property string $AccessKey allows you to specify what Alt-Letter combination will automatically focus that control on the form
+	 * @property boolean $ActionsMustTerminate
+	 * @property string $ActionParameter This property allows you to pass your own parameters to the handlers for actions applied to this control.
+	 * @property string $BackColor sets the CSS background-color of the control
+	 * @property string $BorderColor sets the CSS border-color of the control
+	 * @property string $BorderWidth sets the CSS border-width of the control
+	 * @property string $BorderStyle is used to set CSS border-style by {@link QBorderStyle}
+	 * @property mixed $CausesValidation flag says whether or not the form should run through its validation routine if this control has an action defined and is acted upon
+	 * @property-read string $ControlId returns the id of this control
+	 * @property string $CssClass sets or returns the CSS class for this control
+	 * @property string $Cursor is used to set CSS cursor property by {@link QCursor}
+	 * @property boolean $Display shows or hides the control using the CSS display property.  In either case, the control is still rendered on the page. See the Visible property if you wish to not render a control.
+	 * @property string $DisplayStyle is used to set CSS display property by {@link QDisplayStyle}
+	 * @property boolean $Enabled specifies whether or not this is enabled (it will grey out the control and make it inoperable if set to true)
+	 * @property boolean $FontBold sets the font bold or normal
+	 * @property boolean $FontItalic sets the Font italic or normal
+	 * @property string $FontNames sets the name of used fonts
+	 * @property boolean $FontOverline
+	 * @property string $FontSize sets the font-size of the control
+	 * @property boolean $FontStrikeout
+	 * @property boolean $FontUnderline sets the font underlined
+	 * @property string $ForeColor sets the forecolor of the control (like fontcolor)
+	 * @property-read QForm $Form returns the parent form object
+	 * @property-read string $FormAttributes
+	 * @property string $Height
+	 * @property string $HtmlAfter HTML that is shown after the control {@link QControl::RenderWithName}
+	 * @property string $HtmlBefore HTML that is shown before the control {@link QControl::RenderWithName}
+	 * @property string $Instructions instructions that is shown next to the control's name label {@link QControl::RenderWithName}
+	 * @property-read string $JavaScripts
+	 * @property string $Left CSS left property
+	 * @property-read boolean $Modified indicates if the control has been changed. Used to tell Qcodo to rerender the control or not (Ajax calls).
+	 * @property boolean $Moveable
+	 * @property boolean $Resizable
+	 * @property string $Name sets the Name of the Control (see {@link QControl::RenderWithName})
+	 * @property-read boolean $OnPage is true if the control is connected to the form
+	 * @property integer $Opacity sets the opacity of the control (0-100)
+	 * @property string $Overflow is used to set CSS overflow property by {@link QOverflow}
+	 * @property-read QForm|QControl $ParentControl returns the parent control
+	 * @property string $Position is used to set CSS position property by {@link QPosition}
+	 * @property-read boolean $Rendered
+	 * @property-read boolean $Rendering
+	 * @property-read string $RenderMethod carries the name of the function, which were initially used for rendering
+	 * @property boolean $Required specifies whether or not this is required (will cause a validation error if the form is trying to be validated and this control is left blank)
+	 * @property-read string $StyleSheets
+	 * @property integer $TabIndex specifies the index/tab order on a form
+	 * @property string $ToolTip specifies the text to be displayed when the mouse is hovering over the control
+	 * @property string $Top
+	 * @property-read string $ValidationError is the string that contains the validation error (if applicable) or will be blank if (1) the form did not undergo its validation routine or (2) this control had no error
+	 * @property boolean $Visible specifies whether or not the control should be rendered in the page.  This is in contrast to Display, which will just hide the control via CSS styling.
+	 * @property string $Warning is warning text (looks like an error, but it can be user defined) that will be shown next to the control's name label {@link QControl::RenderWithName}
+	 * @property string $Width
+	 * @property-read boolean $WrapperModified
+	 */
 	abstract class QControlBase extends QBaseClass {
 		///////////////////////////
 		// Private Member Variables
