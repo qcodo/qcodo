@@ -1,32 +1,32 @@
 // General Variables
 		/**
-		 * @var <%= $objTable->ClassName %>
-		 * @access protected <%= $objCodeGen->VariableNameFromTable($objTable->Name); %>
+		 * @var <%= $objTable->ClassName %> <%= $objCodeGen->VariableNameFromTable($objTable->Name); %>
+		 * @access protected
 		 */
 		protected $<%= $objCodeGen->VariableNameFromTable($objTable->Name); %>;
 
 		/**
-		 * @var QForm|QControl
-		 * @access protected objParentObject
+		 * @var QForm|QControl objParentObject
+		 * @access protected
 		 */
 		protected $objParentObject;
 
 		/**
-		 * @var string
-		 * @access protected strTitleVerb
+		 * @var string  strTitleVerb
+		 * @access protected
 		 */
 		protected $strTitleVerb;
 
 		/**
-		 * @var boolean
-		 * @access protected blnEditMode
+		 * @var boolean blnEditMode
+		 * @access protected
 		 */
 		protected $blnEditMode;
 
 		// Controls that allow the editing of <%= $objTable->ClassName %>'s individual data fields
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
         /**
-         * @var <%= $objCodeGen->FormControlTypeForColumn($objColumn); %> <%= $objCodeGen->FormLabelVariableNameForColumn($objColumn); %>
+         * @var <%= $objCodeGen->FormControlClassForColumn($objColumn); %> <%= $objCodeGen->FormControlVariableNameForColumn($objColumn); %>;
          * @access protected
          */
 		protected $<%= $objCodeGen->FormControlVariableNameForColumn($objColumn); %>;
