@@ -569,7 +569,11 @@
 			if (!$strEncodingType) $strEncodingType = QApplication::$EncodingType;
 
 			// Additional "Optional" Headers
-			if ($this->Subject) $this->SetHeader('Subject', sprintf("=?%s?Q?%s?=", $strEncodingType, self::QuotedPrintableEncode($this->Subject)));
+			if ($this->Subject) {
+				$strSubject = self::QuotedPrintableEncode($this->Subject);
+				$strSubject = str_replace('?', '=3F', $strSubject);
+				$this->SetHeader('Subject', sprintf("=?%s?Q?%s?=", $strEncodingType, $strSubject));
+			}
 			if ($this->Cc) $this->SetHeader('Cc', $this->Cc);
 
 			// Setup for MIME and Content Encoding
