@@ -221,8 +221,15 @@
 
 			// Header
 			if (is_array($mixMessageHeader)) {
-				foreach ($mixMessageHeader as $strName => $strValue)
-					self::SendData(sprintf("%s: %s\r\n", $strName, $strValue));
+				foreach ($mixMessageHeader as $strName => $mixValue) {
+					if (is_array($mixValue)) {
+						foreach ($mixValue as $strValue) {
+							self::SendData(sprintf("%s: %s\r\n", $strName, $strValue));
+						}
+					} else {
+						self::SendData(sprintf("%s: %s\r\n", $strName, $mixValue));
+					}
+				}
 			} else {
 				self::SendData(trim($mixMessageHeader) . "\r\n");
 			}
