@@ -555,41 +555,46 @@
 		protected function GetControlHtml() {
 			$this->DataBind();
 
-			// Render NoDataHtml?
-			if ((!$this->objDataSource || !count($this->objDataSource)) &&
-				$this->strNoDataHtml) {
-				$this->objDataSource = null;
-				return $this->strNoDataHtml;
-			}
-
 			// Table Tag
 			$strStyle = $this->GetStyleAttributes();
 			if ($strStyle)
 				$strStyle = sprintf('style="%s" ', $strStyle);
-			$strToReturn = sprintf("<table id=\"%s\" %s%s>\r\n", $this->strControlId, $this->GetAttributes(), $strStyle);
 
-			// Paginator Row (if applicable)
-			if ($this->objPaginator)
-				$strToReturn .= "<caption>\r\n" . $this->GetPaginatorRowHtml($this->objPaginator) . "</caption>\r\n";
+			// Display the "NoHtml" if no data
+			if (!$this->objDataSource || !count($this->objDataSource)) {
+				$strToReturn = sprintf('<p id="%s" %s%s>%s</p>',
+					$this->strControlId,
+					$this->GetAttributes(),
+					$strStyle,
+					$this->strNoDataHtml);
 
-			// Header Row (if applicable)
-			if ($this->blnShowHeader)
-				$strToReturn .= "<thead>\r\n" . $this->GetHeaderRowHtml() . "</thead>\r\n";
+			} else {
+				$strToReturn = sprintf("<table id=\"%s\" %s%s>\r\n", $this->strControlId, $this->GetAttributes(), $strStyle);
 
-			// Footer Row (if applicable)
-			if ($this->blnShowFooter)
-				$strToReturn .= "<tfoot>\r\n" . $this->GetFooterRowHtml() . "</tfoot>\r\n";
+				// Paginator Row (if applicable)
+				if ($this->objPaginator)
+					$strToReturn .= "<caption>\r\n" . $this->GetPaginatorRowHtml($this->objPaginator) . "</caption>\r\n";
 
-			// DataGrid Rows
-			$strToReturn .= "<tbody>\r\n";
-			$this->intCurrentRowIndex = 0;
-			if ($this->objDataSource)
-				foreach ($this->objDataSource as $objObject)
-					$strToReturn .= $this->GetDataGridRowHtml($objObject);
-			$strToReturn .= "</tbody>\r\n";
+				// Header Row (if applicable)
+				if ($this->blnShowHeader)
+					$strToReturn .= "<thead>\r\n" . $this->GetHeaderRowHtml() . "</thead>\r\n";
 
-			// Finish Up
-			$strToReturn .= '</table>';
+				// Footer Row (if applicable)
+				if ($this->blnShowFooter)
+					$strToReturn .= "<tfoot>\r\n" . $this->GetFooterRowHtml() . "</tfoot>\r\n";
+
+				// DataGrid Rows
+				$strToReturn .= "<tbody>\r\n";
+				$this->intCurrentRowIndex = 0;
+				if ($this->objDataSource)
+					foreach ($this->objDataSource as $objObject)
+						$strToReturn .= $this->GetDataGridRowHtml($objObject);
+				$strToReturn .= "</tbody>\r\n";
+
+				// Finish Up
+				$strToReturn .= '</table>';
+			}
+
 			$this->objDataSource = null;
 			return $strToReturn;
 		}
