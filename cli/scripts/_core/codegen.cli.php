@@ -61,8 +61,10 @@
 		if (ini_get('max_execution_time')) printf(' (%ss maximum)', ini_get('max_execution_time'));
 		print "\r\n";
 
-		printf('Peak memory usage %s (%s maximum allocation)', QString::GetByteSize(memory_get_peak_usage(true)), ini_get('memory_limit'));
-		print "\r\n";
+		if (function_exists('memory_get_peak_usage')) {
+			printf('Peak memory usage %s (%s maximum allocation)', QString::GetByteSize(memory_get_peak_usage(true)), ini_get('memory_limit'));
+			print "\r\n";
+		}
 	} catch (Exception $objExc) {
 		print 'error: ' . trim($objExc->getMessage()) . "\r\n";
 		exit(1);

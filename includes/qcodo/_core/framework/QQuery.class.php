@@ -51,10 +51,7 @@
 			$this->strPropertyName = $strPropertyName;
 			$this->strType = $strType;
 			if ($objParentNode) {
-				if (version_compare(PHP_VERSION, '5.1.0') == -1)
-					$this->strRootTableName = $objParentNode->__get('_RootTableName');
-				else
-					$this->strRootTableName = $objParentNode->_RootTableName;
+				$this->strRootTableName = $objParentNode->_RootTableName;
 			} else
 				$this->strRootTableName = $strName;
 		}
@@ -265,10 +262,7 @@
 		public function __construct($objParentNode, $strName, $strType, $strForeignKey, $strPropertyName = null) {
 			$this->objParentNode = $objParentNode;
 			if ($objParentNode) {
-				if (version_compare(PHP_VERSION, '5.1.0') == -1)
-					$this->strRootTableName = $objParentNode->__get('_RootTableName');
-				else
-					$this->strRootTableName = $objParentNode->_RootTableName;
+				$this->strRootTableName = $objParentNode->_RootTableName;
 			} else
 				throw new QCallerException('ReverseReferenceNodes must have a Parent Node');
 			$this->strName = $strName;
@@ -354,10 +348,7 @@
 	class QQAssociationNode extends QQBaseNode {
 		public function __construct($objParentNode) {
 			$this->objParentNode = $objParentNode;
-			if (version_compare(PHP_VERSION, '5.1.0') == -1)
-				$this->strRootTableName = $objParentNode->__get('_RootTableName');
-			else
-				$this->strRootTableName = $objParentNode->_RootTableName;
+			$this->strRootTableName = $objParentNode->_RootTableName;
 		}
 
 		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
@@ -1041,10 +1032,7 @@
 			$this->strPropertyName = 'PROPERTYFOO';
 			$this->strType = 'integer';
 			if ($this->objParentNode) {
-				if (version_compare(PHP_VERSION, '5.1.0') == -1)
-					$this->strRootTableName = $objNode->objParentNode->__get('_RootTableName');
-				else
-					$this->strRootTableName = $objNode->objParentNode->_RootTableName;
+				$this->strRootTableName = $objNode->objParentNode->_RootTableName;
 			} else
 				$this->strRootTableName = 'ROOTFOO';
 
