@@ -958,7 +958,8 @@
 				}
 
 				// Output runtime statistics
-				print('memory_get_peak_usage: ' . QString::GetByteSize(memory_get_peak_usage(true)) . ' / ' . ini_get('memory_limit') . '<br/>');
+				if (function_exists('memory_get_peak_usage'))
+					print('memory_get_peak_usage: ' . QString::GetByteSize(memory_get_peak_usage(true)) . ' / ' . ini_get('memory_limit') . '<br/>');
 				print('max_execution_time: ' . ini_get('max_execution_time') . '&nbsp;s<br/>');
 				print('max_input_time: ' . ini_get('max_input_time') . '&nbsp;s<br/>');
 				print('upload_max_filesize: ' . ini_get('upload_max_filesize') . '<br/>');
