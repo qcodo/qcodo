@@ -116,7 +116,7 @@
 			if ($strStyle)
 				$strAttributes .= sprintf(' style="%s"', $strStyle);
 
-			$strCommand = sprintf(' onchange="qc.dttChange(\'%s\', this);"', $this->strControlId);
+			$strCommand = sprintf(' onchange="qc.dtpChange(\'%s\', this);"', $this->strControlId);
 
 			if ($this->dttDateTime)
 				$dttDateTime = $this->dttDateTime;

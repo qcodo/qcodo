@@ -1,4 +1,8 @@
-	function Qcodo__DateTimePicker_Change(strControlId, objListbox) {
+/////////////////////////////////////////////
+// Control: Date Time Picker functionality
+/////////////////////////////////////////////
+
+	qcodo.dateTimePickerChange = function(strControlId, objListbox) {
 		var objMonth = document.getElementById(strControlId + "_lstMonth");
 		var objDay = document.getElementById(strControlId + "_lstDay");
 		var objYear = document.getElementById(strControlId + "_lstYear");
@@ -75,3 +79,5 @@
 			};
 		};
 	};
+
+	qc.dtpChange = qcodo.dateTimePickerChange;
