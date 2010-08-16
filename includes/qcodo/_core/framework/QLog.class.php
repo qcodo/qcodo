@@ -100,6 +100,36 @@
 		}
 
 		/**
+		 * Used to log the current backtrace.
+		 * @param integer $intLogLevel
+		 * @param string $strLogModule
+		 * @return void
+		 */
+		public static function LogBackTrace($intLogLevel = QLogLevel::Normal, $strLogModule = 'default') {
+			$objBackTrace = debug_backtrace();
+			$strMessage = null;
+			for ($intIndex = 1; $intIndex < count($objBackTrace); $intIndex++) {
+				$objItem = $objBackTrace[$intIndex];
+				
+				$strKeyFile = (array_key_exists('file', $objItem)) ? $objItem['file'] : '';
+				$strKeyLine = (array_key_exists('line', $objItem)) ? $objItem['line'] : '';
+				$strKeyClass = (array_key_exists('class', $objItem)) ? $objItem['class'] : '';
+				$strKeyType = (array_key_exists('type', $objItem)) ? $objItem['type'] : '';
+				$strKeyFunction = (array_key_exists('function', $objItem)) ? $objItem['function'] : '';
+				
+				$strMessage .= sprintf("#%s %s(%s): %s%s%s()\r\n",
+					$intIndex,
+					$strKeyFile,
+					$strKeyLine,
+					$strKeyClass,
+					$strKeyType,
+					$strKeyFunction);
+			}
+
+			self::Log(trim($strMessage), $intLogLevel, $strLogModule);
+		}
+
+		/**
 		 * Internally used function to properly format (with linebreaks and indentation) the message
 		 * @param string $strMessage
 		 * @return string
