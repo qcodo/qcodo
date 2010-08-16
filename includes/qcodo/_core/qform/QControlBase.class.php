@@ -239,11 +239,70 @@
 				return $this->objChildControlArray;
 		}
 
+		public function MoveUpInParent() {
+			if (!$this->objParentControl) throw new QCallerException('QControl has no parent control to move within');
+
+			$this->objParentControl->objChildControlArray = array_reverse($this->objParentControl->objChildControlArray);
+			$this->MoveDownInParent();
+			$this->objParentControl->objChildControlArray = array_reverse($this->objParentControl->objChildControlArray);
+		}
+
+		public function MoveDownInParent() {
+			if (!$this->objParentControl) throw new QCallerException('QControl has no parent control to move within');
+
+			$objNewChildControlArray = array();
+
+			$blnFound = false;
+			foreach ($this->objParentControl->objChildControlArray as $strControlId => $objControl) {
+				if ($this->strControlId != $strControlId) {
+					$objNewChildControlArray[$strControlId] = $objControl;
+				}
+
+				if ($blnFound) {
+					$objNewChildControlArray[$this->strControlId] = $this;
+					$blnFound = false;
+				} else if ($this->strControlId == $strControlId) {
+					$blnFound = true;
+				}
+			}
+
+			$this->objParentControl->objChildControlArray = $objNewChildControlArray;
+		}
+
+		public function MoveChildControlDown($strControlId) {
+			if (array_key_exists($strControlId, $this->objChildControlArray))
+				$this->objChildControlArray[$strControlId]->MoveDownInParent();
+			else
+				throw new QCallerException('Child control does not exist: ' . $strControlId);
+		}
+		
+		public function MoveChildControlUp($strControlId) {
+			if (array_key_exists($strControlId, $this->objChildControlArray))
+				$this->objChildControlArray[$strControlId]->MoveUpInParent();
+			else
+				throw new QCallerException('Child control does not exist: ' . $strControlId);
+		}
+
 		public function GetChildControl($strControlId) {
 			if (array_key_exists($strControlId, $this->objChildControlArray))
 				return $this->objChildControlArray[$strControlId];
 			else
 				return null;
+		}
+
+		public function GetChildControlIndex($strControlId) {
+			$intIndex = 0;
+			foreach($this->objChildControlArray as $strControlIdToTest => $objControl) {
+				if ($strControlIdToTest == $strControlId)
+					return $intIndex;
+				$intIndex++;
+			}
+
+			return null;
+		}
+
+		public function CountChildControls() {
+			return count($this->objChildControlArray);
 		}
 
 		public function RemoveChildControls($blnRemoveFromForm) {
