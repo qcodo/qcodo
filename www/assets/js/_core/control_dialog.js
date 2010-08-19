@@ -17,6 +17,9 @@
 		};
 		objWrapper.id = objControl.id + "_ctl";
 
+		// Only register if we haven't yet registered
+		if (objWrapper.showDialogBox) return;
+
 		// DialogBox MUST be at the "top level" in the DOM, a direct child of the FORM
 		document.getElementById(document.getElementById("Qform__FormId").value).appendChild(objWrapper);
 
