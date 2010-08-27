@@ -54,14 +54,26 @@
 		}
 
 		public function TransactionBegin() {
+			// Connect if Applicable
+			if (!$this->blnConnectedFlag) {
+				$this->Connect();
+			}
 			$this->objPdo->beginTransaction();
 		}
 
 		public function TransactionCommit() {
+			// Connect if Applicable
+			if (!$this->blnConnectedFlag) {
+				$this->Connect();
+			}
 			$this->objPdo->commit();
 		}
 
 		public function TransactionRollBack() {
+			// Connect if Applicable
+			if (!$this->blnConnectedFlag) {
+				$this->Connect();
+			}
 			$this->objPdo->rollback();
 		}
 
