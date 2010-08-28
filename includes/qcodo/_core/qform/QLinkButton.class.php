@@ -130,11 +130,4 @@
 			}
 		}
 	}
-
-	abstract class QLinkTarget {
-		const Blank = '_blank';
-		const Self = '_self';
-		const Parent = '_parent';
-		const Top = '_top';
-	}
 ?>
