@@ -493,6 +493,7 @@
 				print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
 				print "  qpm-download   Download and installs an external QPM package\r\n";
 				print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
+				print "  phpunit        Run bundled PHPUnit\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
 				print "See \"" . $strDefaultPath . "/scripts/_README.txt\" for more info";
