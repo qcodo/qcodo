@@ -314,6 +314,8 @@
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_7_0;
 					else if (strpos($strUserAgent, 'msie 8.0') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_8_0;
+					else if (strpos($strUserAgent, 'msie 9.0') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::InternetExplorer_9_0;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
@@ -346,6 +348,8 @@
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_3_0;
 					else if (strpos($strUserAgent, 'chrome/4.') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_4_0;
+					else if (strpos($strUserAgent, 'chrome/5.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Chrome_5_0;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
@@ -359,6 +363,8 @@
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_3_0;
 					else if (strpos($strUserAgent, 'version/4.') !== false)
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_4_0;
+					else if (strpos($strUserAgent, 'version/5.') !== false)
+						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Safari_5_0;
 					else
 						QApplication::$BrowserType = QApplication::$BrowserType | QBrowserType::Unsupported;
 
@@ -1029,27 +1035,31 @@
 		const InternetExplorer_6_0 = 2;
 		const InternetExplorer_7_0 = 4;
 		const InternetExplorer_8_0 = 8;
+		const InternetExplorer_9_0 = 16;
 		
-		const Firefox = 16;
-		const Firefox_1_0 = 32;
-		const Firefox_1_5 = 64;
-		const Firefox_2_0 = 128;
-		const Firefox_3_0 = 256;
-		const Firefox_3_5 = 512;
+		const Firefox = 32;
+		const Firefox_1_0 = 64;
+		const Firefox_1_5 = 128;
+		const Firefox_2_0 = 256;
+		const Firefox_3_0 = 512;
+		const Firefox_3_5 = 1024;
+		const Firefox_4   = 2048;
 		
-		const Safari = 1024;
-		const Safari_2_0 = 2048;
-		const Safari_3_0 = 4096;
-		const Safari_4_0 = 8192;
+		const Safari = 4096;
+		const Safari_2_0 = 8192;
+		const Safari_3_0 = 16384;
+		const Safari_4_0 = 32768;
+		const Safari_5_0 = 65536;
 		
-		const Chrome = 16384;
-		const Chrome_2_0 = 32768;
-		const Chrome_3_0 = 65536;
-		const Chrome_4_0 = 131072;
+		const Chrome     = 131072;
+		const Chrome_2_0 = 262144;
+		const Chrome_3_0 = 524288;
+		const Chrome_4_0 = 1048576;
+		const Chrome_5_0 = 2097152;
 
-		const Macintosh = 262144;
-		const Iphone = 524288;
+		const Macintosh = 4194304;
+		const Iphone = 8388608;
 
-		const Unsupported = 1048576;
+		const Unsupported = 16777216;
 	}
 ?>

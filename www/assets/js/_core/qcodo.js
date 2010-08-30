@@ -16,28 +16,32 @@
 			this.IE_6_0 = 2;
 			this.IE_7_0 = 4;
 			this.IE_8_0 = 8;
+			this.IE_9_0 = 16;
+		
+			this.FIREFOX = 32;
+			this.FIREFOX_1_0 = 64;
+			this.FIREFOX_1_5 = 128;
+			this.FIREFOX_2_0 = 256;
+			this.FIREFOX_3_0 = 512;
+			this.FIREFOX_3_5 = 1024;
+			this.FIREFOX_4   = 2048;
+		
+			this.SAFARI = 4096;
+			this.SAFARI_2_0 = 8192;
+			this.SAFARI_3_0 = 16384;
+			this.SAFARI_4_0 = 32768;
+			this.SAFARI_5_0 = 65536;
+		
+			this.CHROME     = 131072;
+			this.CHROME_2_0 = 262144;
+			this.CHROME_3_0 = 524288;
+			this.CHROME_4_0 = 1048576;
+			this.CHROME_5_0 = 2097152;
 
-			this.FIREFOX = 16;
-			this.FIREFOX_1_0 = 32;
-			this.FIREFOX_1_5 = 64;
-			this.FIREFOX_2_0 = 128;
-			this.FIREFOX_3_0 = 256;
-			this.FIREFOX_3_5 = 512;
+			this.MACINTOSH = 4194304;
+			this.IPHONE = 8388608;
 
-			this.SAFARI = 1024;
-			this.SAFARI_2_0 = 2048;
-			this.SAFARI_3_0 = 4096;
-			this.SAFARI_4_0 = 8192;
-
-			this.CHROME = 16384;
-			this.CHROME_2_0 = 32768;
-			this.CHROME_3_0 = 65536;
-			this.CHROME_4_0 = 131072;
-
-			this.MACINTOSH = 262144;
-			this.IPHONE = 524288;
-
-			this.UNSUPPORTED = 1048576;
+			this.UNSUPPORTED = 16777216;
 
 			// INTERNET EXPLORER (supporting versions 6.0, 7.0 and 8.0)
 			if (navigator.userAgent.toLowerCase().indexOf("msie") >= 0) {
@@ -48,7 +52,9 @@
 				else if (navigator.userAgent.toLowerCase().indexOf("msie 7.0") >= 0)
 					this._intBrowserType = this._intBrowserType | this.IE_7_0;
 				else if (navigator.userAgent.toLowerCase().indexOf("msie 8.0") >= 0)
-					this._intBrowserType = this._intBrowserType | this.IE_7_0;
+					this._intBrowserType = this._intBrowserType | this.IE_8_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("msie 9.0") >= 0)
+					this._intBrowserType = this._intBrowserType | this.IE_9_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
@@ -68,6 +74,8 @@
 					this._intBrowserType = this._intBrowserType | this.FIREFOX_3_0;
 				else if (strUserAgent.indexOf("firefox/3.5") >= 0)
 					this._intBrowserType = this._intBrowserType | this.FIREFOX_3_5;
+				else if (strUserAgent.indexOf("firefox/4.0") >= 0)
+					this._intBrowserType = this._intBrowserType | this.FIREFOX_4_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
@@ -82,6 +90,8 @@
 					this._intBrowserType = this._intBrowserType | this.CHROME_3_0;
 				else if (navigator.userAgent.toLowerCase().indexOf("chrome/4.") >= 0)
 					this._intBrowserType = this._intBrowserType | this.CHROME_4_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("chrome/5.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.CHROME_5_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
@@ -95,6 +105,8 @@
 					this._intBrowserType = this._intBrowserType | this.SAFARI_3_0;
 				else if (navigator.userAgent.toLowerCase().indexOf("version/4.") >= 0)
 					this._intBrowserType = this._intBrowserType | this.SAFARI_4_0;
+				else if (navigator.userAgent.toLowerCase().indexOf("version/5.") >= 0)
+					this._intBrowserType = this._intBrowserType | this.SAFARI_5_0;
 				else
 					this._intBrowserType = this._intBrowserType | this.UNSUPPORTED;
 
