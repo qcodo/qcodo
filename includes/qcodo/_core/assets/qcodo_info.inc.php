@@ -9,7 +9,7 @@
 			.heading { font: 16px <?php _p(QFontFamily::Verdana) ?>; font-weight: bold; }
 		</style>
 	</head><body>	
-		<div class="title_action">Qcodo Development Framework <?= QCODO_VERSION ?></div>
+		<div class="title_action">Qcodo Development Framework <?php _p(QCODO_VERSION); ?></div>
 		<div class="title">Start Page</div>
 		<br class="item_divider" />
 
