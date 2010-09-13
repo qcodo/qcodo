@@ -3,6 +3,11 @@
 	/////////////////////////////////////
 
 <% foreach ($objTable->ManyToManyReferenceArray as $objReference) { %>
+	/**
+	 * @property-read QQNode $<%= $objReference->OppositePropertyName %>
+	 * @property-read QQNode<%=$objReference->VariableType %> $<%= $objReference->VariableType %>
+	 * @property-read QQNode<%=$objReference->VariableType %> $_ChildTableNode
+	 */
 	class QQNode<%= $objTable->ClassName %><%= $objReference->ObjectDescription %> extends QQAssociationNode {
 		protected $strType = 'association';
 		protected $strName = '<%= strtolower($objReference->ObjectDescription); %>';
