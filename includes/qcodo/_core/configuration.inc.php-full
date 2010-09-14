@@ -194,8 +194,8 @@
 //			define('DB_CONNECTION_4', serialize(array('adapter'=>'MySql', 'server'=>'localhost', 'port'=>null, 'database'=>'qcodo', 'username'=>'root', 'password'=>'', 'profiling'=>false)));
 //			define('DB_CONNECTION_5', serialize(array('adapter'=>'PostgreSql', 'server'=>'localhost', 'port'=>null, 'database'=>'qcodo', 'username'=>'root', 'password'=>'', 'profiling'=>false)));
 
-			// (For PHP > v5.1) Setup the default timezone (if not already specified in php.ini)
-			if ((function_exists('date_default_timezone_set')) && (!ini_get('date.timezone')))
+			// Setup the default timezone (if not already specified in php.ini)
+			if (!ini_get('date.timezone'))
 				date_default_timezone_set('America/Los_Angeles');
 
 			// To log ALL errors that have occurred, set flag to TRUE

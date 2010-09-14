@@ -66,7 +66,7 @@
 	define ('__IMAGE_ASSETS__', __SUBDIRECTORY__ . '/assets/images');
 	define ('__PHP_ASSETS__', __SUBDIRECTORY__ . '/assets/php');
 
-	if ((function_exists('date_default_timezone_set')) && (!ini_get('date.timezone')))
+	if (!ini_get('date.timezone'))
 		date_default_timezone_set('America/Los_Angeles');
 
 	define('ERROR_LOG_FLAG', false);
