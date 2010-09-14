@@ -1,4 +1,5 @@
 <template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>Gen.class.php"/>
+<% shell_exec(sprintf('%s/qcodo%s phpunit --skeleton-test %s',__DEVTOOLS_CLI__,(QApplication::$Windows)?'.bat':'',$objTable->ClassName)); %>
 <?php
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
