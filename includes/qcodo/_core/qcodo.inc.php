@@ -32,7 +32,13 @@
 
 	// Versioning Information
 	define('QCODO_VERSION', '0.4.17');
+	// Php minimum version
+	define('QCODO_PHP_MIN_VERSION', '5.1.2');
 
+	// Php minimimum version check
+	if (version_compare(PHP_VERSION, QCODO_PHP_MIN_VERSION, '<')){
+		exit(sprintf('Error: Qcodo needs at least PHP version %s ',QCODO_PHP_MIN_VERSION));
+	}
 	// Preload Required Framework Classes
 	require(__QCODO_CORE__ . '/framework/QBaseClass.class.php');
 	require(__QCODO_CORE__ . '/framework/QExceptions.class.php');
@@ -45,7 +51,7 @@
 
 	// Load the User-defined QApplication class (check to see if it exists, first)
 	if (!file_exists(__INCLUDES__ . '/QApplication.class.php'))
-		exit('error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo/_core/QApplication.class.php-dist to your includes/ directory');
+		exit('Error: QApplication.class.php missing from includes/ directory; set one up by copying includes/qcodo/_core/QApplication.class.php-dist to your includes/ directory');
 	require(__INCLUDES__ . '/QApplication.class.php');
 
 	// Load the Core Database Class
