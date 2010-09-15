@@ -58,7 +58,7 @@
 					if ($this->strName)
 						$this->strValidationError = $this->strName . QApplication::Translate(' is required');
 					else
-						$this->strValidationError = $this->strName . QApplication::Translate('Required');
+						$this->strValidationError = QApplication::Translate('Required');
 				}
 			}
 
