@@ -22,7 +22,7 @@
 		the qcodo codegen CLI tool from the command-line:<br />
 
 		<blockquote style="background-color: #eee; padding: 5px; font-size: 14px; font-weight: bold; ">
-			<pre>$ <?php _p(__DEVTOOLS_CLI__); ?>/qcodo codegen --help</pre>
+			<pre>$ <?php _p(realpath(__DEVTOOLS_CLI__)); ?>/qcodo<?php QApplication::$Windows ? _p('.bat'):''; ?> codegen --help</pre>
 		</blockquote>
 		
 		After codegenning, you can use either of the following tools to view the "generated" draft pages of your database application:
