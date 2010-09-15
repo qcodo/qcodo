@@ -126,9 +126,7 @@
 			$strData = str_replace("\n", "\\n", $strData);
 			$strData = str_replace("\r", "\\r", $strData);
 			$strData = str_replace("\"", "&quot;", $strData);
-			$strData = str_replace("</script>", "&lt/script&gt", $strData);
-			$strData = str_replace("</Script>", "&lt/script&gt", $strData);
-			$strData = str_replace("</SCRIPT>", "&lt/script&gt", $strData);
+			$strData = str_ireplace("</script>", "&lt/script&gt", $strData);
 			return $strData;
 		}
 
