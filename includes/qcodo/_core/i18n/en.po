@@ -1,7 +1,30 @@
 # Qcodo Distributed Language File
 # for English (default)
 
+#qcodo_info
+MsgId "Start Page"
+MsgStr "Start Page"
 
+MsgId "It worked!"
+MsgStr "It worked!"
+
+MsgId "If you are seeing this, then it means that the framework has been successfully installed."
+MsgStr "If you are seeing this, then it means that the framework has been successfully installed."
+
+MsgId "Make sure your database connection properties are up to date, and then you can add tables to your database.  To codegen, you will want to run the codegen using the qcodo codegen CLI tool from the command-line:"
+MsgStr "Make sure your database connection properties are up to date, and then you can add tables to your database.  To codegen, you will want to run the codegen using the qcodo codegen CLI tool from the command-line:"
+
+MsgId "After codegenning, you can use either of the following tools to view the "generated" draft pages of your database application:"
+MsgStr "After codegenning, you can use either of the following tools to view the "generated" draft pages of your database application:"
+
+MsgId "to view the generated Form Drafts of your database"
+MsgStr "to view the generated Form Drafts of your database"
+
+MsgId "to view the generated Panel Drafts "dashboard" of your database"
+MsgStr "to view the generated Panel Drafts "dashboard" of your database"
+
+MsgId "For more information, please go to the Qcodo website at:"
+MsgStr "For more information, please go to the Qcodo website at:"
 
 # For QTextBoxBase controls
 MsgId "%s is required"

@@ -2,6 +2,30 @@
 # for Spanish (Argentina)
 # Contributed by marcosdsanchez @ thinkclear dot com dot ar
 
+#qcodo_info
+MsgId "Start Page"
+MsgStr "Página de inicio"
+
+MsgId "It worked!"
+MsgStr "Ha funcionado!"
+
+MsgId "If you are seeing this, then it means that the framework has been successfully installed."
+MsgStr "Si estás viendo esto, es porque el framework ha sido instalado correctamente."
+
+MsgId "Make sure your database connection properties are up to date, and then you can add tables to your database.  To codegen, you will want to run the codegen using the qcodo codegen CLI tool from the command-line:"
+MsgStr "Asegurate que la conexión a la base de datos esté actualizada. Luego podrás agregar tablas a tu base.  Para codegenerear, deberás ejecutar el siguiente comando desde la linea de comando:"
+
+MsgId "After codegenning, you can use either of the following tools to view the \"generated\" draft pages of your database application:"
+MsgStr "Luego de codegenerear, podrás usar los siguientes links para ver las páginas \"borrador\" de tu aplicación:"
+
+MsgId "to view the generated Form Drafts of your database"
+MsgStr "para ver los formularios borradores generados de tu base de datos"
+
+MsgId "to view the generated Panel Drafts "dashboard" of your database"
+MsgStr "para ver los paneles borradores generados "panel de control" de tu base de datos"
+
+MsgId "For more information, please go to the Qcodo website at:"
+MsgStr "Para más información, por favor dirigete al sitio de Qcodo en:"
 
 # For QTextBoxBase controls
 MsgId "%s is required"
