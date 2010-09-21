@@ -1,9 +1,12 @@
 <?php
-	// This class will render an HTML Button.
-	// * "Text" is used to display the button's text.
-	// * "PrimaryButton" is a boolean to specify whether or not the button is
-	//   'primary' (e.g. makes this button a "Submit" form element rather than a "Button" form element)
-
+	/**
+	 * This class will render an HTML Button.
+	 * @property string $Text is used to display the button's text.
+	 * @property boolean $PrimaryButton is a boolean to specify whether or not
+	 * the button is 'primary' (e.g. makes this button a "Submit" form element
+	 * rather than a "Button" form element)
+	 * @property boolean HtmlEntities
+	 */
 	abstract class QButtonBase extends QActionControl {
 		///////////////////////////
 		// Private Member Variables
