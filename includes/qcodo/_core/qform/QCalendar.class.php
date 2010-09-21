@@ -1,4 +1,7 @@
 <?php
+	/**
+	 * @property string $CalendarImageSource
+	 */
 	class QCalendar extends QControl {
 		protected $dtxLinkedControl;
 		protected $strCalendarImageSource;
