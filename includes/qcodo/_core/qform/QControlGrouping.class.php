@@ -1,4 +1,8 @@
 <?php
+	/**
+	 * @property-read string $GroupingId
+	 * @property-read boolean $Modified
+	 */
 	abstract class QControlGrouping extends QBaseClass {
 		protected $strGroupingId;
 		protected $objControlArray = array();
