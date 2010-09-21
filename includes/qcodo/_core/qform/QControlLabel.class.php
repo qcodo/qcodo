@@ -1,4 +1,9 @@
 <?php
+	/**
+	 * @property string $Text
+	 * @property string $ForControlId
+	 * @property-write QControl $ForControl
+	 */
 	class QControlLabel extends QControl {
 		///////////////////////////
 		// Private Member Variables
