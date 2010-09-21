@@ -1,4 +1,13 @@
 <?php
+	/**
+	 * This class will render a QWaitIcon during ajax calls
+	 *
+	 * @property string $Text
+	 * @property string $TagName
+	 * @property string $Padding
+	 * @property string $HorizontalAlign
+	 * @property string $VerticalAlign
+	 */
 	class QWaitIcon extends QControl {
 		///////////////////////////
 		// Private Member Variables
