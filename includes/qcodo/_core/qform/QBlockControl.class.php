@@ -1,10 +1,24 @@
 <?php
-	// This class will render HTML via a pair of <span></span> tags.  It is
-	// used to simply display any miscellaneous HTML that you would want displayed.
-	// Because of this, it can't really execute any actions.  Any Server- or Client-Actions
-	// defined will simply be ignored.
-	// * "Text" is the Html that you want rendered.
-
+	/**
+	 * This class will render HTML via a pair of <span></span> tags.  It is
+	 * used to simply display any miscellaneous HTML that you would want displayed.
+	 * Because of this, it can't really execute any actions.  Any Server- or Client-Actions
+	 * defined will simply be ignored.
+	 *
+	 * @property string $Text is the Html that you want rendered.
+	 * @property string $Format
+	 * @property string $Template
+	 * @property boolean $AutoRenderChildren
+	 * @property string $Padding
+	 * @property string $TagName
+	 * @property boolean $HtmlEntities
+	 * @property boolean $DropTarget
+	 * @property string $HorizontalAlign
+	 * @property string $VerticalAlign
+	 * @property integer $ResizeHandleMinimum
+	 * @property integer $ResizeHandleMaximum
+	 * @property string $ResizeHandleDirection
+	 */
 	abstract class QBlockControl extends QControl {
 		///////////////////////////
 		// Private Member Variables
