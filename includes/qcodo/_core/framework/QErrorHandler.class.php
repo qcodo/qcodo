@@ -108,10 +108,10 @@
 					return false;
 				}
 			} else {
+				header("HTTP/1.1 500 Internal Server Error");
 				if (defined('ERROR_FRIENDLY_PAGE_PATH') && ERROR_FRIENDLY_PAGE_PATH && !QApplication::$CliMode) {
 					// Reset the Buffer
 					while(ob_get_level()) ob_end_clean();
-					header("HTTP/1.1 500 Internal Server Error");
 					require(ERROR_FRIENDLY_PAGE_PATH);		
 				}
 			}
