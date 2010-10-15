@@ -535,38 +535,56 @@
 				$strConstantName = sprintf('DB_CONNECTION_%s', $intIndex);
 
 				if (defined($strConstantName)) {
-					// Expected Keys to be Set
-					$strExpectedKeys = array(
-						'adapter', 'server', 'port', 'database',
-						'username', 'password', 'profiling'
-					);
-
 					// Lookup the Serialized Array from the DB_CONFIG constants and unserialize it
 					$strSerialArray = constant($strConstantName);
 					$objConfigArray = unserialize($strSerialArray);
 
-					// Set All Expected Keys
-					foreach ($strExpectedKeys as $strExpectedKey)
-						if (!array_key_exists($strExpectedKey, $objConfigArray))
-							$objConfigArray[$strExpectedKey] = null;
-
-					if (!$objConfigArray['adapter'])
-						throw new Exception('No Adapter Defined for ' . $strConstantName . ': ' . var_export($objConfigArray, true));
-
-					if (!$objConfigArray['server'])
-						throw new Exception('No Server Defined for ' . $strConstantName . ': ' . constant($strConstantName));
-
-					$strDatabaseType = 'Q' . $objConfigArray['adapter'] . 'Database';
-					if (!class_exists($strDatabaseType)) {
-						$strDatabaseAdapter = sprintf('%s/database/%s.class.php', __QCODO_CORE__, $strDatabaseType);
-						if (!file_exists($strDatabaseAdapter))
-							throw new Exception('Database Type is not valid: ' . $objConfigArray['adapter']);
-						require($strDatabaseAdapter);
-					}
-
-					QApplication::$Database[$intIndex] = new $strDatabaseType($intIndex, $objConfigArray);
+					// Use Helper Method to instantiate and store db connection/adapter
+					QApplication::$Database[$intIndex] = self::CreateDatabaseConnection($intIndex, $objConfigArray);
 				}
 			}
+		}
+
+		/**
+		 * Given a ConfigArray, create a QDatabaseBase adapter instance.  Only used internally by InitializeDatabaseConnections.
+		 * @param integer $intIndex
+		 * @param string[] $objConfigArray
+		 * @return QDatabaseBase
+		 */
+		protected static function CreateDatabaseConnection($intIndex, $objConfigArray) {
+			// Expected Keys to be Set
+			$strExpectedKeys = array(
+				'adapter', 'server', 'port', 'database',
+				'username', 'password', 'profiling'
+			);
+
+			// Set All Expected Keys
+			foreach ($strExpectedKeys as $strExpectedKey)
+				if (!array_key_exists($strExpectedKey, $objConfigArray))
+					$objConfigArray[$strExpectedKey] = null;
+
+			if (!$objConfigArray['adapter'])
+				throw new Exception('No Adapter Defined for ' . $strConstantName . ': ' . var_export($objConfigArray, true));
+
+			if (!$objConfigArray['server'])
+				throw new Exception('No Server Defined for ' . $strConstantName . ': ' . constant($strConstantName));
+
+			$strDatabaseType = 'Q' . $objConfigArray['adapter'] . 'Database';
+			if (!class_exists($strDatabaseType)) {
+				$strDatabaseAdapter = sprintf('%s/database/%s.class.php', __QCODO_CORE__, $strDatabaseType);
+				if (!file_exists($strDatabaseAdapter))
+					throw new Exception('Database Type is not valid: ' . $objConfigArray['adapter']);
+				require($strDatabaseAdapter);
+			}
+
+			$objToReturn = new $strDatabaseType($intIndex, $objConfigArray);
+
+			// Add Journaling (if applicable)
+			if (array_key_exists('journaling', $objConfigArray)) {
+				$objToReturn->JournalingDatabase = self::CreateDatabaseConnection($intIndex * 1000, $objConfigArray['journaling']);
+			}
+
+			return $objToReturn;
 		}
 
 		/**
@@ -1012,6 +1030,11 @@
 
 				// Don't display database password
 				$arrDb['password'] = '********';
+
+				// Don't display linked Journaling database password (if applicable)
+				if (array_key_exists('journaling', $arrDb)) {
+					$arrDb['journaling']['password'] = '********';
+				}
 
 				printf('<li>QApplication::$Database[%s] = %s</li>', $intKey, var_export($arrDb, true));
 			}
