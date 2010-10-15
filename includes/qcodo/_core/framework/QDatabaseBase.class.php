@@ -26,6 +26,8 @@
 		protected $objConfigArray;
 		protected $blnConnectedFlag = false;
 
+		protected $objJournalingDatabase;
+
 		protected $strEscapeIdentifierBegin = '"';
 		protected $strEscapeIdentifierEnd = '"';
 
@@ -62,6 +64,9 @@
 				case 'AffectedRows':
 					return -1;
 
+				case 'JournalingDatabase':
+					return $this->objJournalingDatabase;
+
 				case 'Adapter':
 					$strConstantName = get_class($this) . '::Adapter';
 					return constant($strConstantName) . ' (' . $this->objConfigArray['adapter'] . ')';
@@ -70,11 +75,27 @@
 				case 'Database':
 				case 'Username':
 				case 'Password':
+				case 'StaticProperty':
 					return $this->objConfigArray[strtolower($strName)];
 
 				default:
 					try {
 						return parent::__get($strName);
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+			}
+		}
+
+		public function __set($strName, $mixValue) {
+			switch ($strName) {
+				case 'JournalingDatabase':
+					return ($this->objJournalingDatabase = QType::Cast($mixValue, 'QDatabaseBase'));
+
+				default:
+					try {
+						return parent::__set($strName);
 					} catch (QCallerException $objExc) {
 						$objExc->IncrementOffset();
 						throw $objExc;
