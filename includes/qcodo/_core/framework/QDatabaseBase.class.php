@@ -67,6 +67,11 @@
 				case 'JournalingDatabase':
 					return $this->objJournalingDatabase;
 
+				case 'JournaledById':
+					if (!array_key_exists('staticproperty', $this->objConfigArray)) return null;
+					if (!($strStaticPropertyName = $this->objConfigArray['staticproperty'])) return null;
+					return QApplication::$$strStaticPropertyName;
+
 				case 'Adapter':
 					$strConstantName = get_class($this) . '::Adapter';
 					return constant($strConstantName) . ' (' . $this->objConfigArray['adapter'] . ')';

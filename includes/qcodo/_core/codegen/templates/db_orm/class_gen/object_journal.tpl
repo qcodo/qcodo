@@ -22,7 +22,7 @@
 					' . $objDatabase->SqlVariable($this-><%= $objColumn->VariableName %>) . ',
 <% } %>
 <% } %>
-					' . ((QApplication::$Login) ? QApplication::$Login->Id : 'NULL') . ',
+					' . (($objDatabase->JournaledById) ? $objDatabase->JournaledById : 'NULL') . ',
 					' . $objDatabase->SqlVariable($strJournalCommand) . ',
 					NOW()
 				);
