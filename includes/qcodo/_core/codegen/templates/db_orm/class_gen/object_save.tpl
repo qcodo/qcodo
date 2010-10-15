@@ -41,6 +41,10 @@
 					$mixToReturn = $this->%s = $objDatabase->InsertId(\'%s\', \'%s\');',
 					$objColumn->VariableName, $objTable->Name, $objColumn->Name);
 %>
+
+					// Journaling
+					if ($objDatabase->JournalingDatabase) $this->Journal('INSERT');
+
 				} else {
 					// Perform an UPDATE query
 
@@ -90,6 +94,9 @@
 	<% } %>
 <% } %><%-----%>
 					');
+
+					// Journaling
+					if ($objDatabase->JournalingDatabase) $this->Journal('UPDATE');
 				}
 
 <% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>

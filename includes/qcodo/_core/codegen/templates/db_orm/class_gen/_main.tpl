@@ -44,15 +44,17 @@
 
 
 
-		//////////////////////////
-		// SAVE, DELETE AND RELOAD
-		//////////////////////////
+		//////////////////////////////////////
+		// SAVE, DELETE, RELOAD and JOURNALING
+		//////////////////////////////////////
 
 		<%@ object_save('objTable'); %>
 
 		<%@ object_delete('objTable'); %>
 
 		<%@ object_reload('objTable'); %>
+
+		<%@ object_journal('objTable'); %>
 
 
 

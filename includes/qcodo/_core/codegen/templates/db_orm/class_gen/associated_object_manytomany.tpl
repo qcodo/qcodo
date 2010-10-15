@@ -52,6 +52,51 @@
 		}
 
 		/**
+		 * Journals the <%= $objManyToManyReference->ObjectDescription %> relationship into the Log database.
+		 * Used internally as a helper method.
+		 * @param string $strJournalCommand
+		 */
+		public function Journal<%= $objManyToManyReference->ObjectDescription %>Association($intAssociatedId, $strJournalCommand) {
+			$objDatabase = <%= $objTable->ClassName %>::GetDatabase()->JournalingDatabase;
+
+			$objDatabase->NonQuery('
+				INSERT INTO <%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->Table %><%= $strEscapeIdentifierEnd %> (
+					<%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->Column %><%= $strEscapeIdentifierEnd %>,
+					<%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->OppositeColumn %><%= $strEscapeIdentifierEnd %>,
+					__sys_login_id,
+					__sys_action,
+					__sys_date
+				) VALUES (
+					' . $objDatabase->SqlVariable($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) . ',
+					' . $objDatabase->SqlVariable($intAssociatedId) . ',
+					' . ((QApplication::$Login) ? QApplication::$Login->Id : 'NULL') . ',
+					' . $objDatabase->SqlVariable($strJournalCommand) . ',
+					NOW()
+				);
+			');
+		}
+
+		/**
+		 * Gets the historical journal for an object's <%= $objManyToManyReference->ObjectDescription %> relationship from the log database.
+		 * @param integer <%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>
+		 * @return QDatabaseResult $objResult
+		 */
+		public static function GetJournal<%= $objManyToManyReference->ObjectDescription %>AssociationForId($<%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) {
+			$objDatabase = <%= $objTable->ClassName %>::GetDatabase()->JournalingDatabase;
+
+			return $objDatabase->Query('SELECT * FROM <%= $objManyToManyReference->Table %> WHERE <%= $objManyToManyReference->Column %> = ' .
+				$objDatabase->SqlVariable($<%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) . ' ORDER BY __sys_date');
+		}
+
+		/**
+		 * Gets the historical journal for this object's <%= $objManyToManyReference->ObjectDescription %> relationship from the log database.
+		 * @return QDatabaseResult $objResult
+		 */
+		public function GetJournal<%= $objManyToManyReference->ObjectDescription %>Association() {
+			return <%= $objTable->ClassName %>::GetJournal<%= $objManyToManyReference->ObjectDescription %>AssociationForId($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>);
+		}
+
+		/**
 		 * Associates a <%= $objManyToManyReference->ObjectDescription %>
 		 * @param <%= $objManyToManyReference->VariableType %> $<%= $objManyToManyReference->VariableName %>
 		 * @return void
@@ -75,6 +120,10 @@
 					' . $objDatabase->SqlVariable($<%= $objManyToManyReference->VariableName %>-><%= $objManyToManyReferenceTable->PrimaryKeyColumnArray[0]->PropertyName %>) . '
 				)
 			');
+
+			// Journaling (if applicable)
+			if ($objDatabase->JournalingDatabase)
+				$this->Journal<%= $objManyToManyReference->ObjectDescription %>Association($<%= $objManyToManyReference->VariableName %>-><%= $objManyToManyReferenceTable->PrimaryKeyColumnArray[0]->PropertyName %>, 'INSERT');
 		}
 
 		/**
@@ -99,6 +148,10 @@
 					<%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->Column %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) . ' AND
 					<%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->OppositeColumn %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($<%= $objManyToManyReference->VariableName %>-><%= $objManyToManyReferenceTable->PrimaryKeyColumnArray[0]->PropertyName %>) . '
 			');
+
+			// Journaling (if applicable)
+			if ($objDatabase->JournalingDatabase)
+				$this->Journal<%= $objManyToManyReference->ObjectDescription %>Association($<%= $objManyToManyReference->VariableName %>-><%= $objManyToManyReferenceTable->PrimaryKeyColumnArray[0]->PropertyName %>, 'DELETE');
 		}
 
 		/**
@@ -111,6 +164,14 @@
 
 			// Get the Database Object for this Class
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
+
+			// Journaling (if applicable)
+			if ($objDatabase->JournalingDatabase) {
+				$objResult = $objDatabase->Query('SELECT <%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->OppositeColumn %><%= $strEscapeIdentifierEnd %> AS associated_id FROM <%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->Table %><%= $strEscapeIdentifierEnd %> WHERE <%= $strEscapeIdentifierBegin %><%= $objManyToManyReference->Column %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>));
+				while ($objRow = $objResult->GetNextRow()) {
+					$this->Journal<%= $objManyToManyReference->ObjectDescription %>Association($objRow->GetColumn('associated_id'), 'DELETE');
+				}
+			}
 
 			// Perform the SQL Query
 			$objDatabase->NonQuery('

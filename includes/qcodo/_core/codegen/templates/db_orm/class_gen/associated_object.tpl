@@ -57,6 +57,12 @@
 					<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($<%= $objReverseReference->VariableName %>-><%= $objColumn->PropertyName %>) . ' AND
 <% } %><% } %><%-----%>
 			');
+
+			// Journaling (if applicable)
+			if ($objDatabase->JournalingDatabase) {
+				$<%= $objReverseReference->VariableName %>-><%= $objReverseReference->PropertyName %> = $this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>;
+				$<%= $objReverseReference->VariableName %>->Journal('UPDATE');
+			}
 		}
 
 		/**
@@ -86,6 +92,12 @@
 <% } %><% } %><%-%>
 					<%= $strEscapeIdentifierBegin %><%= $objReverseReference->Column %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) . '
 			');
+
+			// Journaling
+			if ($objDatabase->JournalingDatabase) {
+				$<%= $objReverseReference->VariableName %>-><%= $objReverseReference->PropertyName %> = null;
+				$<%= $objReverseReference->VariableName %>->Journal('UPDATE');
+			}
 		}
 
 		/**
@@ -98,6 +110,14 @@
 
 			// Get the Database Object for this Class
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
+
+			// Journaling
+			if ($objDatabase->JournalingDatabase) {
+				foreach (<%= $objReverseReference->VariableType %>::LoadArrayBy<%= $objReverseReference->PropertyName %>($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) as $<%= $objReverseReference->VariableName %>) {
+					$<%= $objReverseReference->VariableName %>-><%= $objReverseReference->PropertyName %> = null;
+					$<%= $objReverseReference->VariableName %>->Journal('UPDATE');
+				}
+			}
 
 			// Perform the SQL Query
 			$objDatabase->NonQuery('
@@ -135,6 +155,11 @@
 <% } %><% } %><%-%>
 					<%= $strEscapeIdentifierBegin %><%= $objReverseReference->Column %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) . '
 			');
+
+			// Journaling
+			if ($objDatabase->JournalingDatabase) {
+				$<%= $objReverseReference->VariableName %>->Journal('DELETE');
+			}
 		}
 
 		/**
@@ -147,6 +172,13 @@
 
 			// Get the Database Object for this Class
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
+
+			// Journaling
+			if ($objDatabase->JournalingDatabase) {
+				foreach (<%= $objReverseReference->VariableType %>::LoadArrayBy<%= $objReverseReference->PropertyName %>($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) as $<%= $objReverseReference->VariableName %>) {
+					$<%= $objReverseReference->VariableName %>->Journal('DELETE');
+				}
+			}
 
 			// Perform the SQL Query
 			$objDatabase->NonQuery('
