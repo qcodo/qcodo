@@ -481,12 +481,6 @@
 			// Did we ask for a script to be run?
 			if (!array_key_exists(1, $_SERVER['argv']) ||
 				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
-				$strDefaultPath = __DEVTOOLS_CLI__;
-				$strDefaultPath = str_replace('/html/../', '/', $strDefaultPath);
-				$strDefaultPath = str_replace('/docroot/../', '/', $strDefaultPath);
-				$strDefaultPath = str_replace('/wwwroot/../', '/', $strDefaultPath);
-				$strDefaultPath = str_replace('/www/../', '/', $strDefaultPath);
-
 				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
 				print "usage: qcodo SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
 				print "\r\n";
@@ -502,7 +496,7 @@
 				print "  phpunit        Run bundled PHPUnit\r\n";
 				print "\r\n";
 				print "Other custom scripts can be created as well.\r\n";
-				print "See \"" . $strDefaultPath . "/scripts/_README.txt\" for more info";
+				print "See \"" . realpath(__DEVTOOLS_CLI__) . "/scripts/_README.txt\" for more info";
 				print "\r\n";
 				exit(1);
 			}

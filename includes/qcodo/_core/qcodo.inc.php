@@ -31,14 +31,15 @@
 	 */
 
 	// Versioning Information
-	define('QCODO_VERSION', '0.4.17');
-	// Php minimum version
+	define('QCODO_VERSION', '0.4.18');
+
+	// PHP Minimum Version Supported
 	define('QCODO_PHP_MIN_VERSION', '5.1.2');
 
-	// Php minimimum version check
-	if (version_compare(PHP_VERSION, QCODO_PHP_MIN_VERSION, '<')){
-		exit(sprintf('Error: Qcodo needs at least PHP version %s ',QCODO_PHP_MIN_VERSION));
-	}
+	// PHP Minimum Version Check
+	if (version_compare(PHP_VERSION, QCODO_PHP_MIN_VERSION, '<'))
+		exit(sprintf('Error: Qcodo requires PHP %s or later (installed version is %s)', QCODO_PHP_MIN_VERSION, PHP_VERSION));
+
 	// Preload Required Framework Classes
 	require(__QCODO_CORE__ . '/framework/QBaseClass.class.php');
 	require(__QCODO_CORE__ . '/framework/QExceptions.class.php');
