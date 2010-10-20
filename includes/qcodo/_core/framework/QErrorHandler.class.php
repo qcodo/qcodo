@@ -32,8 +32,7 @@
 		public static $DateTimeOfError;
 		public static $FileNameOfError;
 		public static $IsoDateTimeOfError;
-
-		public static $CliMode;
+		
 		public static $CliReportWidth = 138;
 
 		protected static function Run() {
@@ -77,7 +76,7 @@
 
 			// Generate the Error Dump
 			if (!ob_get_level()) ob_start();
-			if (self::$CliMode)
+			if (QApplication::$CliMode)
 				require(__QCODO_CORE__ . '/assets/error_dump_cli.inc.php');
 			else
 				require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
