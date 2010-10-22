@@ -98,6 +98,7 @@
 		public function __get($strName) {
 			switch ($strName) {
 				case 'CalendarImageSource': return $this->strCalendarImageSource;
+				case 'DateTime': return $this->dtxLinkedControl->DateTime;
 
 				default:
 					try {
