@@ -1012,6 +1012,18 @@
 			return new QQDistinct();
 		}
 
+		static public function CustomNode($strSql) {
+			return new QQCustomNode($strSql);
+		}
+
+		static public function CustomFrom($strTableName, $strTableAlias) {
+			try {
+				return new QQCustomFrom($strTableName, $strTableAlias);
+			} catch (QCallerException $objExc) {
+				$objExc->IncrementOffset(); throw $objExc;
+			}
+		}
+
 		/////////////////////////
 		// NamedValue QQ Node
 		/////////////////////////
@@ -1202,6 +1214,53 @@
 		}
 		public function __toString() {
 			return 'QQDistinct Clause';
+		}
+	}
+
+	class QQCustomNode extends QQNode {
+		public function __construct($strName) {
+			$this->strName = $strName;
+			$this->objParentNode = true;
+		}
+
+		public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection) {}
+
+		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
+			return $this->strName;
+		}
+	}
+
+	class QQCustomFrom extends QQClause {
+		protected $strTableName;
+		protected $strTableAlias;
+
+		public function __construct($strTableName, $strTableAlias) {
+			if (($strTableAlias[0] == 't') && (is_numeric(substr($strTableAlias, 1)))) {
+				throw new QCallerException('Alias name cannot be t#');
+			}
+
+			$this->strTableName = $strTableName;
+			$this->strTableAlias = $strTableAlias;
+		}
+
+		public function UpdateQueryBuilder(QQueryBuilder $objBuilder) {
+			$objBuilder->AddFromItem($this->strTableName, $this->strTableAlias);
+		}
+
+		public function __toString() {
+			return 'QQCustomFrom Clause';
+		}
+
+		public function __get($strName) {
+			switch ($strName) {
+				case 'TableName': return $this->strTableName;
+				case 'TableAlias': return $this->strTableAlias;
+
+				default:
+					try {
+						return parent::__get($strName);
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+			}
 		}
 	}
 
@@ -1420,6 +1479,7 @@
 		protected $intColumnAliasCount = 0;
 		protected $strTableAliasArray;
 		protected $intTableAliasCount = 0;
+		protected $intCustomFromCount = 0;
 		protected $strFromArray;
 		protected $strJoinArray;
 		protected $strJoinConditionArray;
@@ -1461,12 +1521,18 @@
 				$this->strEscapeIdentifierBegin, $strFullAlias, $this->strEscapeIdentifierEnd);
 		}
 
-		public function AddFromItem($strTableName) {
-			$strTableAlias = $this->GetTableAlias($strTableName);
+		public function AddFromItem($strTableName, $strAliasOverride = null) {
+			if (!$strAliasOverride) {
+				$strTableAlias = $this->GetTableAlias($strTableName);
 
-			$this->strFromArray[$strTableName] = sprintf('%s%s%s AS %s%s%s',
-				$this->strEscapeIdentifierBegin, $strTableName, $this->strEscapeIdentifierEnd,
-				$this->strEscapeIdentifierBegin, $strTableAlias, $this->strEscapeIdentifierEnd);
+				$this->strFromArray[$strTableName] = sprintf('%s%s%s AS %s%s%s',
+					$this->strEscapeIdentifierBegin, $strTableName, $this->strEscapeIdentifierEnd,
+					$this->strEscapeIdentifierBegin, $strTableAlias, $this->strEscapeIdentifierEnd);
+			} else {
+				$this->strFromArray[$strTableName . '+' . ($this->intCustomFromCount++)] = sprintf('%s%s%s AS %s%s%s',
+					$this->strEscapeIdentifierBegin, $strTableName, $this->strEscapeIdentifierEnd,
+					$this->strEscapeIdentifierBegin, $strAliasOverride, $this->strEscapeIdentifierEnd);
+			}
 		}
 
 		public function GetTableAlias($strTableName) {
