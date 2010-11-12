@@ -1016,6 +1016,14 @@
 			return new QQCustomNode($strSql);
 		}
 
+		static public function CustomJoin($strTableName, $strTableAlias, $strJoinConditionSql) {
+			try {
+				return new QQCustomJoin($strTableName, $strTableAlias, $strJoinConditionSql);
+			} catch (QCallerException $objExc) {
+				$objExc->IncrementOffset(); throw $objExc;
+			}
+		}
+
 		static public function CustomFrom($strTableName, $strTableAlias) {
 			try {
 				return new QQCustomFrom($strTableName, $strTableAlias);
@@ -1230,6 +1238,48 @@
 		}
 	}
 
+	class QQCustomJoin extends QQClause {
+		protected $strTableName;
+		protected $strTableAlias;
+		protected $strJoinConditionSql;
+
+		public function __construct($strTableName, $strTableAlias, $strJoinConditionSql) {
+			if (($strTableAlias[0] == 't') && (is_numeric(substr($strTableAlias, 1)))) {
+				throw new QCallerException('Alias name cannot be t#');
+			}
+
+			$this->strTableName = $strTableName;
+			$this->strTableAlias = $strTableAlias;
+			$this->strJoinConditionSql = $strJoinConditionSql;
+		}
+
+		public function UpdateQueryBuilder(QQueryBuilder $objBuilder) {
+			$strJoinSql = sprintf('LEFT JOIN %s%s%s AS %s%s%s ON %s',
+					$objBuilder->EscapeIdentifierBegin, $this->strTableName, $objBuilder->EscapeIdentifierEnd,
+					$objBuilder->EscapeIdentifierBegin, $this->strTableAlias, $objBuilder->EscapeIdentifierEnd,
+					$this->strJoinConditionSql);
+
+			$objBuilder->AddJoinCustomSqlItem($strJoinSql);
+		}
+
+		public function __toString() {
+			return 'QQCustomJoin';
+		}
+
+		public function __get($strName) {
+			switch ($strName) {
+				case 'TableName': return $this->strTableName;
+				case 'TableAlias': return $this->strTableAlias;
+				case 'JoinConditionSql': return $this->strJoinConditionSql;
+				
+				default:
+					try {
+						return parent::__get($strName);
+					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+			}
+		}
+	}
+	
 	class QQCustomFrom extends QQClause {
 		protected $strTableName;
 		protected $strTableAlias;
@@ -1749,6 +1799,10 @@
 
 		public function __get($strName) {
 			switch ($strName) {
+				case 'EscapeIdentifierBegin':
+					return $this->strEscapeIdentifierBegin;
+				case 'EscapeIdentifierEnd':
+					return $this->strEscapeIdentifierEnd;
 				case 'Database':
 					return $this->objDatabase;
 				case 'RootTableName':
