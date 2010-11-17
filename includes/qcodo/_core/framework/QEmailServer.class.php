@@ -270,7 +270,7 @@
 
 				$strExpectedStatusCode = trim($strExpectedStatusCode) . ' ';
 				if (substr($strResponse, 0, 4) != $strExpectedStatusCode) {
-					throw new QEmailException(sprintf('Unexpected Response from SMTP Server on %s: %s', $strErrorMessage, $strFullResponse));
+					throw new QEmailException(sprintf('Unexpected Response from SMTP Server on %s: %s', $strCurrentAction, $strFullResponse));
 				}
 			}
 		}
