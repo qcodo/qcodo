@@ -192,6 +192,10 @@ MsgId "AJAX Dashboard"
 MsgStr "Panel de administración AJAX"
 
 #For the QDateTime-Related Objects and Controls
+
+MsgId "Invalid Date"
+MsgStr "Fecha Inválida"
+
 msgid "Today"
 msgstr "Hoy"
 
