@@ -189,6 +189,10 @@ MsgStr "AJAX Dashboard"
 
 
 #For the QDateTime class and QDateTimePicker control
+
+MsgId "Invalid Date"
+MsgStr "Invalid Date"
+
 msgid "Jan"
 msgstr "Jan"
 msgid "January"
