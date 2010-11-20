@@ -754,7 +754,7 @@
 					}
 
 					// Because we are switching to/from Ajax, we need to reset the events
-					$this->RemoveAllActions('onclick');
+					$this->RemoveAllActions(QClickEvent::EventName);
 					if ($this->blnUseAjax)
 						$this->AddAction(new QClickEvent(), new QAjaxControlAction($this, 'Sort_Click'));
 					else

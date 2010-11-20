@@ -82,7 +82,7 @@
 		}
 
 		public function GetJavaScriptAction() {
-			return "onchange";
+			return QChangeEvent::EventName;
 		}
 
 		protected function GetControlHtml() {

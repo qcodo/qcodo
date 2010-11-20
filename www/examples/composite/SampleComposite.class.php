@@ -52,8 +52,8 @@
 
 		protected function SetupButtonActions() {
 			// In case any actions are setup already, let's remove them
-			$this->btnIncrement->RemoveAllActions('onclick');
-			$this->btnDecrement->RemoveAllActions('onclick');
+			$this->btnIncrement->RemoveAllActions(QClickEvent::EventName);
+			$this->btnDecrement->RemoveAllActions(QClickEvent::EventName);
 
 			// Notice how, instead of Server or Ajax actions, we use Server-
 			// or Ajax- CONTROL actions.  This is because the actual PHP method

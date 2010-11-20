@@ -38,7 +38,7 @@
 
 		public function ParsePostData() {}
 		public function Validate() {return true;}
-		public function GetJavaScriptAction() {return 'onclick';}
+		public function GetJavaScriptAction() {return QClickEvent::EventName;}
 
 		public function Page_Click($strFormId, $strControlId, $strParameter) {
 			$this->objPaginatedControl->PageNumber = QType::Cast($strParameter, QType::Integer);			
@@ -136,7 +136,7 @@
 					}
 
 					// Because we are switching to/from Ajax, we need to reset the events
-					$this->RemoveAllActions('onclick');
+					$this->RemoveAllActions(QClickEvent::EventName);
 					if ($this->blnUseAjax)
 						$this->AddAction(new QClickEvent(), new QAjaxControlAction($this, 'Page_Click'));
 					else

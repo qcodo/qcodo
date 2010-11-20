@@ -13,7 +13,7 @@
 		// Methods
 		//////////
 		public function ParsePostData() {}
-		public function GetJavaScriptAction() {return "onclick";}
+		public function GetJavaScriptAction() {return QClickEvent::EventName;}
 		public function Validate() {return true;}
 	}
 ?>

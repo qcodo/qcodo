@@ -67,7 +67,7 @@
 		}
 
 		public function GetJavaScriptAction() {
-			return "onchange";
+			return QChangeEvent::EventName;
 		}
 
 		public function GetAttributes($blnIncludeCustom = true, $blnIncludeAction = true) {
