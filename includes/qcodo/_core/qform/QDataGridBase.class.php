@@ -589,10 +589,8 @@
 
 			// Display the "NoHtml" if no data
 			if (!$this->objDataSource || !count($this->objDataSource)) {
-				$strToReturn = sprintf('<p id="%s" %s%s>%s</p>',
+				$strToReturn = sprintf('<p id="%s">%s</p>',
 					$this->strControlId,
-					$this->GetAttributes(),
-					$strStyle,
 					$this->strNoDataHtml);
 
 			} else {
