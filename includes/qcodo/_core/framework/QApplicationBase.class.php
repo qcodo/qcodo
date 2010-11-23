@@ -209,7 +209,6 @@
 		 * @return void
 		 */
 		protected static function InitializeErrorHandling() {
-			QErrorHandler::$CliMode = QApplication::$CliMode;
 			set_error_handler(array('QErrorHandler', 'HandleError'), error_reporting());
 			set_exception_handler(array('QErrorHandler', 'HandleException'));
 		}
