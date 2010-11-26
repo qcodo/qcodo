@@ -158,10 +158,7 @@
 				$this->strControlId = $this->objForm->GenerateControlId();
 			else {
 				// Verify ControlId is only AlphaNumeric Characters
-				$strMatches = array();
-				$strPattern = '/[A-Za-z0-9]*/';
-				preg_match($strPattern, $strControlId, $strMatches);
-				if (count($strMatches) && ($strMatches[0] == $strControlId))
+				if (ctype_alnum($strControlId))
 					$this->strControlId = $strControlId;
 				else
 					throw new QCallerException('ControlIDs must be only alphanumeric chacters: ' . $strControlId);
