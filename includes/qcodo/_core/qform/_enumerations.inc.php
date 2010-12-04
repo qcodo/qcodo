@@ -48,6 +48,7 @@
 		const SingleLine = 'SingleLine';
 		const MultiLine = 'MultiLine';
 		const Password = 'Password';
+		const Hidden = 'Hidden';
 	}
 
 	abstract class QHorizontalAlign {
