@@ -210,7 +210,7 @@
 						($mixValue > (count($this->objItemsArray) - 1)))
 						throw new QIndexOutOfRangeException($mixValue, "SelectedIndex");
 					for ($intIndex = 0; $intIndex < count($this->objItemsArray); $intIndex++)
-						if ($mixValue == $intIndex)
+						if ($mixValue === $intIndex)
 							$this->objItemsArray[$intIndex]->Selected = true;
 						else
 							$this->objItemsArray[$intIndex]->Selected = false;
