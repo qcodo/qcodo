@@ -534,7 +534,7 @@
 						$strBody .= sprintf("Content-Type: %s; name=\"%s\"\r\n", $objFile->MimeType, $objFile->FileName);
 						$strBody .= sprintf("Content-Length: %s\r\n", strlen($objFile->EncodedFileData));
 						$strBody .= sprintf("Content-Disposition: attachment; filename=\"%s\"\r\n", $objFile->FileName);
-						$strBody .= "Content-Transfer-Encoding: base64\r\n";
+						$strBody .= "Content-Transfer-Encoding: base64\r\n\r\n";
 						$strBody .= $objFile->EncodedFileData;
 						$strBody .= "\r\n\r\n";
 					}
