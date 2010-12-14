@@ -1,41 +1,67 @@
 <?php
-	// Abstract object which is extended by anything which involves lists of selectable items.
-	// (e.g. ListBox, CheckBoxList, RadioButtonList and TreeNav)
-	// It contains a private objItemsArray which contains an array of ListItems.
-	// * "ItemCount" (readonly) is the current count of ListItems in the control.
-	// * "SelectedIndex" is the index # of the control that is selected.  "-1" means that nothing
-	//   is selected.  If multiple items are selected, it will return the lowest index # of 
-	//   all ListItems that are currently selected.  SETTING SelectedIndex will obviously
-	//   select that specific ListItem, but it will also automatically UNSELECT ALL OTHER currently
-	//   selected ListItems (if applicable).
-	// * "SelectedItem" (readonly) returns the ListItem object, itself, that is selected 
-	//   (or the ListItem with the lowest index # of a ListItems that are currently selected
-	//   if multiple items are selected).  It will return null if nothing is selected.
-	// * "SelectedName" (readonly) is simply returns ListControl::SelectedItem->Name, or null
-	//   if nothing is selected.
-	// * "SelectedValue" (readonly) is simply returns ListControl::SelectedItem->Value, or null
-	//   if nothing is selected.
-	// * "SelectedItems" (readonly) returns an array of selected ListItems (if any).
-
+	/**
+	 * Abstract object which is extended by anything which involves lists of
+	 * selectable items. (e.g. QListBox, QCheckBoxList, QRadioButtonList and
+	 * QTreeNav)
+	 * It contains a private objItemsArray which contains an array of QListItems.
+	 *
+	 * @property-read integer $ItemCount is the current count of QListItems in
+	 * the control.
+	 *
+	 * @property integer $SelectedIndex is the index # of the control that is
+	 * selected.  "-1" means that nothing is selected.  If multiple items are
+	 * selected, it will return the lowest index # of all QListItems that are
+	 * currently selected.  SETTING SelectedIndex will obviously select that
+	 * specific ListItem, but it will also automatically UNSELECT ALL OTHER
+	 * currently selected QListItems (if applicable).
+	 *
+	 * @property QListItem[] $SelectedIndexes simply returns an array of selected
+	 * QListItems
+	 *
+	 * @property QListItem $SelectedName simply returns
+	 * ListControl::SelectedItem->Name, or null if nothing is selected
+	 *
+	 * @property QListItem[] $SelectedNames simply returns an array of selected
+	 * QListItems
+	 *
+	 * @property QListItem $SelectedValue simply returns
+	 * ListControl::SelectedItem->Value, or null if nothing is selected.
+	 *
+	 * @property QListItem[] $SelectedValues returns an array of selected
+	 * QListItems (if any).
+	 *
+	 * @property-read QListItem $SelectedItem returns the ListItem object,
+	 * itself, that is selected (or the ListItem with the lowest index # of a
+	 * QListItems that are currently selected if multiple items are selected).
+	 * It will return null if nothing is selected.
+	 *
+	 * @property-read QListItem[] $SelectedItems returns an array of selected
+	 * QListItems (if any).
+	 */
 	abstract class QListControl extends QControl {
 		///////////////////////////
 		// Private Member Variables
 		///////////////////////////
 
 		// MISC
+		/**
+		 * @var QListItem[] $objItemsArray
+		 */
 		protected $objItemsArray = array();
 
 		//////////
 		// Methods
 		//////////
-		
-		// Allows you to add a ListItem to the ListControl at the end of the private objItemsArray.
-		// This method exhibits polymorphism: you can either pass in a ListItem object, **OR** you can
-		// pass in three strings:
-		//	* Name of the ListItem (string)
-		//	* Value of the ListItem (string, optional)
-		//	* Selected flag for the ListItem (bool, optional)
-		//  * OverrideParameters for ListItemStyle (optional)
+		/**
+		 * Allows you to add a QListItem to the QListControl at the end of the
+		 * private objItemsArray.
+		 *
+		 * @param mixed $mixListItemOrName
+		 * @param string $strValue
+		 * @param boolean $blnSelected
+		 * @param string $strItemGroup
+		 * @param string $strOverrideParameters
+		 */
 		public function AddItem($mixListItemOrName, $strValue = null, $blnSelected = null, $strItemGroup = null, $strOverrideParameters = null) {
 			$this->blnModified = true;
 			if (gettype($mixListItemOrName) == QType::Object)
@@ -84,9 +110,9 @@
 		}
 
 		/**
-		 * This will return an array of ALL the QListItems associated with this QListControl.
+		 * This will return an array of ALL the QQListItems associated with this QListControl.
 		 * Please note that while each individual item can be altered, altering the array, itself,
-		 * will not affect any change on the QListControl.  So existing QListItems may be modified,
+		 * will not affect any change on the QListControl.  So existing QQListItems may be modified,
 		 * but to add / remove items from the QListControl, you should use AddItem() and RemoveItem().
 		 * @return QListItem[]
 		 */
@@ -94,7 +120,7 @@
 			return $this->objItemsArray;
 		}
 
-		// REmoves all the items in objItemsArray
+		// Removes all the items in objItemsArray
 		public function RemoveAllItems() {
 			$this->blnModified = true;
 			$this->objItemsArray = array();
@@ -272,6 +298,26 @@
 						}
 					}
 					return $mixValue;
+					break;
+
+				case "SelectedIndexes":
+					try {
+						$intIndexArray = QType::Cast($mixValue, QType::ArrayType);
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+					//First remove all indexes
+					$this->SelectedIndex = -1;
+
+					//Assign selected
+					foreach ($intIndexArray as $intIndex){
+						if ($this->objItemsArray[$intIndex]){
+							$this->objItemsArray[$intIndex]->Selected = true;
+						} else {
+							throw new QIndexOutOfRangeException($intIndex, "SelectedIndexes");
+						}
+					}
 					break;
 
 				default:
