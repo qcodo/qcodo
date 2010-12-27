@@ -87,7 +87,7 @@
 		 * @param mixed $mixItem
 		 * @return string
 		 */
-		private static function GetType($mixItem){
+		public static function GetType($mixItem){
 			if (is_null($mixItem)){
 				return null;
 			} else if (is_string($mixItem)) {
