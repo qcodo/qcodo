@@ -8,7 +8,7 @@
 	 * displayed to the left or to the right of the checkbox.
 	 * @property integer $CellPadding specified the HTML Table's CellPadding
 	 * @property integer $CellSpacing specified the HTML Table's CellSpacing
-	 * @property integer $RepeatColumn specifies how many columns should be
+	 * @property integer $RepeatColumns specifies how many columns should be
 	 * rendered in the HTML Table
 	 * @property string $RepeatDirection specifies which direction should the
 	 * list go first...
