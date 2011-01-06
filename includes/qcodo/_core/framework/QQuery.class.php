@@ -1529,10 +1529,10 @@
 		protected $intColumnAliasCount = 0;
 		protected $strTableAliasArray;
 		protected $intTableAliasCount = 0;
-		protected $intCustomFromCount = 0;
 		protected $strFromArray;
 		protected $strJoinArray;
 		protected $strJoinConditionArray;
+		protected $strCustomFromArray;
 		protected $strWhereArray;
 		protected $strOrderByArray;
 		protected $strGroupByArray;
@@ -1579,7 +1579,8 @@
 					$this->strEscapeIdentifierBegin, $strTableName, $this->strEscapeIdentifierEnd,
 					$this->strEscapeIdentifierBegin, $strTableAlias, $this->strEscapeIdentifierEnd);
 			} else {
-				$this->strFromArray[$strTableName . '+' . ($this->intCustomFromCount++)] = sprintf('%s%s%s AS %s%s%s',
+				// If an AliasOverride was submitted, we are doing a "custom from"
+				$this->strCustomFromArray[$strTableName . '+' . count($this->strCustomFromArray)] = sprintf('%s%s%s AS %s%s%s',
 					$this->strEscapeIdentifierBegin, $strTableName, $this->strEscapeIdentifierEnd,
 					$this->strEscapeIdentifierBegin, $strAliasOverride, $this->strEscapeIdentifierEnd);
 			}
@@ -1770,6 +1771,10 @@
 			$strSql .= sprintf("\r\nFROM\r\n    %s\r\n    %s",
 				implode(",\r\n    ", $this->strFromArray),
 				implode("\r\n    ", $this->strJoinArray));
+
+			// Custom "FROM" Columns
+			if (count($this->strCustomFromArray))
+				$strSql .= ",\r\n    " . implode(",\r\n    ", $this->strCustomFromArray);
 
 			// WHERE Clause
 			if (count($this->strWhereArray)) {
