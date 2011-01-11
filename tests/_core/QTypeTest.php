@@ -66,6 +66,12 @@
 			$this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_BOOL, $blnResult);
 			$this->assertFalse($blnResult);
 		}
+		
+		public function testEmptyStringToInteger() {
+			$intResult = QType::Cast('', QType::Integer);
+			$this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_INT, $intResult);
+			$this->assertEquals(0, $intResult);
+		}		
 
 		public function testStringToBoolean() {
 			$blnResult = QType::Cast('qcodo', QType::Boolean);

@@ -158,7 +158,7 @@
 				case QType::Integer:
 					if (is_integer($mixItem))
 						return $mixItem;
-					if (!is_numeric($mixItem) && !is_bool($mixItem)){
+					if (!is_numeric($mixItem) && !is_bool($mixItem) && $mixItem != ''){
 						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', QType::GetType($mixItem), $strType));
 					}
 					if (is_bool($mixItem)){
@@ -178,7 +178,7 @@
 				case QType::Float:
 					if (is_double($mixItem))
 						return $mixItem;
-					if (!is_numeric($mixItem) && !is_bool($mixItem)){
+					if (!is_numeric($mixItem) && !is_bool($mixItem) && $mixItem != ''){
 						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', QType::GetType($mixItem), $strType));
 					}
 					if (is_bool($mixItem)){
