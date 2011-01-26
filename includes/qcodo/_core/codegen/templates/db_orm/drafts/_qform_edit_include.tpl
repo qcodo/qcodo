@@ -12,32 +12,44 @@
 
 	<?php $this->RenderBegin() ?>
 
-	<div id="titleBar">
-		<h2><?php _p($this->mct<%= $objTable->ClassName %>->TitleVerb); ?></h2>
-		<h1><?php _t('<%= $objTable->ClassName %>')?></h1>
-	</div>
+	<div id="container">
+		<div id="headerContainer">
+			<div id="headerBorder">
+				<div id="header">
+					<div id="hleft">
+						<span class="hsmall"><?php _p($this->mct<%= $objTable->ClassName %>->TitleVerb); ?></span><br/>
+						<span class="hbig"><?php _t('<%= $objTable->ClassName %>')?></span>
+					</div>
+					<br class="clear"/>
+				</div>
+			</div>
+		</div>
 
-	<div id="formControls">
-<% foreach ($objTable->ColumnArray as $objColumn) { %>
-		<?php $this-><%= $objCodeGen->FormControlVariableNameForColumn($objColumn); %>->RenderWithName(); ?>
+		<div id="content">
+		
+			<div id="formControls">
+		<% foreach ($objTable->ColumnArray as $objColumn) { %>
+				<?php $this-><%= $objCodeGen->FormControlVariableNameForColumn($objColumn); %>->RenderWithName(); ?>
 
-<% } %>
-<% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>
-<% if ($objReverseReference->Unique) { %>
-		<?php $this-><%= $objCodeGen->FormControlVariableNameForUniqueReverseReference($objReverseReference); %>->RenderWithName(); ?>
+		<% } %>
+		<% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>
+		<% if ($objReverseReference->Unique) { %>
+				<?php $this-><%= $objCodeGen->FormControlVariableNameForUniqueReverseReference($objReverseReference); %>->RenderWithName(); ?>
 
-<% } %>
-<% } %>
-<% foreach ($objTable->ManyToManyReferenceArray as $objManyToManyReference) { %>
-		<?php $this-><%= $objCodeGen->FormControlVariableNameForManyToManyReference($objManyToManyReference); %>->RenderWithName(true, "Rows=7"); ?>
+		<% } %>
+		<% } %>
+		<% foreach ($objTable->ManyToManyReferenceArray as $objManyToManyReference) { %>
+				<?php $this-><%= $objCodeGen->FormControlVariableNameForManyToManyReference($objManyToManyReference); %>->RenderWithName(true, "Rows=7"); ?>
 
-<% } %>
-	</div>
+		<% } %>
+			</div>
 
-	<div id="formActions">
-		<div id="save"><?php $this->btnSave->Render(); ?></div>
-		<div id="cancel"><?php $this->btnCancel->Render(); ?></div>
-		<div id="delete"><?php $this->btnDelete->Render(); ?></div>
+			<div id="formActions">
+				<div id="save"><?php $this->btnSave->Render(); ?></div>
+				<div id="cancel"><?php $this->btnCancel->Render(); ?></div>
+				<div id="delete"><?php $this->btnDelete->Render(); ?></div>
+			</div>
+		</div>
 	</div>
 
 	<?php $this->RenderEnd() ?>	

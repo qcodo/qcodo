@@ -11,19 +11,35 @@
 ?>
 
 	<?php $this->RenderBegin() ?>
-
-	<div id="titleBar">
-		<h2 id="right"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/index.php">&laquo; <?php _t('Go to "Form Drafts"'); ?></a></h2>
-		<h2><?php _t('List All'); ?></h2>
-		<h1><?php _t('<%= $objTable->ClassNamePlural %>'); ?></h1>
-	</div>
+	
+	<div id="container">
+		<div id="headerContainer">
+			<div id="headerBorder">
+				<div id="header">
+					<div id="hleft">
+						<span class="hsmall"><?php _t('List All'); ?></span><br/>
+						<span class="hbig"><?php _t('<%= $objTable->ClassNamePlural %>'); ?></span>
+					</div>
+					<div id="hright">
+						<a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/index.php">&laquo; <?php _t('Go to "Form Drafts"'); ?></a>
+					</div>
+					<br class="clear"/>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content">
 
 	<?php $this->dtg<%= $objTable->ClassNamePlural %>->Render(); ?>
 
-	<p class="create">
-		<a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/<%= QConvertNotation::UnderscoreFromCamelCase($objTable->ClassName) %>_edit.php"><?php _t('Create a New'); ?> <?php _t('<%= $objTable->ClassName %>');?></a>
-	</p>
-
+			<div id="formActions">
+				<p class="buttons">
+					<a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/<%= QConvertNotation::UnderscoreFromCamelCase($objTable->ClassName) %>_edit.php"><?php _t('Create a New'); ?> <?php _t('<%= $objTable->ClassName %>');?></a>			
+				</p>
+			</div>
+		</div>
+	</div>
+	
 	<?php $this->RenderEnd() ?>
 	
 <?php require(__INCLUDES__ . '/footer.inc.php'); ?>

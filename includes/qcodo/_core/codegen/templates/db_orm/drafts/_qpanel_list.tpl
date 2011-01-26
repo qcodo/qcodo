@@ -50,8 +50,8 @@
 			$this->dtg<%= $objTable->ClassNamePlural %> = new <%= $objTable->ClassName %>DataGrid($this);
 
 			// Style the DataGrid (if desired)
-			$this->dtg<%= $objTable->ClassNamePlural %>->CssClass = 'datagrid';
-			$this->dtg<%= $objTable->ClassNamePlural %>->AlternateRowStyle->CssClass = 'alternate';
+			$this->dtg<%= $objTable->ClassNamePlural %>->CssClass = 'qdatagrid';
+			$this->dtg<%= $objTable->ClassNamePlural %>->AlternateRowStyle->CssClass = 'qalternate';
 
 			// Add Pagination (if desired)
 			$this->dtg<%= $objTable->ClassNamePlural %>->Paginator = new QPaginator($this->dtg<%= $objTable->ClassNamePlural %>);
