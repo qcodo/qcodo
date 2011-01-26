@@ -6,7 +6,7 @@
 		protected $strLabelForPrevious;
 		protected $strLabelForNext;
 
-		protected $strCssClass = 'paginator';
+		protected $strCssClass = 'qpaginator';
 
 		//////////
 		// Methods
@@ -28,24 +28,24 @@
 			$strToReturn = sprintf('<span id="%s" %s%s>', $this->strControlId, $strStyle, $this->GetAttributes(true, false));
 
 			if ($this->intPageNumber <= 1)
-				$strToReturn .= sprintf('<span class="arrow">%s</span>', $this->strLabelForPrevious);
+				$strToReturn .= sprintf('<span class="qarrow">%s</span>', $this->strLabelForPrevious);
 			else {
 				$this->strActionParameter = $this->intPageNumber - 1;
-				$strToReturn .= sprintf('<span class="arrow"><a href="" %s>%s</a></span>',
+				$strToReturn .= sprintf('<span class="qarrow"><a href="" %s>%s</a></span>',
 					$this->GetActionAttributes(), $this->strLabelForPrevious);
 			}
 
-			$strToReturn .= '<span class="break">|</span>';
+			$strToReturn .= '<span class="qbreak">|</span>';
 			
 			if ($this->PageCount <= $this->intIndexCount) {
 				// We have less pages than total indexcount -- so let's go ahead
 				// and just display all page indexes
 				for ($intIndex = 1; $intIndex <= $this->PageCount; $intIndex++) {
 					if ($this->intPageNumber == $intIndex) {
-						$strToReturn .= sprintf('<span class="selected">%s</span>', $intIndex);
+						$strToReturn .= sprintf('<span class="qselected">%s</span>', $intIndex);
 					} else {
 						$this->strActionParameter = $intIndex;
-						$strToReturn .= sprintf('<span class="page"><a href="" %s>%s</a></span>',
+						$strToReturn .= sprintf('<span class="qpage"><a href="" %s>%s</a></span>',
 							$this->GetActionAttributes(), $intIndex);
 					}
 				}
@@ -117,9 +117,9 @@
 					$intPageStart = min($intMaximumStartOfBunch, $this->intPageNumber - $intLeftOfBunchCount);
 
 					$this->strActionParameter = 1;
-					$strStartEllipsis = sprintf('<span class="page"><a href="" %s>%s</a></span>',
+					$strStartEllipsis = sprintf('<span class="qpage"><a href="" %s>%s</a></span>',
 						$this->GetActionAttributes(), 1);
-					$strStartEllipsis .= '<span class="ellipsis">...</span>';
+					$strStartEllipsis .= '<span class="qellipsis">...</span>';
 				}
 				
 				if ($this->intPageNumber > $intRightBunchTrigger) {
@@ -127,20 +127,20 @@
 					$strEndEllipsis = "";
 				} else {
 					$intPageEnd = max($intMinimumEndOfBunch, $this->intPageNumber + $intRightOfBunchCount);
-					$strEndEllipsis = '<span class="ellipsis">...</span>';
+					$strEndEllipsis = '<span class="qellipsis">...</span>';
 
 					$this->strActionParameter = $this->PageCount;
-					$strEndEllipsis .= sprintf('<span class="page"><a href="" %s>%s</a></span>',
+					$strEndEllipsis .= sprintf('<span class="qpage"><a href="" %s>%s</a></span>',
 						$this->GetActionAttributes(), $this->PageCount);
 				}
 
 				$strToReturn .= $strStartEllipsis;
 				for ($intIndex = $intPageStart; $intIndex <= $intPageEnd; $intIndex++) {
 					if ($this->intPageNumber == $intIndex) {
-						$strToReturn .= sprintf('<span class="selected">%s</span>', $intIndex);
+						$strToReturn .= sprintf('<span class="qselected">%s</span>', $intIndex);
 					} else {
 						$this->strActionParameter = $intIndex;
-						$strToReturn .= sprintf('<span class="page"><a href="" %s>%s</a></span>',
+						$strToReturn .= sprintf('<span class="qpage"><a href="" %s>%s</a></span>',
 							$this->GetActionAttributes(), $intIndex);
 					}
 				}
@@ -148,13 +148,13 @@
 			}
 				
 	
-			$strToReturn .= '<span class="break">|</span>';
+			$strToReturn .= '<span class="qbreak">|</span>';
 	
 			if ($this->intPageNumber >= $this->PageCount)
-				$strToReturn .= sprintf('<span class="arrow">%s</span>', $this->strLabelForNext);
+				$strToReturn .= sprintf('<span class="qarrow">%s</span>', $this->strLabelForNext);
 			else {
 				$this->strActionParameter = $this->intPageNumber + 1;
-				$strToReturn .= sprintf('<span class="arrow"><a href="" %s>%s</a></span>',
+				$strToReturn .= sprintf('<span class="qarrow"><a href="" %s>%s</a></span>',
 					$this->GetActionAttributes(), $this->strLabelForNext);
 			}
 

@@ -5,7 +5,7 @@
 		///////////////////////////
 
 		// Feel free to specify global display preferences/defaults for all QListBox controls
-		protected $strCssClass = 'listbox';
+		protected $strCssClass = 'qlistbox';
 //		protected $strFontNames = QFontFamily::Verdana;
 //		protected $strFontSize = '12px';
 //		protected $strWidth = '250px';

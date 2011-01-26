@@ -7,7 +7,7 @@
 		protected $strCalendarImageSource;
 
 		protected $strJavaScripts = '_core/calendar.js';
-		protected $strCssClass = 'calendar';
+		protected $strCssClass = 'qcalendar';
 
 		public function ParsePostData() {}
 		public function Validate() {return true;}

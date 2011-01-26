@@ -34,14 +34,14 @@
 			$strToReturn = '<div class="renderWithName">';
 
 			// Render the Left side
-			$strLeftClass = "left";
+			$strLeftClass = "qleft";
 			if ($this->blnRequired)
-				$strLeftClass .= ' required';
+				$strLeftClass .= ' qrequired';
 			if (!$this->blnEnabled)
-				$strLeftClass .= ' disabled';
+				$strLeftClass .= ' qdisabled';
 
 			if ($this->strInstructions)
-				$strInstructions = '<br/><span class="instructions">' . $this->strInstructions . '</span>';
+				$strInstructions = '<br/><span class="qinstructions">' . $this->strInstructions . '</span>';
 			else
 				$strInstructions = '';
 
@@ -49,21 +49,22 @@
 
 			// Render the Right side
 			if ($this->strValidationError)
-				$strMessage = sprintf('<span class="error">%s</span>', $this->strValidationError);
+				$strMessage = sprintf('<span class="qerror">%s</span>', $this->strValidationError);
 			else if ($this->strWarning)
-				$strMessage = sprintf('<span class="error">%s</span>', $this->strWarning);
+				$strMessage = sprintf('<span class="qerror">%s</span>', $this->strWarning);
 			else
 				$strMessage = '';
 
 			try {
-				$strToReturn .= sprintf('<div class="right">%s%s%s%s</div>',
+				$strToReturn .= sprintf('<div class="qright">%s%s%s%s</div>',
 					$this->strHtmlBefore, $this->GetControlHtml(), $this->strHtmlAfter, $strMessage);
 			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
-
-			$strToReturn .= '</div>';
+			
+			//clear float and close Control's Dressing div
+			$strToReturn .= '<br class="qclear" /></div>';
 
 			////////////////////////////////////////////
 			// Call RenderOutput, Returning its Contents

@@ -467,9 +467,9 @@
 		}
 
 		protected function GetPaginatorRowHtml($objPaginator) {
-			$strToReturn = "  <span class=\"right\">";
+			$strToReturn = "  <span class=\"qright\">";
 			$strToReturn .= $objPaginator->Render(false);
-			$strToReturn .= "</span>\r\n  <span class=\"left\">";
+			$strToReturn .= "</span>\r\n  <span class=\"qleft\">";
 			if ($this->TotalItemCount > 0) {
 				$intStart = (($this->PageNumber - 1) * $this->ItemsPerPage) + 1;
 				$intEnd = $intStart + count($this->DataSource) - 1;

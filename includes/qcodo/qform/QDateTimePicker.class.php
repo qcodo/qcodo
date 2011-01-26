@@ -5,7 +5,7 @@
 		///////////////////////////
 
 		// Feel free to specify global display preferences/defaults for all QDateTimePicker controls
-		protected $strCssClass = 'datetimepicker';
+		protected $strCssClass = 'qdatetimepicker';
 
 		protected $strDateTimePickerType = QDateTimePickerType::Date;
 		protected $strDateTimePickerFormat = QDateTimePickerFormat::MonthDayYear;

@@ -5,7 +5,7 @@
 		///////////////////////////
 
 		// Feel free to specify global display preferences/defaults for all QButton controls
-		protected $strCssClass = 'button';
+		protected $strCssClass = 'qbutton';
 //		protected $strFontNames = QFontFamily::Verdana;
 //		protected $strFontSize = '10px';
 //		protected $blnFontBold = true;

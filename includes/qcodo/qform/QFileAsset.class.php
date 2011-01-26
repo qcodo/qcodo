@@ -7,7 +7,7 @@
 
 			// Setup Default Properties
 			$this->strTemplate = __QCODO_CORE__ . '/assets/QFileAsset.tpl.php';
-			$this->DialogBoxCssClass = 'fileassetDbox';
+			$this->DialogBoxCssClass = 'qfileassetDbox';
 			$this->UploadText = QApplication::Translate('Upload');
 			$this->CancelText = QApplication::Translate('Cancel');
 			$this->btnUpload->Text = '<img src="' . __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__ . '/add.png" alt="' . QApplication::Translate('Upload') . '" border="0"/> ' . QApplication::Translate('Upload');
