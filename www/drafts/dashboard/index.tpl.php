@@ -1,29 +1,36 @@
 <?php require(__INCLUDES__ . '/header.inc.php'); ?>
 <?php $this->RenderBegin(); ?>
 
-	<div id="titleBar">
-		<h2 id="right"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/index.php">&laquo; <?php _t('Go to "Form Drafts"'); ?></a></h2>
-		<h2><?php _t('Panel Drafts') ?></h2>
-		<h1><?php $this->pnlTitle->Render(); ?></h1>
+<div id="container">
+	<div id="headerContainer">
+		<div id="headerBorder">
+			<div id="header">
+				<div id="hleft">
+					<span class="hsmall"><?php _t('Panel Drafts') ?></span><br/>
+					<span class="hbig"><?php $this->pnlTitle->Render(); ?></span>
+				</div>
+				<div id="hright">
+					<a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>/index.php">&laquo; <?php _t('Go to "Form Drafts"'); ?></a>
+				</div>
+				<br class="clear"/>
+			</div>
+		</div>
 	</div>
 
-	<div id="dashboard">
-		<div id="left">
-			<p><strong><?php _t('Select a Class to View/Edit') ?></strong></p>
-			<p><?php $this->lstClassNames->Render('FontSize=10px','Width=100px'); ?></p>
-			<p><?php $this->objDefaultWaitIcon->Render(); ?></p>
-		</div>
-		<div id="right">
-			<?php $this->pnlList->Render(); ?>
-			<?php $this->pnlEdit->Render(); ?>
+	<div id="content">
+		<div id="dashboard">
+			<div id="dleft">
+				<strong><?php _t('Select a Class to View/Edit') ?></strong><br/>
+				<br/>
+				<?php $this->lstClassNames->Render(); ?>
+				<?php $this->objDefaultWaitIcon->Render(); ?>
+			</div>
+			<div id="dright">
+				<?php $this->pnlList->Render(); ?>
+				<?php $this->pnlEdit->Render(); ?>
+			</div>
 		</div>
 	</div>
-	
-	<div id="draftList">
-		<p>&nbsp;</p>
-		<h1><?php _t('Form Drafts') ?></h1>
-		<p class="create"><a href="<?php _p(__VIRTUAL_DIRECTORY__ . __FORM_DRAFTS__) ?>"><?php _t('Go to "Form Drafts"') ?></a></p>
-	</div>
-	
+</div>
 <?php $this->RenderEnd(); ?>
 <?php require(__INCLUDES__ . '/footer.inc.php'); ?>

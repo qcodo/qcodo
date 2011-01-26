@@ -1,28 +1,31 @@
 <?php
 	// Include prepend.inc to load Qcodo
 	require(dirname(__FILE__) . '/../../../includes/prepend.inc.php');
-
+	
 	// Security check for ALLOW_REMOTE_ADMIN
 	// To allow access REGARDLESS of ALLOW_REMOTE_ADMIN, simply remove the line below
 	QApplication::CheckRemoteAdmin();
 
-
-	// Let's "magically" determine the list of genereated Class Panel Drafts by
+	// Let's "magically" determine the list of generated Class Panel Drafts by
 	// just traversing through this directory, looking for "*ListPanel.class.php" and "*EditPanel.class.php"
 
-	// Obviously, if you are wanting to make your own dashbaord, you should change this and use more
+	// Obviously, if you are wanting to make your own dashboard, you should change this and use more
 	// hard-coded means to determine which classes' paneldrafts you want to include/use in your dashboard.
-	$objDirectory = opendir(dirname(__FILE__));
+	
 	$strClassNameArray = array();
-	while ($strFile = readdir($objDirectory)) {
-		if ($intPosition = strpos($strFile, 'ListPanel.class.php')) {
-			$strClassName = substr($strFile, 0, $intPosition);
-			$strClassNameArray[$strClassName] = $strClassName . 'ListPanel';
-			require($strClassName . 'ListPanel.class.php');
-			require($strClassName . 'EditPanel.class.php');
+	$objDirectory = new DirectoryIterator(dirname(__FILE__));
+	
+	foreach ($objDirectory as $objFileinfo) {
+		$strFilename = $objFileinfo->getFilename();
+		if ( !$objFileinfo->IsDir() ) {
+			if ($intPosition = strpos($strFilename, 'ListPanel.class.php')) {
+				$strClassName = substr($strFilename, 0, $intPosition);
+				$strClassNameArray[$strClassName] = $strClassName . 'ListPanel';
+				require($strClassName . 'ListPanel.class.php');
+				require($strClassName . 'EditPanel.class.php');
+			}
 		}
 	}
-
 
 	class Dashboard extends QForm {
 		protected $lstClassNames;
@@ -52,7 +55,18 @@
 				$this->lstClassNames->AddItem($strKey, $strValue);
 			$this->lstClassNames->AddAction(new QChangeEvent(), new QAjaxAction('lstClassNames_Change'));
 			
+			// Create spinner which will be displayed during the every call unless specified otherwise
 			$this->objDefaultWaitIcon = new QWaitIcon($this);
+			$this->objDefaultWaitIcon->Text = sprintf('<img src="%s/spinner_20.gif" width="20" height="20" alt="Please Wait..."/>', __VIRTUAL_DIRECTORY__ . __IMAGE_ASSETS__);
+			$this->objDefaultWaitIcon->Position = QPosition::Absolute;
+			$this->objDefaultWaitIcon->Top = 230;
+			$this->objDefaultWaitIcon->Left = 140;
+		}
+				
+		protected function Form_Run() {
+			// Security check for ALLOW_REMOTE_ADMIN
+			// To allow access REGARDLESS of ALLOW_REMOTE_ADMIN, simply remove the line below
+			QApplication::CheckRemoteAdmin();
 		}
 
 		/**
