@@ -1,0 +1,18 @@
+	/**
+	 * Draft Forms Specific Styles
+	 * NOTE: because these are page specific, we use element IDs instead of element classes for most items here
+	 */
+	
+	#formControls { }
+
+	#formActions {
+		border-top: 1px solid #d8d8d8;
+		padding: 20px 0;
+		height: 100%;
+		margin-top: 20px;
+		overflow: hidden;
+	}
+		#formActions div#save { float: left; }
+		#formActions div#cancel { margin-left: 10px; float: left; }
+		#formActions div#delete { float: right; }
+		#formActions p.buttons { margin: 0; padding: 0; }

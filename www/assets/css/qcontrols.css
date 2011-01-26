@@ -1,0 +1,117 @@
+	/* These are all EXAMPLES -- they are meant to be updated/changed/modified */
+	
+	/* Standard HTML Form Controls */
+	input.qbutton, 	input.qtextbox, textarea.qtextbox, select.qlistbox, .qdatetimepicker select {
+		font-family: inherit;
+		font-size: inherit;
+		border: 1px solid #aaa;
+		background-color: #f6f6f6;
+	}
+	
+	input.qbutton {
+		font-weight: bold;
+		padding: 2px 6px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		border-radius: 2px;
+	}
+	input.qbutton:hover { background-color: #c1e2ac; border-color: #69ca32; outline: 0; }
+
+	input.qtextbox, textarea.qtextbox {
+		width: 200px;
+		padding: 2px 3px;
+	}
+	textarea.qtextbox { height: 120px; }
+		input.qtextbox:focus, textarea.qtextbox:focus { background-color: #f9f9f9; border-color: #69ca32; outline: 0; }
+
+	select.qlistbox { width: 208px;	}
+		select.qlistbox:focus { background-color: #f9f9f9; border-color: #69ca32; }
+		a.qlistboxreset { text-decoration: none; }
+		a.qlistboxreset:hover { text-decoration: underline; }
+
+	/**
+	 * Various QControl-specific Styles
+	 */
+
+	/* QFileAsset */
+	.qfileassetDbox { border: 1px solid #333; background-color: #fff; padding: 20px; width: 400px; overflow: auto; }
+		.qfileassetDbox h1 { margin: 0; }
+		.qfileassetDbox input { padding: 3px; margin-right: 5px; }
+
+	/* QDialogBox */
+	.qdialogbox { border: 1px solid #333; background-color: #fff; padding: 20px; width: 400px; overflow: auto; }
+
+	/* QDateTimePicker */
+	.qdatetimepicker { }
+		.qdatetimepicker select { }
+		.qdatetimepicker select:focus { }
+		.qdatetimepicker select.qmonth { min-width: 55px; }
+		.qdatetimepicker select.qday { min-width: 45px; }
+		.qdatetimepicker select.qyear { min-width: 60px; }
+		.qdatetimepicker select.qhour { min-width: 45px; margin-right: 2px; }
+		.qdatetimepicker select.qminute { min-width: 45px; margin: 0 2px; }
+		.qdatetimepicker select.qsecond { min-width: 45px; margin-left: 2px; }
+		.qdatetimepicker span.qdivider { width: 20px; display: inline-block; }
+		.qdatetimepicker span.qspacer { width: 10px; display: inline-block; }
+
+	/* QDataGrid */
+	.qdatagrid { border: 1px solid #aaa; }
+		.qdatagrid caption, .qdatagrid tfoot { padding-bottom: 3px; overflow: hidden; }
+			.qdatagrid span.qleft { float: left; display: block; padding: 1px; }
+			.qdatagrid span.qright { float: right; display: block; padding: 1px; }
+		.qdatagrid tr { background-color: #fff; }
+			.qdatagrid tr.qalternate { background-color: #f0f0f0; }
+		.qdatagrid th { background-color: #c1e2ac; padding: 3px 5px; text-align: left; }
+			.qdatagrid th a { color: #000; text-decoration: none; }
+			.qdatagrid th a:hover { color: #000; text-decoration: underline; }
+		.qdatagrid td { padding: 5px; }
+			.qdatagrid td a { text-decoration: none; }
+			.qdatagrid td a:hover { text-decoration: underline; }
+		.qdatagrid tfoot { border-top: 1px solid #aaa;}
+
+	/* QPaginator */
+	.qpaginator { margin: 0; padding: 0; }
+		.qpaginator span { list-style-type:none; display: inline; padding: 0; margin: 0; }
+			.qpaginator span.qpage a { text-decoration: none; color: #000; padding: 0 3px; margin: 0 2px; }
+			.qpaginator span.qpage a:hover { background-color: #c1e2ac; }
+			.qpaginator span.qarrow { font-weight: bold; color: #ccc; margin: 0; padding: 0 3px; }
+			.qpaginator span.qarrow a { font-weight: bold; color: #000; text-decoration: none; }
+			.qpaginator span.qselected { font-weight: bold; background-color: #c1e2ac; padding: 0 3px; margin: 1px 2px 0 2px; border: 1px solid #2baa28; }
+			.qpaginator span.qbreak { color: #666; margin: 0 5px; }
+			.qpaginator span.qellipsis { color: #666; }
+
+	/* QCalendar */
+	.qcalendar { width: 200px; border: 1px solid #2baa28; background-color: #c1e2ac; }
+		.qcalendar div.qnavigator { background-color: #2baa28; overflow: hidden; color: #fff; padding: 2px 6px; height: 100%; }
+		.qcalendar div.qnavigator div.qleft { float: left; }
+		.qcalendar div.qnavigator div.qmonth { float: left; width: 80px; text-align: center; font-weight: bold; }
+		.qcalendar div.qnavigator div.qyear { float: right; }
+		.qcalendar div.qnavigator div.qyear span { font-weight: bold; margin: 0 6px; }
+			.qcalendar div.qnavigator a { color: #fff; text-decoration: none; }
+			.qcalendar div.qnavigator a:hover { text-decoration: underline; }
+		.qcalendar table { border: 0; margin-left: auto; margin-right: auto; }
+			.qcalendar th { text-align: center; border: 0; padding: 4px 2px; font-weight: bold; }
+			.qcalendar td { text-align: center; border-width: 0 0 1px 0; border-style: solid; border-color: #000; padding: 0; }
+				.qcalendar td.qlastrow { border-width: 0; }
+				.qcalendar td a { text-decoration: none; color: #000; display: block; padding: 2px 6px; }
+				.qcalendar td.qtoday { background-color: #c9f991; }
+				.qcalendar td.qnonmonth a { color: #aaa; }
+				.qcalendar td.qselected { background-color: #2baa28; font-weight: bold; }
+				.qcalendar td.qselected a { color: #fff; }
+				.qcalendar td a:hover { background-color: #fff; color: #000; }
+		.qcalendar div.qoptions { text-align: center; background-color: #2baa28; }
+			.qcalendar div.qoptions a { color: #fff; text-decoration: none; }
+			.qcalendar div.qoptions a:hover { text-decoration: underline; }
+
+	/**
+	 * Styles for Custom Render Functions as defined in QControl.class.php
+	 */
+	.renderWithName { padding: 5px 0; height: 100%; overflow: hidden; }
+		.renderWithName div.qleft { float: left; width: 200px; margin-right: 20px; }
+		.renderWithName div.qrequired { font-weight: bold; text-transform: uppercase; }
+		.renderWithName div.qdisabled { }
+		.renderWithName div.qleft span.qinstructions { color: #999; font-style: italic; font-weight: normal; text-transform: none; }
+
+		.renderWithName div.qright { float: left; }
+		.renderWithName div.qright span.qerror { margin-left: 20px; background-color: #fff6bf; color: #514721; border: 1px solid #ffd324; padding: 2px 3px; }
+		.renderWithName br.qclear { font-size: 0; clear: both; }
