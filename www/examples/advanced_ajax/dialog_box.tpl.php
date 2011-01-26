@@ -33,22 +33,23 @@
 		.calculator_widget { width: 220px; height: 300px; background-color: #999999; padding: 10px; border-width: 1px; border-color: black; border-style: solid; }
 		.calculator_display { text-align: right; padding: 4px; width: 208px; border-width: 1px; border-style: solid; border-color: black; background-color: white; font: 24px verdana, arial, helvetica; }
 		.calculator_button { width: 50px; height: 45px; font: 20px verdana, arial, helvetica; font-weight: bold; border-width: 1px; background-color: #eeffdd; }
-		.calculator_top_button { width: 78px; height: 45px; font: 10px verdana, arial, helvetica; color: white; border-width: 1px; background-color: #336644; }
+		.calculator_top_button { width: 77px; height: 45px; font: 10px verdana, arial, helvetica; color: white; border-width: 1px; background-color: #336644; }
 	</style>
 
-	<fieldset style="width: 400px;">
-		<legend>Simple Message Example</legend>
+	<div style="width: 400px;">
+		Simple Message Example
 		<?php $this->dlgSimpleMessage->Render(); ?>
 		<p><?php $this->btnDisplaySimpleMessage->Render(); ?></p>
 		<p><?php $this->btnDisplaySimpleMessageJsOnly->Render(); ?></p>
-	</fieldset>
-	<br/><br/>
-	<fieldset style="width: 400px;">
-		<legend>Calculator Widget Example</legend>
+	</div>
+	<br/>
+	<br/>
+	<div style="width: 400px;">
+		Calculator Widget Example
 		<?php $this->dlgCalculatorWidget->Render(); ?>
 		<p>Current Value: <?php $this->txtValue->Render(); ?></p>
 		<p><?php $this->btnCalculator->Render(); ?></p>
-	</fieldset>
+	</div>
 	
 	<?php $this->RenderEnd(); ?>
 <?php require(__INCLUDES__ . '/examples/footer.inc.php'); ?>

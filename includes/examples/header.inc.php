@@ -5,7 +5,7 @@
 		<title>Qcodo Development Framework - Examples</title>
 		<link rel="stylesheet" type="text/css" href="<?php _p(__VIRTUAL_DIRECTORY__ . __CSS_ASSETS__ . '/qcontrols.css'); ?>"></link>
 		<link rel="stylesheet" type="text/css" href="<?php _p(__VIRTUAL_DIRECTORY__ . __CSS_ASSETS__ . '/examples/examples.css'); ?>"></link>
-		<!--<script type="text/javascript" src="<?php _p(__VIRTUAL_DIRECTORY__ . __JS_ASSETS__ . '/_core/_qc_packed.js'); ?>"></script>-->
+		<script type="text/javascript" src="<?php _p(__VIRTUAL_DIRECTORY__ . __JS_ASSETS__ . '/_core/_qc_packed.js'); ?>"></script>
 		<script type="text/javascript">
 			function ViewSource(intCategoryId, intExampleId) {
 				var objWindow = window.open("../view_source.php/" + intCategoryId + "/" + intExampleId, "ViewSource", "menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes,width=1000,height=750,left=50,top=50");
