@@ -1,0 +1,211 @@
+/**
+ * Css for core qcodo pages:
+ * profiling
+ * error page
+ * start page
+ * codegen
+ * drafts index
+ * drafts panel dashboard
+ */
+
+	body { 
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 14px;
+		margin: 0;
+	}
+	a { color: #009721;}
+	a:link, a:visited { text-decoration: none; }
+	a:hover { text-decoration: underline; }
+	form { margin: 0; }
+	
+	#container { }
+	#content { padding: 15px 20px 0 20px; margin-bottom: 20px; }
+	
+	#headerContainer {
+		overflow: hidden;
+		padding-bottom: 5px;
+		line-height: 18px;
+		width: 100%;
+	}
+	#headerBorder { border-bottom: 1px solid #c9f991; }
+	#header {
+		background-color: #2baa28;
+		color: #ffffff;
+		border-top: 1px solid #c1e2ac;
+		border-bottom: 1px solid #c1e2ac;
+		font-size: 16px;
+		overflow: hidden;
+		height: 100%;
+		
+		-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+		-moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+		text-shadow: 1px 1px 1px rgba(0, 50, 11, 0.5);
+	}
+		#header a { color: #fff; }
+	
+	/* diffrent header do error page */
+	.headerError {
+		background-color: #a00 !important;
+		border-top: 1px solid #e00 !important;
+		border-bottom: 1px solid #e00 !important;
+	}
+	.headerErrorBorder {
+		border-bottom: 1px solid #900 !important;
+	}
+	#header #hleft {
+		float: left;
+		padding: 10px 0px 10px 20px;
+		line-height: 24px;
+	}
+	#header .hbig {	
+		font-size: 21px;
+		font-weight: bold;
+		text-shadow: 1px 1px 2px rgba(0, 50, 11, 0.7);
+	}
+	#header .hsmall { font-size: 14px; }
+	#header #hright {
+		float: right;
+		font-size: 13px;
+		padding: 10px 10px 10px 0;
+		text-align: right;
+	}
+	
+	.title {
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.code_title { 
+		font-size: 16px; 
+		font-weight: bold; 
+	}
+	
+	pre { 
+		font-family: 'Lucida Console', 'Courier New', Courier, monospaced;
+		font-size: 14px;
+		line-height: 16px;
+		margin: 10px 0;
+	}	
+	pre code {
+		font-size: 12px;
+		margin: 0;
+		padding: 10px;
+		display: block;
+
+		background-color: #f0f0f0;
+		border: 1px solid #d8d8d8;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		-webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+		-moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+		box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+	}
+		
+	.function { 
+		font-weight: bold;
+		line-height: 21px;
+	}
+	.function_details {
+		color: #444;
+		font-size: 14px;
+		line-height: 21px;
+	}
+
+	a.smallbutton {
+		border: 1px solid #aaa;
+		background-color: #f6f6f6;
+		color: #000;
+		padding: 0px 4px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		border-radius: 2px;
+		font-size: 14px;
+	}
+		a.smallbutton:hover { background-color: #c1e2ac; border-color: #69ca32; outline: 0; text-decoration: none; }
+	
+	p.buttons { padding: 5px 0; margin: 10px 0; }
+		p.buttons a {
+			font-family: inherit;
+			font-size: inherit;
+			border: 1px solid #aaa;
+			background-color: #f6f6f6;
+			color: #000;
+
+			font-weight: bold;
+			padding: 4px 8px;
+			-moz-border-radius: 2px;
+			-webkit-border-radius: 2px;
+			border-radius: 2px;
+		}
+			p.buttons a:hover { background-color: #c1e2ac; border-color: #69ca32; outline: 0; text-decoration: none; }
+
+	.time { font-size: 14px; }
+	.slow, .error { color: #F00; }
+	.clear {
+		clear: both;
+		font-size: 0pt;
+	}
+	
+	#dashboard { }
+		#dashboard #dleft {
+			float: left;
+			width: 210px;
+			padding: 20px;
+			
+			background-color: #f0f0f0;
+			border: 1px solid #d8d8d8;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			-khtml-border-radius: 5px;
+			-o-border-radius: 5px;
+			border-radius: 5px;
+			-webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			-moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+		}
+		#dashboard #dright {
+			margin-left: 270px;
+		}
+		#dashboard #dright #pnlList {
+			margin-bottom: 20px;
+			padding: 20px;
+			min-height: 300px;
+			overflow: visible;
+			
+			background-color: #f0f0f0;
+			border: 1px solid #d8d8d8;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			-khtml-border-radius: 5px;
+			-o-border-radius: 5px;
+			border-radius: 5px;
+			-webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			-moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+		}
+		#dashboard #dright #pnlEdit {
+			padding: 20px;
+			overflow: visible;
+			
+			background-color: #f0f0f0;
+			border: 1px solid #d8d8d8;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			-khtml-border-radius: 5px;
+			-o-border-radius: 5px;
+			border-radius: 5px;
+			-webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			-moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+		}
+	
+	#footer {
+		border-top: 1px solid #d8d8d8;
+		color: #444;
+		font-size: 12px;
+		text-align: center;
+		padding-top: 20px;
+		margin: 0 20px;
+		clear: both;
+	}

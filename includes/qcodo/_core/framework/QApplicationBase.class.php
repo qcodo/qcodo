@@ -1001,28 +1001,27 @@
 
   		/**
 		 * For development purposes, this static method outputs all the Application static variables
-		 *
 		 * @return void
 		 */
 		public static function VarDump() {
-			_p('<div style="background-color: #cccccc; padding: 5px;"><b>Qcodo Settings</b><ul>', false);
+			_p('<pre><code><b>Qcodo Settings</b>' . "\n\r", false);
 			if (ini_get('magic_quotes_gpc') || ini_get('magic_quotes_runtime'))
-				printf('<li><font color="red"><b>WARNING:</b> magic_quotes_gpc and magic_quotes_runtime need to be disabled</font>');
+				printf('&bull; <span style="color: red;"><b>WARNING:</b> magic_quotes_gpc and magic_quotes_runtime need to be disabled</span>' . "\n\r");
 
-			printf('<li>QCODO_VERSION = "%s"</li>', QCODO_VERSION);
-			printf('<li>__SUBDIRECTORY__ = "%s"</li>', __SUBDIRECTORY__);
-			printf('<li>__VIRTUAL_DIRECTORY__ = "%s"</li>', __VIRTUAL_DIRECTORY__);
-			printf('<li>__INCLUDES__ = "%s"</li>', __INCLUDES__);
-			printf('<li>__QCODO_CORE__ = "%s"</li>', __QCODO_CORE__);
-			printf('<li>PHP Include Path = "%s"</li>', get_include_path());
-			printf('<li>QApplication::$DocumentRoot = "%s"</li>', QApplication::$DocumentRoot);
-			printf('<li>QApplication::$EncodingType = "%s"</li>', QApplication::$EncodingType);
-			printf('<li>QApplication::$PathInfo = "%s"</li>', QApplication::$PathInfo);
-			printf('<li>QApplication::$QueryString = "%s"</li>', QApplication::$QueryString);
-			printf('<li>QApplication::$RequestUri = "%s"</li>', QApplication::$RequestUri);
-			printf('<li>QApplication::$ScriptFilename = "%s"</li>', QApplication::$ScriptFilename);
-			printf('<li>QApplication::$ScriptName = "%s"</li>', QApplication::$ScriptName);
-			printf('<li>QApplication::$ServerAddress = "%s"</li>', QApplication::$ServerAddress);
+			printf('&bull; QCODO_VERSION = "%s"' . "\n", QCODO_VERSION);
+			printf('&bull; __SUBDIRECTORY__ = "%s"' . "\n", __SUBDIRECTORY__);
+			printf('&bull; __VIRTUAL_DIRECTORY__ = "%s"' . "\n", __VIRTUAL_DIRECTORY__);
+			printf('&bull; __INCLUDES__ = "%s"' . "\n", __INCLUDES__);
+			printf('&bull; __QCODO_CORE__ = "%s"' . "\n", __QCODO_CORE__);
+			printf('&bull; PHP Include Path = "%s"' . "\n", get_include_path());
+			printf('&bull; QApplication::$DocumentRoot = "%s"' . "\n", QApplication::$DocumentRoot);
+			printf('&bull; QApplication::$EncodingType = "%s"' . "\n", QApplication::$EncodingType);
+			printf('&bull; QApplication::$PathInfo = "%s"' . "\n", QApplication::$PathInfo);
+			printf('&bull; QApplication::$QueryString = "%s"' . "\n", QApplication::$QueryString);
+			printf('&bull; QApplication::$RequestUri = "%s"' . "\n", QApplication::$RequestUri);
+			printf('&bull; QApplication::$ScriptFilename = "%s"' . "\n", QApplication::$ScriptFilename);
+			printf('&bull; QApplication::$ScriptName = "%s"' . "\n", QApplication::$ScriptName);
+			printf('&bull; QApplication::$ServerAddress = "%s"' . "\n", QApplication::$ServerAddress);
 
 			if (QApplication::$Database) foreach (QApplication::$Database as $intKey => $objObject) {
 				$arrDb = unserialize(constant('DB_CONNECTION_' . $intKey));
@@ -1030,14 +1029,9 @@
 				// Don't display database password
 				$arrDb['password'] = '********';
 
-				// Don't display linked Journaling database password (if applicable)
-				if (array_key_exists('journaling', $arrDb)) {
-					$arrDb['journaling']['password'] = '********';
-				}
-
-				printf('<li>QApplication::$Database[%s] = %s</li>', $intKey, var_export($arrDb, true));
+				printf('&bull; QApplication::$Database[%s] = %s' . "\n", $intKey, var_export($arrDb, true));
 			}
-			_p('</ul></div>', false);
+			_p('</code></pre>', false);
 		}
 	}
 
