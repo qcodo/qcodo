@@ -1,5 +1,13 @@
 <?php
 	require(dirname(__FILE__) . '/../_require_prepend.inc.php');
+	
+	//Exit gracefully if called directly or profiling data is missing.
+	if ( !isset($_POST['intDatabaseIndex']) && !isset($_POST['strProfileData']) && !isset($_POST['strReferrer']) )
+		exit('Nothing to profile. No Database Profiling data recived.');
+
+	if ( !isset($_POST['intDatabaseIndex']) || !isset($_POST['strProfileData']) || !isset($_POST['strReferrer']) )
+		throw new Exception('Database Profiling data appears to have been corrupted.');
+	
 	$intDatabaseIndex = $_POST['intDatabaseIndex'];
 	$strProfileData = $_POST['strProfileData'];
 	$strReferrer = $_POST['strReferrer'];
@@ -8,103 +16,93 @@
 	$objProfileArray = QType::Cast($objProfileArray, QType::ArrayType);
 	if ((count($objProfileArray) % 2) != 0)
 		throw new Exception('Database Profiling data appears to have been corrupted.');
+		
+	$intCount = count($objProfileArray);
 ?>
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>Qcodo Development Framework - Database Profiling Tool</title>
-		<style>
-			body { font-family: 'Arial', 'Helvetica', 'sans-serif'; font-size: 14px; }
-			a:link, a:visited { text-decoration: none; }
-			a:hover { text-decoration: underline; }
+<head>
+	<title>Qcodo Development Framework - Database Profiling Tool</title>
+	<style type="text/css">@import url("<?php _p(__VIRTUAL_DIRECTORY__ . __CSS_ASSETS__); ?>/_core/corepage.css");</style>
+	<script type="text/javascript">
+		function Toggle(strWhatId, strButtonId) {
+			var obj = document.getElementById(strWhatId);
+			var objButton = document.getElementById(strButtonId);
 
-			pre { font-family: 'Lucida Console', 'Courier New', 'Courier', 'monospaced'; font-size: 11px; line-height: 13px; }
-			.page { padding: 10px; }
-
-			.headingLeft {
-				background-color: #446644;
-				color: #ffffff;
-				padding: 10px 0px 10px 10px;
-				font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif';
-				font-size: 18px;
-				font-weight: bold;
-				width: 70%;
-				vertical-align: middle;
-			}
-			.headingLeftSmall { font-size: 10px; }
-			.headingRight {
-				background-color: #446644;
-				color: #ffffff;
-				padding: 0px 10px 10px 10px;
-				font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif';
-				font-size: 10px;
-				width: 30%;
-				vertical-align: middle;
-				text-align: right;
-			}
-			.title { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 19px; font-style: italic; color: #330055; }
-			.code { background-color: #f4eeff; padding: 1px 10px 1px 10px; }
-			
-			.function { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 12px; font-weight: bold; }
-			.function_details { font-family: 'Verdana', 'Arial', 'Helvetica', 'sans-serif'; font-size: 10px; color: #777777; }
-		</style>
-		<script type="text/javascript">
-			function Toggle(spanId) {
-				var obj = document.getElementById(spanId);
-
-				if (obj) {
-					if (obj.style.display == "block") {
-						// Make INVISIBLE
-						obj.style.display = "none";
-					} else {
-						// Make VISIBLE
-						obj.style.display = "block";
-					}
-				}
-			}
-			
-			function ShowAll() {
-				for (var intIndex = 1; intIndex < <?php _p(count($objProfileArray)); ?>; intIndex = intIndex + 2) {
-					var obj = document.getElementById('query' + intIndex);
-					obj.style.display = "block";
-				}
-			}
-			
-			function HideAll() {
-				for (var intIndex = 1; intIndex < <?php _p(count($objProfileArray)); ?>; intIndex = intIndex + 2) {
-					var obj = document.getElementById('query' + intIndex);
+			if (obj && objButton) {
+				if (obj.style.display == "block") {
 					obj.style.display = "none";
+					objButton.innerHTML = "Show";
+				}
+				else {
+					obj.style.display = "block";
+					objButton.innerHTML = "Hide";
 				}
 			}
-		</script>
-	</head>
-	<body topmargin="0" leftmargin="0" marginheight="0" marginwidth="0"> 
+			return false;
+		}
 
-		<table border="0" cellspacing="0" width="100%">
-			<tr>
-				<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall">Qcodo Development Framework <?php _p(QCODO_VERSION); ?><br /></span>Database Profiling Tool</td>
-				<td nowrap="nowrap" class="headingRight">
-					<b>Database Index:</b> <?php _p($intDatabaseIndex); ?>;&nbsp;&nbsp;<b>Database Type:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Adapter); ?><br />
-					<b>Database Server:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Server); ?>;&nbsp;&nbsp;<b>Database Name:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Database); ?><br />
-					<b>Profile Generated From:</b> <?php _p($strReferrer); ?>
-				</td>
-			</tr>
-		</table><br />
+		function ShowAll() {
+			for (var intIndex = 1; intIndex <= <?php _p($intCount); ?>; intIndex = intIndex + 2) {
+				var objQuery = document.getElementById('query' + intIndex);
+				var objButton = document.getElementById('button' + intIndex);
+				objQuery.style.display = "block";
+				objButton.innerHTML = "Hide";
+			}
+			return false;
+		}
 
-		<div class="page">
+		function HideAll() {
+			for (var intIndex = 1; intIndex <= <?php _p($intCount); ?>; intIndex = intIndex + 2) {
+				var objQuery = document.getElementById('query' + intIndex);
+				var objButton = document.getElementById('button' + intIndex);
+				objQuery.style.display = "none";
+				objButton.innerHTML = "Show";
+			}
+			return false;
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="headerContainer">
+			<div id="headerBorder">
+				<div id="header">
+					<div id="hleft">
+						<span class="hsmall">Qcodo Development Framework <?php echo QCODO_VERSION ?></span><br/>
+						<span class="hbig">Database Profiling Tool</span>
+					</div>
+					<div id="hright">
+						<b>Database Index:</b> <?php _p($intDatabaseIndex); ?>&nbsp;&nbsp;
+						<b>Database Type:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Adapter); ?><br/>
+						<b>Database Server:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Server); ?>&nbsp;&nbsp;
+						<b>Database Name:</b> <?php _p(QApplication::$Database[$intDatabaseIndex]->Database); ?><br/>
+						<b>Profile Generated From:</b> <?php _p($strReferrer); ?>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="content">
+		<span class="title">
 <?php
-			$intCount = count($objProfileArray) / 2;
-			if ($intCount == 0)
-				_p('<b>There were no queries that were performed.</b>', false);
-			else if ($intCount == 1)
-				_p('<b>There was 1 query that was performed.</b>', false);
-			else
-				printf('<b>There were %s queries that were performed.</b>', $intCount);
+		$intCount = $intCount / 2;
+		
+		switch ($intCount) {
+			case 0: _p('<b>There were no queries that were performed.</b>', false); break;
+			case 1: _p('<b>There was 1 query that was performed.</b>', false); break;
+			default: printf('<b>There were %s queries that were performed.</b>', $intCount); break;
+		};
 ?>
-			<br />
-			<a href="javascript: ShowAll()" class="function_details">Show All</a>
-			 &nbsp;&nbsp;|&nbsp;&nbsp; 
-			<a href="javascript: HideAll()" class="function_details">Hide All</a>
-			<br /><br /><br />
+		</span>
+		<br/>
+		<br/>
+		<a href="#" onClick="return ShowAll()" class="smallbutton">Show All</a>
+		<a href="#" onClick="return HideAll()" class="smallbutton">Hide All</a>
+		<br/>
+		<br/>
 <?php
 			for ($intIndex = 0; $intIndex < count($objProfileArray); $intIndex++) {
 				if ((count($objProfileArray[$intIndex]) > 3) &&
@@ -125,20 +123,24 @@
 				$strFile = (array_key_exists('file', $objDebugBacktrace)) ? $objDebugBacktrace['file'] : null;
 				$strLine = (array_key_exists('line', $objDebugBacktrace)) ? $objDebugBacktrace['line'] : null;
 ?>
-				<span class="function">
-					Called by <?php _p($strClass . $strType . $strFunction . '(' . implode(', ', $objArgs) . ')'); ?>
-				</span>
-				 &nbsp;&nbsp;|&nbsp;&nbsp; 
-				<a href="javascript: Toggle('query<?php _p($intIndex); ?>')" class="function_details">Show/Hide</a>
-				<br />
-				<span class="function_details"><b>File: </b><?php _p($strFile); ?>; &nbsp;&nbsp;<b>Line: </b><?php _p($strLine); ?>
-				</span><br />
-				<div class="code" id="query<?php _p($intIndex); ?>" style="display: none"><pre><?php _p($strQuery); ?></pre></div>
-				<br /><br />
+			<span class="function">
+				Called by <?php _p($strClass . $strType . $strFunction . '(' . implode(', ', $objArgs) . ')'); ?>
+				<a href="#" onClick="return Toggle('query<?php _p($intIndex); ?>', 'button<?php _p($intIndex); ?>')" id="button<?php _p($intIndex); ?>" class="smallbutton">
+					Show
+				</a>
+			</span>&nbsp;&nbsp;<br/>
+			<span class="function_details">
+				<b>File: </b><?php _p($strFile); ?>; &nbsp;&nbsp;<b>Line: </b><?php _p($strLine); ?>
+			</span>
+			<pre id="query<?php _p($intIndex); ?>" style="display: none"><code><?php _p($strQuery); ?></code></pre>
+			<br/>
+			<br/>
 <?php
-			}
-?>
-
-		</div>
-	</body>
+		}
+?>			</div>
+	</div>
+	<script>
+		if (<?php _p($intCount); ?> <= 5) ShowAll();
+	</script>
+</body>
 </html>
