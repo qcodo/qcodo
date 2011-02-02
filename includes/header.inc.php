@@ -1,5 +1,5 @@
 <?php
-	// This example header.inc.php is intended to be modfied for your application.
+	// This example header.inc.php is intended to be modified for your application.
 ?>
 <!DOCTYPE html>
 <html>
