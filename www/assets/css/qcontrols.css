@@ -14,15 +14,13 @@
 		-moz-border-radius: 2px;
 		-webkit-border-radius: 2px;
 		border-radius: 2px;
+		cursor: pointer;
 	}
 	input.qbutton:hover { background-color: #c1e2ac; border-color: #69ca32; outline: 0; }
 
-	input.qtextbox, textarea.qtextbox {
-		width: 200px;
-		padding: 2px 3px;
-	}
-	textarea.qtextbox { height: 120px; }
-		input.qtextbox:focus, textarea.qtextbox:focus { background-color: #f9f9f9; border-color: #69ca32; outline: 0; }
+	input.qtextbox, textarea.qtextbox { padding: 2px 3px; }
+	input.qtextbox { width: 200px; }
+			input.qtextbox:focus, textarea.qtextbox:focus { background-color: #f9f9f9; border-color: #69ca32; outline: 0; }
 
 	select.qlistbox { width: 208px;	}
 		select.qlistbox:focus { background-color: #f9f9f9; border-color: #69ca32; }
