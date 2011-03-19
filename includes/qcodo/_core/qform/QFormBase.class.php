@@ -1315,7 +1315,7 @@
 				$objObject = ($this->objPollingParentObject) ? $this->objPollingParentObject : $this;
 				$strMethod = $this->strPollingMethod;
 				$objObject->$strMethod();
-				QApplication::ExecuteJavascript(sprintf('qc.regPP("%s", %s);', $this->pxyPollingProxy->ControlId, $this->intPollingInterval));
+				if ($this->strPollingMethod) QApplication::ExecuteJavascript(sprintf('qc.regPP("%s", %s);', $this->pxyPollingProxy->ControlId, $this->intPollingInterval));
 			}
 		}
 
