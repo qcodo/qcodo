@@ -49,8 +49,8 @@ For more information, you can also refer the Qcodo Documentation online at
 	to have them reflect the settings and preferences for your specific Qcodo installation.
 
 	Copy the following files to the following locations
-		cli/settings/codegen.xml                         => cli/settings/codegen.xml
-		cli/settings/qpm.xml                             => cli/settings/qpm.xml
+		cli/settings/codegen-dist.xml                    => cli/settings/codegen.xml
+		cli/settings/qpm-dist.xml                        => cli/settings/qpm.xml
 		includes/qcodo/_core/QApplication.class.php-dist => includes/QApplication.class.php
 		includes/qcodo/_core/configuration.inc.php-dist  => includes/configuration.inc.php
 
