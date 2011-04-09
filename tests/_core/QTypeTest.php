@@ -143,10 +143,22 @@
 			$this->assertEquals(123123123123123123123.1231231235454334324, $fltResult);
 		}
 
+		public function testNumericStringToFloat() {
+			$fltResult = QType::Cast('123.123', QType::Float);
+			$this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_FLOAT, $fltResult);
+			$this->assertEquals(123.123, $fltResult);
+		}
+
 		public function testNegativeLongStringToFloat() {
 			$fltResult = QType::Cast('-123123123123123123123.1231231235454334324', QType::Float);
 			$this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_FLOAT, $fltResult);
 			$this->assertEquals(-123123123123123123123.1231231235454334324, $fltResult);
+		}
+
+		public function testNumericNegativeStringToFloat() {
+			$fltResult = QType::Cast('-123.123', QType::Float);
+			$this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_FLOAT, $fltResult);
+			$this->assertEquals(-123.123, $fltResult);
 		}
 
 		public function testBooleanFalseToFloat() {
