@@ -196,9 +196,9 @@
 									$objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = sprintf("[%s]", $objDebugBacktrace[$intIndex]['args'][$intInnerIndex]->__toString());
 								else if (is_null($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]))
 									$objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = 'null';
-								else if (gettype($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == 'integer')
+								else if (QType::GetType ($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == QType::Integer)
 									$objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = $objDebugBacktrace[$intIndex]['args'][$intInnerIndex];
-								else if (gettype($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == 'object')
+								else if (QType::GetType($objDebugBacktrace[$intIndex]['args'][$intInnerIndex]) == QType::Object)
 									$objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = 'Object';
 								else
 									$objDebugBacktrace[$intIndex]['args'][$intInnerIndex] = sprintf("'%s'", $objDebugBacktrace[$intIndex]['args'][$intInnerIndex]);

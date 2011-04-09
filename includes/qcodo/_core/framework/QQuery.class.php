@@ -991,9 +991,6 @@
 		}
 
 		static public function Expand($objNode, QQCondition $objJoinCondition = null) {
-//			if (gettype($objNode) == 'string')
-//				return new QQExpandVirtualNode(new QQVirtualNode($objNode));
-
 			if ($objNode instanceof QQVirtualNode)
 				return new QQExpandVirtualNode($objNode);
 			else

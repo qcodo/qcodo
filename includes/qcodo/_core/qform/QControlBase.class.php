@@ -690,7 +690,7 @@
 
 			// Apply any overrides (if applicable)
 			if (count($mixParameterArray) > 0) {
-				if (gettype($mixParameterArray[0]) != QType::String) {
+				if (QType::GetType($mixParameterArray[0]) != QType::String) {
 					// Pop the first item off the array
 					$mixParameterArray = array_reverse($mixParameterArray);
 					array_pop($mixParameterArray);

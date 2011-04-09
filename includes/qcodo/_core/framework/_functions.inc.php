@@ -17,7 +17,7 @@
 		 */
 		function _p($strString, $blnHtmlEntities = true) {
 			// Standard Print
-			if ($blnHtmlEntities && (gettype($strString) != 'object'))
+			if ($blnHtmlEntities && (QType::GetType($strString) != QType::Object))
 				print(QApplication::HtmlEntities($strString));
 			else
 				print($strString);
@@ -35,7 +35,7 @@
 		 */
 		function _b($strString, $blnHtmlEntities = true) {
 			// Text Block Print
-			if ($blnHtmlEntities && (gettype($strString) != 'object'))
+			if ($blnHtmlEntities && (QType::GetType($strString) != QType::Object))
 				print(nl2br(QApplication::HtmlEntities($strString)));
 			else
 				print(nl2br($strString));

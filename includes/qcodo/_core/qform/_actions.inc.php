@@ -132,7 +132,7 @@
 
 		public function RenderScript(QControl $objControl) {
 			$strWaitIconControlId = null;
-			if ((gettype($this->objWaitIconControl) == 'string') && ($this->objWaitIconControl == 'default')) {
+			if ((QType::GetType($this->objWaitIconControl) == QType::String) && ($this->objWaitIconControl == 'default')) {
 				if ($objControl->Form->DefaultWaitIcon)
 					$strWaitIconControlId = $objControl->Form->DefaultWaitIcon->ControlId;
 			} else if ($this->objWaitIconControl) {
