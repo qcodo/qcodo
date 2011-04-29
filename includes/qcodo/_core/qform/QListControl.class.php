@@ -94,6 +94,31 @@
 			$this->objItemsArray[$intIndex] = $objListItem;
 		}
 
+		// Use this to add an array of items, or an array of key=>value pairs. Convenient for adding a list from a type table.
+		// When passing key=>val pairs, mixSelectedValues can be an array, or just a single value to compare against to indicate what is selected
+		public function AddItems (array $mixItemArray, $mixSelectedValues = null, $strItemGroup = null, $strOverrideParameters = null) {
+			$this->blnModified = true;
+			try {
+				$mixItemArray = QType::Cast($mixItemArray, QType::ArrayType);
+			} catch (QInvalidCastException $objExc) {
+				$objExc->IncrementOffset();
+				throw $objExc;
+			}
+			
+			foreach ($mixItemArray as $val=>$item) {
+				$blnSelected = false;
+				if ($mixSelectedValues) {
+					if (gettype($mixSelectedValues) == QType::ArrayType) {
+						$blnSelected = in_array ($val, $mixSelectedValues);
+					}
+					else {
+						$blnSelected = ($val == $mixSelectedValues);
+					}
+				}
+				$this->AddItem ($item, $val, $blnSelected, $strItemGroup, $strOverrideParameters);
+			};
+		}
+		
 		// Gets the ListItem at a specific location in objItemsArray
 		public function GetItem($intIndex) {
 			try {
