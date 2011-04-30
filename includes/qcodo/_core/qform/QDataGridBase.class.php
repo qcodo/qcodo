@@ -571,12 +571,21 @@
 				(!is_null($this->objOverrideRowStyleArray[$this->intCurrentRowIndex])))
 				$objStyle = $objStyle->ApplyOverride($this->objOverrideRowStyleArray[$this->intCurrentRowIndex]);
 
+			if ($override = $this->GetRowOverride ($this->intCurrentRowIndex, $objObject)) {
+				$objStyle = $objStyle->ApplyOverride($override);
+			}
+				
 			// Finish up
 			$strToReturn = sprintf("  <tr id=\"%s_row%s\" %s>\r\n%s  </tr>\r\n", $this->strControlId, $this->intCurrentRowIndex, $objStyle->GetAttributes(), $strColumnsHtml);
 			$this->intCurrentRowIndex++;
 			return $strToReturn;
 		}
 
+		// Override this function and return an override to a particular row based on its content
+		protected function GetRowOverride ($rowIndex, $obj) {
+			return null;
+		}
+			
 		protected function GetFooterRowHtml() {}
 
 		protected function GetControlHtml() {
