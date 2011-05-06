@@ -107,18 +107,19 @@
 			
 			foreach ($mixItemArray as $val=>$item) {
 				$blnSelected = false;
-				if ($mixSelectedValues) {
-					if (gettype($mixSelectedValues) == QType::ArrayType) {
-						$blnSelected = in_array ($val, $mixSelectedValues);
-					}
-					else {
-						$blnSelected = ($val == $mixSelectedValues);
-					}
+				if ($val === '') {
+					$val = null; // these are equivalent when specified as a key of an array
+				}
+				if ($mixSelectedValues && is_array($mixSelectedValues)) {
+					$blnSelected = in_array ($val, $mixSelectedValues);
+				}
+				else {
+					$blnSelected = ($val === $mixSelectedValues);	// differentiate between null and 0 values
 				}
 				$this->AddItem ($item, $val, $blnSelected, $strItemGroup, $strOverrideParameters);
 			};
 		}
-		
+				
 		// Gets the ListItem at a specific location in objItemsArray
 		public function GetItem($intIndex) {
 			try {
