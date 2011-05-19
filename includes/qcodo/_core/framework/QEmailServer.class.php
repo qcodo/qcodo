@@ -578,6 +578,7 @@
 			// Additional "Optional" Headers
 			if ($this->Subject) {
 				$strSubject = self::QuotedPrintableEncode($this->Subject);
+				$strSubject = str_replace("=\r\n", "", $strSubject);
 				$strSubject = str_replace('?', '=3F', $strSubject);
 				$this->SetHeader('Subject', sprintf("=?%s?Q?%s?=", $strEncodingType, $strSubject));
 			}
