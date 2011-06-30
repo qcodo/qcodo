@@ -7,6 +7,12 @@
 		 */
 		public function BindAllRows(QPaginatedControl $objPaginatedControl) {
 			// Use MetaDataBinder to Bind QQ::All() to this datagrid
-			// Don't pass in any additional / optional clauses
-			$this->MetaDataBinder(QQ::All(), null);
+			// Expand References (if any) to make fewer database calls
+			$objClausesArray = array();
+			<% foreach ($objTable->ColumnArray as $objColumn) { %>
+				<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
+			array_push($objClausesArray, QQ::Expand(QQN::<%= $objTable->ClassName %>()-><%= $objColumn->Reference->PropertyName %>));
+				<% } %>
+			<% } %>
+			$this->MetaDataBinder(QQ::All(), $objClausesArray);
 		}
