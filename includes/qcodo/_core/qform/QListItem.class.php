@@ -13,6 +13,7 @@
 		protected $blnSelected = false;
 		protected $strItemGroup = null;
 		protected $objItemStyle;
+		protected $blnEnabled = true;
 
 		/////////////////////////
 		// Methods
@@ -57,6 +58,7 @@
 				case "Selected": return $this->blnSelected;
 				case "ItemGroup": return $this->strItemGroup;
 				case "ItemStyle": return $this->objItemStyle;
+				case "Enabled": return $this->blnEnabled;
 
 				default:
 					try {
@@ -113,6 +115,14 @@
 						$objExc->IncrementOffset();
 						throw $objExc;
 					}
+				case "Enabled":
+                                        try {
+                                                $this->blnEnabled = QType::Cast($mixValue, QType::Boolean);
+                                                break;
+                                        } catch (QInvalidCastException $objExc) {
+                                                $objExc->IncrementOffset();
+                                                throw $objExc;
+                                        }
 
 				default:
 					try {

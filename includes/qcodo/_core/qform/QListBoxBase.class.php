@@ -93,6 +93,7 @@
 			$strToReturn = sprintf('<option value="%s" %s%s>%s</option>',
 				$intIndex,
 				($objItem->Selected) ? 'selected="selected"' : "",
+				(!$objItem->Enabled) ? 'disabled="disabled"' : "",
 				$objStyle->GetAttributes(),
 				($this->blnHtmlEntities) ? QApplication::HtmlEntities($objItem->Name) : $objItem->Name
 			);
