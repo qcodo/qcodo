@@ -11,8 +11,8 @@
 <% } %><% if (!$objColumn->NotNull) { %>
 			$this-><%=$strControlId %>->AddItem(QApplication::Translate('- Select One -'), null);
 <% } %>
-			foreach (<%= $objColumn->Reference->VariableType %>::$NameArray as $intId => $strValue)
-				$this-><%= $strControlId %>->AddItem(new QListItem($strValue, $intId, $this-><%= $strObjectName %>-><%= $objColumn->PropertyName %> == $intId));
+
+			$this-><%= $strControlId %>->AddItems(<%= $objColumn->Reference->VariableType %>::$NameArray, $this-><%= $strObjectName %>-><%= $objColumn->PropertyName %>);
 			return $this-><%= $strControlId %>;
 		}
 
