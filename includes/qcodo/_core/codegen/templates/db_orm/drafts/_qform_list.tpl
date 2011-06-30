@@ -1,7 +1,8 @@
 <template OverwriteFlag="true" DocrootFlag="true" DirectorySuffix="" TargetDirectory="<%= __FORM_DRAFTS__ %>" TargetFileName="<%= QConvertNotation::UnderscoreFromCamelCase($objTable->ClassName) %>_list.php"/>
 <?php
 	// Load the Qcodo Development Framework
-	require(dirname(__FILE__) . '/../../includes/prepend.inc.php');
+	require(__DOCROOT__ . __PHP_ASSETS__ . '/_require_prepend.inc.php');
+
 
 	/**
 	 * This is a quick-and-dirty draft QForm object to do the List All functionality
