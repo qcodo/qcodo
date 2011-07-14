@@ -21,7 +21,8 @@
 <% if (count($objColumnArray) > 1) { %>
 					)
 <% } %><%-%>,
-					$objOptionalClauses);
+					$objOptionalClauses
+					);
 			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
@@ -36,7 +37,7 @@
 <% } %>
 		 * @return int
 		*/
-		public static function CountBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %>(<%= $objCodeGen->ParameterListFromColumnArray($objColumnArray); %>) {
+		public static function CountBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %>(<%= $objCodeGen->ParameterListFromColumnArray($objColumnArray); %>, $objOptionalClauses = null) {
 			// Call <%= $objTable->ClassName %>::QueryCount to perform the CountBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %> query
 			return <%= $objTable->ClassName %>::QueryCount(
 <% if (count($objColumnArray) > 1) { %>
@@ -48,5 +49,6 @@
 <% if (count($objColumnArray) > 1) { %>
 				)
 <% } %>
+			, $objOptionalClauses
 			);
 		}
