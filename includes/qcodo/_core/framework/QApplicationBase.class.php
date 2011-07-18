@@ -827,9 +827,9 @@
 		 * @return mixed
 		 */
 		public static function PathInfo($intIndex = null) {
-			$strPathInfo = QApplication::$PathInfo;
-
+			// Lookup PathInfoArray from cache, or create it into cache if it doesn't yet exist
 			if (!isset(self::$arrPathInfo)) {
+				$strPathInfo = QApplication::$PathInfo;
 				self::$arrPathInfo = array();
 
 				if ($strPathInfo != '' ) {
