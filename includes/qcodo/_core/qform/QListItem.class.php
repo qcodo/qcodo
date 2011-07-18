@@ -26,7 +26,7 @@
 
 			// Override parameters get applied here
 			$strOverrideArray = func_get_args();
-			if (count($strOverrideArray) > 4)	{
+			if (count($strOverrideArray) > 4 && !is_null($strOverrideParameters)) {
 				try {
 					$strOverrideArray = array_reverse($strOverrideArray);
 					array_pop($strOverrideArray);
