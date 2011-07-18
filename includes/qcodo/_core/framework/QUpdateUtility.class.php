@@ -925,7 +925,7 @@
 				$strCommandName = __DEVTOOLS_CLI__ . ' qcodo-downloader';
 
 			print('Qcodo Downloader Service - ' . QCODO_VERSION . '
-Copyright (c) 2005 - 2010, Quasidea Development, LLC
+Copyright (c) 2005 - 2011, Quasidea Development, LLC
 This program is free software with ABSOLUTELY NO WARRANTY; you may
 redistribute it under the terms of The MIT License.
 
@@ -1032,7 +1032,7 @@ For more information, please go to www.qcodo.com
            updating to.";
 
 			printf('Qcodo Updater Service - ' . QCODO_VERSION . '
-Copyright (c) 2005 - 2010, Quasidea Development, LLC
+Copyright (c) 2005 - 2011, Quasidea Development, LLC
 This program is free software with ABSOLUTELY NO WARRANTY; you may
 redistribute it under the terms of The MIT License.
 
