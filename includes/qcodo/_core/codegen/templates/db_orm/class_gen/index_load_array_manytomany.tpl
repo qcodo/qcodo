@@ -24,8 +24,9 @@
 		 * @param <%= $objManyToManyReference->OppositeVariableType %> $<%= $objManyToManyReference->OppositeVariableName %>
 		 * @return int
 		*/
-		public static function CountBy<%= $objManyToManyReference->ObjectDescription %>($<%= $objManyToManyReference->OppositeVariableName %>) {
+		public static function CountBy<%= $objManyToManyReference->ObjectDescription %>($<%= $objManyToManyReference->OppositeVariableName %>, $objOptionalClauses = null) {
 			return <%= $objTable->ClassName %>::QueryCount(
-				QQ::Equal(QQN::<%= $objTable->ClassName %>()-><%= $objManyToManyReference->ObjectDescription %>-><%= $objManyToManyReference->OppositePropertyName %>, $<%= $objManyToManyReference->OppositeVariableName %>)
+				QQ::Equal(QQN::<%= $objTable->ClassName %>()-><%= $objManyToManyReference->ObjectDescription %>-><%= $objManyToManyReference->OppositePropertyName %>, $<%= $objManyToManyReference->OppositeVariableName %>),
+				$objOptionalClauses
 			);
 		}
