@@ -568,9 +568,9 @@
 			$this->SetHeader('To', $this->To);
 
 			if ($dttSendDate)
-				$this->SetHeader('Date', $dttSendDate->ToString(QDateTime::FormatRfc822));
+				$this->SetHeader('Date', $dttSendDate->ToString(QDateTime::FormatRfc5322));
 			else
-				$this->SetHeader('Date', QDateTime::NowToString(QDateTime::FormatRfc822));
+				$this->SetHeader('Date', QDateTime::NowToString(QDateTime::FormatRfc5322));
 
 			// Setup Encoding Type (default to QApplication's if not specified)
 			if (!$strEncodingType) $strEncodingType = QApplication::$EncodingType;
