@@ -225,5 +225,41 @@
 		public static function ConvertToCamelCase($strString) {
 			return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($strString))));
 		}
+
+		/**
+		 * Encodes a given 8-bit string into a quoted-printable string,
+		 * @param string $strString the string to encode
+		 * @return string the encoded string
+		 */
+		public static function QuotedPrintableEncode($strString) {
+			if (function_exists('quoted_printable_encode')) {
+				$strText = quoted_printable_encode($strString);
+			} else {
+				$strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
+				preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
+				$strText = implode( '=' . "\r\n", $arrMatch[0] );
+			}
+
+			return $strText;
+		}
+
+		/**
+		 * Returns whether or not the given string contains any UTF-8 encoded characters.
+		 * Uses regexp pattern as originally defined from http://w3.org/International/questions/qa-forms-utf-8.html
+		 * and modified by chris@w3style.co.uk for efficiency.
+		 * @param string $strString
+		 * @return boolean whether or not the string contains any UTF-8 characters
+		 */
+		public static function IsContainsUtf8($strString) {
+			return preg_match('%(?:
+				[\xC2-\xDF][\x80-\xBF]				# non-overlong 2-byte
+				|\xE0[\xA0-\xBF][\x80-\xBF]			# excluding overlongs
+				|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}	# straight 3-byte
+				|\xED[\x80-\x9F][\x80-\xBF]			# excluding surrogates
+				|\xF0[\x90-\xBF][\x80-\xBF]{2}		# planes 1-3
+				|[\xF1-\xF3][\x80-\xBF]{3}			# planes 4-15
+				|\xF4[\x80-\x8F][\x80-\xBF]{2}		# plane 16
+				)+%xs', $strString);
+		}
 	}
 ?>
