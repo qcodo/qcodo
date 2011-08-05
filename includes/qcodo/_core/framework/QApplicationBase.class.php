@@ -684,7 +684,7 @@
 		 */
 		public static function Redirect($strLocation) {
 			// Clear the output buffer (if any)
-			if( count(ob_list_handlers()) ) {
+			while (count(ob_list_handlers())) {
 				ob_clean();
 			}
 
