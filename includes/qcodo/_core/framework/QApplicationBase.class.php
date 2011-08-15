@@ -685,7 +685,7 @@
 		public static function Redirect($strLocation) {
 			// Clear the output buffer (if any)
 			while (count(ob_list_handlers())) {
-				ob_clean();
+				ob_end_clean();
 			}
 
 			if ((QApplication::$RequestMode == QRequestMode::Ajax) ||
