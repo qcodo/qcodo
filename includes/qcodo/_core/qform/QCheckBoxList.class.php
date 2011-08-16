@@ -178,7 +178,7 @@
 						$strActions = $this->GetActionAttributes();
 
 						if ($this->strTextAlign == QTextAlign::Left) {
-							$strToReturn .= sprintf('<td>%s<label for="%s[%s]" %s>%s</label><input id="%s[%s]" name="%s[%s]" type="checkbox" %s%s%s%s%s />%s</td>',
+							$strToReturn .= sprintf('<td>%s<label for="%s[%s]" %s>%s</label><input id="%s[%s]" name="%s[%s]" type="checkbox" %s%s%s%s%s%s />%s</td>',
 								$strDisabledStart,
 								$this->strControlId,
 								$intIndex,
@@ -193,9 +193,10 @@
 								$strActions,
 								$strTabIndex,
 								$strCheckboxAttributes,
+								(!$this->objItemsArray[$intIndex]->Enabled) ? 'disabled="disabled"' : "",
 								$strDisabledEnd);
 						} else {
-							$strToReturn .= sprintf('<td>%s<input id="%s[%s]" name="%s[%s]" type="checkbox" %s%s%s%s%s /><label for="%s[%s]" %s>%s</label>%s</td>',
+							$strToReturn .= sprintf('<td>%s<input id="%s[%s]" name="%s[%s]" type="checkbox" %s%s%s%s%s%s /><label for="%s[%s]" %s>%s</label>%s</td>',
 								$strDisabledStart,
 								$this->strControlId,
 								$intIndex,
@@ -206,6 +207,7 @@
 								$strActions,
 								$strTabIndex,
 								$strCheckboxAttributes,
+								(!$this->objItemsArray[$intIndex]->Enabled) ? 'disabled="disabled"' : "",
 								$this->strControlId,
 								$intIndex,
 								$strLabelAttributes,
