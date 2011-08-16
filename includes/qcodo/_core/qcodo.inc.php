@@ -9,7 +9,7 @@
 	 * under the terms of The MIT License.  More information can be found at
 	 * http://www.opensource.org/licenses/mit-license.php
 	 * 
-	 * Copyright (c) 2001 - 2010, Quasidea Development, LLC
+	 * Copyright (c) 2001 - 2011, Quasidea Development, LLC
 	 * 
 	 * Permission is hereby granted, free of charge, to any person obtaining a copy of
 	 * this software and associated documentation files (the "Software"), to deal in
@@ -31,7 +31,7 @@
 	 */
 
 	// Versioning Information
-	define('QCODO_VERSION', '0.4.20');
+	define('QCODO_VERSION', '0.4.22');
 
 	// PHP Minimum Version Supported
 	define('QCODO_PHP_MIN_VERSION', '5.1.2');

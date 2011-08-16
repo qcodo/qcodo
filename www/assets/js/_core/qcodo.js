@@ -221,13 +221,13 @@
 				qc.processHashCurrent = null;
 				qc.processHashControlId = strControlId;
 
-				//use native event
-				if ( 'onhashchange' in window )
+				// Use native event for IE8/IE9 while NOT in IE7 CompatabilityMode
+				if (('onhashchange' in window) && (document.documentMode != 7))
 					window.onhashchange = this.processHash;
 				else
 					this.processHashIntervalId = setInterval("qc.processHash();", intPollingInterval);
 
-				//fire processor once to process hash on load instantly not waiting for interval
+				// Fire processor once to process hash on load instantly not waiting for interval
 				this.processHash();
 			};
 

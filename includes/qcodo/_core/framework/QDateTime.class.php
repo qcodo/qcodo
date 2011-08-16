@@ -24,6 +24,11 @@
 		const FormatDisplayTime = 'hh:mm:ss zz';
 		const FormatRfc822 = 'DDD, DD MMM YYYY hhhh:mm:ss ttt';
 
+		// Note: RFC 5322 actually obsoletes RFC 2822, but both have the same date time format specification
+		// Both constants are defined here just as a convenience
+		const FormatRfc2822 = 'DDD, DD MMM YYYY hhhh:mm:ss ttttt';
+		const FormatRfc5322 = 'DDD, DD MMM YYYY hhhh:mm:ss ttttt';
+
 		const FormatSoap = 'YYYY-MM-DDThhhh:mm:ss';
 
 		public static $DefaultFormat = QDateTime::FormatDisplayDateTime;
@@ -355,6 +360,9 @@
 							break;
 						case 'tttt':
 							$strToReturn .= parent::format('e');
+							break;
+						case 'ttttt':
+							$strToReturn .= parent::format('O');
 							break;
 
 						default:

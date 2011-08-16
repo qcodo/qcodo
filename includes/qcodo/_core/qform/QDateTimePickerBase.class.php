@@ -4,13 +4,19 @@
 		// Private Member Variables
 		///////////////////////////
 
+		// DEFAULTS
+		// These are set at the bottom of this script
+		public static $DefaultMinimumYear;
+		public static $DefaultMaximumYear;
+
 		// MISC
 		protected $dttDateTime = null;
 		protected $strDateTimePickerType = QDateTimePickerType::Date;
 		protected $strDateTimePickerFormat = QDateTimePickerFormat::MonthDayYear;
 
-		protected $intMinimumYear = 1970;
-		protected $intMaximumYear = 2015;
+		// If these stay null, then it will use the $DefaultMinimumYear and $DefaultMaximumYear static variables on QDateTimePicker
+		protected $intMinimumYear = null;
+		protected $intMaximumYear = null;
 
 		protected $intSelectedMonth = null;
 		protected $intSelectedDay = null;
@@ -191,12 +197,17 @@
 						}
 					}
 					$strDayListbox .= '</select>';
-					
+
+					// Figure Out Min and Max Years
+					$intMinimumYear = (is_null($this->intMinimumYear)) ? QDateTimePicker::$DefaultMinimumYear : $this->intMinimumYear;
+					$intMaximumYear = (is_null($this->intMaximumYear)) ? QDateTimePicker::$DefaultMaximumYear : $this->intMaximumYear;
+
 					// Year
 					$strYearListbox = sprintf('<select name="%s_lstYear" id="%s_lstYear" class="year" %s%s>', $this->strControlId, $this->strControlId, $strAttributes, $strCommand);
 					if (!$this->blnRequired || $dttDateTime->IsDateNull())
 						$strYearListbox .= '<option value="">--</option>';
-					for ($intYear = $this->intMinimumYear; $intYear <= $this->intMaximumYear; $intYear++) {
+					
+					for ($intYear = $intMinimumYear; $intYear <= $intMaximumYear; $intYear++) {
 						if (/*!$dttDateTime->IsDateNull() && */(($dttDateTime->Year == $intYear) || ($this->intSelectedYear == $intYear)))
 							$strSelected = ' selected="selected"';
 						else
@@ -477,4 +488,7 @@
 			}
 		}
 	}
+
+	QDateTimePickerBase::$DefaultMinimumYear = date('Y') - 30;
+	QDateTimePickerBase::$DefaultMaximumYear = date('Y') + 5; 
 ?>

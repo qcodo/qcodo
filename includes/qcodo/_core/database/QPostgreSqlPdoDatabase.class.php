@@ -8,14 +8,17 @@
 		const PDO_PGSQL_DSN_IDENTIFIER = 'pgsql';
 
 		public function Connect() {
+			// if no port is set. Set it to the default
+			$intPort = $this->Port ? $this->Port : 5432;
+
 			// Lookup Adapter-Specific Connection Properties
-			$strDsn = sprintf("%s:host=%s;dbname=%s;port=%s", QPostgreSqlPdoDatabase::PDO_PGSQL_DSN_IDENTIFIER, $this->Server, $this->Database, $this->Port);
+			$strDsn = sprintf("%s:host=%s;dbname=%s;port=%s", QPostgreSqlPdoDatabase::PDO_PGSQL_DSN_IDENTIFIER, $this->Server, $this->Database, $intPort);
 
 			// Connect to the Database Server
 			try {
 				$this->objPdo = new PDO($strDsn, $this->Username, $this->Password);
 			} catch (PDOException $expPgSql) {
-				throw new QPostgreSqlDatabaseException(sprintf("Unable to connect to Database: %s", $expPgSql->getMessage()), -1, null);
+				throw new QPostgreSqlPdoDatabaseException(sprintf("Unable to connect to Database: %s", $expPgSql->getMessage()), -1, null);
 			}
 			// Update Connected Flag
 			$this->blnConnectedFlag = true;

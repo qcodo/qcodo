@@ -67,6 +67,9 @@
 			// Write the Line
 			fwrite($objFile, $strLine);
 			fclose($objFile);
+
+			// Update Permissions on File
+			@chmod($strLogFilePath, 0777);
 		}
 
 		/**

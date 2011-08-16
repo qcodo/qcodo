@@ -76,6 +76,7 @@
 		 * @var string PathInfo
 		 */
 		public static $PathInfo;
+		private static $arrPathInfo;
 
 		/**
 		 * Query String after the script URL (if applicable)
@@ -683,7 +684,9 @@
 		 */
 		public static function Redirect($strLocation) {
 			// Clear the output buffer (if any)
-			ob_clean();
+			while (count(ob_list_handlers())) {
+				ob_end_clean();
+			}
 
 			if ((QApplication::$RequestMode == QRequestMode::Ajax) ||
 				(array_key_exists('Qform__FormCallType', $_POST) &&
@@ -826,19 +829,27 @@
 		 * @return mixed
 		 */
 		public static function PathInfo($intIndex = null) {
-			// TODO: Cache PathInfo
-			$strPathInfo = QApplication::$PathInfo;
+			// Lookup PathInfoArray from cache, or create it into cache if it doesn't yet exist
+			if (!isset(self::$arrPathInfo)) {
+				$strPathInfo = QApplication::$PathInfo;
+				self::$arrPathInfo = array();
 
-			// Remove Trailing '/'
-			if (QString::FirstCharacter($strPathInfo) == '/')			
-				$strPathInfo = substr($strPathInfo, 1);
+				if ($strPathInfo != '' ) {
+					if ($strPathInfo == '/' )
+						self::$arrPathInfo[0] = '';
+					else {
+						// Remove Trailing '/'
+						if (QString::FirstCharacter($strPathInfo) == '/')
+							$strPathInfo = substr($strPathInfo, 1);
+						self::$arrPathInfo = explode('/', $strPathInfo);
+					}
+				}
+			}
 
-			$strPathInfoArray = explode('/', $strPathInfo);
-
-			if ($intIndex === null) return $strPathInfoArray;
-
-			if (array_key_exists($intIndex, $strPathInfoArray))
-				return $strPathInfoArray[$intIndex];
+			if ($intIndex === null)
+				return self::$arrPathInfo;
+			elseif (array_key_exists($intIndex, self::$arrPathInfo))
+				return self::$arrPathInfo[$intIndex];
 			else
 				return null;
 		}

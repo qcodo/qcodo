@@ -75,7 +75,12 @@
 			array_push($this->objItemsArray, $objListItem);
 		}
 
-		// Used if you want to add a LIstItem at a specific location in objItemsArray
+		/**
+		 * Allows you to add a QListItem to this QListControl at a specific location in the current item array
+		 * @param integer $intIndex the index of the location to add the new item to
+		 * @param QListItem $objListItem the item to add
+		 * @throws QIndexOutOfRangeException
+		 */
 		public function AddItemAt($intIndex, QListItem $objListItem) {
 			$this->blnModified = true;
 			try {
@@ -92,6 +97,39 @@
 			}
 			
 			$this->objItemsArray[$intIndex] = $objListItem;
+		}
+
+		/**
+		 * Allows you to add an array of key/value pairs to the ListControl.  Convenient especially for adding a list from a type table,
+		 * e.g. by passing in SomeType::$NameArray.  The list of seleted values can either be an array of values, or just a single value.
+		 * @param array $mixItemArray name/value pairs of QListItems to add to this QListControl
+		 * @param mixed $mixSelectedValues can be an array of selected values, or just an atomic value, that is selected (optional)
+		 * @param string $strItemGroup
+		 * @param string $strOverrideParameters
+		 */
+		public function AddItems($mixItemArray, $mixSelectedValues = null, $strItemGroup = null, $strOverrideParameters = null) {
+			try {
+				$mixItemArray = QType::Cast($mixItemArray, QType::ArrayType);
+			} catch (QInvalidCastException $objExc) {
+				$objExc->IncrementOffset();
+				throw $objExc;
+			}
+
+			foreach ($mixItemArray as $strValue => $strName) {
+				$blnSelected = false;
+
+				// Check to See if we are "selected"
+				if ($mixSelectedValues) {
+					if (gettype($mixSelectedValues) == QType::ArrayType) {
+						$blnSelected = in_array($strValue, $mixSelectedValues);
+					} else {
+						$blnSelected = ($strValue== $mixSelectedValues);
+					}
+				}
+
+				// Add It
+				$this->AddItem($strName, $strValue, $blnSelected, $strItemGroup, $strOverrideParameters);
+			}
 		}
 
 		// Gets the ListItem at a specific location in objItemsArray
@@ -118,6 +156,14 @@
 		 */
 		public function GetAllItems() {
 			return $this->objItemsArray;
+		}
+
+		/**
+		 * Returns the count of items in this QListControl
+		 * @return integer
+		 */
+		public function CountItems() {
+			return count($this->objItemsArray);
 		}
 
 		// Removes all the items in objItemsArray

@@ -122,7 +122,7 @@
 	</select> &nbsp; 
 	<select name="dttYear" class="dropdown" onchange="selectDate(document.myForm.dttYear.options[document.myForm.dttYear.selectedIndex].value)">
 <?php
-	for ($intYear = 1970; $intYear <= 2010; $intYear++) {
+	for ($intYear = 1970; $intYear <= date('Y') + 1; $intYear++) {
 		$intTimestampLabel = mktime(0,0,0, $intSelectedMonth, 1, $intYear);
 		$strLabel = date("Y", $intTimestampLabel);
 		$strSelected = ($intYear == $intSelectedYear) ? 'selected="selected"' : '';

@@ -8,7 +8,7 @@
 	 * displayed to the left or to the right of the checkbox.
 	 * @property integer $CellPadding specified the HTML Table's CellPadding
 	 * @property integer $CellSpacing specified the HTML Table's CellSpacing
-	 * @property integer $RepeatColumn specifies how many columns should be
+	 * @property integer $RepeatColumns specifies how many columns should be
 	 * rendered in the HTML Table
 	 * @property string $RepeatDirection specifies which direction should the
 	 * list go first...
@@ -170,7 +170,11 @@
 							$strCheckboxAttributes = null;
 						}
 
+						// ActionParameter is overridden by the framework to store and pass int othe event handler the index
+						// of the item that was actually checked.  Without this, the event handler will not be able to easily
+						// respond to actions based on specific items that have been checked/clicked.
 						$this->strActionParameter = $intIndex;
+
 						$strActions = $this->GetActionAttributes();
 
 						if ($this->strTextAlign == QTextAlign::Left) {

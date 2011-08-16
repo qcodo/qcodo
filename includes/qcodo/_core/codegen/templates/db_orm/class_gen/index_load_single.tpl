@@ -7,7 +7,7 @@
 <% } %>
 		 * @return <%= $objTable->ClassName %>
 		*/
-		public static function LoadBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %>(<%= $objCodeGen->ParameterListFromColumnArray($objColumnArray); %>) {
+		public static function LoadBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %>(<%= $objCodeGen->ParameterListFromColumnArray($objColumnArray); %>, $objOptionalClauses = null) {
 			return <%= $objTable->ClassName %>::QuerySingle(
 <% if (count($objColumnArray) > 1) { %>
 				QQ::AndCondition(
@@ -18,5 +18,6 @@
 <% if (count($objColumnArray) > 1) { %>
 				)
 <% } %>
+			, $objOptionalClauses
 			);
 		}

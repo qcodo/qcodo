@@ -152,4 +152,11 @@
 			protected $strCondition = 'event.keyCode == 40';
 		}
 	}
+	
+	// the one key supported by all browsers
+	// Note that on the Mac, if in a text field, making this a QKeyPressEvent will not work.
+	class QBackspaceKeyEvent extends QKeyDownEvent {
+		protected $strCondition = 'event.keyCode == 8';
+	}
+
 ?>

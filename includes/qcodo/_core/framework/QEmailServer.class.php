@@ -512,7 +512,7 @@
 				$strBody .= sprintf("--%s\r\n", $strAltBoundary);
 				$strBody .= sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType);
 				$strBody .= sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n");
-				$strBody .= self::QuotedPrintableEncode($this->Body);
+				$strBody .= QString::QuotedPrintableEncode($this->Body);
 				$strBody .= "\r\n\r\n";
 
 				// Provide Html Version of Email (if applicable)
@@ -520,7 +520,7 @@
 					$strBody .= sprintf("--%s\r\n", $strAltBoundary);
 					$strBody .= sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType);
 					$strBody .= sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n");
-					$strBody .= self::QuotedPrintableEncode($this->HtmlBody);
+					$strBody .= QString::QuotedPrintableEncode($this->HtmlBody);
 					$strBody .= "\r\n\r\n";
 				}
 
@@ -545,7 +545,7 @@
 
 			// Plain-Text Version of the Body for Plain-Text Message Only
 			} else {
-				$strBody = self::QuotedPrintableEncode($this->Body);
+				$strBody = QString::QuotedPrintableEncode($this->Body);
 			}
 
 			return $strBody;
@@ -568,19 +568,24 @@
 			$this->SetHeader('To', $this->To);
 
 			if ($dttSendDate)
-				$this->SetHeader('Date', $dttSendDate->ToString(QDateTime::FormatRfc822));
+				$this->SetHeader('Date', $dttSendDate->ToString(QDateTime::FormatRfc5322));
 			else
-				$this->SetHeader('Date', QDateTime::NowToString(QDateTime::FormatRfc822));
+				$this->SetHeader('Date', QDateTime::NowToString(QDateTime::FormatRfc5322));
 
 			// Setup Encoding Type (default to QApplication's if not specified)
 			if (!$strEncodingType) $strEncodingType = QApplication::$EncodingType;
 
 			// Additional "Optional" Headers
 			if ($this->Subject) {
-				$strSubject = self::QuotedPrintableEncode($this->Subject);
-				$strSubject = str_replace("=\r\n", "", $strSubject);
-				$strSubject = str_replace('?', '=3F', $strSubject);
-				$this->SetHeader('Subject', sprintf("=?%s?Q?%s?=", $strEncodingType, $strSubject));
+				// Encode to UTF8 Subject if Applicable
+				if (QString::IsContainsUtf8($this->Subject)) {
+					$strSubject = QString::QuotedPrintableEncode($this->Subject);
+					$strSubject = str_replace("=\r\n", "", $strSubject);
+					$strSubject = str_replace('?', '=3F', $strSubject);
+					$this->SetHeader('Subject', sprintf("=?%s?Q?%s?=", $strEncodingType, $strSubject));
+				} else {
+					$this->SetHeader('Subject', $this->Subject);
+				}
 			}
 			if ($this->Cc) $this->SetHeader('Cc', $this->Cc);
 
@@ -652,23 +657,6 @@
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
-		}
-
-		/**
-		 * Encodes a given 8-bit string into a quoted-printable string,
-		 * @param string $strString the string to encode
-		 * @return string the encoded string
-		 */
-		public static function QuotedPrintableEncode($strString) {
-			if (function_exists('quoted_printable_encode')) {
-				$strText = quoted_printable_encode($strString);
-			} else {
-				$strText = preg_replace( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/e', 'sprintf( "=%02X", ord ( "$0" ) ) ;', $strString );
-				preg_match_all( '/.{1,73}([^=]{0,2})?/', $strText, $arrMatch );
-				$strText = implode( '=' . "\r\n", $arrMatch[0] );
-			}
-
-			return $strText;
 		}
 	}
 ?>
