@@ -21,6 +21,13 @@
 		objWrapper.progress.fill = document.getElementById(objControl.id + "_fill");
 		objWrapper.iframe = document.getElementById(objControl.id + "_iframe");
 
+		// Check to see if the button has been laid out
+		if (!objWrapper.button.offsetWidth) {
+			// The button does not yet appear on the page -- so we will need to call regFUP once again at a later time
+			// And hopefully by then, it will be available for us
+			setTimeout('qc.regFUP("' + objControl.id + '", "' + strPostBack + '", "' + strUniqueHash + '");', 250);
+			return;
+		};
 
 		// Setup the Outer Span
 		var objOuterSpan = document.getElementById(objControl.id + "_ospan");
