@@ -257,12 +257,12 @@
 			$strEndpoint = substr(QPackageManager::QpmServiceEndpoint, strlen('http://'));
 			$strHost = substr($strEndpoint, 0, strpos($strEndpoint, '/'));
 			$strPath = substr($strEndpoint, strpos($strEndpoint, '/'));
-			$strHeader = sprintf("GET %s/UploadPackage?name=%s&u=%s&p=%s&gz=%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %s\r\n\r\n",
+			$strHeader = sprintf("POST %s/UploadPackage?name=%s&u=%s&p=%s&gz=%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %s\r\n\r\n",
 				$strPath, $this->strPackageName, $this->strUsername, $this->strPassword, $blnGzCompress, $strHost, strlen($strQpmXml));
 			$objSocket = fsockopen($strHost, 80);
-			fputs($objSocket, $strHeader);
-			fputs($objSocket, $strQpmXml);
-			fputs($objSocket, "\r\n\r\n");
+			if (@fwrite($objSocket, $strHeader) === false) throw new Exception('Error on Sending QPM Header');
+			if (@fwrite($objSocket, $strQpmXml) === false) throw new Exception('Error on Sending QPM XML');
+			if (@fwrite($objSocket, "\r\n\r\n") === false) throw new Exception('Error on Final Linebreaks');
 			$strResponse = null;
 			while (($chr = fgetc($objSocket)) !== false)
 				$strResponse .= $chr;
