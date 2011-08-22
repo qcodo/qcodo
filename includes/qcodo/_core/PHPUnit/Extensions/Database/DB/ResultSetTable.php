@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,37 +34,28 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.2.0
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
-require_once 'PHPUnit/Extensions/Database/DataSet/AbstractTable.php';
 
 /**
  * Provides the functionality to represent a database result set as a DBUnit
  * table.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
  * @copyright  2010 Mike Lively <m@digitalsandwich.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
  * @deprecated The PHPUnit_Extension_Database_DataSet_QueryTable should be used instead
  * @see        PHPUnit_Extension_Database_DataSet_QueryTable
  * @see        PHPUnit_Extension_Database_DataSet_QueryDataSet
- * @since      Class available since Release 3.2.0
+ * @since      Class available since Release 1.0.0
  */
 class PHPUnit_Extensions_Database_DB_ResultSetTable extends PHPUnit_Extensions_Database_DataSet_AbstractTable
 {
@@ -88,4 +79,3 @@ class PHPUnit_Extensions_Database_DB_ResultSetTable extends PHPUnit_Extensions_D
         $this->setTableMetaData(new PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData($tableName, $columns));
     }
 }
-?>

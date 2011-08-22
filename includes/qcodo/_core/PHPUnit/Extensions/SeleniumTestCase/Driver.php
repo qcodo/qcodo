@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2010-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,30 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_Selenium
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2010-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.3.0
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * Implementation of the Selenium RC client/server protocol.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_Selenium
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2010-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.3.0
+ * @since      Class available since Release 1.0.0
  */
 class PHPUnit_Extensions_SeleniumTestCase_Driver
 {
@@ -112,7 +106,7 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
     protected $seleniumTimeout = 30;
 
     /**
-     * @var    array
+     * @var    string
      */
     protected $sessionId;
 
@@ -596,9 +590,7 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
             case 'attachFile':
             case 'break':
             case 'captureEntirePageScreenshot':
-            case 'captureEntirePageScreenshotToString':
             case 'captureScreenshot':
-            case 'captureScreenshotToString':
             case 'check':
             case 'chooseCancelOnNextConfirmation':
             case 'chooseOkOnNextConfirmation':
@@ -707,8 +699,7 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
                     case 'allowNativeXpath':
                     case 'assignId':
                     case 'captureEntirePageScreenshot':
-                    case 'captureScreenshot':
-                    case 'captureScreenshotToString': {
+                    case 'captureScreenshot': {
                         // intentionally empty
                     }
                     break;
@@ -787,6 +778,8 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
             case 'getTable':
             case 'getText':
             case 'getTitle':
+            case 'captureEntirePageScreenshotToString':
+            case 'captureScreenshotToString':
             case 'getValue': {
                 $result = $this->getString($command, $arguments);
 
@@ -906,15 +899,13 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
         }
 
         stream_set_blocking($handle, 1);
-        stream_set_timeout($handle, 0, $this->httpTimeout * 1000);
+        stream_set_timeout($handle, $this->httpTimeout);
 
-        $info     = stream_get_meta_data($handle);
-        $response = '';
+        /* Tell the web server that we will not be sending more data
+        so that it can start processing our request */
+        stream_socket_shutdown($handle, STREAM_SHUT_WR);
 
-        while (!$info['eof'] && !$info['timed_out']) {
-            $response .= fgets($handle, 4096);
-            $info = stream_get_meta_data($handle);
-        }
+        $response = stream_get_contents($handle);
 
         fclose($handle);
 
@@ -1074,9 +1065,9 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
 
         if ($info['isBoolean']) {
             if (!isset($info['negative']) || !$info['negative']) {
-                PHPUnit_Framework_Assert::assertTrue($result);
+	      PHPUnit_Framework_Assert::assertTrue($result, $arguments[ count($arguments) - 1 ]);
             } else {
-                PHPUnit_Framework_Assert::assertFalse($result);
+	      PHPUnit_Framework_Assert::assertFalse($result, $arguments[ count($arguments) - 1 ]);
             }
         } else {
             $expected = array_pop($arguments);
@@ -1090,9 +1081,14 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
                     PHPUnit_Framework_Assert::assertNotEquals($expected, $result);
                 }
             } else {
+                $caseInsensitive = FALSE;
+
                 if (strpos($expected, 'regexp:') === 0) {
                     $expected = substr($expected, strlen('regexp:'));
-                } else {
+                } else if (strpos($expected, 'regexpi:') === 0) {
+                    $expected        = substr($expected, strlen('regexpi:'));
+                    $caseInsensitive = TRUE;
+                } else  {
                     if (strpos($expected, 'glob:') === 0) {
                         $expected = substr($expected, strlen('glob:'));
                     }
@@ -1102,15 +1098,19 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
                     );
                 }
 
-                $expected = str_replace('/', '\/', $expected);
+                $expected = '/' . str_replace('/', '\/', $expected) . '/';
+
+                if ($caseInsensitive) {
+                    $expected .= 'i';
+                }
 
                 if (!isset($info['negative']) || !$info['negative']) {
                     PHPUnit_Framework_Assert::assertRegExp(
-                      '/' . $expected . '/', $result
+                      $expected, $result
                     );
                 } else {
                     PHPUnit_Framework_Assert::assertNotRegExp(
-                      '/' . $expected . '/', $result
+                      $expected, $result
                     );
                 }
             }
@@ -1216,4 +1216,3 @@ class PHPUnit_Extensions_SeleniumTestCase_Driver
         }
     }
 }
-?>

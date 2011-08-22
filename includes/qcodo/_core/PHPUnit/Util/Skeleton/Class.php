@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,31 +34,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util_Skeleton
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.3.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/File.php';
-require_once 'PHPUnit/Util/Template.php';
-require_once 'PHPUnit/Util/Skeleton.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
+require_once 'Text/Template.php';
 
 /**
  * Generator for class skeletons from test classes.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util_Skeleton
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.3.0
  */
@@ -113,7 +108,7 @@ class PHPUnit_Util_Skeleton_Class extends PHPUnit_Util_Skeleton
         $methods = '';
 
         foreach ($this->findTestedMethods() as $method) {
-            $methodTemplate = new PHPUnit_Util_Template(
+            $methodTemplate = new Text_Template(
               sprintf(
                 '%s%sTemplate%sMethod.tpl',
 
@@ -132,7 +127,7 @@ class PHPUnit_Util_Skeleton_Class extends PHPUnit_Util_Skeleton
             $methods .= $methodTemplate->render();
         }
 
-        $classTemplate = new PHPUnit_Util_Template(
+        $classTemplate = new Text_Template(
           sprintf(
             '%s%sTemplate%sClass.tpl',
 
@@ -192,7 +187,15 @@ class PHPUnit_Util_Skeleton_Class extends PHPUnit_Util_Skeleton
             $args  = substr($testMethod['signature'], $start, $end);
 
             foreach (explode(',', $args) as $arg) {
-                list($type, $var) = explode(' ', $arg);
+                $arg = explode(' ', trim($arg));
+
+                if (count($arg) == 2) {
+                    $type = $arg[0];
+                    $var  = $arg[1];
+                } else {
+                    $type = NULL;
+                    $var  = $arg[0];
+                }
 
                 if ($type == $this->outClassName['fullyQualifiedClassName']) {
                     $argVariables[] = $var;
@@ -322,4 +325,3 @@ class PHPUnit_Util_Skeleton_Class extends PHPUnit_Util_Skeleton
         return FALSE;
     }
 }
-?>

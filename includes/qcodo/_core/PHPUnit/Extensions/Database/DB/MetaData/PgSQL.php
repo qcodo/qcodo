@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,34 +34,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.2.0
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Extensions/Database/DB/MetaData/InformationSchema.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
- * Provides functionality to retrieve meta data from a postgres database.
+ * Provides functionality to retrieve meta data from a PostgreSQL database.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.2.0
+ * @since      Class available since Release 1.0.0
  */
-class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_Database_DB_MetaData_InformationSchema
+class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_Database_DB_MetaData
 {
 
     /**
@@ -73,12 +65,11 @@ class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_D
     {
         $query = "
             SELECT DISTINCT
-            	TABLE_NAME
+                TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE
                 TABLE_TYPE='BASE TABLE' AND
-                TABLE_CATALOG = ? AND
-                TABLE_SCHEMA = 'public'
+                TABLE_SCHEMA = ?
             ORDER BY TABLE_NAME
         ";
 
@@ -94,24 +85,54 @@ class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_D
     }
 
     /**
-     * Loads column info from a sqlite database.
+     * Returns an array containing the names of all the columns in the
+     * $tableName table,
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getTableColumns($tableName)
+    {
+        if (!isset($this->columns[$tableName])) {
+            $this->loadColumnInfo($tableName);
+        }
+
+        return $this->columns[$tableName];
+    }
+
+    /**
+     * Returns an array containing the names of all the primary key columns in
+     * the $tableName table.
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getTablePrimaryKeys($tableName)
+    {
+        if (!isset($this->keys[$tableName])) {
+            $this->loadColumnInfo($tableName);
+        }
+
+        return $this->keys[$tableName];
+    }
+
+    /**
+     * Loads column info from a database table.
      *
      * @param string $tableName
      */
     protected function loadColumnInfo($tableName)
     {
         $this->columns[$tableName] = array();
-        $this->keys[$tableName] = array();
+        $this->keys[$tableName]    = array();
 
         $columnQuery = "
             SELECT DISTINCT
-            	COLUMN_NAME,
-		ORDINAL_POSITION
+                COLUMN_NAME, ORDINAL_POSITION
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE
                 TABLE_NAME = ? AND
-                TABLE_SCHEMA = 'public' AND
-                TABLE_CATALOG = ?
+                TABLE_SCHEMA = ?
             ORDER BY ORDINAL_POSITION
         ";
 
@@ -123,30 +144,40 @@ class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_D
         }
 
         $keyQuery = "
-			SELECT
-				KCU.COLUMN_NAME,
-				KCU.ORDINAL_POSITION
-			FROM
-				INFORMATION_SCHEMA.TABLE_CONSTRAINTS as TC,
-				INFORMATION_SCHEMA.KEY_COLUMN_USAGE as KCU
-			WHERE
-				TC.CONSTRAINT_NAME = KCU.CONSTRAINT_NAME AND
-				TC.TABLE_NAME = KCU.TABLE_NAME AND
-				TC.TABLE_SCHEMA = KCU.TABLE_SCHEMA AND
-                                TC.TABLE_CATALOG = KCU.TABLE_CATALOG AND
-				TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND
-				TC.TABLE_NAME = ? AND
-				TC.TABLE_SCHEMA = 'public' AND
-                                TC.TABLE_CATALOG = ?
-			ORDER BY
-				KCU.ORDINAL_POSITION ASC
-    	";
+            SELECT
+                KCU.COLUMN_NAME,
+                KCU.ORDINAL_POSITION
+            FROM
+                INFORMATION_SCHEMA.KEY_COLUMN_USAGE as KCU
+            LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS as TC
+                ON TC.TABLE_NAME = KCU.TABLE_NAME
+            WHERE
+                TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND
+                TC.TABLE_NAME = ? AND
+                TC.TABLE_SCHEMA = ?
+            ORDER BY
+                KCU.ORDINAL_POSITION ASC
+        ";
 
         $keyStatement = $this->pdo->prepare($keyQuery);
         $keyStatement->execute(array($tableName, $this->getSchema()));
 
         while ($columName = $keyStatement->fetchColumn(0)) {
             $this->keys[$tableName][] = $columName;
+        }
+    }
+
+    /**
+     * Returns the schema for the connection.
+     *
+     * @return string
+     */
+    public function getSchema()
+    {
+        if (empty($this->schema)) {
+            return 'public';
+        } else {
+            return $this->schema;
         }
     }
 
@@ -160,4 +191,3 @@ class PHPUnit_Extensions_Database_DB_MetaData_PgSQL extends PHPUnit_Extensions_D
         return TRUE;
     }
 }
-?>

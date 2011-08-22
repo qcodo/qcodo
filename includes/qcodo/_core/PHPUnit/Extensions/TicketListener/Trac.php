@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,30 +36,47 @@
  *
  * @category   Testing
  * @package    PHPUnit
+ * @author     Graham Christensen <graham@grahamc.com>
  * @author     Sean Coates <sean@caedmon.net>
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.4.0
+ * @since      Class available since Release 3.5.4
  */
 
-require_once 'PHPUnit/Extensions/TicketListener.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
- * A test listener that interact with Trac.
+ * A ticket listener that interacts with Trac.
+ *
+ * <code>
+ * <phpunit>
+ *  <listeners>
+ *   <!-- You may need to update the path to the TicketListener -->
+ *   <listener class="PHPUnit_Extensions_TicketListener_Trac"
+ *             file="/usr/lib/php/PHPUnit/Extensions/TicketListener/Trac.php">
+ *    <arguments>
+ *     <!-- A user and their password. This user must have XML_RPC permissions -->
+ *     <string>trac_username</string>
+ *     <string>trac_password</string>
+ *     <!-- The URL for your XML-RPC endpoint. -->
+ *     <!-- For example, if trac is at 127.0.0.1/trac: -->
+ *     <string>127.0.0.1/trac/login/xmlrpc</string>
+ *    </arguments>
+ *   </listener>
+ *  </listeners>
+ * </phpunit>
+ * </code>
  *
  * @category   Testing
  * @package    PHPUnit
+ * @author     Graham Christensen <graham@grahamc.com>
  * @author     Sean Coates <sean@caedmon.net>
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.4.0
+ * @since      Class available since Release 3.5.4
  */
 class PHPUnit_Extensions_TicketListener_Trac extends PHPUnit_Extensions_TicketListener
 {
@@ -67,81 +84,106 @@ class PHPUnit_Extensions_TicketListener_Trac extends PHPUnit_Extensions_TicketLi
     protected $password;
     protected $hostpath;
     protected $scheme;
+    private $printTicketStateChanges;
 
     /**
      * Constructor
      *
-     * @param string $user Trac-XMLRPC username
-     * @param string $pass Trac-XMLRPC password
+     * @param string $username Trac-XMLRPC username
+     * @param string $password Trac-XMLRPC password
      * @param string $hostpath Trac-XMLRPC Host+Path (e.g. example.com/trac/login/xmlrpc)
      * @param string $scheme Trac scheme (http or https)
+     * @param bool   $printTicketStateChanges To display changes or not
      */
-    public function __construct($username, $password, $hostpath, $scheme = 'http')
+    public function __construct($username, $password, $hostpath, $scheme = 'http', $printTicketStateChanges = FALSE)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->hostpath = $hostpath;
-        $this->scheme   = $scheme;
+        $this->username                = $username;
+        $this->password                = $password;
+        $this->hostpath                = $hostpath;
+        $this->scheme                  = $scheme;
+        $this->printTicketStateChanges = $printTicketStateChanges;
     }
 
-    protected function updateTicket($ticketId, $newStatus, $message, $resolution)
+    /**
+     * Get the status of a ticket message
+     *
+     * @param  integer $ticketId The ticket ID
+     * @return array('status' => $status) ($status = new|closed|unknown_ticket)
+     */
+    public function getTicketInfo($ticketId = NULL)
     {
-        if (PHPUnit_Util_Filesystem::fileExistsInIncludePath('XML/RPC2/Client.php')) {
-            PHPUnit_Util_Filesystem::collectStart();
-            require_once 'XML/RPC2/Client.php';
+        if (!is_numeric($ticketId)) {
+            return array('status' => 'invalid_ticket_id');
+        }
 
-            $ticket = XML_RPC2_Client::create(
-              $this->scheme . '://' .
-              $this->username . ':' . $this->password . '@' .
-              $this->hostpath,
-              array('prefix' => 'ticket.')
-            );
+        try {
+            $info = $this->getClient()->get($ticketId);
 
-            try {
-                $ticketInfo = $ticket->get($ticketId);
+            switch ($info[3]['status']) {
+                case 'closed': {
+                    return array('status' => 'closed');
+                }
+                break;
+
+                case 'new':
+                case 'reopened': {
+                    return array('status' => 'new');
+                }
+                break;
+
+                default: {
+                    return array('status' => 'unknown_ticket');
+                }
             }
+        }
 
-            catch (XML_RPC2_FaultException $e) {
-                throw new PHPUnit_Framework_Exception(
-                  sprintf(
-                    "Trac fetch failure: %d: %s\n",
-                    $e->getFaultCode(),
-                    $e->getFaultString()
-                  )
-                );
-            }
-
-            try {
-                printf(
-                  "Updating Trac ticket #%d, status: %s\n",
-                  $ticketId,
-                  $newStatus
-                );
-
-                $ticket->update(
-                  $ticketId,
-                  $message,
-                  array(
-                    'status'     => $newStatus,
-                    'resolution' => $resolution
-                  )
-                );
-            }
-
-            catch (XML_RPC2_FaultException $e) {
-                throw new PHPUnit_Framework_Exception(
-                  sprintf(
-                    "Trac update failure: %d: %s\n",
-                    $e->getFaultCode(),
-                    $e->getFaultString()
-                  )
-                );
-            }
-
-            PHPUnit_Util_Filesystem::collectEndAndAddToBlacklist();
-        } else {
-            throw new PHPUnit_Framework_Exception('XML_RPC2 is not available.');
+        catch (Exception $e) {
+            return array('status' => 'unknown_ticket');
         }
     }
+
+    /**
+     * Update a ticket with a new status
+     *
+     * @param string $ticketId   The ticket number of the ticket under test (TUT).
+     * @param string $statusToBe The status of the TUT after running the associated test.
+     * @param string $message    The additional message for the TUT.
+     * @param string $resolution The resolution for the TUT.
+     */
+    protected function updateTicket($ticketId, $statusToBe, $message, $resolution)
+    {
+        $change = array('status' => $statusToBe, 'resolution' => $resolution);
+
+        $this->getClient()->update((int)$ticketId, $message, $change);
+
+        if ($this->printTicketStateChanges) {
+            printf(
+              "\nUpdating Trac issue #%d, status: %s\n", $ticketId, $statusToBe
+            );
+        }
+    }
+
+    /**
+     * Get a Trac XML_RPC2 client
+     *
+     * @return XML_RPC2_Client
+     */
+    protected function getClient()
+    {
+        if (!PHPUnit_Util_Filesystem::fileExistsInIncludePath('XML/RPC2/Client.php')) {
+            throw new PHPUnit_Framework_Exception('PEAR/XML_RPC2 is not available.');
+        }
+
+        require_once 'XML/RPC2/Client.php';
+
+        $url = sprintf(
+          '%s://%s:%s@%s',
+          $this->scheme,
+          $this->username,
+          $this->password,
+          $this->hostpath
+        );
+
+        return XML_RPC2_Client::create($url, array('prefix' => 'ticket.'));
+    }
 }
-?>

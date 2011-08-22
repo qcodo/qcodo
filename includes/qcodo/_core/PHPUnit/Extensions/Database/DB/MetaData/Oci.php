@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,30 +34,22 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Trond Hansen <trond@xait.no>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.2.3
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Extensions/Database/DB/MetaData.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Provides functionality to retrieve meta data from an Oracle database.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Trond Hansen <trond@xait.no>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.2.3
  */
@@ -65,15 +57,24 @@ class PHPUnit_Extensions_Database_DB_MetaData_Oci extends PHPUnit_Extensions_Dat
 {
     /**
      * No character used to quote schema objects.
+     * @var string
      */
     protected $schemaObjectQuoteChar = '';
 
     /**
      * The command used to perform a TRUNCATE operation.
+     * @var string
      */
     protected $truncateCommand = 'TRUNCATE TABLE';
 
+    /**
+     * @var array
+     */
     protected $columns = array();
+
+    /**
+     * @var array
+     */
     protected $keys = array();
 
     /**
@@ -147,7 +148,7 @@ class PHPUnit_Extensions_Database_DB_MetaData_Oci extends PHPUnit_Extensions_Dat
 
         if (!empty($tableParts['schema']))
         {
-            $ownerQuery = " AND OWNER = '{$tableParts['schema']}'";
+            $ownerQuery    = " AND OWNER = '{$tableParts['schema']}'";
             $conOwnerQuery = " AND a.owner = '{$tableParts['schema']}'";
         }
 
@@ -177,4 +178,3 @@ class PHPUnit_Extensions_Database_DB_MetaData_Oci extends PHPUnit_Extensions_Dat
         }
     }
 }
-?>

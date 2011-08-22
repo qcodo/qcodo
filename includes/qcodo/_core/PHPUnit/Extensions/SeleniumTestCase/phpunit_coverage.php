@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2010-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,17 +34,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_Selenium
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2010-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.2.10
+ * @since      File available since Release 1.0.0
  */
 
-require_once 'PHPUnit/Util/CodeCoverage.php';
-require_once 'PHPUnit/Util/FilterIterator.php';
+require_once 'File/Iterator/Factory.php';
+require_once 'PHP/CodeCoverage/Filter.php';
 
 // Set this to the directory that contains the code coverage files.
 // It defaults to getcwd(). If you have configured a different directory
@@ -52,12 +51,9 @@ require_once 'PHPUnit/Util/FilterIterator.php';
 $GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY'] = getcwd();
 
 if (isset($_GET['PHPUNIT_SELENIUM_TEST_ID'])) {
-    $files = new PHPUnit_Util_FilterIterator(
-      new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(
-          $GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY']
-        )
-      )
+    $files = File_Iterator_Factory::getFileIterator(
+      $GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY'],
+      $_GET['PHPUNIT_SELENIUM_TEST_ID']
     );
 
     $coverage = array();
@@ -69,7 +65,7 @@ if (isset($_GET['PHPUNIT_SELENIUM_TEST_ID'])) {
         unset($filename);
 
         foreach ($data as $filename => $lines) {
-            if (PHPUnit_Util_CodeCoverage::isFile($filename)) {
+            if (PHP_CodeCoverage_Filter::isFile($filename)) {
                 if (!isset($coverage[$filename])) {
                     $coverage[$filename] = array(
                       'md5' => md5_file($filename), 'coverage' => $lines
@@ -88,4 +84,3 @@ if (isset($_GET['PHPUNIT_SELENIUM_TEST_ID'])) {
 
     print serialize($coverage);
 }
-?>

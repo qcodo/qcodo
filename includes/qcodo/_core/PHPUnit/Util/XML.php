@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.2.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * XML helpers.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.2.0
  */
@@ -192,26 +188,25 @@ class PHPUnit_Util_XML
             return $actual;
         }
 
+        $document  = new DOMDocument;
         $internal  = libxml_use_internal_errors(TRUE);
+        $message   = '';
         $reporting = error_reporting(0);
-        $dom       = new DOMDocument;
 
         if ($isHtml) {
-            $loaded = $dom->loadHTML($actual);
+            $loaded = $document->loadHTML($actual);
         } else {
-            $loaded = $dom->loadXML($actual);
+            $loaded = $document->loadXML($actual);
+        }
+
+        foreach (libxml_get_errors() as $error) {
+            $message .= $error->message;
         }
 
         libxml_use_internal_errors($internal);
         error_reporting($reporting);
 
         if ($loaded === FALSE) {
-            $message = '';
-
-            foreach (libxml_get_errors() as $error) {
-                $message .= $error->message;
-            }
-
             if ($filename != '') {
                 throw new PHPUnit_Framework_Exception(
                   sprintf(
@@ -226,7 +221,7 @@ class PHPUnit_Util_XML
             }
         }
 
-        return $dom;
+        return $document;
     }
 
     /**
@@ -238,6 +233,10 @@ class PHPUnit_Util_XML
      */
     public static function nodeToText(DOMNode $node)
     {
+        if ($node->childNodes->length == 1) {
+            return $node->nodeValue;
+        }
+
         $result = '';
 
         foreach ($node->childNodes as $childNode) {
@@ -522,12 +521,13 @@ class PHPUnit_Util_XML
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
+     * @author Tobias Schlitt <toby@php.net>
      */
     public static function cssSelect($selector, $content, $actual, $isHtml = TRUE)
     {
         $matcher = self::convertSelectToTag($selector, $content);
         $dom     = self::load($actual, $isHtml);
-        $tags    = self::findNodes($dom, $matcher);
+        $tags    = self::findNodes($dom, $matcher, $isHtml);
 
         return $tags;
     }
@@ -542,6 +542,7 @@ class PHPUnit_Util_XML
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
+     * @author Tobias Schlitt <toby@php.net>
      */
     public static function findNodes(DOMDocument $dom, array $options, $isHtml = TRUE)
     {
@@ -703,7 +704,7 @@ class PHPUnit_Util_XML
 
         // filter by parent node
         if ($options['parent']) {
-            $parentNodes = self::findNodes($dom, $options['parent']);
+            $parentNodes = self::findNodes($dom, $options['parent'], $isHtml);
             $parentNode  = isset($parentNodes[0]) ? $parentNodes[0] : NULL;
 
             foreach ($nodes as $node) {
@@ -724,7 +725,7 @@ class PHPUnit_Util_XML
 
         // filter by child node
         if ($options['child']) {
-            $childNodes = self::findNodes($dom, $options['child']);
+            $childNodes = self::findNodes($dom, $options['child'], $isHtml);
             $childNodes = !empty($childNodes) ? $childNodes : array();
 
             foreach ($nodes as $node) {
@@ -747,7 +748,7 @@ class PHPUnit_Util_XML
 
         // filter by ancestor
         if ($options['ancestor']) {
-            $ancestorNodes = self::findNodes($dom, $options['ancestor']);
+            $ancestorNodes = self::findNodes($dom, $options['ancestor'], $isHtml);
             $ancestorNode  = isset($ancestorNodes[0]) ? $ancestorNodes[0] : NULL;
 
             foreach ($nodes as $node) {
@@ -772,7 +773,7 @@ class PHPUnit_Util_XML
 
         // filter by descendant
         if ($options['descendant']) {
-            $descendantNodes = self::findNodes($dom, $options['descendant']);
+            $descendantNodes = self::findNodes($dom, $options['descendant'], $isHtml);
             $descendantNodes = !empty($descendantNodes) ? $descendantNodes : array();
 
             foreach ($nodes as $node) {
@@ -845,7 +846,7 @@ class PHPUnit_Util_XML
                     // match each child against a specific tag
                     if ($childOptions['only']) {
                         $onlyNodes = self::findNodes(
-                          $dom, $childOptions['only']
+                          $dom, $childOptions['only'], $isHtml
                         );
 
                         // try to match each child to one of the 'only' nodes
@@ -954,4 +955,3 @@ class PHPUnit_Util_XML
         return str_replace('  ', ' ', $result);
     }
 }
-?>

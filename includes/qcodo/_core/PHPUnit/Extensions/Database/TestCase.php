@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,38 +34,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.2.0
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-require_once 'PHPUnit/Extensions/Database/DefaultTester.php';
-require_once 'PHPUnit/Extensions/Database/DB/DefaultDatabaseConnection.php';
-require_once 'PHPUnit/Extensions/Database/Operation/Factory.php';
-require_once 'PHPUnit/Extensions/Database/Constraint/TableIsEqual.php';
-require_once 'PHPUnit/Extensions/Database/Constraint/DataSetIsEqual.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * A TestCase extension that provides functionality for testing and asserting
  * against a real database.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
  * @copyright  2010 Mike Lively <m@digitalsandwich.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.2.0
+ * @since      Class available since Release 1.0.0
  */
 abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_TestCase
 {
@@ -153,7 +140,7 @@ abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_Te
      * @param string $schema
      * @return PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection
      */
-    protected function createDefaultDBConnection(PDO $connection, $schema)
+    protected function createDefaultDBConnection(PDO $connection, $schema = '')
     {
         return new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($connection, $schema);
     }
@@ -166,7 +153,6 @@ abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_Te
      */
     protected function createFlatXMLDataSet($xmlFile)
     {
-        require_once 'PHPUnit/Extensions/Database/DataSet/FlatXmlDataSet.php';
         return new PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet($xmlFile);
     }
 
@@ -178,8 +164,19 @@ abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_Te
      */
     protected function createXMLDataSet($xmlFile)
     {
-        require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
         return new PHPUnit_Extensions_Database_DataSet_XmlDataSet($xmlFile);
+    }
+
+    /**
+     * Create a a new MysqlXmlDataSet with the given $xmlFile. (absolute path.)
+     *
+     * @param string $xmlFile
+     * @return PHPUnit_Extensions_Database_DataSet_MysqlXmlDataSet
+     * @since  Method available since Release 1.0.0
+     */
+    protected function createMySQLXMLDataSet($xmlFile)
+    {
+        return new PHPUnit_Extensions_Database_DataSet_MysqlXmlDataSet($xmlFile);
     }
 
     /**
@@ -190,7 +187,6 @@ abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_Te
      */
     protected function getOperations()
     {
-        require_once 'PHPUnit/Extensions/Database/Operation/Factory.php';
         return new PHPUnit_Extensions_Database_Operation_Factory();
     }
 
@@ -252,4 +248,3 @@ abstract class PHPUnit_Extensions_Database_TestCase extends PHPUnit_Framework_Te
         self::assertThat($actual, $constraint, $message);
     }
 }
-?>

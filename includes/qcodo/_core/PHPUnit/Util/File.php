@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,10 +34,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
@@ -47,19 +47,15 @@ if (!defined('T_NAMESPACE')) {
     define('T_NAMESPACE', 377);
 }
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * File helpers.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
@@ -68,45 +64,7 @@ class PHPUnit_Util_File
     /**
      * @var array
      */
-    protected static $countCache = array();
-
-    /**
-     * @var array
-     */
-    protected static $classesFunctionsCache = array();
-
-    /**
-     * Counts LOC, CLOC, and NCLOC for a file.
-     *
-     * @param  string $filename
-     * @return array
-     */
-    public static function countLines($filename)
-    {
-        if (!isset(self::$countCache[$filename])) {
-            $buffer = file_get_contents($filename);
-            $loc    = substr_count($buffer, "\n");
-            $cloc   = 0;
-
-            foreach (token_get_all($buffer) as $i => $token) {
-                if (is_string($token)) {
-                    continue;
-                }
-
-                list ($token, $value) = $token;
-
-                if ($token == T_COMMENT || $token == T_DOC_COMMENT) {
-                    $cloc += substr_count($value, "\n") + 1;
-                }
-            }
-
-            self::$countCache[$filename] = array(
-              'loc' => $loc, 'cloc' => $cloc, 'ncloc' => $loc - $cloc
-            );
-        }
-
-        return self::$countCache[$filename];
-    }
+    protected static $cache = array();
 
     /**
      * Returns information on the classes declared in a sourcefile.
@@ -116,38 +74,22 @@ class PHPUnit_Util_File
      */
     public static function getClassesInFile($filename)
     {
-        if (!isset(self::$classesFunctionsCache[$filename])) {
-            self::parseFile($filename);
+        if (!isset(self::$cache[$filename])) {
+            self::$cache[$filename] = self::parseFile($filename);
         }
 
-        return self::$classesFunctionsCache[$filename]['classes'];
+        return self::$cache[$filename];
     }
 
     /**
-     * Returns information on the functions declared in a sourcefile.
+     * Parses a file for class and method information.
      *
      * @param  string $filename
      * @return array
      */
-    public static function getFunctionsInFile($filename)
-    {
-        if (!isset(self::$classesFunctionsCache[$filename])) {
-            self::parseFile($filename);
-        }
-
-        return self::$classesFunctionsCache[$filename]['functions'];
-    }
-
-    /**
-     * Parses a file for class, method, and function information.
-     *
-     * @param string $filename
-     */
     protected static function parseFile($filename)
     {
-        self::$classesFunctionsCache[$filename] = array(
-          'classes' => array(), 'functions' => array()
-        );
+        $result = array();
 
         $tokens                     = token_get_all(
                                         file_get_contents($filename)
@@ -222,10 +164,8 @@ class PHPUnit_Util_File
                               'tokens'     => $currentFunctionTokens
                             );
 
-                            if ($currentClass === FALSE) {
-                                self::$classesFunctionsCache[$filename]['functions'][$currentFunction] = $tmp;
-                            } else {
-                                self::$classesFunctionsCache[$filename]['classes'][$currentClass]['methods'][$currentFunction] = $tmp;
+                            if ($currentClass !== FALSE) {
+                                $result[$currentClass]['methods'][$currentFunction] = $tmp;
                             }
 
                             $currentFunction          = FALSE;
@@ -235,7 +175,7 @@ class PHPUnit_Util_File
                         }
 
                         else if ($block == $currentClass) {
-                            self::$classesFunctionsCache[$filename]['classes'][$currentClass]['endLine'] = $line;
+                            $result[$currentClass]['endLine'] = $line;
 
                             $currentClass          = FALSE;
                             $currentClassStartLine = FALSE;
@@ -247,9 +187,14 @@ class PHPUnit_Util_File
             }
 
             switch ($tokens[$i][0]) {
+                case T_HALT_COMPILER: {
+                    return;
+                }
+                break;
+
                 case T_NAMESPACE: {
                     $currentNamespace = $tokens[$i+2][1];
-                    
+
                     for ($j = $i+3; $j < $numTokens; $j += 2) {
                         if ($tokens[$j][0] == T_NS_SEPARATOR) {
                             $currentNamespace .= '\\' . $tokens[$j+1][1];
@@ -289,7 +234,7 @@ class PHPUnit_Util_File
                         $docComment = '';
                     }
 
-                    self::$classesFunctionsCache[$filename]['classes'][$currentClass] = array(
+                    $result[$currentClass] = array(
                       'methods'    => array(),
                       'docComment' => $docComment,
                       'startLine'  => $line
@@ -359,6 +304,7 @@ class PHPUnit_Util_File
 
             $line += substr_count($tokens[$i][1], "\n");
         }
+
+        return $result;
     }
 }
-?>

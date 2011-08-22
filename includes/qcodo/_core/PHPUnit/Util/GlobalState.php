@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  *
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
@@ -153,7 +149,8 @@ class PHPUnit_Util_GlobalState
     {
         self::$globals[$superGlobalArray] = array();
 
-        if (isset($GLOBALS[$superGlobalArray])) {
+        if (isset($GLOBALS[$superGlobalArray]) &&
+            is_array($GLOBALS[$superGlobalArray])) {
             foreach ($GLOBALS[$superGlobalArray] as $key => $value) {
                 self::$globals[$superGlobalArray][$key] = serialize($value);
             }
@@ -162,7 +159,9 @@ class PHPUnit_Util_GlobalState
 
     protected static function restoreSuperGlobalArray($superGlobalArray)
     {
-        if (isset($GLOBALS[$superGlobalArray])) {
+        if (isset($GLOBALS[$superGlobalArray]) &&
+            is_array($GLOBALS[$superGlobalArray]) &&
+            isset(self::$globals[$superGlobalArray])) {
             $keys = array_keys(
               array_merge(
                 $GLOBALS[$superGlobalArray], self::$globals[$superGlobalArray]
@@ -185,7 +184,7 @@ class PHPUnit_Util_GlobalState
 
     public static function getIncludedFilesAsString()
     {
-        $blacklist = PHPUnit_Util_Filter::getBlacklistedFiles();
+        $blacklist = PHP_CodeCoverage::getInstance()->filter()->getBlacklist();
         $blacklist = array_flip($blacklist['PHPUNIT']);
         $files     = get_included_files();
         $result    = '';
@@ -224,8 +223,9 @@ class PHPUnit_Util_GlobalState
         $superGlobalArrays = self::getSuperGlobalArrays();
 
         foreach ($superGlobalArrays as $superGlobalArray) {
-            if (isset($GLOBALS[$superGlobalArray])) {
-                foreach ($GLOBALS[$superGlobalArray] as $key => $value) {
+            if (isset($GLOBALS[$superGlobalArray]) &&
+                is_array($GLOBALS[$superGlobalArray])) {
+                foreach (array_keys($GLOBALS[$superGlobalArray]) as $key) {
                     $result .= sprintf(
                       '$GLOBALS[\'%s\'][\'%s\'] = %s;' . "\n",
                       $superGlobalArray,
@@ -272,6 +272,12 @@ class PHPUnit_Util_GlobalState
 
         for ($i = $declaredClassesNum - 1; $i >= 0; $i--) {
             if (strpos($declaredClasses[$i], 'PHPUnit') !== 0 &&
+                strpos($declaredClasses[$i], 'File_Iterator') !== 0 &&
+                strpos($declaredClasses[$i], 'PHP_CodeCoverage') !== 0 &&
+                strpos($declaredClasses[$i], 'PHP_Timer') !== 0 &&
+                strpos($declaredClasses[$i], 'PHP_TokenStream') !== 0 &&
+                strpos($declaredClasses[$i], 'sfYaml') !== 0 &&
+                strpos($declaredClasses[$i], 'Text_Template') !== 0 &&
                 !$declaredClasses[$i] instanceof PHPUnit_Framework_Test) {
                 $class = new ReflectionClass($declaredClasses[$i]);
 
@@ -320,7 +326,9 @@ class PHPUnit_Util_GlobalState
             return var_export($variable, TRUE);
         }
 
-        return 'unserialize(\'' . serialize($variable) . '\')';
+        return 'unserialize(\'' .
+                str_replace("'", "\'", serialize($variable)) .
+                '\')';
     }
 
     protected static function arrayOnlyContainsScalars(array $array)
@@ -344,4 +352,3 @@ class PHPUnit_Util_GlobalState
         return $result;
     }
 }
-?>

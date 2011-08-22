@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,37 +34,40 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
+ * @subpackage Extensions_TicketListener
  * @author     Sean Coates <sean@caedmon.net>
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author     Raphael Stolt <raphael.stolt@gmail.com>
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Test.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Base class for test listeners that interact with an issue tracker.
  *
- * @category   Testing
  * @package    PHPUnit
+ * @subpackage Extensions_TicketListener
  * @author     Sean Coates <sean@caedmon.net>
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
 abstract class PHPUnit_Extensions_TicketListener implements PHPUnit_Framework_TestListener
 {
+    /**
+     * @var array
+     */
     protected $ticketCounts = array();
+
+    /**
+     * @var boolean
+     */
     protected $ran = FALSE;
 
     /**
@@ -144,7 +147,7 @@ abstract class PHPUnit_Extensions_TicketListener implements PHPUnit_Framework_Te
                 return;
             }
 
-            $name    = $test->getName();
+            $name    = $test->getName(FALSE);
             $tickets = PHPUnit_Util_Test::getTickets(get_class($test), $name);
 
             foreach ($tickets as $ticket) {
@@ -184,7 +187,7 @@ abstract class PHPUnit_Extensions_TicketListener implements PHPUnit_Framework_Te
                 return;
             }
 
-            $name    = $test->getName();
+            $name    = $test->getName(FALSE);
             $tickets = PHPUnit_Util_Test::getTickets(get_class($test), $name);
 
             foreach ($tickets as $ticket) {
@@ -208,13 +211,15 @@ abstract class PHPUnit_Extensions_TicketListener implements PHPUnit_Framework_Te
                     $adjustTicket = TRUE;
                 }
 
-                if ($adjustTicket && in_array($ticketInfo[3]['status'], $ifStatus)) {
+                $ticketInfo = $this->getTicketInfo($ticket);
+
+                if ($adjustTicket && in_array($ticketInfo['status'], $ifStatus)) {
                     $this->updateTicket($ticket, $newStatus, $message, $resolution);
                 }
             }
         }
     }
 
+    abstract protected function getTicketInfo($ticketId = NULL);
     abstract protected function updateTicket($ticketId, $newStatus, $message, $resolution);
 }
-?>

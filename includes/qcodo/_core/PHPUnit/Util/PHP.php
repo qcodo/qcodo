@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,32 +34,28 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Utility methods for PHP sub-processes.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: @package_version@
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
-class PHPUnit_Util_PHP
+abstract class PHPUnit_Util_PHP
 {
     /**
      * Path to the PHP interpreter that is to be used.
@@ -67,17 +63,6 @@ class PHPUnit_Util_PHP
      * @var    string $phpBinary
      */
     protected static $phpBinary = NULL;
-
-    /**
-     * Descriptor specification for proc_open().
-     *
-     * @var    array
-     */
-    protected static $descriptorSpec = array(
-      0 => array('pipe', 'r'),
-      1 => array('pipe', 'w'),
-      2 => array('pipe', 'w')
-    );
 
     /**
      * Returns the path to a PHP interpreter.
@@ -110,8 +95,8 @@ class PHPUnit_Util_PHP
     public static function getPhpBinary()
     {
         if (self::$phpBinary === NULL) {
-            if (is_readable('@php_bin@')) {
-                self::$phpBinary = '@php_bin@';
+            if (is_readable('/usr/local/bin/php')) {
+                self::$phpBinary = '/usr/local/bin/php';
             }
 
             else if (PHP_SAPI == 'cli' && isset($_SERVER['_']) &&
@@ -124,7 +109,7 @@ class PHPUnit_Util_PHP
             if (!is_readable(self::$phpBinary)) {
                 self::$phpBinary = 'php';
             } else {
-                self::$phpBinary = escapeshellarg(self::$phpBinary);
+                self::$phpBinary = escapeshellcmd(self::$phpBinary);
             }
         }
 
@@ -132,31 +117,161 @@ class PHPUnit_Util_PHP
     }
 
     /**
+     * @return PHPUnit_Util_PHP
+     * @since  Method available since Release 3.5.12
+     */
+    public static function factory()
+    {
+        if (DIRECTORY_SEPARATOR == '\\') {
+            return new PHPUnit_Util_PHP_Windows;
+        }
+
+        return new PHPUnit_Util_PHP_Default;
+    }
+
+    /**
      * Runs a single job (PHP code) using a separate PHP process.
      *
-     * @param  string $job
-     * @return string
+     * @param  string                       $job
+     * @param  PHPUnit_Framework_TestCase   $test
+     * @param  PHPUnit_Framework_TestResult $result
+     * @return array|null
+     * @throws PHPUnit_Framework_Exception
      */
-    public static function runJob($job)
+    public function runJob($job, PHPUnit_Framework_Test $test = NULL, PHPUnit_Framework_TestResult $result = NULL)
     {
         $process = proc_open(
-          self::getPhpBinary(), self::$descriptorSpec, $pipes
+          self::getPhpBinary(),
+          array(
+            0 => array('pipe', 'r'),
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w')
+          ),
+          $pipes
         );
 
-        if (is_resource($process)) {
-            fwrite($pipes[0], $job);
-            fclose($pipes[0]);
+        if (!is_resource($process)) {
+            throw new PHPUnit_Framework_Exception(
+              'Unable to create process for process isolation.'
+            );
+        }
 
-            $stdout = stream_get_contents($pipes[1]);
-            fclose($pipes[1]);
+        if ($result !== NULL) {
+            $result->startTest($test);
+        }
 
-            $stderr = stream_get_contents($pipes[2]);
-            fclose($pipes[2]);
+        $this->process($pipes[0], $job);
+        fclose($pipes[0]);
 
-            proc_close($process);
+        $stdout = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
 
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[2]);
+
+        proc_close($process);
+        $this->cleanup();
+
+        if ($result !== NULL) {
+            $this->processChildResult($test, $result, $stdout, $stderr);
+        } else {
             return array('stdout' => $stdout, 'stderr' => $stderr);
         }
     }
+
+    /**
+     * @param resource $pipe
+     * @param string   $job
+     * @since Method available since Release 3.5.12
+     */
+    abstract protected function process($pipe, $job);
+
+    /**
+     * @since Method available since Release 3.5.12
+     */
+    protected function cleanup()
+    {
+    }
+
+    /**
+     * Processes the TestResult object from an isolated process.
+     *
+     * @param PHPUnit_Framework_TestCase   $test
+     * @param PHPUnit_Framework_TestResult $result
+     * @param string                       $stdout
+     * @param string                       $stderr
+     * @since Method available since Release 3.5.0
+     */
+    protected function processChildResult(PHPUnit_Framework_Test $test, PHPUnit_Framework_TestResult $result, $stdout, $stderr)
+    {
+        if (!empty($stderr)) {
+            $time = 0;
+            $result->addError(
+              $test,
+              new RuntimeException(trim($stderr)), $time
+            );
+        } else {
+            $childResult = @unserialize($stdout);
+
+            if ($childResult !== FALSE) {
+                if (!empty($childResult['output'])) {
+                    print $childResult['output'];
+                }
+
+                $test->setResult($childResult['testResult']);
+                $test->addToAssertionCount($childResult['numAssertions']);
+
+                $childResult = $childResult['result'];
+
+                if ($result->getCollectCodeCoverageInformation()) {
+                    $codeCoverageInformation = $childResult->getRawCodeCoverageInformation();
+
+                    if (isset($codeCoverageInformation[0]) &&
+                         is_array($codeCoverageInformation[0])) {
+                        $result->getCodeCoverage()->append(
+                          $codeCoverageInformation[0], $test
+                        );
+                    }
+                }
+
+                $time           = $childResult->time();
+                $notImplemented = $childResult->notImplemented();
+                $skipped        = $childResult->skipped();
+                $errors         = $childResult->errors();
+                $failures       = $childResult->failures();
+
+                if (!empty($notImplemented)) {
+                    $result->addError(
+                      $test, $notImplemented[0]->thrownException(), $time
+                    );
+                }
+
+                else if (!empty($skipped)) {
+                    $result->addError(
+                      $test, $skipped[0]->thrownException(), $time
+                    );
+                }
+
+                else if (!empty($errors)) {
+                    $result->addError(
+                      $test, $errors[0]->thrownException(), $time
+                    );
+                }
+
+                else if (!empty($failures)) {
+                    $result->addFailure(
+                      $test, $failures[0]->thrownException(), $time
+                    );
+                }
+            } else {
+                $time = 0;
+
+                $result->addError(
+                  $test, new RuntimeException(trim($stdout)), $time
+                );
+            }
+        }
+
+        $result->endTest($test, $time);
+    }
 }
-?>

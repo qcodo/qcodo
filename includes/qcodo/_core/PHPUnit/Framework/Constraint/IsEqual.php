@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,21 +34,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
+ * @subpackage Framework_Constraint
  * @author     Kore Nordmann <kn@ez.no>
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/Type.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * Constraint that checks if one value is equal to another.
@@ -59,13 +53,13 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
  *
  * The expected value is passed in the constructor.
  *
- * @category   Testing
  * @package    PHPUnit
+ * @subpackage Framework_Constraint
  * @author     Kore Nordmann <kn@ez.no>
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -89,7 +83,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
     /**
      * @var boolean
      */
-    protected $canonicalizeEol = FALSE;
+    protected $canonicalize = FALSE;
 
     /**
      * @var boolean
@@ -100,10 +94,10 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
      * @param mixed   $value
      * @param float   $delta
      * @param integer $maxDepth
-     * @param boolean $canonicalizeEol
+     * @param boolean $canonicalize
      * @param boolean $ignoreCase
      */
-    public function __construct($value, $delta = 0, $maxDepth = 10, $canonicalizeEol = FALSE, $ignoreCase = FALSE)
+    public function __construct($value, $delta = 0, $maxDepth = 10, $canonicalize = FALSE, $ignoreCase = FALSE)
     {
         if (!is_numeric($delta)) {
             throw PHPUnit_Util_InvalidArgumentHelper::factory(2, 'numeric');
@@ -113,7 +107,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             throw PHPUnit_Util_InvalidArgumentHelper::factory(3, 'integer');
         }
 
-        if (!is_bool($canonicalizeEol)) {
+        if (!is_bool($canonicalize)) {
             throw PHPUnit_Util_InvalidArgumentHelper::factory(4, 'boolean');
         }
 
@@ -121,11 +115,11 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             throw PHPUnit_Util_InvalidArgumentHelper::factory(5, 'boolean');
         }
 
-        $this->value           = $value;
-        $this->delta           = $delta;
-        $this->maxDepth        = $maxDepth;
-        $this->canonicalizeEol = $canonicalizeEol;
-        $this->ignoreCase      = $ignoreCase;
+        $this->value        = $value;
+        $this->delta        = $delta;
+        $this->maxDepth     = $maxDepth;
+        $this->canonicalize = $canonicalize;
+        $this->ignoreCase   = $ignoreCase;
     }
 
     /**
@@ -218,7 +212,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
     }
 
     /**
-     * Perform the actual recursive comparision of two values
+     * Perform the actual recursive comparison of two values
      *
      * @param mixed $a First value
      * @param mixed $b Second value
@@ -284,11 +278,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
                 unset($_b);
             }
 
-            if (version_compare(PHP_VERSION, '5.2.0RC1', '>=')) {
-                return ($a->C14N() == $b->C14N());
-            } else {
-                return ($a->saveXML() == $b->saveXML());
-            }
+            return $a->C14N() == $b->C14N();
         }
 
         if (is_object($a) && is_object($b) &&
@@ -296,7 +286,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             return FALSE;
         }
 
-        // Normal comparision for scalar values.
+        // Normal comparison for scalar values.
         if ((!is_array($a) && !is_object($a)) ||
             (!is_array($b) && !is_object($b))) {
             if (is_numeric($a) && is_numeric($b)) {
@@ -305,7 +295,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             }
 
             if (is_string($a) && is_string($b)) {
-                if ($this->canonicalizeEol && PHP_EOL != "\n") {
+                if ($this->canonicalize && PHP_EOL != "\n") {
                     $a = str_replace(PHP_EOL, "\n", $a);
                     $b = str_replace(PHP_EOL, "\n", $b);
                 }
@@ -333,6 +323,11 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             }
         }
 
+        if ($this->canonicalize) {
+            sort($a);
+            sort($b);
+        }
+
         $keysInB = array_flip(array_keys($b));
 
         foreach ($a as $key => $v) {
@@ -342,7 +337,7 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             }
 
             if (!$this->recursiveComparison($a[$key], $b[$key], $depth + 1)) {
-                // FALSE, if child comparision fails.
+                // FALSE, if child comparison fails.
                 return FALSE;
             }
 
@@ -389,4 +384,3 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
         return $document->saveXML();
     }
 }
-?>

@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,22 +34,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.2.0
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-require_once 'PHPUnit/Extensions/Database/Operation/IDatabaseOperation.php';
-require_once 'PHPUnit/Extensions/Database/Operation/Exception.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * Provides basic functionality for row based operations.
@@ -59,14 +50,13 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
  * a prepared statement. The second one, buildOperationArguments(), should
  * return an array containing arguments for each row.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
  * @copyright  2010 Mike Lively <m@digitalsandwich.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.2.0
+ * @since      Class available since Release 1.0.0
  */
 abstract class PHPUnit_Extensions_Database_Operation_RowBased implements PHPUnit_Extensions_Database_Operation_IDatabaseOperation
 {
@@ -94,19 +84,26 @@ abstract class PHPUnit_Extensions_Database_Operation_RowBased implements PHPUnit
         foreach ($dsIterator as $table) {
             /* @var $table PHPUnit_Extensions_Database_DataSet_ITable */
             $databaseTableMetaData = $databaseDataSet->getTableMetaData($table->getTableMetaData()->getTableName());
-            $query = $this->buildOperationQuery($databaseTableMetaData, $table, $connection);
+            $query                 = $this->buildOperationQuery($databaseTableMetaData, $table, $connection);
 
             if ($query === FALSE && $table->getRowCount() > 0) {
                 throw new PHPUnit_Extensions_Database_Operation_Exception($this->operationName, '', array(), $table, "Rows requested for insert, but no columns provided!");
             }
 
             $statement = $connection->getConnection()->prepare($query);
-            for ($i = 0; $i < $table->getRowCount(); $i++) {
+            $rowCount  = $table->getRowCount();
+
+            for ($i = 0; $i < $rowCount; $i++) {
                 $args = $this->buildOperationArguments($databaseTableMetaData, $table, $i);
+
                 try {
                     $statement->execute($args);
-                } catch (Exception $e) {
-                    throw new PHPUnit_Extensions_Database_Operation_Exception($this->operationName, $query, $args, $table, $e->getMessage());
+                }
+
+                catch (Exception $e) {
+                    throw new PHPUnit_Extensions_Database_Operation_Exception(
+                      $this->operationName, $query, $args, $table, $e->getMessage()
+                    );
                 }
             }
         }
@@ -115,10 +112,11 @@ abstract class PHPUnit_Extensions_Database_Operation_RowBased implements PHPUnit
     protected function buildPreparedColumnArray($columns, PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection)
     {
         $columnArray = array();
+
         foreach ($columns as $columnName) {
             $columnArray[] = "{$connection->quoteSchemaObject($columnName)} = ?";
         }
+
         return $columnArray;
     }
 }
-?>

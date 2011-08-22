@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Factory for InvalidArgumentException objects.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
@@ -65,18 +61,14 @@ class PHPUnit_Util_InvalidArgumentHelper
      * @param integer $argument
      * @param string  $type
      * @param mixed   $value
-     */ 
+     */
     public static function factory($argument, $type, $value = NULL)
     {
-        if (version_compare(PHP_VERSION, '5.2.5', '>=')) {
-            $stack = debug_backtrace(FALSE);
-        } else {
-            $stack = debug_backtrace();
-        }
+        $stack = debug_backtrace(FALSE);
 
         return new InvalidArgumentException(
           sprintf(
-            'Argument #%d%sof %s:%s() is no %s',
+            'Argument #%d%sof %s::%s() must be a %s',
             $argument,
             $value !== NULL ? ' (' . $value . ')' : ' ',
             $stack[1]['class'],
@@ -86,4 +78,3 @@ class PHPUnit_Util_InvalidArgumentHelper
         );
     }
 }
-?>

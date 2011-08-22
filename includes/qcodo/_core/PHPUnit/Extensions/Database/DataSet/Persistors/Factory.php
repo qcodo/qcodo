@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,26 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.4.0
+ * @since      File available since Release 1.0.0
  */
 
 /**
  * Creates the appropriate Persistor based on a given type and spec.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    DbUnit
  * @author     Mike Lively <m@digitalsandwich.com>
  * @copyright  2010 Mike Lively <m@digitalsandwich.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 1.0.3
  * @link       http://www.phpunit.de//**
- * @since      Class available since Release 3.4.0
+ * @since      Class available since Release 1.0.0
  */
 class PHPUnit_Extensions_Database_DataSet_Persistors_Factory
 {
@@ -68,19 +66,16 @@ class PHPUnit_Extensions_Database_DataSet_Persistors_Factory
     {
         switch (strtolower($type)) {
             case 'xml':
-                require_once ('PHPUnit/Extensions/Database/DataSet/Persistors/Xml.php');
                 $xmlPersistor = new PHPUnit_Extensions_Database_DataSet_Persistors_Xml();
                 $xmlPersistor->setFileName($spec);
                 return $xmlPersistor;
 
             case 'flatxml':
-                require_once ('PHPUnit/Extensions/Database/DataSet/Persistors/FlatXml.php');
                 $flatXmlPersistor = new PHPUnit_Extensions_Database_DataSet_Persistors_FlatXml();
                 $flatXmlPersistor->setFileName($spec);
                 return $flatXmlPersistor;
 
             case 'yaml':
-                require_once ('PHPUnit/Extensions/Database/DataSet/Persistors/Yaml.php');
                 $yamlPersistor = new PHPUnit_Extensions_Database_DataSet_Persistors_Yaml();
                 $yamlPersistor->setFileName($spec);
                 return $yamlPersistor;
@@ -90,4 +85,3 @@ class PHPUnit_Extensions_Database_DataSet_Persistors_Factory
         }
     }
 }
-?>

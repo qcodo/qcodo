@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util_TestDox
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.3.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Prettifies class and method names for use in TestDox documentation.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util_TestDox
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.11
+ * @version    Release: 3.5.15
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.1.0
  */
@@ -113,11 +109,11 @@ class PHPUnit_Util_TestDox_NamePrettifier
             return $buffer;
         }
 
-        $string = preg_replace('#\d+$#', '', $name);
+        $string = preg_replace('#\d+$#', '', $name, -1, $count);
 
         if (in_array($string, $this->strings)) {
             $name = $string;
-        } else {
+        } else if ($count == 0) {
             $this->strings[] = $string;
         }
 
@@ -130,7 +126,7 @@ class PHPUnit_Util_TestDox_NamePrettifier
         if (substr($name, 0, 4) == 'test') {
             $offset = 4;
         } else {
-            $offset = 0;
+            $offset  = 0;
             $name[0] = strtoupper($name[0]);
         }
 
@@ -145,7 +141,7 @@ class PHPUnit_Util_TestDox_NamePrettifier
                 $isNumeric = is_numeric($name[$i]);
 
                 if (!$wasNumeric && $isNumeric) {
-                    $buffer .= ' ';
+                    $buffer    .= ' ';
                     $wasNumeric = TRUE;
                 }
 
@@ -180,4 +176,3 @@ class PHPUnit_Util_TestDox_NamePrettifier
         $this->suffix = $suffix;
     }
 }
-?>
