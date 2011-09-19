@@ -40,7 +40,7 @@
 			}
 
 			$objReflection = new ReflectionMethod($this->strType, 'AlterSoapComplexTypeArray');
-			$objReflection->invoke(null, &$strComplexTypesArray, false);
+			$objReflection->invoke(null, $strComplexTypesArray, false);
 			return $strToReturn;
 		}
 

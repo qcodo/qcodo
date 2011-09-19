@@ -75,7 +75,7 @@
 <?php
 		$objPeople = $objClient->GetPeople('Smith');
 		foreach ($objPeople as $objPerson)
-			printf('<li>%s %s</li>', $objPerson->FirstName, $objPerson->LastName);
+			printf('<li>%s %s</li>', $objPerson->strFirstName, $objPerson->strLastName);
 ?>
 		</ul>
 	</div>

@@ -11,7 +11,8 @@ nbproject
 /includes/qcodo/_core/manifest/*.xml
 /includes/data_classes
 /includes/data_meta_controls
-/includes/qcodo/cache/i18n/*
+/includes/qcodo/cache/i18n
+/includes/qcodo/cache/soap
 /www/drafts/dashboard/*Panel*
 /www/drafts/*_*
 /log
