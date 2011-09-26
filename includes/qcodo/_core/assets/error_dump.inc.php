@@ -31,7 +31,7 @@
 			<td nowrap="nowrap" class="headingRight">
 				<b>PHP Version:</b> <?php _p(PHP_VERSION); ?>;&nbsp;&nbsp;<b>Zend Engine Version:</b> <?php _p(zend_version()); ?>;&nbsp;&nbsp;<b>Qcodo Version:</b> <?php _p(QCODO_VERSION); ?><br />
 				<?php if (array_key_exists('OS', $_SERVER)) printf('<b>Operating System:</b> %s;&nbsp;&nbsp;', $_SERVER['OS']); ?><b>Application:</b> <?php _p($_SERVER['SERVER_SOFTWARE']); ?>;&nbsp;&nbsp;<b>Server Name:</b> <?php _p($_SERVER['SERVER_NAME']); ?><br />
-				<b>HTTP User Agent:</b> <?php _p($_SERVER['HTTP_USER_AGENT']); ?></td>
+				<b>HTTP User Agent:</b> <?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) _p($_SERVER['HTTP_USER_AGENT']); ?></td>
 		</tr>
 	</table>
 	
@@ -164,6 +164,6 @@
 <filename><?php _p(QErrorHandler::$FileNameOfError); ?></filename>
 <script><?php _p($_SERVER["PHP_SELF"]); ?></script>
 <server><?php _p($_SERVER['SERVER_NAME']); ?></server>
-<agent><?php _p($_SERVER['HTTP_USER_AGENT']); ?></agent>
+<agent><?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) print($_SERVER['HTTP_USER_AGENT']); ?></agent>
 </error>-->
 <?php } ?>
