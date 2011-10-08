@@ -14,6 +14,7 @@
 		 * This is called by the PHP5 Autoloader.  This method overrides the
 		 * one in ApplicationBase.
 		 *
+		 * @param $strClassName
 		 * @return void
 		 */
 		public static function Autoload($strClassName) {
