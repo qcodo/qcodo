@@ -75,25 +75,30 @@
 	<% } %>
 <% } %>
 
-					// Perform the UPDATE query
-					$objDatabase->NonQuery('
-						UPDATE
-							<%= $strEscapeIdentifierBegin %><%= $objTable->Name %><%= $strEscapeIdentifierEnd %>
-						SET
-<% foreach ($objTable->ColumnArray as $objColumn) { %>
-	<% if ((!$objColumn->Identity) && (!$objColumn->Timestamp)) { %>
-							<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objColumn->VariableName %>) . ',
-	<% } %>
-<% } %><%--%>
-						WHERE
-<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) { %>
-	<% if ($objColumn->Identity) { %>
-							<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objColumn->VariableName %>) . ' AND
-	<% } %><% if (!$objColumn->Identity) { %>
-							<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this->__<%= $objColumn->VariableName %>) . ' AND
-	<% } %>
-<% } %><%-----%>
-					');
+					if ($this->__blnDirtyColumnArray){
+						// Perform the UPDATE query
+						$strSetStatement = '';
+						foreach ($this->__blnDirtyColumnArray as $strDirtyColumn => $strDirtyColumnVariableName){
+							$strSetStatement .= '<%= $strEscapeIdentifierBegin %>'. $strDirtyColumn .'<%= $strEscapeIdentifierEnd %> = '. $objDatabase->SqlVariable($this->{$strDirtyColumnVariableName}) .',';
+						}
+						$strSetStatement = substr($strSetStatement, 0, -1);
+						$objDatabase->NonQuery('
+							UPDATE
+								<%= $strEscapeIdentifierBegin %><%= $objTable->Name %><%= $strEscapeIdentifierEnd %>
+							SET
+								'.$strSetStatement.'
+							WHERE
+							<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) { %>
+							<% if ($objColumn->Identity) { %>
+								<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this-><%= $objColumn->VariableName %>) . ' AND
+					<% } %><% if (!$objColumn->Identity) { %>
+								<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %> = ' . $objDatabase->SqlVariable($this->__<%= $objColumn->VariableName %>) . ' AND
+							<% } %>
+		   <% } %><%-----%>
+						');
+						//erase dirty columns
+						$this->__blnDirtyColumnArray = array();
+					}
 
 					// Journaling
 					if ($objDatabase->JournalingDatabase) $this->Journal('UPDATE');

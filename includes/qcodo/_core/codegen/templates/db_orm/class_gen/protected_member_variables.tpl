@@ -81,3 +81,10 @@
 		 * @var bool __blnRestored;
 		 */
 		protected $__blnRestored;
+
+		/**
+		 * Protected internal member array that specifies whether or not this column was modified.
+		 * Used by Save() to determine the columns involved in the UPDATE call.
+		 * @var array $__blnDirtyColumnArray;
+		 */
+		protected $__blnDirtyColumnArray = array();

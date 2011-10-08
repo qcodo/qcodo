@@ -21,7 +21,13 @@
 		<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
 						$this-><%= $objColumn->Reference->VariableName %> = null;
 		<% } %>
-						return ($this-><%= $objColumn->VariableName %> = QType::Cast($mixValue, <%= $objColumn->VariableTypeAsConstant %>));
+						$mixValue = QType::Cast($mixValue, <%= $objColumn->VariableTypeAsConstant %>);
+						<% if ((!$objColumn->Identity) && (!$objColumn->Timestamp)) { %>
+						if ($mixValue !== $this-><%= $objColumn->VariableName %>){
+						    $this->__blnDirtyColumnArray['<%= $objColumn->Name %>'] = '<%= $objColumn->VariableName %>';
+						}
+						<% } %>
+						return $this-><%= $objColumn->VariableName %> = $mixValue;
 					} catch (QCallerException $objExc) {
 						$objExc->IncrementOffset();
 						throw $objExc;
