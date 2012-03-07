@@ -16,7 +16,7 @@
 	if (array_key_exists('PWD', $_SERVER))	printf("Working Directory: %s\r\n", $_SERVER['PWD']);
 	if (array_key_exists('USER', $_SERVER))	printf("      Run As User: %s\r\n", $_SERVER['USER']);
 	foreach (QErrorHandler::$ErrorAttributeArray as $objErrorAttribute) if (!$objErrorAttribute->MultiLine) {
-		printf("%17s: %s\r\n", $objErrorAttribute->Label, $objErrorAttribute->Content);
+		printf("%17s: %s\r\n", $objErrorAttribute->Label, $objErrorAttribute->Contents);
 	}
 
 	printf("\r\nCall Stack:\r\n    ");
@@ -25,7 +25,7 @@
 
 	foreach (QErrorHandler::$ErrorAttributeArray as $objErrorAttribute) if ($objErrorAttribute->MultiLine) {
 		printf("\r\n%s:\r\n    ", $objErrorAttribute->Label);
-		print(trim(str_replace("\n", "\n    ", $objErrorAttribute->Content)));
+		print(trim(str_replace("\n", "\n    ", $objErrorAttribute->Contents)));
 		print("\r\n\r\n");
 	}
 
