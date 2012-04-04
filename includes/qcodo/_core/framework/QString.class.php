@@ -64,9 +64,13 @@
 		 */
 		public final static function Truncate($strText, $intMaxLength, $blnHtmlEntities = true) {
 			if (strlen($strText) > $intMaxLength) {
-				$strText = substr($strText, 0, $intMaxLength - 1);
-				if ($blnHtmlEntities) $strText = QApplication::HtmlEntities($strText);
-				$strText .= '&hellip;';
+				if ($blnHtmlEntities) {
+					$strText = substr($strText, 0, $intMaxLength - 1);
+					$strText = QApplication::HtmlEntities($strText);
+					$strText .= '&hellip;';
+				} else {
+					$strText = substr($strText, 0, $intMaxLength - 3) . '...';
+				}
 				return $strText;
 			} else {
 				if ($blnHtmlEntities)
