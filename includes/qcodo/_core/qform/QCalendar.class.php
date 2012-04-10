@@ -8,6 +8,7 @@
 
 		protected $strJavaScripts = '_core/calendar.js';
 		protected $strCssClass = 'calendar';
+		protected $strJavaScriptSetDateOverride = null;
 
 		public function ParsePostData() {}
 		public function Validate() {return true;}
@@ -38,7 +39,16 @@
 		public function AddAction($objEvent, $objAction) {
 			throw new QCallerException('QCalendar does not support custom events');
 		}
-		public function __construct($objParentObject, QDateTimeTextBox $dtxLinkedControl, $strControlId = null) {
+
+		/**
+		 * The constructor for the QCalendar QControl object
+		 * @param mixed $objParentObject
+		 * @param QDateTimeTextBox $dtxLinkedControl the linked QDateTimeTextBox to this calendar icon/control
+		 * @param string $strControlId optional
+		 * @param boolean $blnAutoShowOnClick whether or not the calendar should automatically display upon clicking the qdatetimetexbox (default is yes/true)
+		 * @throws QCallerException
+		 */
+		public function __construct($objParentObject, QDateTimeTextBox $dtxLinkedControl, $strControlId = null, $blnAutoShowOnClick = true) {
 			try {
 				parent::__construct($objParentObject, $strControlId);
 			} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
@@ -49,15 +59,23 @@
 			// Other Setup
 			$this->strCalendarImageSource = __IMAGE_ASSETS__ . '/calendar.png';
 			
-			$this->dtxLinkedControl->RemoveAllActions(QClickEvent::EventName);
-			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QJavaScriptAction("qc.getC('" . $this->strControlId . "').showCalendar(); "));
-			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QBlurControlAction($this->dtxLinkedControl));
-			$this->dtxLinkedControl->AddAction(new QClickEvent(), new QTerminateAction());
+			if ($blnAutoShowOnClick) {
+				$this->dtxLinkedControl->RemoveAllActions(QClickEvent::EventName);
+				$this->dtxLinkedControl->AddAction(new QClickEvent(), new QJavaScriptAction("qc.getC('" . $this->strControlId . "').showCalendar(); "));
+				$this->dtxLinkedControl->AddAction(new QClickEvent(), new QBlurControlAction($this->dtxLinkedControl));
+				$this->dtxLinkedControl->AddAction(new QClickEvent(), new QTerminateAction());
+			}
 		}
+
 		public function GetEndScript() {
 			$strToReturn = parent::GetEndScript();
 
-			if (QDateTime::$Translate) {
+			if ($this->strJavaScriptSetDateOverride) {
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null); ',
+						$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'));
+				$strToReturn .= sprintf('qc.getC("%s").setDate = %s;', $this->strControlId, $this->strJavaScriptSetDateOverride);
+
+			} else if (QDateTime::$Translate) {
 				$strShortNameArray = array();
 				$strLongNameArray = array();
 				$strDayArray = array();
@@ -99,6 +117,7 @@
 			switch ($strName) {
 				case 'CalendarImageSource': return $this->strCalendarImageSource;
 				case 'DateTime': return $this->dtxLinkedControl->DateTime;
+				case 'JavaScriptSetDateOverride': return $this->strJavaScriptSetDateOverride;
 
 				default:
 					try {
@@ -114,11 +133,20 @@
 			$this->blnModified = true;
 
 			switch ($strName) {
-
-				case 'CalendarImageSource': 
+				
+				case 'CalendarImageSource':
 					try {
-						return ($this->strCalendarImageSource = QType::Cast($mixValue, QType::Integer));
-					} catch (QCallerException $objExc) { $objExc->IncrementOffset(); throw $objExc; }
+						return ($this->strCalendarImageSource = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset(); throw $objExc;
+					}
+
+				case 'JavaScriptSetDateOverride':
+					try {
+						return ($this->strJavaScriptSetDateOverride = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset(); throw $objExc;
+					}
 
 				default:
 					try {
