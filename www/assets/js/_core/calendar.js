@@ -7,7 +7,7 @@
 	qcodo.dayNames = new Array("Su","Mo","Tu","We","Th","Fr","Sa");
 	qcodo.dateTimeTranslated = false;
 
-	qcodo.registerCalendar = function(mixControl, strDtxControlId, strTodayText, strCancelText, strNameArray) {
+	qcodo.registerCalendar = function(mixControl, strDtxControlId, strTodayText, strCancelText, strNameArray, blnHideOnClickAway) {
 		// Initialize the Event Handler
 		qcodo.handleEvent();
 
@@ -25,6 +25,9 @@
 		// Set Names
 		objControl.todayText = strTodayText;
 		objControl.cancelText = strCancelText;
+
+		// Hide on ClickAway?
+		objControl.hideOnClickAway = blnHideOnClickAway;
 
 		if (strNameArray) {
 			for (var intMonth = 0; intMonth < 12; intMonth++) {
@@ -51,6 +54,24 @@
 
 			// Figure Out the Position and Set It
 			this.wrapper.setAbsolutePosition(strPositionArray.x, strPositionArray.y);
+
+			if (this.hideOnClickAway) {
+				document.onmousedown = function (e) {
+					e = e || event;
+					var target = e.target || e.srcElement;
+					var box = document.getElementById(qcodo.openCalendar + "_cal");
+					do {
+						if (box == target) {
+							// Click occured inside the box, do nothing.
+							return;
+						}
+						target = target.parentNode;
+					} while (target);
+
+					// Click was outside the box, hide it.
+					qc.getControl(qcodo.openCalendar).hideCalendar();
+				};
+			};
 		};
 
 		objControl.setDate = function(intYear, intMonth, intDay) {
@@ -163,6 +184,7 @@
 		objControl.hideCalendar = function() {
 			qcodo.openCalendar = null;
 			this.calendarPane.style.display = 'none';
+			document.onmousedown = null;
 		};
 
 		objControl.onclick = objControl.showCalendar;

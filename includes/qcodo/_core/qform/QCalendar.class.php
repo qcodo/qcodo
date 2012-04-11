@@ -9,6 +9,7 @@
 		protected $strJavaScripts = '_core/calendar.js';
 		protected $strCssClass = 'calendar';
 		protected $strJavaScriptSetDateOverride = null;
+		protected $blnHideOnClickAway = false;
 
 		public function ParsePostData() {}
 		public function Validate() {return true;}
@@ -71,8 +72,8 @@
 			$strToReturn = parent::GetEndScript();
 
 			if ($this->strJavaScriptSetDateOverride) {
-				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null); ',
-						$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'));
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null, %s); ',
+						$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'), $this->blnHideOnClickAway ? 1 : 0);
 				$strToReturn .= sprintf('qc.getC("%s").setDate = %s;', $this->strControlId, $this->strJavaScriptSetDateOverride);
 
 			} else if (QDateTime::$Translate) {
@@ -101,11 +102,11 @@
 				}
 				$strArrays = sprintf('new Array(new Array(%s), new Array(%s), new Array(%s))',
 					implode(', ', $strLongNameArray), implode(', ', $strShortNameArray), implode(', ', $strDayArray));
-				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", %s); ',
-					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'), $strArrays);
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", %s, %s); ',
+					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'), $strArrays, $this->blnHideOnClickAway ? 1 : 0);
 			} else {
-				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null); ',
-					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'));
+				$strToReturn .= sprintf('qc.regCAL("%s", "%s", "%s", "%s", null, %s); ',
+					$this->strControlId, $this->dtxLinkedControl->ControlId, QApplication::Translate('Today'), QApplication::Translate('Cancel'), $this->blnHideOnClickAway ? 1 : 0);
 			}
 			return $strToReturn;
 		}
@@ -118,6 +119,7 @@
 				case 'CalendarImageSource': return $this->strCalendarImageSource;
 				case 'DateTime': return $this->dtxLinkedControl->DateTime;
 				case 'JavaScriptSetDateOverride': return $this->strJavaScriptSetDateOverride;
+				case 'HideOnClickAway': return $this->blnHideOnClickAway;
 
 				default:
 					try {
@@ -133,10 +135,16 @@
 			$this->blnModified = true;
 
 			switch ($strName) {
-				
 				case 'CalendarImageSource':
 					try {
 						return ($this->strCalendarImageSource = QType::Cast($mixValue, QType::String));
+					} catch (QCallerException $objExc) {
+						$objExc->IncrementOffset(); throw $objExc;
+					}
+
+				case 'HideOnClickAway':
+					try {
+						return ($this->blnHideOnClickAway = QType::Cast($mixValue, QType::Boolean));
 					} catch (QCallerException $objExc) {
 						$objExc->IncrementOffset(); throw $objExc;
 					}
