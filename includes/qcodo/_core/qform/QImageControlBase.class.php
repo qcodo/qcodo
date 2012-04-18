@@ -10,10 +10,12 @@
 		protected $strBackColor = 'ffffff';
 		protected $blnScaleCanvasDown = false;
 		protected $blnScaleImageUp = true;
+		protected $blnTransparentBackgorund = false;
 
 		// BEHAVIOR
 		protected $strImageType = null;
 		protected $intQuality = 100;
+		protected $intBackgroundAlpha = 127;
 
 		protected $strImagePath;
 		protected $strAlternateText;
@@ -455,7 +457,13 @@
 			$intRed = hexdec(substr($this->strBackColor, 0, 2));
 			$intGreen = hexdec(substr($this->strBackColor, 2, 2));
 			$intBlue = hexdec(substr($this->strBackColor, 4));
-			$clrBackground = imagecolorallocate($objFinalImage, $intRed, $intGreen, $intBlue);
+			if(!$this->blnTransparentBackgorund)
+		              $clrBackground = imagecolorallocate($objFinalImage, $intRed, $intGreen, $intBlue);
+		        else{
+		              imagealphablending($objFinalImage, false);
+		              imagesavealpha($objFinalImage, true);
+		              $clrBackground = imagecolorallocatealpha($objFinalImage, $intRed, $intGreen, $intBlue, $this->intBackgroundAlpha);
+		        }
 
 			// Paint Background
 			imagefilledrectangle($objFinalImage, 0, 0, $intCanvasWidth, $intCanvasHeight, $clrBackground);
@@ -481,6 +489,9 @@
 
 			// Resample Image Over
 			imagecopyresampled($objFinalImage, $objImage, $intX, $intY, 0, 0, $intDestinationWidth, $intDestinationHeight, $intSourceWidth, $intSourceHeight);
+
+			if($this->blnTransparentBackgorund)
+              			imagealphablending($objFinalImage, true);
 
 			// Output the Image (if path isn't specified, output to buffer.  Otherwise, output to disk)
 			if (!$strPath)
@@ -524,10 +535,12 @@
 				// APPEARANCE
 				case "ScaleCanvasDown": return $this->blnScaleCanvasDown;
 				case "ScaleImageUp": return $this->blnScaleImageUp;
+				case "TransparentBackground": return $this->blnTransparentBackgorund;
 
 				// BEHAVIOR
 				case "ImageType": return $this->strImageType;
 				case "Quality": return $this->intQuality;
+				case "BackgroundAlpha": return $this->intBackgroundAlpha;
 
 				// MISCELLANEOUS
 				case "CacheFolder": return $this->strCacheFolder;
@@ -572,6 +585,14 @@
 						throw $objExc;
 					}
 
+				case "TransparentBackground":
+					try {
+						$this->blnTransparentBackgorund = QType::Cast($mixValue, QType::Boolean);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
 
 				// BEHAVIOR
 				case "ImageType":
@@ -586,6 +607,15 @@
 				case "Quality":
 					try {
 						$this->intQuality = QType::Cast($mixValue, QType::Integer);
+						break;
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+					
+				case "BackgroundAlpha":
+					try {
+						$this->intBackgroundAlpha = QType::Cast($mixValue, QType::Integer);
 						break;
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
