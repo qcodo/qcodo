@@ -37,6 +37,7 @@
 		protected $strName;
 		protected $strHtml;
 		protected $blnHtmlEntities = true;
+		protected $intDefaultSortDirection = 0;
 
 		public function __construct($strName, $strHtml = null, $objOverrideParameters = null) {
 			$this->strName = $strName;
@@ -175,6 +176,7 @@
 				// MANUAL QUERY BEHAVIORS
 				case "SortByCommand": return $this->objOrderByClause;
 				case "ReverseSortByCommand": return $this->objReverseOrderByClause;
+				case "DefaultSortDirection": return $this->intDefaultSortDirection;
 
 				// MISC
 				case "Html": return $this->strHtml;
@@ -371,8 +373,13 @@
 						$objExc->IncrementOffset();
 						throw $objExc;
 					}
-					
-					
+				case "DefaultSortDirection":
+					if ($mixValue == 1)
+						$this->intDefaultSortDirection = 1;
+					else
+						$this->intDefaultSortDirection = 0;
+					break;
+
 				// MISC
 				case "Html":
 					try {

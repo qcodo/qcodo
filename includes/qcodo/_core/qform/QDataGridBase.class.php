@@ -456,7 +456,7 @@
 					} else {
 						// Nope -- so let's set it to this column
 						$this->intSortColumnIndex = $intColumnIndex;
-						$this->intSortDirection = 0;
+						$this->intSortDirection = $objColumn->DefaultSortDirection;
 					}
 				} else {
 					// It isn't -- clear all sort properties
