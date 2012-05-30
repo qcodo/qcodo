@@ -39,7 +39,7 @@
 		 */
 		public function <%= $strLabelId %>_Create($strControlId = null, $strGlue = ', ') {
 			$this-><%= $strLabelId %> = new QLabel($this->objParentObject, $strControlId);
-			$this-><%= $strControlId %>->Name = QApplication::Translate('<%= QConvertNotation::WordsFromCamelCase($objManyToManyReference->ObjectDescriptionPlural) %>');
+			$this-><%= $strLabelId %>->Name = QApplication::Translate('<%= QConvertNotation::WordsFromCamelCase($objManyToManyReference->ObjectDescriptionPlural) %>');
 			
 			$objAssociatedArray = $this-><%= $strObjectName %>->Get<%= $objManyToManyReference->ObjectDescription; %>Array();
 			$strItems = array();
