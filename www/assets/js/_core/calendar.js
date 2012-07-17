@@ -59,6 +59,9 @@
 				if (intMonth < 10) {
 					intMonth = "0" + intMonth;
 				}
+				if (intDay < 10) {
+					intDay = "0" + intDay;
+				}
 				this.dateTimeTextBox.value = intYear + "-" + intMonth + "-" + intDay;
 			} else
 				this.dateTimeTextBox.value = qcodo.monthNamesAbbreviated[intMonth] + " " + intDay + " " + intYear;
