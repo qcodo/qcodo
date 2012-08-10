@@ -61,6 +61,7 @@
 		 * @param boolean $blnSelected
 		 * @param string $strItemGroup
 		 * @param string $strOverrideParameters
+		 * @return QListItem
 		 */
 		public function AddItem($mixListItemOrName, $strValue = null, $blnSelected = null, $strItemGroup = null, $strOverrideParameters = null) {
 			$this->blnModified = true;
@@ -73,6 +74,8 @@
 				$objListItem = new QListItem($mixListItemOrName, $strValue, $blnSelected, $strItemGroup);
 
 			array_push($this->objItemsArray, $objListItem);
+
+			return $objListItem;
 		}
 
 		/**
