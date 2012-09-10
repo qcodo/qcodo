@@ -196,8 +196,8 @@
 	};
 
 	qcodo.scroll = {
-		x: window.scrollX || (window.document.body) ? window.document.body.scrollLeft : null,
-		y: window.scrollY || (window.document.body) ? window.document.body.scrollTop : null,
+		x: (window.document.body) ? window.document.body.scrollLeft : (window.scrollX ? window.scrollX : null),
+		y: (window.document.body) ? window.document.body.scrollTop : (window.scrollY ? window.scrollY : null),
 //		x: null,
 //		y: null,
 		width: (window.document.body) ? (window.document.body.scrollWidth - qcodo.client.width) : null,
