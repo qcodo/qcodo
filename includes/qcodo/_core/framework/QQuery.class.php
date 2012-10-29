@@ -1012,6 +1012,14 @@
 			return new QQDistinct();
 		}
 
+		static public function FindInSet(QQNode $objQueryNode, $mixValue) {
+			return new QQConditionInSet($objQueryNode, $mixValue);
+		}
+
+		static public function NotFindInSet(QQNode $objQueryNode, $mixValue) {
+			return new QQConditionNotInSet($objQueryNode, $mixValue);
+		}
+
 		static public function CustomNode($strSql) {
 			return new QQCustomNode($strSql);
 		}
@@ -1037,6 +1045,58 @@
 		/////////////////////////
 		static public function NamedValue($strName) {
 			return new QQNamedValue($strName);
+		}
+	}
+
+	class QQConditionInSet extends QQConditionComparison {
+		public function __construct(QQNode $objQueryNode, $strValue) {
+			$this->objQueryNode = $objQueryNode;
+			if (!$objQueryNode->_ParentNode)
+				throw new QInvalidCastException('Unable to cast "' . $objQueryNode->_Name . '" table to Column-based QQNode', 3);
+
+			if ($strValue instanceof QQNamedValue)
+				$this->mixOperand = $strValue;
+			else {
+				try {
+					$this->mixOperand = QType::Cast($strValue, QType::String);
+				} catch (QCallerException $objExc) {
+					$objExc->IncrementOffset();
+					$objExc->IncrementOffset();
+					throw $objExc;
+				}
+			}
+		}
+		public function UpdateQueryBuilder(QQueryBuilder $objBuilder) {
+			if ($this->mixOperand instanceof QQNamedValue)
+				$objBuilder->AddWhereItem('FIND_IN_SET(' . $this->mixOperand->Parameter() . ',' . $this->objQueryNode->GetColumnAlias($objBuilder) . ')');
+			else
+				$objBuilder->AddWhereItem('FIND_IN_SET(' . $objBuilder->Database->SqlVariable($this->mixOperand) . ',' . $this->objQueryNode->GetColumnAlias($objBuilder) . ')');
+		}
+	}
+
+	class QQConditionNotInSet extends QQConditionComparison {
+		public function __construct(QQNode $objQueryNode, $strValue) {
+			$this->objQueryNode = $objQueryNode;
+			if (!$objQueryNode->_ParentNode)
+				throw new QInvalidCastException('Unable to cast "' . $objQueryNode->_Name . '" table to Column-based QQNode', 3);
+
+			if ($strValue instanceof QQNamedValue)
+				$this->mixOperand = $strValue;
+			else {
+				try {
+					$this->mixOperand = QType::Cast($strValue, QType::String);
+				} catch (QCallerException $objExc) {
+					$objExc->IncrementOffset();
+					$objExc->IncrementOffset();
+					throw $objExc;
+				}
+			}
+		}
+		public function UpdateQueryBuilder(QQueryBuilder $objBuilder) {
+			if ($this->mixOperand instanceof QQNamedValue)
+				$objBuilder->AddWhereItem('NOT FIND_IN_SET(' . $this->mixOperand->Parameter() . ',' . $this->objQueryNode->GetColumnAlias($objBuilder) . ')');
+			else
+				$objBuilder->AddWhereItem('NOT FIND_IN_SET(' . $objBuilder->Database->SqlVariable($this->mixOperand) . ',' . $this->objQueryNode->GetColumnAlias($objBuilder) . ')');
 		}
 	}
 
