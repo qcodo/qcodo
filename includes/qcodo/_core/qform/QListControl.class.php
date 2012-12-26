@@ -65,7 +65,7 @@
 		 */
 		public function AddItem($mixListItemOrName, $strValue = null, $blnSelected = null, $strItemGroup = null, $strOverrideParameters = null) {
 			$this->blnModified = true;
-			if (gettype($mixListItemOrName) == QType::Object)
+			if (QType::GetType($mixListItemOrName) == QType::Object)
 				$objListItem = QType::Cast($mixListItemOrName, "QListItem");
 			elseif ($strOverrideParameters)			
 				// The OverrideParameters can only be included if they are not null, because OverrideAttributes in QBaseClass can't except a NULL Value

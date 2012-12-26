@@ -70,8 +70,44 @@
 		const ArrayType = 'array';
 
 		const DateTime = 'QDateTime';
-		
+
 		const Resource = 'resource';
+
+		/**
+		 * Method to get the php type of a variable.
+		 * This is done because php builtin gettype function
+		 * is unreliable.
+		 *
+		 * From http://ar2.php.net/manual/en/function.gettype.php :
+		 * "Never use gettype() to test for a certain type, since the returned
+		 * string may be subject to change in a future version. In addition,
+		 * it is slow too, as it involves string comparison.
+		 * Instead, use the is_* functions.
+		 *
+		 * @param mixed $mixItem
+		 * @return string
+		 */
+		public static function GetType($mixItem){
+			if (is_null($mixItem)){
+				return null;
+			} else if (is_string($mixItem)) {
+				return QType::String;
+			} else if (is_integer($mixItem)){
+				return QType::Integer;
+			} else if (is_double($mixItem)) {
+				return QType::Float;
+			} else if (is_bool($mixItem)){
+				return QType::Boolean;
+			} else if (is_object($mixItem)){
+				return QType::Object;
+			} else if (is_array($mixItem)){
+				return QType::ArrayType;
+			} else if (is_resource($mixItem)){
+				return QType::Resource;
+			}
+			throw new QCallerException(sprintf('Could not figure type of %s', $mixItem));
+		}
+
 
 		private static function CastObjectTo($objItem, $strType) {
 			try {
@@ -106,11 +142,9 @@
 		}
 
 		private static function CastValueTo($mixItem, $strType) {
-			$strItemType = gettype($mixItem);
-
 			switch ($strType) {
 				case QType::Boolean:
-					if ($strItemType == QType::Boolean)
+					if (is_bool($mixItem))
 						return $mixItem;
 					if (is_null($mixItem))
 						return false;
@@ -122,44 +156,47 @@
 					return $mixItem;
 
 				case QType::Integer:
-				case QType::Float:
-					if (strlen($mixItem) == 0)
-						return null;
+					if (is_integer($mixItem))
+						return $mixItem;
+					if (!is_numeric($mixItem) && !is_bool($mixItem) && $mixItem != ''){
+						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', QType::GetType($mixItem), $strType));
+					}
+					if (is_bool($mixItem)){
+						return (integer)($mixItem ? 1:0);
+					}
 
-					$mixOriginal = $mixItem;
+					//enforce positive value
+					$mixItemTest = $mixItem;
+					if ($mixItemTest < 0){
+						$mixItemTest = $mixItemTest * (-1);
+					}
+					if ($mixItemTest > PHP_INT_MAX){
+						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s, try casting to QType::Float', QType::GetType($mixItem), $strType));
+					}
 					settype($mixItem, $strType);
-
-					// Check to make sure the value hasn't changed significantly
-					$mixTest = $mixItem;
-					settype($mixTest, gettype($mixOriginal));
-
-					// Has it?
-					if ($mixTest != $mixOriginal)
-						// Yes -- therefore this is an invalid cast
-						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s: %s', $strItemType, $strType, $mixOriginal));
-
 					return $mixItem;
-
-				case QType::String:
-					$mixOriginal = $mixItem;
+				case QType::Float:
+					if (is_double($mixItem))
+						return $mixItem;
+					if (!is_numeric($mixItem) && !is_bool($mixItem) && $mixItem != ''){
+						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', QType::GetType($mixItem), $strType));
+					}
+					if (is_bool($mixItem)){
+						return (double)($mixItem ? 1:0);
+					}
 					settype($mixItem, $strType);
-
-/*					// Check to make sure the value hasn't changed significantly
-					$mixTest = $mixItem;
-					settype($mixTest, gettype($mixOriginal));
-
-					// Has it?
-					if ($mixTest != $mixOriginal)
-						// Yes -- therefore this is an invalid cast
-						throw new QInvalidCastException(sprintf('Unable to cast %s value to %s: %s', $strItemType, $strType, $mixOriginal));*/
-
+					return $mixItem;
+				case QType::String:
+					if (is_string($mixItem))
+						return $mixItem;
+					settype($mixItem, $strType);
 					return $mixItem;
 
 				default:
-					throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', $strItemType, $strType));
+					throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', QType::GetType($mixItem), $strType));
 			}
 		}
-		
+
 		private static function CastArrayTo($arrItem, $strType) {
 			if ($strType == QType::ArrayType)
 				return $arrItem;
@@ -181,12 +218,12 @@
 		 * @return mixed the passed in value/array/object that has been cast to strType
 		 */
 		public final static function Cast($mixItem, $strType) {
-			// Automatically Return NULLs
-			if (is_null($mixItem))
-				return null;
-
 			// Figure out what PHP thinks the type is
-			$strPhpType = gettype($mixItem);
+			$strPhpType = QType::GetType($mixItem);
+
+			// Automatically Return NULLs
+			if (is_null($strPhpType))
+				return null;
 
 			switch ($strPhpType) {
 				case QType::Object:
@@ -252,7 +289,7 @@
 					throw new QInvalidCastException(sprintf('Unable to determine type of item to lookup its constant: %s', $strType));
 			}
 		}
-		
+
 		public final static function TypeFromDoc($strType) {
 			switch (strtolower($strType)) {
 				case 'string':
@@ -295,7 +332,7 @@
 					}
 			}
 		}
-		
+
 		/**
 		 * Used by the Qcodo Code Generator and QSoapService class to allow for the xml generation of
 		 * the actual "s:type" Soap Variable types.
@@ -359,7 +396,7 @@
 
 			if (!array_key_exists($strArrayName, $strComplexTypeArray))
 				$strComplexTypeArray[$strArrayName] = sprintf(
-					'<s:complexType name="%s"><s:sequence>' . 
+					'<s:complexType name="%s"><s:sequence>' .
 					'<s:element minOccurs="0" maxOccurs="unbounded" name="%s" type="%s"/>' .
 					'</s:sequence></s:complexType>',
 					QType::SoapArrayType($strType),
