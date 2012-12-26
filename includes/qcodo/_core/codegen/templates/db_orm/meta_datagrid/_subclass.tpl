@@ -1,4 +1,5 @@
 <template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_META_CONTROLS__ %>" TargetFileName="<%= $objTable->ClassName %>DataGrid.class.php"/>
+<% shell_exec(sprintf('%s/qcodo%s phpunit --skeleton-test %s',__DEVTOOLS_CLI__,(QApplication::$Windows)?'.bat':'',$objTable->ClassName .'DataGrid')); %>
 <?php
 	require(__DATAGEN_META_CONTROLS__ . '/<%= $objTable->ClassName %>DataGridGen.class.php');
 
