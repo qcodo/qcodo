@@ -65,7 +65,7 @@
 
 	qcodo.ajaxQueue = new Array();
 
-	qcodo.postAjax = function(strForm, strControl, strEvent, strParameter, strWaitIconControlId) {
+	qcodo.postAjax = function(strForm, strControl, strEvent, strParameter, strWaitIconControlId, strToggleEnableControlIds) {
 		// Only add if we're not unloaded
 		if (!qc.unloadFlag) {
 			if (qc.beforeUnloadFlag) {
@@ -78,7 +78,7 @@
 				blnQueueEmpty = true;
 
 			// Enqueue the AJAX Request
-			qcodo.ajaxQueue.push(new Array(strForm, strControl, strEvent, strParameter, strWaitIconControlId));
+			qcodo.ajaxQueue.push(new Array(strForm, strControl, strEvent, strParameter, strWaitIconControlId, strToggleEnableControlIds));
 
 			// If the Queue was originally empty, call the Dequeue
 			if (blnQueueEmpty)
@@ -92,6 +92,7 @@
 
 	qcodo.objAjaxWaitIcon = null;
 	qcodo.ajaxRequest = null;
+	qcodo.arrToggleEnableControls = [];
 
 	qcodo.handleAjaxResponse = function(objEvent, objIframeResponse) {
 		var objRequest;
@@ -172,6 +173,11 @@
 			if (qcodo.objAjaxWaitIcon)
 				qcodo.objAjaxWaitIcon.style.display = 'none';
 
+			// Enable controls (if applicable)
+			for (var i = 0; i < qcodo.arrToggleEnableControls.length; i++) {
+				qcodo.arrToggleEnableControls[i].disabled = false;
+			}
+
 			// If there are still AjaxEvents in the queue, go ahead and process/dequeue them
 			if (qcodo.ajaxQueue.length > 0)
 				qcodo.dequeueAjaxQueue();
@@ -185,6 +191,7 @@
 			strEvent = this.ajaxQueue[0][2];
 			strParameter = this.ajaxQueue[0][3];
 			strWaitIconControlId = this.ajaxQueue[0][4];
+			strToggleEnableControlIds = this.ajaxQueue[0][5];
 
 			// Display WaitIcon (if applicable)
 			if (strWaitIconControlId) {
@@ -192,6 +199,16 @@
 				if (this.objAjaxWaitIcon)
 					this.objAjaxWaitIcon.style.display = 'inline';
 			};
+
+			// Disable controls (if applicable)
+			var arrToggleEnableControlIds = strToggleEnableControlIds.split(',');
+			for (var i = 0; i < arrToggleEnableControlIds.length; i++) {
+				var objToggleEnableControl = document.getElementById(arrToggleEnableControlIds[i]);
+				if (objToggleEnableControl) {
+					this.arrToggleEnableControls.push(objToggleEnableControl);
+					objToggleEnableControl.disabled = true;
+				}
+			};			
 
 			var objForm = document.getElementById(strForm);
 			objForm.Qform__FormControl.value = strControl;

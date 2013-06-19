@@ -105,11 +105,13 @@
 		protected $strMethodName;
 		protected $objWaitIconControl;
 		protected $mixCausesValidationOverride;
+		protected $mixToggleEnableControls;
 
-		public function __construct($strMethodName = null, $objWaitIconControl = 'default', $mixCausesValidationOverride = null) {
+		public function __construct($strMethodName = null, $objWaitIconControl = 'default', $mixCausesValidationOverride = null, $mixToggleEnableControls = null) {
 			$this->strMethodName = $strMethodName;
 			$this->objWaitIconControl = $objWaitIconControl;
 			$this->mixCausesValidationOverride = $mixCausesValidationOverride;
+			$this->mixToggleEnableControls = $mixToggleEnableControls;
 		}
 
 		public function __get($strName) {
@@ -120,6 +122,8 @@
 					return $this->objWaitIconControl;
 				case 'CausesValidationOverride':
 					return $this->mixCausesValidationOverride;
+				case 'ToggleEnableControls':
+					return $this->mixToggleEnableControls;
 				default:
 					try {
 						return parent::__get($strName);
@@ -139,8 +143,19 @@
 				$strWaitIconControlId = $this->objWaitIconControl->ControlId;
 			}
 
-			return sprintf("qc.pA('%s', '%s', '%s', '%s', '%s');",
-				$objControl->Form->FormId, $objControl->ControlId, get_class($this->objEvent), addslashes($objControl->ActionParameter), $strWaitIconControlId);
+			$strToggleEnableControlIds = null;
+			if ($this->mixToggleEnableControls instanceof QControl) {
+				$strToggleEnableControlIds = $this->mixToggleEnableControls->ControlId;
+			} else if (gettype($this->mixToggleEnableControls) == 'array') {
+				$arrToggleEnableControlIds = array();
+				foreach ($this->mixToggleEnableControls as $objToggleEnableControl) {
+					$arrToggleEnableControlIds[] = $objToggleEnableControl->ControlId;
+				}
+				$strToggleEnableControlIds = implode(',', $arrToggleEnableControlIds);
+			}
+
+			return sprintf("qc.pA('%s', '%s', '%s', '%s', '%s', '%s');",
+				$objControl->Form->FormId, $objControl->ControlId, get_class($this->objEvent), addslashes($objControl->ActionParameter), $strWaitIconControlId, $strToggleEnableControlIds);
 		}
 	}
 
@@ -151,8 +166,8 @@
 	}
 
 	class QAjaxControlAction extends QAjaxAction {
-		public function __construct(QControl $objControl, $strMethodName, $objWaitIconControl = 'default', $mixCausesValidationOverride = null) {
-			parent::__construct($objControl->ControlId . ':' . $strMethodName, $objWaitIconControl, $mixCausesValidationOverride);
+		public function __construct(QControl $objControl, $strMethodName, $objWaitIconControl = 'default', $mixCausesValidationOverride = null, $mixToggleEnableControls = null) {
+			parent::__construct($objControl->ControlId . ':' . $strMethodName, $objWaitIconControl, $mixCausesValidationOverride, $mixToggleEnableControls);
 		}
 	}
 
