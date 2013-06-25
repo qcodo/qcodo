@@ -146,7 +146,7 @@
 			$strToggleEnableControlIds = null;
 			if ($this->mixToggleEnableControls instanceof QControl) {
 				$strToggleEnableControlIds = $this->mixToggleEnableControls->ControlId;
-			} else if (gettype($this->mixToggleEnableControls) == 'array') {
+			} else if (is_array($this->mixToggleEnableControls)) {
 				$arrToggleEnableControlIds = array();
 				foreach ($this->mixToggleEnableControls as $objToggleEnableControl) {
 					$arrToggleEnableControlIds[] = $objToggleEnableControl->ControlId;

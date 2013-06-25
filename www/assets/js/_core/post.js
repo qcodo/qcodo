@@ -92,7 +92,7 @@
 
 	qcodo.objAjaxWaitIcon = null;
 	qcodo.ajaxRequest = null;
-	qcodo.arrToggleEnableControls = [];
+	qcodo.arrToggleEnableControlIds = [];
 
 	qcodo.handleAjaxResponse = function(objEvent, objIframeResponse) {
 		var objRequest;
@@ -173,9 +173,9 @@
 			if (qcodo.objAjaxWaitIcon)
 				qcodo.objAjaxWaitIcon.style.display = 'none';
 
-			// Enable controls (if applicable)
-			for (var i = 0; i < qcodo.arrToggleEnableControls.length; i++) {
-				qcodo.arrToggleEnableControls[i].disabled = false;
+			// Toggle enabled/disabled controls (if applicable)
+			for (var i = 0; i < qcodo.arrToggleEnableControlIds.length; i++) {
+				qcodo.getWrapper(qcodo.arrToggleEnableControlIds[i]).toggleEnabled();
 			}
 
 			// If there are still AjaxEvents in the queue, go ahead and process/dequeue them
@@ -200,15 +200,18 @@
 					this.objAjaxWaitIcon.style.display = 'inline';
 			};
 
-			// Disable controls (if applicable)
-			var arrToggleEnableControlIds = strToggleEnableControlIds.split(',');
-			for (var i = 0; i < arrToggleEnableControlIds.length; i++) {
-				var objToggleEnableControl = document.getElementById(arrToggleEnableControlIds[i]);
-				if (objToggleEnableControl) {
-					this.arrToggleEnableControls.push(objToggleEnableControl);
-					objToggleEnableControl.disabled = true;
+			// Toggle enabled/disabled controls (if applicable)
+			if (strToggleEnableControlIds) {
+				this.arrToggleEnableControlIds = [];
+				var arrToggleEnableControlIds = strToggleEnableControlIds.split(',');
+				for (var i = 0; i < arrToggleEnableControlIds.length; i++) {
+					var objToggleEnableControl = document.getElementById(arrToggleEnableControlIds[i]);
+					if (objToggleEnableControl) {
+						this.arrToggleEnableControlIds.push(arrToggleEnableControlIds[i]);
+						this.getWrapper(arrToggleEnableControlIds[i]).toggleEnabled();
+					}
 				}
-			};			
+			};
 
 			var objForm = document.getElementById(strForm);
 			objForm.Qform__FormControl.value = strControl;
