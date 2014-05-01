@@ -201,8 +201,8 @@
 			};
 
 			// Toggle enabled/disabled controls (if applicable)
+			this.arrToggleEnableControlIds = [];
 			if (strToggleEnableControlIds) {
-				this.arrToggleEnableControlIds = [];
 				var arrToggleEnableControlIds = strToggleEnableControlIds.split(',');
 				for (var i = 0; i < arrToggleEnableControlIds.length; i++) {
 					var objToggleEnableControl = document.getElementById(arrToggleEnableControlIds[i]);
