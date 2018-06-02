@@ -1,0 +1,11 @@
+{
+    "name": "qcodo/qcodo",
+    "description": "Qcodo PHP Development Framework",
+    "authors": [
+        {
+            "name": "Mike Ho",
+            "email": "mike@quasidea.com"
+        }
+    ],
+    "require": {}
+}
