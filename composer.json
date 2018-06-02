@@ -9,5 +9,9 @@
             "email": "mike@quasidea.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "version": "0.4.22",
+    "autoload": {
+        "files": ["includes/prepend.inc.php"]
+    }
 }
