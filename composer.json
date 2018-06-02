@@ -16,7 +16,7 @@
         "files": ["includes/prepend.inc.php"]
     },
     "scripts": {
-        "post-package-install": [
+        "post-install-cmd": [
             "QInstaller::postPackageInstall"
         ]
     }
