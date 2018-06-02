@@ -1,6 +1,8 @@
 {
     "name": "qcodo/qcodo",
     "description": "Qcodo PHP Development Framework",
+    "homepage": "http://www.qcodo.com",
+    "license": "MIT",
     "authors": [
         {
             "name": "Mike Ho",
