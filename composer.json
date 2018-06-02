@@ -9,6 +9,7 @@
             "email": "mike@quasidea.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {},
     "version": "0.4.22",
     "autoload": {
