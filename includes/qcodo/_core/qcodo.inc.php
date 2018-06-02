@@ -74,6 +74,8 @@
 	QApplicationBase::$ClassFile['qsessionformstatehandler'] = __QCODO_CORE__ . '/qform_state_handlers/QSessionFormStateHandler.class.php';
 	QApplicationBase::$ClassFile['qfileformstatehandler'] = __QCODO_CORE__ . '/qform_state_handlers/QFileFormStateHandler.class.php';
 
+	QApplicationBase::$ClassFile['qinstaller'] = __QCODO_CORE__ . '/installer/QInstaller.class.php';
+
 	// Define ClassFile Locations for Framework Classes
 	QApplicationBase::$ClassFile['qrssfeed'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';
 	QApplicationBase::$ClassFile['qrssimage'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';

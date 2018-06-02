@@ -14,5 +14,10 @@
     "version": "0.4.22",
     "autoload": {
         "files": ["includes/prepend.inc.php"]
+    },
+    "scripts": {
+        "post-package-install": [
+            "QInstaller::postPackageInstall"
+        ]
     }
 }
