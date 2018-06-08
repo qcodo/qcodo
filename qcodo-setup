@@ -1,0 +1,3 @@
+#!/usr/bin/env php
+<?php
+	require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'qcodo' . DIRECTORY_SEPARATOR . '_core' . DIRECTORY_SEPARATOR . 'setup' . DIRECTORY_SEPARATOR . 'setup.php');
