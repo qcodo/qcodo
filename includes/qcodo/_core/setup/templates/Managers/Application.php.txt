@@ -1,0 +1,6 @@
+<?php
+
+namespace %NAME%\Managers;
+
+class Application {
+}
