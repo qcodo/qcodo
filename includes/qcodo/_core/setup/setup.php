@@ -125,12 +125,12 @@ class QcodoSetup {
 			),
 			'configuration' => array(
 				'_server_instance.php' => false,
-				'databases.php' => false,
-				'directories.php' => array(
+				'_directories.php' => array(
 					'ROOT' => $rootRelativePath,
 					'VENDOR' => $vendorRelativePath
 				),
-				'logs.php' => false
+				'_logs.php' => false,
+				'databases.php' => false
 			),
 			'Handlers' => array(),
 			'Handlers' . DIRECTORY_SEPARATOR . 'Console' => array(),
