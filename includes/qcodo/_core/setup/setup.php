@@ -17,6 +17,19 @@
 		protected $applicationDirectory;
 		protected $rootRelativeDirectoryFromApplication;
 
+		public function __construct() {
+			$this->stdin = fopen('php://stdin', 'r');
+			$this->vendorPath = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..');
+		}
+
+		public function Run() {
+			$this->ExecuteRootPath();
+			$this->ExecuteApplicationName();
+			$this->ExecuteApplicationDirectory();
+
+			$this->ExecuteCreateApplicationDirectories();
+		}
+
 		protected function GetRelativeReverseDirectory($path, $relativeDirectory) {
 			// Cleanup starting path
 			$position = strpos($path, DIRECTORY_SEPARATOR);
@@ -60,19 +73,6 @@
 			}
 
 			return implode(DIRECTORY_SEPARATOR, array_reverse($reverseDirectoryArray));
-		}
-
-		public function __construct() {
-			$this->stdin = fopen('php://stdin', 'r');
-			$this->vendorPath = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..');
-		}
-
-		public function Run() {
-			$this->ExecuteRootPath();
-			$this->ExecuteApplicationName();
-			$this->ExecuteApplicationDirectory();
-
-			$this->ExecuteCreateApplicationDirectories();
 		}
 
 		protected function ExecuteCreateApplicationDirectories() {
