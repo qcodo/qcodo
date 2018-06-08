@@ -2,5 +2,5 @@
 
 namespace %NAME%\Managers;
 
-class Application {
+class Application extends \QApplicationBase {
 }

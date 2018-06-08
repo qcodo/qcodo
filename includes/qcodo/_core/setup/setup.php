@@ -95,6 +95,16 @@ class QcodoSetup {
 	protected function ExecuteCreateApplicationDirectories() {
 		if (!is_dir($this->applicationPath)) mkdir($this->applicationPath);
 
+		// Setup Commands
+		if (!is_file($path = $this->applicationPath . DIRECTORY_SEPARATOR . 'qcodo')) {
+			copy(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qcodo', $path);
+			chmod($path, 0555);
+		}
+		if (!is_file($path = $this->applicationPath . DIRECTORY_SEPARATOR . 'qcodo.bat')) {
+			copy(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qcodo.bat', $path);
+		}
+
+		// Figure Out Relative Paths for directories
 		$rootRelativePath = null;
 		foreach ($this->rootRelativeDirectoryFromApplicationArray as $directoryAtom) {
 			$rootRelativePath .= sprintf(" . DIRECTORY_SEPARATOR . '%s'", $directoryAtom);
@@ -105,7 +115,14 @@ class QcodoSetup {
 			$vendorRelativePath .= sprintf(" . DIRECTORY_SEPARATOR . '%s'", $directoryAtom);
 		}
 
+		// Define Setup Directories
 		$applicationDirectories = array(
+			'bootstrap' => array(
+				'bootstrap.php' => array(
+					'NAME' => $this->applicationName
+				),
+				'console.php' => false
+			),
 			'configuration' => array(
 				'_server_instance.php' => false,
 				'databases.php' => false,
@@ -130,6 +147,7 @@ class QcodoSetup {
 			'Models' . DIRECTORY_SEPARATOR . 'JsonSchema' . DIRECTORY_SEPARATOR . 'Generated' => array()
 		);
 
+		// Execute Setup Directories
 		foreach ($applicationDirectories as $directory => $fileArray) {
 			$path = $this->applicationPath . DIRECTORY_SEPARATOR . $directory;
 			if (!is_dir($path)) mkdir($path);

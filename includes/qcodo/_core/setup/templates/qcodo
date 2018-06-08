@@ -1,0 +1,4 @@
+#!/usr/bin/env php
+<?php
+
+require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'console.php');
