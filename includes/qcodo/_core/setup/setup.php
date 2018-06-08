@@ -121,7 +121,9 @@ class QcodoSetup {
 				'bootstrap.php' => array(
 					'NAME' => $this->applicationName
 				),
-				'console.php' => false
+				'console.php' => array(
+					'NAME' => $this->applicationName
+				)
 			),
 			'configuration' => array(
 				'_server_instance.php' => false,
