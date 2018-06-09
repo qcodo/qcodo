@@ -81,8 +81,13 @@
 				$this->executeConsoleWelcome();
 			}
 
-			$classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, $_SERVER['argv'][1]);
-			if (class_exists($classPath)) {
+			if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, $_SERVER['argv'][1]))) {
+				$handler = new $classPath();
+				$handler->run();
+			} else if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, str_replace('::', '\\', $_SERVER['argv'][1])))) {
+				$handler = new $classPath();
+				$handler->run();
+			} else if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, str_replace(':', '\\', $_SERVER['argv'][1])))) {
 				$handler = new $classPath();
 				$handler->run();
 			} else {
