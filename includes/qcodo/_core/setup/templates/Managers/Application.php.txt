@@ -3,4 +3,12 @@
 namespace %NAME%\Managers;
 
 class Application extends \QApplicationBase {
+	/**
+	 * Returns the Singleton Application
+	 * @return Application
+	 */
+	public static function application() {
+		if (!self::$application) self::$application = new Application('%NAME%');
+		return self::$application;
+	}
 }

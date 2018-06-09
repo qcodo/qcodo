@@ -1,12 +1,8 @@
 <?php
 
-// Tell QApplication that we are running as a Qcodo CLI Runner/Wrapper
-// so that it properly sets up QApplication::$ScriptFilename on QApplication::InitializeForCli()
-$_SERVER['QCODO_CLI_RUNNER'] = true;
-
 // Use BootstrapHelper to load Qcodo
 require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BootstrapHelper.php');
-BootstrapHelper::LoadQcodo();
+BootstrapHelper::loadQcodo();
 
-// Finally, require() the ScriptFilename that is being run/executed
-require(%NAME%\Application::$ScriptFilename);
+// Finally, run the ScriptFilename that is being run/executed
+%NAME%\Managers\Application::application()->runConsole();

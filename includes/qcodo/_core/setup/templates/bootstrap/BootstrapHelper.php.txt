@@ -1,7 +1,9 @@
 <?php
 
+use %NAME%\Managers;
+
 class BootstrapHelper {
-	public static function LoadQcodo() {
+	public static function loadQcodo() {
 		// Autorun Applicable Configuration Directory Items
 		$configurationPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'configuration';
 		$configurationDirectory =  opendir($configurationPath);
@@ -12,5 +14,9 @@ class BootstrapHelper {
 		closedir($configurationDirectory);
 
 		require_once(__VENDOR__ . DIRECTORY_SEPARATOR . 'autoload.php');
+		require_once(__QCODO_CORE__ . '/qcodo.inc.php');
+		require_once(__APPLICATION__. DIRECTORY_SEPARATOR . '/Managers/Application.php');
+
+		Managers\Application::application();
 	}
 }

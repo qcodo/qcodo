@@ -7,6 +7,8 @@
 	 * prepend.inc.
 	 */
 	abstract class QApplicationBase extends QBaseClass {
+		protected $rootNamespace = null;
+
 		//////////////////////////
 		// Public Static Variables
 		//////////////////////////
@@ -185,19 +187,9 @@
 		 */
 		public static $LanguageObject;
 
-		////////////////////////
-		// Public Overrides
-		////////////////////////
-		/**
-		 * This faux constructor method throws a caller exception.
-		 * The Application object should never be instantiated, and this constructor
-		 * override simply guarantees it.
-		 *
-		 * @return void
-		 */
-		public final function __construct() {
-			throw new QCallerException('Application should never be instantiated.  All methods and variables are publically statically accessible.');
-		}
+
+		protected static $application;
+
 
 
 		////////////////////////
@@ -391,41 +383,46 @@
 		 *
 		 * @return void
 		 */
-		public static function Initialize() {
-			// Basic Initailization Routines
-			QApplication::InitializeEnvironment();
-			QApplication::InitializeScriptInfo();
-			QApplication::InitializeErrorHandling();
+		public function __construct($rootNamespace) {
+			$this->rootNamespace = $rootNamespace;
 
-			// Perform Initialization for CLI
-			if (QApplication::$CliMode) {
-				QApplication::InitializeForCli();
-
-			// *OR* Perform Initializations for WebApp
-			} else {
-				QApplication::InitializeOutputBuffering();
-				QApplication::InitializeServerAddress();
-				QApplication::InitializeRequestUri();
-				QApplication::InitializeBrowserType();
-				QApplication::InitializeServerSignature();
-				QApplication::InitializePhpSession();
-			}
+//			// Basic Initailization Routines
+//			$this->InitializeEnvironment();
+//			QApplication::InitializeEnvironment();
+//			QApplication::InitializeScriptInfo();
+//			QApplication::InitializeErrorHandling();
+//
+//			// Perform Initialization for CLI
+//			if (QApplication::$CliMode) {
+//				QApplication::InitializeForCli();
+//
+//			// *OR* Perform Initializations for WebApp
+//			} else {
+//				QApplication::InitializeOutputBuffering();
+//				QApplication::InitializeServerAddress();
+//				QApplication::InitializeRequestUri();
+//				QApplication::InitializeBrowserType();
+//				QApplication::InitializeServerSignature();
+//				QApplication::InitializePhpSession();
+//			}
 
 			// Next, Initialize PHP AutoLoad Functionality
-			QApplication::InitializeAutoload();
+			$this->initializeAutoload();
 
-			// Next, Initialize the Database Connections
-			QApplication::InitializeDatabaseConnections();
-
-			// Then Preload all required "Prepload" Class Files
-			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
-
-			// Finally, go through any other auto_includes that this application requires
-			QApplication::InitializeAutoIncludes();
+//			// Next, Initialize the Database Connections
+//			QApplication::InitializeDatabaseConnections();
+//
+//			// Then Preload all required "Prepload" Class Files
+//			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
+//
+//			// Finally, go through any other auto_includes that this application requires
+//			QApplication::InitializeAutoIncludes();
 		}
 
-		protected static function InitializeAutoload() {
-			spl_autoload_register(array('QApplication', 'Autoload'));
+		protected function initializeAutoload() {
+			spl_autoload_register(array($this, 'autoload'));
+			$loader = new \Composer\Autoload\ClassLoader();
+			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
 		}
 
 		/**
@@ -592,15 +589,12 @@
 		 *
 		 * @return boolean whether or not a class was found / included
 		 */
-		public static function Autoload($strClassName) {
-			if (array_key_exists(strtolower($strClassName), QApplication::$ClassFile)) {
-				require(QApplication::$ClassFile[strtolower($strClassName)]);
+		public function autoload($className) {
+			if (array_key_exists(strtolower($className), QApplicationBase::$ClassFile)) {
+				require(QApplicationBase::$ClassFile[strtolower($className)]);
 				return true;
-			} else if (file_exists($strFilePath = sprintf('%s/%s.class.php', __INCLUDES__, $strClassName))) {
-				require($strFilePath);
-				return true;
-			} else if (file_exists($strFilePath = sprintf('%s/qform/%s.class.php', __QCODO__, $strClassName))) {
-				require($strFilePath);
+			} else if (strtolower($className) == 'qqn') {
+				require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Generated' . DIRECTORY_SEPARATOR . 'QQN.class.php');
 				return true;
 			}
 
