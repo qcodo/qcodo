@@ -1,0 +1,16 @@
+<?php
+
+class BootstrapHelper {
+	public static function LoadQcodo() {
+		// Autorun Applicable Configuration Directory Items
+		$configurationPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'configuration';
+		$configurationDirectory =  opendir($configurationPath);
+
+		while ($file = readdir($configurationDirectory)) {
+			if (substr($file, 0, 1) == '_') require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+		}
+		closedir($configurationDirectory);
+
+		require_once(__VENDOR__ . DIRECTORY_SEPARATOR . 'autoload.php');
+	}
+}
