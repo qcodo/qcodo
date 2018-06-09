@@ -118,7 +118,7 @@ class QcodoSetup {
 		// Define Setup Directories
 		$applicationDirectories = array(
 			'bootstrap' => array(
-				'bootstrap.php' => array(
+				'BootstrapHelper.php' => array(
 					'NAME' => $this->applicationName
 				),
 				'console.php' => array(
