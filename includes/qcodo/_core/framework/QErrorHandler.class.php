@@ -76,7 +76,7 @@
 
 			// Generate the Error Dump
 			if (!ob_get_level()) ob_start();
-			if (QApplication::$CliMode)
+			if (QApplicationBase::$application->consoleModeFlag)
 				require(__QCODO_CORE__ . '/assets/error_dump_cli.inc.php');
 			else
 				require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
@@ -86,33 +86,17 @@
 				// Log to File in __ERROR_LOG__
 				$strContents = ob_get_contents();
 
-				QApplication::MakeDirectory(__ERROR_LOG__, 0777);
+				QApplicationBase::$application->makeDirectory(__ERROR_LOG__, 0777);
 				$strFileName = sprintf('%s/%s', __ERROR_LOG__, QErrorHandler::$FileNameOfError);
 				file_put_contents($strFileName, $strContents);
 				@chmod($strFileName, 0666);
 			}
 
-			if (QApplication::$RequestMode == QRequestMode::Ajax) {
-				if (defined('ERROR_FRIENDLY_AJAX_MESSAGE') && ERROR_FRIENDLY_AJAX_MESSAGE) {
-					// Reset the Buffer
-					while(ob_get_level()) ob_end_clean();
-		
-					// Setup the Friendly Response
-					header('Content-Type: text/xml');
-					$strToReturn = '<controls/><commands><command>alert("' . str_replace('"', '\\"', ERROR_FRIENDLY_AJAX_MESSAGE) . '");</command></commands>';
-					if (QApplication::$EncodingType)
-						printf("<?xml version=\"1.0\" encoding=\"%s\"?><response>%s</response>\r\n", QApplication::$EncodingType, $strToReturn);
-					else
-						printf("<?xml version=\"1.0\"?><response>%s</response>\r\n", $strToReturn);
-					return false;
-				}
-			} else {
-				if (!QApplication::$CliMode) header("HTTP/1.1 500 Internal Server Error");
-				if (defined('ERROR_FRIENDLY_PAGE_PATH') && ERROR_FRIENDLY_PAGE_PATH && !QApplication::$CliMode) {
-					// Reset the Buffer
-					while(ob_get_level()) ob_end_clean();
-					require(ERROR_FRIENDLY_PAGE_PATH);		
-				}
+			if (!QApplicationBase::$application->consoleModeFlag) header("HTTP/1.1 500 Internal Server Error");
+			if (defined('ERROR_FRIENDLY_PAGE_PATH') && ERROR_FRIENDLY_PAGE_PATH && !QApplicationBase::$application->consoleModeFlag) {
+				// Reset the Buffer
+				while(ob_get_level()) ob_end_clean();
+				require(ERROR_FRIENDLY_PAGE_PATH);
 			}
 
 			exit();
@@ -134,12 +118,12 @@
 		public static function HandleException(Exception $objException) {
 			// If we still have access to QApplicationBase, set the error flag on the Application
 			if (class_exists('QApplicationBase'))
-				QApplicationBase::$ErrorFlag = true;
-	
+				QApplicationBase::$application->errorFlag = true;
+
 			// If we are currently dealing with reporting an error, don't go on
 			if (QErrorHandler::$Type)
 				return;
-	
+
 			// Setup the QErrorHandler Object
 			QErrorHandler::$Type = 'Exception';
 			$objReflection = new ReflectionObject($objException);
@@ -148,16 +132,16 @@
 			QErrorHandler::$Filename = $objException->getFile();
 			QErrorHandler::$LineNumber = $objException->getLine();
 			QErrorHandler::$StackTrace = trim($objException->getTraceAsString());
-	
+
 			// Special Setup for Database Exceptions
 			if ($objException instanceof QDatabaseExceptionBase) {
 				QErrorHandler::$ErrorAttributeArray[] = new QErrorAttribute('Database Error Number', $objException->ErrorNumber, false);
-	
+
 				if ($objException->Query) {
 					QErrorHandler::$ErrorAttributeArray[] = new QErrorAttribute('Query', $objException->Query, true);
 				}
 			}
-	
+
 			// Sepcial Setup for DataBind Exceptions
 			if ($objException instanceof QDataBindException) {
 				if ($objException->Query) {
@@ -174,10 +158,10 @@
 			// If a command is called with "@", then we should return
 			if (error_reporting() == 0)
 				return;
-	
+
 			// If we still have access to QApplicationBase, set the error flag on the Application
 			if (class_exists('QApplicationBase'))
-				QApplicationBase::$ErrorFlag = true;
+				QApplicationBase::$application->errorFlag = true;
 	
 			// If we are currently dealing with reporting an error, don't go on
 			if (QErrorHandler::$Type)

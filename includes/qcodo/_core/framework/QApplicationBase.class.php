@@ -7,7 +7,116 @@
 	 * prepend.inc.
 	 */
 	abstract class QApplicationBase extends QBaseClass {
+		/**
+		 * @var QApplicationBase
+		 */
+		public static $application;
+
+		public $errorFlag = false;
+		public $consoleModeFlag = false;
+		public $scriptName = null;
+
 		protected $rootNamespace = null;
+
+
+
+		/**
+		 * This should be the first call to initialize all the static variables
+		 * The application object also has static methods that are miscellaneous web
+		 * development utilities, etc.
+		 *
+		 * It also will make a call to InitializeDatabaseConnections()
+		 *
+		 * @return void
+		 */
+		public function __construct($rootNamespace) {
+			$this->rootNamespace = $rootNamespace;
+
+//			// Basic Initailization Routines
+//			$this->InitializeEnvironment();
+//			QApplication::InitializeEnvironment();
+//			QApplication::InitializeScriptInfo();
+			$this->initializeErrorHandling();
+//
+//			// Perform Initialization for CLI
+//			if (QApplication::$CliMode) {
+//				QApplication::InitializeForCli();
+//
+//			// *OR* Perform Initializations for WebApp
+//			} else {
+//				QApplication::InitializeOutputBuffering();
+//				QApplication::InitializeServerAddress();
+//				QApplication::InitializeRequestUri();
+//				QApplication::InitializeBrowserType();
+//				QApplication::InitializeServerSignature();
+//				QApplication::InitializePhpSession();
+//			}
+
+			// Next, Initialize PHP AutoLoad Functionality
+			$this->initializeAutoload();
+
+//			// Next, Initialize the Database Connections
+//			QApplication::InitializeDatabaseConnections();
+//
+//			// Then Preload all required "Prepload" Class Files
+//			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
+//
+//			// Finally, go through any other auto_includes that this application requires
+//			QApplication::InitializeAutoIncludes();
+		}
+
+		protected function initializeAutoload() {
+			spl_autoload_register(array($this, 'autoload'));
+			$loader = new \Composer\Autoload\ClassLoader();
+			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
+		}
+
+		public function runConsole() {
+			$this->consoleModeFlag = true;
+
+			// Did we ask for a script to be run?
+			if (!array_key_exists(1, $_SERVER['argv']) ||
+				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
+				$this->executeConsoleWelcome();
+			}
+
+			// Find Script
+			if (strpos($_SERVER['argv'][1], '.cli.php') === false)
+				$strScriptFilename = $_SERVER['argv'][1] . '.cli.php';
+			else
+				$strScriptFilename = $_SERVER['argv'][1];
+
+			if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/' . $strScriptFilename)) {
+				QApplication::$ScriptFilename = $strPath;
+				QApplication::$ScriptName = $strScriptFilename;
+			} else if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/_core/' . $strScriptFilename)) {
+				QApplication::$ScriptFilename = $strPath;
+				QApplication::$ScriptName = $strScriptFilename;
+			} else {
+				print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
+				exit(1);
+			}
+		}
+
+		protected function executeConsoleWelcome() {
+			print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
+			print "usage: " . $_SERVER['argv'][0] . " SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
+			print "\r\n";
+			print "required parameters:\r\n";
+			print "  SCRIPT         the name of the handler in the Handlers/Console directory\r\n";
+			print "                 in " . $this->rootNamespace . " that you wish to run\r\n";
+			print "\r\n";
+			print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
+			print "  codegen        Code generates your ORM-layer\r\n";
+			print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
+			print "  qpm-download   Download and installs an external QPM package\r\n";
+			print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
+			print "  phpunit        Run bundled PHPUnit\r\n";
+			print "\r\n";
+			print "Other custom scripts can be created as well.\r\n";
+			print "\r\n";
+			exit(1);
+		}
 
 		//////////////////////////
 		// Public Static Variables
@@ -188,7 +297,6 @@
 		public static $LanguageObject;
 
 
-		protected static $application;
 
 
 
@@ -201,7 +309,7 @@
 		 * to use the Qcodo Error/Exception handler.
 		 * @return void
 		 */
-		protected static function InitializeErrorHandling() {
+		protected function InitializeErrorHandling() {
 			set_error_handler(array('QErrorHandler', 'HandleError'), error_reporting());
 			set_exception_handler(array('QErrorHandler', 'HandleException'));
 		}
@@ -374,56 +482,6 @@
 			}
 		}
 
-		/**
-		 * This should be the first call to initialize all the static variables
-		 * The application object also has static methods that are miscellaneous web
-		 * development utilities, etc.
-		 * 
-		 * It also will make a call to InitializeDatabaseConnections()
-		 *
-		 * @return void
-		 */
-		public function __construct($rootNamespace) {
-			$this->rootNamespace = $rootNamespace;
-
-//			// Basic Initailization Routines
-//			$this->InitializeEnvironment();
-//			QApplication::InitializeEnvironment();
-//			QApplication::InitializeScriptInfo();
-//			QApplication::InitializeErrorHandling();
-//
-//			// Perform Initialization for CLI
-//			if (QApplication::$CliMode) {
-//				QApplication::InitializeForCli();
-//
-//			// *OR* Perform Initializations for WebApp
-//			} else {
-//				QApplication::InitializeOutputBuffering();
-//				QApplication::InitializeServerAddress();
-//				QApplication::InitializeRequestUri();
-//				QApplication::InitializeBrowserType();
-//				QApplication::InitializeServerSignature();
-//				QApplication::InitializePhpSession();
-//			}
-
-			// Next, Initialize PHP AutoLoad Functionality
-			$this->initializeAutoload();
-
-//			// Next, Initialize the Database Connections
-//			QApplication::InitializeDatabaseConnections();
-//
-//			// Then Preload all required "Prepload" Class Files
-//			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
-//
-//			// Finally, go through any other auto_includes that this application requires
-//			QApplication::InitializeAutoIncludes();
-		}
-
-		protected function initializeAutoload() {
-			spl_autoload_register(array($this, 'autoload'));
-			$loader = new \Composer\Autoload\ClassLoader();
-			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
-		}
 
 		/**
 		 * This is called during the Initialization stage of the Qcodo application -- it will go
@@ -467,53 +525,6 @@
 		protected static function InitializePhpSession() {
 			// Go ahead and start the PHP session if we have set EnableSession to true
 			if (QApplication::$EnableSession) session_start();
-		}
-
-		protected static function InitializeForCli() {
-			// We should only run through this logic if we are specifically running
-			// a CLI script through the Qcodo CLI Runner Wrapper (e.g. "qcodo" or "qcodo.bat")
-			if (!array_key_exists('QCODO_CLI_RUNNER', $_SERVER) || !$_SERVER['QCODO_CLI_RUNNER'])
-				return;
-
-			// Did we ask for a script to be run?
-			if (!array_key_exists(1, $_SERVER['argv']) ||
-				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
-				print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
-				print "usage: qcodo SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
-				print "\r\n";
-				print "required parameters:\r\n";
-				print "  SCRIPT         the .cli.php script name inside the cli/scripts directory\r\n";
-				print "                 that you wish to run\r\n";
-				print "\r\n";
-				print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
-				print "  codegen        Code generates your ORM-layer\r\n";
-				print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
-				print "  qpm-download   Download and installs an external QPM package\r\n";
-				print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
-				print "  phpunit        Run bundled PHPUnit\r\n";
-				print "\r\n";
-				print "Other custom scripts can be created as well.\r\n";
-				print "See \"" . realpath(__DEVTOOLS_CLI__) . "/scripts/_README.txt\" for more info";
-				print "\r\n";
-				exit(1);
-			}
-
-			// Find Script
-			if (strpos($_SERVER['argv'][1], '.cli.php') === false)
-				$strScriptFilename = $_SERVER['argv'][1] . '.cli.php';
-			else
-				$strScriptFilename = $_SERVER['argv'][1];
-
-			if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/' . $strScriptFilename)) {
-				QApplication::$ScriptFilename = $strPath;
-				QApplication::$ScriptName = $strScriptFilename;
-			} else if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/_core/' . $strScriptFilename)) {
-				QApplication::$ScriptFilename = $strPath;
-				QApplication::$ScriptName = $strScriptFilename;
-			} else {
-				print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
-				exit(1);
-			}
 		}
 
 		public static function IsBrowser($intBrowserType) {

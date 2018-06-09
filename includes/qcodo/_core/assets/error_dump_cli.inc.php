@@ -3,7 +3,7 @@
 	 * Qcodo Error Dump for CLI
 	 */
 
-	$strMessage = sprintf('%s in PHP CLI Script - %s', QErrorHandler::$Type, QApplication::$ScriptName);
+	$strMessage = sprintf('%s in PHP CLI Script - %s', QErrorHandler::$Type, QApplicationBase::$application->scriptName);
 	$intPadding = floor((QErrorHandler::$CliReportWidth - strlen($strMessage) - 1) / 2);
 	printf("\r\n%s %s %s\r\n", str_repeat('=', $intPadding), $strMessage, str_repeat('=', $intPadding));
 	print(QErrorHandler::$Message . "\r\n");
@@ -44,7 +44,7 @@
 <datetime><?php print(QErrorHandler::$DateTimeOfError); ?></datetime>
 <isoDateTime><?php print(QErrorHandler::$IsoDateTimeOfError); ?></isoDateTime>
 <filename><?php print(QErrorHandler::$FileNameOfError); ?></filename>
-<script>PHP CLI <?php print(QApplication::$ScriptName); ?></script>
+<script>PHP CLI <?php print(QApplicationBase::$application->scriptName); ?></script>
 <server><?php if (array_key_exists('PWD', $_SERVER)) print($_SERVER['PWD']); ?></server>
 <agent><?php if (array_key_exists('USER', $_SERVER)) print($_SERVER['USER']); ?></agent>
 </error>-->

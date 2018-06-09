@@ -5,7 +5,7 @@
 ?>
 <html>
 	<head>
-		<title>PHP <?php _p(QErrorHandler::$Type); ?> - <?php _p(QErrorHandler::$Message); ?></title>
+		<title>PHP <?php print(QErrorHandler::$Type); ?> - <?php print(QErrorHandler::$Message); ?></title>
 		<style>
 			body { font-family: 'Arial', 'Helvetica', 'sans-serif'; font-size: 11px; }
 			a:link, a:visited { text-decoration: none; }
@@ -27,26 +27,26 @@
 
 	<table border="0" cellspacing="0" width="100%">
 		<tr>
-			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php _p(QErrorHandler::$Type); ?> in PHP Script<br /></span><?php _p($_SERVER["PHP_SELF"]); ?></td>
+			<td nowrap="nowrap" class="headingLeft"><span class="headingLeftSmall"><?php print(QErrorHandler::$Type); ?> in PHP Script<br /></span><?php print($_SERVER["PHP_SELF"]); ?></td>
 			<td nowrap="nowrap" class="headingRight">
-				<b>PHP Version:</b> <?php _p(PHP_VERSION); ?>;&nbsp;&nbsp;<b>Zend Engine Version:</b> <?php _p(zend_version()); ?>;&nbsp;&nbsp;<b>Qcodo Version:</b> <?php _p(QCODO_VERSION); ?><br />
-				<?php if (array_key_exists('OS', $_SERVER)) printf('<b>Operating System:</b> %s;&nbsp;&nbsp;', $_SERVER['OS']); ?><b>Application:</b> <?php _p($_SERVER['SERVER_SOFTWARE']); ?>;&nbsp;&nbsp;<b>Server Name:</b> <?php _p($_SERVER['SERVER_NAME']); ?><br />
-				<b>HTTP User Agent:</b> <?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) _p($_SERVER['HTTP_USER_AGENT']); ?></td>
+				<b>PHP Version:</b> <?php print(PHP_VERSION); ?>;&nbsp;&nbsp;<b>Zend Engine Version:</b> <?php print(zend_version()); ?>;&nbsp;&nbsp;<b>Qcodo Version:</b> <?php print(QCODO_VERSION); ?><br />
+				<?php if (array_key_exists('OS', $_SERVER)) printf('<b>Operating System:</b> %s;&nbsp;&nbsp;', $_SERVER['OS']); ?><b>Application:</b> <?php print($_SERVER['SERVER_SOFTWARE']); ?>;&nbsp;&nbsp;<b>Server Name:</b> <?php print($_SERVER['SERVER_NAME']); ?><br />
+				<b>HTTP User Agent:</b> <?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) print($_SERVER['HTTP_USER_AGENT']); ?></td>
 		</tr>
 	</table>
 	
 	<div class="page">
-		<span class="title"><?php _p(QErrorHandler::$MessageBody, false); ?></span><br />
-		<form method="post" action="<?php _p(__VIRTUAL_DIRECTORY__ . __PHP_ASSETS__) ;?>/_core/error_already_rendered_page.php" target="blank" name="rendered"><input type="hidden" name="strHtml" value=""></form>
+		<span class="title"><?php print(QErrorHandler::$MessageBody); ?></span><br />
+		<form method="post" action="<?php print(__VIRTUAL_DIRECTORY__ . _printHP_ASSETS__) ;?>/_core/error_already_renderedprintage.php" target="blank" name="rendered"><input type="hidden" name="strHtml" value=""></form>
 
-			<b><?php _p(QErrorHandler::$Type); ?> Type:</b>&nbsp;&nbsp;
-			<?php _p(QErrorHandler::$ObjectType); ?>
+			<b><?php print(QErrorHandler::$Type); ?> Type:</b>&nbsp;&nbsp;
+			<?php print(QErrorHandler::$ObjectType); ?>
 			<br /><br />
 
 <?php
 			if (isset(QErrorHandler::$RenderedPage)) {
 ?>
-				<script type="text/javascript">RenderedPage = "<?php _p(QErrorHandler::PrepDataForScript(QErrorHandler::$RenderedPage), false); ?>";</script>
+				<script type="text/javascript">RenderedPage = "<?php print(QErrorHandler::PrepDataForScript(QErrorHandler::$RenderedPage)); ?>";</script>
 				<b>Rendered Page:</b>&nbsp;&nbsp;
 				<a href="javascript:RenderPage(RenderedPage)">Click here</a> to view contents able to be rendered
 				<br /><br />
@@ -54,21 +54,21 @@
 			}
 ?>
 			<b>Source File:</b>&nbsp;&nbsp;
-			<?php _p(QErrorHandler::$Filename); ?>
+			<?php print(QErrorHandler::$Filename); ?>
 			&nbsp;&nbsp;&nbsp;&nbsp;<b>Line:</b>&nbsp;&nbsp;
-			<?php _p(QErrorHandler::$LineNumber); ?>
+			<?php print(QErrorHandler::$LineNumber); ?>
 			<br /><br />
 
 			<div class="code">
 <?php
-						_p('<pre>', false);
+						print('<pre>');
 						for ($__exc_IntLine = max(1, QErrorHandler::$LineNumber - 5); $__exc_IntLine <= min(count(QErrorHandler::$FileLinesArray), QErrorHandler::$LineNumber + 5); $__exc_IntLine++) {
 							if (QErrorHandler::$LineNumber == $__exc_IntLine)
 								printf('<span style="color: #f00;">Line %s:    %s</span>', $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 							else
 								printf("Line %s:    %s", $__exc_IntLine, htmlentities(QErrorHandler::$FileLinesArray[$__exc_IntLine - 1]));
 						}
-						_p('</pre>', false);
+						print('</pre>');
 						unset($__exc_IntLine);
 ?>
 			</div><br />
@@ -95,7 +95,7 @@
 			<b>Call Stack:</b>
 			<br><br>
 			<div class="code">
-				<pre><?php _p(QErrorHandler::$StackTrace); ?></pre>
+				<pre><?php print(QErrorHandler::$StackTrace); ?></pre>
 			</div><br />
 
 			<b>Global Variables Dump:</b>&nbsp;&nbsp;
@@ -103,7 +103,7 @@
 			<br /><br />
 			<div id="VariableDump" class="code" style="Display: none;">
 <?php
-				_p('<pre>', false);
+				print('<pre>');
 
 				// Dump All Variables
 				foreach ($GLOBALS as $__exc_Key => $__exc_Value) {
@@ -137,18 +137,18 @@
 					}
 				}
 
-				_p($__exc_StrToDisplay . '</pre>', false);
+				print($__exc_StrToDisplay . '</pre>');
 				printf('<script type="text/javascript">%s</script>', $__exc_StrToScript);
 ?>
 			</div><br />
 			<hr width="100%" size="1" color="#dddddd" />
 			<center><em>
-				<?php _p(QErrorHandler::$Type); ?> Report Generated:&nbsp;&nbsp;<?php _p(QErrorHandler::$DateTimeOfError); ?>
+				<?php print(QErrorHandler::$Type); ?> Report Generated:&nbsp;&nbsp;<?php print(QErrorHandler::$DateTimeOfError); ?>
 				<br/>
 <?php if (QErrorHandler::$FileNameOfError) { ?>
-				<?php _p(QErrorHandler::$Type); ?> Report Logged:&nbsp;&nbsp;<?php _p(QErrorHandler::$FileNameOfError); ?>
+				<?php print(QErrorHandler::$Type); ?> Report Logged:&nbsp;&nbsp;<?php print(QErrorHandler::$FileNameOfError); ?>
 <?php } else { ?>
-				<?php _p(QErrorHandler::$Type); ?> Report NOT Logged
+				<?php print(QErrorHandler::$Type); ?> Report NOT Logged
 <?php } ?>
 			</em></center>
 	</div>
@@ -157,13 +157,13 @@
 
 <?php if (QErrorHandler::$FileNameOfError) { ?>
 <!--qcodo--<error valid="true">
-<type><?php _p(QErrorHandler::$Type); ?></type>
-<title><?php _p(QErrorHandler::$Message); ?></title>
-<datetime><?php _p(QErrorHandler::$DateTimeOfError); ?></datetime>
-<isoDateTime><?php _p(QErrorHandler::$IsoDateTimeOfError); ?></isoDateTime>
-<filename><?php _p(QErrorHandler::$FileNameOfError); ?></filename>
-<script><?php _p($_SERVER["PHP_SELF"]); ?></script>
-<server><?php _p($_SERVER['SERVER_NAME']); ?></server>
+<type><?php print(QErrorHandler::$Type); ?></type>
+<title><?php print(QErrorHandler::$Message); ?></title>
+<datetime><?php print(QErrorHandler::$DateTimeOfError); ?></datetime>
+<isoDateTime><?php print(QErrorHandler::$IsoDateTimeOfError); ?></isoDateTime>
+<filename><?php print(QErrorHandler::$FileNameOfError); ?></filename>
+<script><?php print($_SERVER["PHP_SELF"]); ?></script>
+<server><?php print($_SERVER['SERVER_NAME']); ?></server>
 <agent><?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) print($_SERVER['HTTP_USER_AGENT']); ?></agent>
 </error>-->
 <?php } ?>
