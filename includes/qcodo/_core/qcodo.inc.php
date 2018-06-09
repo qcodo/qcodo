@@ -54,6 +54,11 @@
 	QApplicationBase::$PreloadedClassFile['qdatetime'] = __QCODO_CORE__ . '/framework/QDateTime.class.php';
 	QApplicationBase::$PreloadedClassFile['qq'] = __QCODO_CORE__ . '/framework/QQuery.class.php';
 
+	// Handlers
+	QApplicationBase::$ClassFile['qconsolehandlerbase'] = __QCODO_CORE__ . '/handlers/QConsoleHandlerBase.class.php';
+	QApplicationBase::$ClassFile['qwebservicehandlerbase'] = __QCODO_CORE__ . '/handlers/QWebServiceHandlerBase.class.php';
+	QApplicationBase::$ClassFile['qhandlerbase'] = __QCODO_CORE__ . '/handlers/QHandlerBase.class.php';
+
 	// Define ClassFile Locations for Framework Classes
 	QApplicationBase::$ClassFile['qrssfeed'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';
 	QApplicationBase::$ClassFile['qrssimage'] = __QCODO_CORE__ . '/framework/QRssFeed.class.php';

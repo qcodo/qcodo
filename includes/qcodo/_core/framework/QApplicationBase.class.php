@@ -69,6 +69,7 @@
 			spl_autoload_register(array($this, 'autoload'));
 			$loader = new \Composer\Autoload\ClassLoader();
 			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
+			$loader->register(true);
 		}
 
 		public function runConsole() {
@@ -80,21 +81,23 @@
 				$this->executeConsoleWelcome();
 			}
 
-			// Find Script
-			if (strpos($_SERVER['argv'][1], '.cli.php') === false)
-				$strScriptFilename = $_SERVER['argv'][1] . '.cli.php';
-			else
-				$strScriptFilename = $_SERVER['argv'][1];
-
-			if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/' . $strScriptFilename)) {
-				QApplication::$ScriptFilename = $strPath;
-				QApplication::$ScriptName = $strScriptFilename;
-			} else if (file_exists($strPath = __DEVTOOLS_CLI__ . '/scripts/_core/' . $strScriptFilename)) {
-				QApplication::$ScriptFilename = $strPath;
-				QApplication::$ScriptName = $strScriptFilename;
+			$classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, $_SERVER['argv'][1]);
+			if (class_exists($classPath)) {
+				$handler = new $classPath();
+				$handler->run();
 			} else {
-				print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
-				exit(1);
+				if (strpos($_SERVER['argv'][1], '.cli.php') === false)
+					$scriptFilename = $_SERVER['argv'][1] . '.cli.php';
+				else
+					$scriptFilename = $_SERVER['argv'][1];
+
+				if (file_exists($path = __VENDOR__ . '/qcodo/qcodo/cli/scripts/_core/' . $scriptFilename)) {
+					$this->scriptName = $scriptFilename;
+					require($path);
+				} else {
+					print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
+					exit(1);
+				}
 			}
 		}
 
