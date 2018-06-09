@@ -8,14 +8,28 @@
 	 */
 	abstract class QApplicationBase extends QBaseClass {
 		/**
-		 * @var QApplicationBase
+		 * @var QApplicationBase $application
 		 */
 		public static $application;
 
+		/**
+		 * @var boolean $errorFlag
+		 */
 		public $errorFlag = false;
+
+		/**
+		 * @var boolean $consoleModeFlag
+		 */
 		public $consoleModeFlag = false;
+
+		/**
+		 * @var string $scriptName
+		 */
 		public $scriptName = null;
 
+		/**
+		 * @var string $rootNamespace
+		 */
 		protected $rootNamespace = null;
 
 
