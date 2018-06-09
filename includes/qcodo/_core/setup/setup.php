@@ -132,7 +132,7 @@ class QcodoSetup {
 					'VENDOR' => $vendorRelativePath
 				),
 				'_logs.php' => false,
-				'databases.php' => false
+				'database.php' => false
 			),
 			'Handlers' => array(),
 			'Handlers' . DIRECTORY_SEPARATOR . 'Console' => array(),
