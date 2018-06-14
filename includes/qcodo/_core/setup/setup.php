@@ -134,6 +134,9 @@ class QcodoSetup {
 				'_logs.php' => false,
 				'database.php' => false
 			),
+			'configuration' . DIRECTORY_SEPARATOR . 'codegen' => array(
+				'codegen.xml' => false
+			),
 			'Handlers' => array(),
 			'Handlers' . DIRECTORY_SEPARATOR . 'Console' => array(),
 			'Handlers' . DIRECTORY_SEPARATOR . 'WebService' => array(),
