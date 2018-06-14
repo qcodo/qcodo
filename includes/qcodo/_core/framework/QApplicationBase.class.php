@@ -54,7 +54,6 @@
 //			$this->InitializeEnvironment();
 //			QApplication::InitializeEnvironment();
 //			QApplication::InitializeScriptInfo();
-			$this->initializeErrorHandling();
 
 //
 //			// Perform Initialization for CLI
@@ -77,6 +76,11 @@
 
 			$this->initializeConfiguration();
 
+
+
+
+			$this->initializeErrorHandling();
+
 //			// Next, Initialize the Database Connections
 //			QApplication::InitializeDatabaseConnections();
 //
@@ -98,14 +102,16 @@
 			$configurationPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'configuration';
 			$configurationDirectory = opendir($configurationPath);
 			while ($file = readdir($configurationDirectory)) {
-				switch (substr($file, 0, 1)) {
-					case '.':
-					case '_':
-						break;
-					default:
-						$key = basename(strtolower($file), '.php');
-						$this->configuration[$key] = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
-						break;
+				if (is_file($file)) {
+					switch (substr($file, 0, 1)) {
+						case '.':
+						case '_':
+							break;
+						default:
+							$key = basename(strtolower($file), '.php');
+							$this->configuration[$key] = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+							break;
+					}
 				}
 			}
 		}
