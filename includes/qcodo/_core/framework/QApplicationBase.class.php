@@ -140,7 +140,7 @@
 				else
 					$scriptFilename = $_SERVER['argv'][1];
 
-				if (file_exists($path = __VENDOR__ . '/qcodo/qcodo/cli/scripts/_core/' . $scriptFilename)) {
+				if (file_exists($path = __VENDOR__ . '/qcodo/qcodo/cli/' . $scriptFilename)) {
 					$this->scriptName = $scriptFilename;
 					require($path);
 				} else {
