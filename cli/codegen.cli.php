@@ -25,7 +25,7 @@
 	$strSettingsXmlPath = $objParameters->GetValue('s');
 	$strDbIndex = $objParameters->GetDefaultValue('db_index');
 
-	define('__DATAGEN_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Generated');
+	define('__DATAGEN_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'generated');
 	define('__DATA_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database');
 
 	define('__DATAGEN_META_CONTROLS__', null);

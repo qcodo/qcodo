@@ -1,5 +1,7 @@
 <template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>.php"/>
 <?php
+	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '<%= $objTable->ClassName %>Gen.php');
+
 	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
 	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
 
