@@ -36,4 +36,3 @@
 
 		<%@ example_properties('objTable'); %>
 	}
-?>

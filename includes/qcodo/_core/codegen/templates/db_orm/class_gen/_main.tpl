@@ -6,9 +6,12 @@
 	use QDateTime;
 	use QBaseClass;
 	use QCallerException;
+	use QDatabaseBase;
 	use QDatabaseResultBase;
 	use QDatabaseRowBase;
+	use QInvalidCastException;
 	use QType;
+	use QUndefinedPrimaryKeyException;
 
 	use QQ;
 	use QQN;
@@ -18,6 +21,7 @@
 	use QQGroupBy;
 	use QQNamedValue;
 	use QQueryBuilder;
+	use QQReverseReferenceNode;
 
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
@@ -114,4 +118,3 @@
 
 
 	<%@ qcodo_query_classes('objTable'); %>
-?>

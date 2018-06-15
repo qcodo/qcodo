@@ -14,6 +14,11 @@
 	 * * DatabaseFieldType (which is an abstract class that solely contains constants)
 	 */
 
+	/**
+	 * Class QDatabaseBase
+	 * @property QDatabaseBase $JournalingDatabase
+	 * @property string $JournaledById
+	 */
 	abstract class QDatabaseBase extends QBaseClass {
 		// Must be updated for all Adapters
 		const Adapter = 'Generic Database Adapter (Abstract)';
