@@ -1,6 +1,7 @@
-<template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>.class.php"/>
+<template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>.php"/>
 <?php
-	require(__DATAGEN_CLASSES__ . '/<%= $objTable->ClassName %>Gen.class.php');
+	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
+	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
 
 	/**
 	 * The <%= $objTable->ClassName %> class defined here contains any
@@ -14,7 +15,7 @@
 	 * @subpackage DataObjects
 	 * 
 	 */
-	class <%= $objTable->ClassName %> extends <%= $objTable->ClassName %>Gen {
+	class <%= $objTable->ClassName %> extends Generated\<%= $objTable->ClassName %>Gen {
 		/**
 		 * Default "to string" handler
 		 * Allows pages to _p()/echo()/print() this object, and to define the default

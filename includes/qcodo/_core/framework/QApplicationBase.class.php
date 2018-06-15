@@ -30,7 +30,7 @@
 		/**
 		 * @var string $rootNamespace
 		 */
-		protected $rootNamespace = null;
+		public $rootNamespace = null;
 
 		/**
 		 * @var array[] $configuration
@@ -94,9 +94,9 @@
 
 			// Next, Initialize the Database Connections
 			$this->initializeDatabaseConnections();
-//
-//			// Then Preload all required "Prepload" Class Files
-//			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
+
+			// Then Preload all required "Prepload" Class Files
+			foreach (self::$PreloadedClassFile as $strClassFile) require($strClassFile);
 //
 //			// Finally, go through any other auto_includes that this application requires
 //			QApplication::InitializeAutoIncludes();

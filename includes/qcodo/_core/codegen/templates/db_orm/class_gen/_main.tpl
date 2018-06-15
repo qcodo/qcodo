@@ -1,5 +1,7 @@
-<template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>Gen.class.php"/>
+<template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>Gen.php"/>
 <?php
+	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database\Generated;
+
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
 	 * code-generated and contains all the basic CRUD-type functionality as well as
@@ -18,7 +20,7 @@
 	 * @subpackage GeneratedDataObjects
 <%@ property_comments('objTable'); %>
 	 */
-	class <%= $objTable->ClassName %>Gen extends QBaseClass {
+	class <%= $objTable->ClassName %>Gen extends \QBaseClass {
 
 		<%@ protected_member_variables('objTable'); %>
 

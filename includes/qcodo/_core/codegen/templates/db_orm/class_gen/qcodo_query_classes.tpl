@@ -8,7 +8,7 @@
 	 * @property-read QQNode<%=$objReference->VariableType %> $<%= $objReference->VariableType %>
 	 * @property-read QQNode<%=$objReference->VariableType %> $_ChildTableNode
 	 */
-	class QQNode<%= $objTable->ClassName %><%= $objReference->ObjectDescription %> extends QQAssociationNode {
+	class QQNode<%= $objTable->ClassName %><%= $objReference->ObjectDescription %> extends \QQAssociationNode {
 		protected $strType = 'association';
 		protected $strName = '<%= strtolower($objReference->ObjectDescription); %>';
 
@@ -49,7 +49,7 @@
 	 * @property-read QQReverseReferenceNode<%= $objReference->VariableType %> $<%= $objReference->ObjectDescription %>
 	<% } %>
 	 */
-	class QQNode<%= $objTable->ClassName %> extends QQNode {
+	class QQNode<%= $objTable->ClassName %> extends \QQNode {
 		protected $strTableName = '<%= $objTable->Name %>';
 		protected $strPrimaryKey = '<%= $objTable->PrimaryKeyColumnArray[0]->Name %>';
 		protected $strClassName = '<%= $objTable->ClassName %>';
@@ -97,7 +97,7 @@
 	<% } %>
 	 * @property-read QQNode<% if (($objPkColumn->Reference) && (!$objPkColumn->Reference->IsType)) return $objPkColumn->Reference->VariableType; %> $_PrimaryKeyNode
 	 */
-	class QQReverseReferenceNode<%= $objTable->ClassName %> extends QQReverseReferenceNode {
+	class QQReverseReferenceNode<%= $objTable->ClassName %> extends \QQReverseReferenceNode {
 		protected $strTableName = '<%= $objTable->Name %>';
 		protected $strPrimaryKey = '<%= $objTable->PrimaryKeyColumnArray[0]->Name %>';
 		protected $strClassName = '<%= $objTable->ClassName %>';
