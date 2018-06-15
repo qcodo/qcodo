@@ -26,11 +26,6 @@
 
 		// Relative Paths (from __QCODO_CORE__) to the CORE Template and Subtemplate Directories
 		const TemplatesPath = '/codegen/templates/';
-//		const SubTemplatesPath = '/codegen/subtemplates/';
-
-		// Relative Paths (from __QCODO__) to the CUSTOM Template and Subtemplate Directories
-		const TemplatesPathCustom = '/codegen/templates/';
-//		const SubTemplatesPathCustom = '/codegen/subtemplates/';
 
 		// DebugMode -- for Template Developers
 		// This will output the current evaluated template/statement to the screen
@@ -248,11 +243,6 @@
 			if (!is_dir($strTemplatePath))
 				throw new Exception(sprintf("QCodeGen::TemplatesPath does not appear to be a valid directory:\r\n%s", $strTemplatePath));
 
-			$strTemplatePathCustom = sprintf('%s%s', __QCODO__, QCodeGen::TemplatesPathCustom);
-			if (!is_dir($strTemplatePathCustom))
-				throw new Exception(sprintf("QCodeGen::TemplatesPathCustom does not appear to be a valid directory:\r\n%s", $strTemplatePathCustom));
-			$strTemplatePathCustom .= $strTemplatePrefix;
-
 			// Create an array of arrays of standard templates and custom (override) templates to process
 			// Index by [module_name][filename] => true/false where
 			// module name (e.g. "class_gen", "form_delegates) is name of folder within the prefix (e.g. "db_orm")
@@ -272,20 +262,6 @@
 						if ((QString::FirstCharacter($strFilename) == '_') &&
 							(substr($strFilename, strlen($strFilename) - 4) == '.tpl'))
 							$strTemplateArray[$strModuleName][$strFilename] = false;
-			}
-
-			// Go through and create or override with any custom templates
-			if (is_dir($strTemplatePathCustom)) {
-				$objDirectory = opendir($strTemplatePathCustom);
-				while ($strModuleName = readdir($objDirectory))
-					if ((!in_array(strtolower($strModuleName), array_map('strtolower', QCodeGen::$DirectoriesToExcludeArray))) &&
-						is_dir($strTemplatePathCustom . '/' . $strModuleName)) {
-						$objModuleDirectory = opendir($strTemplatePathCustom . '/' . $strModuleName);
-						while ($strFilename = readdir($objModuleDirectory))
-							if ((QString::FirstCharacter($strFilename) == '_') &&
-								(substr($strFilename, strlen($strFilename) - 4) == '.tpl'))
-								$strTemplateArray[$strModuleName][$strFilename] = true;
-					}
 			}
 
 			// Finally, iterate through all the TempalteFiles and call GenerateFile to Evaluate/Generate/Save them
@@ -309,11 +285,7 @@
 		 * @return mixed returns the evaluated template or boolean save success.
 		 */
 		public function GenerateFile($strModuleName, $strFilename, $blnOverrideFlag, $mixArgumentArray, $blnSave = true) {
-			// Figure out the actual TemplateFilePath
-			if ($blnOverrideFlag)
-				$strTemplateFilePath = __QCODO__ . QCodeGen::TemplatesPathCustom . $strModuleName . '/' . $strFilename;
-			else
-				$strTemplateFilePath = __QCODO_CORE__ . QCodeGen::TemplatesPath . $strModuleName . '/' . $strFilename;
+			$strTemplateFilePath = __QCODO_CORE__ . QCodeGen::TemplatesPath . $strModuleName . '/' . $strFilename;
 
 			// Setup Debug/Exception Message
 			if (QCodeGen::DebugMode) _p("Evaluating $strTemplateFilePath<br/>", false);
@@ -396,11 +368,6 @@
 
 		protected function EvaluateSubTemplate($strSubTemplateFilename, $strModuleName, $mixArgumentArray) {
 			if (QCodeGen::DebugMode) _p("Evaluating $strSubTemplateFilename<br/>", false);
-
-			// Try the Custom SubTemplate Path
-			$strFilename = sprintf('%s%s%s/%s', __QCODO__, QCodeGen::TemplatesPathCustom, $strModuleName, $strSubTemplateFilename);
-			if (file_exists($strFilename))
-				return $this->EvaluateTemplate(file_get_contents($strFilename), $strModuleName, $mixArgumentArray);
 
 			// Try the Standard SubTemplate Path
 			$strFilename = sprintf('%s%s%s/%s', __QCODO_CORE__, QCodeGen::TemplatesPath, $strModuleName, $strSubTemplateFilename);
