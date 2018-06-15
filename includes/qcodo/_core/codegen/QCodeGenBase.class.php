@@ -210,6 +210,26 @@
 			}
 		}
 		
+		/**
+		 *
+		 */
+		public static function GenerateAggregate() {
+			$objDbOrmCodeGen = array();
+			$objRestServiceCodeGen = array();
+
+			foreach (QCodeGen::$CodeGenArray as $objCodeGen) {
+				if ($objCodeGen instanceof QDatabaseCodeGen)
+					array_push($objDbOrmCodeGen, $objCodeGen);
+				if ($objCodeGen instanceof QRestServiceCodeGen)
+					array_push($objRestServiceCodeGen, $objCodeGen);
+			}
+
+			$strToReturn = array();
+			array_merge($strToReturn, QDatabaseCodeGen::GenerateAggregateHelper($objDbOrmCodeGen));
+//			array_push($strToReturn, QRestServiceCodeGen::GenerateAggregateHelper($objRestServiceCodeGen));
+
+			return $strToReturn;
+		}
 
 		/**
 		 * Given a template prefix (e.g. db_orm_, db_type_, rest_, soap_, etc.), pull

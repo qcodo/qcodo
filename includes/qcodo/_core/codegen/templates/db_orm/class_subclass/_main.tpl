@@ -15,7 +15,7 @@
 	 * @subpackage DataObjects
 	 * 
 	 */
-	class <%= $objTable->ClassName %> extends Generated\<%= $objTable->ClassName %>Gen {
+	class <%= $objTable->ClassName %> extends <%= $objTable->ClassName %>Gen {
 		/**
 		 * Default "to string" handler
 		 * Allows pages to _p()/echo()/print() this object, and to define the default

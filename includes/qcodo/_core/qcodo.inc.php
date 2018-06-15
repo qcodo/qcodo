@@ -53,6 +53,7 @@
 	// Define Other Classes to be Preloaded on QApplication::Initialize()
 	QApplicationBase::$PreloadedClassFile['qdatetime'] = __QCODO_CORE__ . '/framework/QDateTime.class.php';
 	QApplicationBase::$PreloadedClassFile['qq'] = __QCODO_CORE__ . '/framework/QQuery.class.php';
+	QApplicationBase::$PreloadedClassFile['qqn'] = __APPLICATION__ . '/Models/Database/Generated/QQN.class.php';
 
 	// Handlers
 	QApplicationBase::$ClassFile['qconsolehandlerbase'] = __QCODO_CORE__ . '/handlers/QConsoleHandlerBase.class.php';

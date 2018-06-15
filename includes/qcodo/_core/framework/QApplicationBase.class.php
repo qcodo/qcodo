@@ -96,7 +96,7 @@
 			$this->initializeDatabaseConnections();
 
 			// Then Preload all required "Prepload" Class Files
-			foreach (self::$PreloadedClassFile as $strClassFile) require($strClassFile);
+			foreach (self::$PreloadedClassFile as $strPath) if (is_file($strPath)) require($strPath);
 //
 //			// Finally, go through any other auto_includes that this application requires
 //			QApplication::InitializeAutoIncludes();

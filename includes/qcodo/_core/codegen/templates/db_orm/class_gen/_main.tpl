@@ -1,6 +1,7 @@
 <template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTable->ClassName %>Gen.php"/>
 <?php
-	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database\Generated;
+	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
+	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
 
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
