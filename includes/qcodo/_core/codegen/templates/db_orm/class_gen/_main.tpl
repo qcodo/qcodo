@@ -3,6 +3,12 @@
 	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
 	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
 
+	use QDateTime;
+	use QQ;
+	use QQNode;
+	use QBaseClass;
+	use QCallerException;
+
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
 	 * code-generated and contains all the basic CRUD-type functionality as well as
@@ -21,7 +27,7 @@
 	 * @subpackage GeneratedDataObjects
 <%@ property_comments('objTable'); %>
 	 */
-	class <%= $objTable->ClassName %>Gen extends \QBaseClass {
+	class <%= $objTable->ClassName %>Gen extends QBaseClass {
 
 		<%@ protected_member_variables('objTable'); %>
 

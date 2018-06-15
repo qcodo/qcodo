@@ -4,7 +4,7 @@
 
 		/**
 		 * Static method to retrieve the Database object that owns this class.
-		 * @return \QDatabaseBase reference to the Database object that can query this class
+		 * @return QDatabaseBase reference to the Database object that can query this class
 		 */
 		public static function GetDatabase() {
 			return Application::application()->database['<%= $objCodeGen->DatabaseIndex; %>'];
@@ -23,10 +23,10 @@
 			// Use QuerySingle to Perform the Query
 			return <%= $objTable->ClassName %>::QuerySingle(
 <% if (count($objTable->PrimaryKeyColumnArray) > 1) { %>
-				\QQ::AndCondition(
+				QQ::AndCondition(
 <% } %>
 <% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) { %>
-				\QQ::Equal(\QQN::<%= $objTable->ClassName %>()-><%= $objColumn->PropertyName %>, $<%= $objColumn->VariableName %>),
+				QQ::Equal(QQN::<%= $objTable->ClassName %>()-><%= $objColumn->PropertyName %>, $<%= $objColumn->VariableName %>),
 <% } %><%--%>
 <% if (count($objTable->PrimaryKeyColumnArray) > 1) { %>
 				)
@@ -42,8 +42,8 @@
 		public static function LoadAll($objOptionalClauses = null) {
 			// Call <%= $objTable->ClassName %>::QueryArray to perform the LoadAll query
 			try {
-				return <%= $objTable->ClassName; %>::QueryArray(\QQ::All(), $objOptionalClauses);
-			} catch (\QCallerException $objExc) {
+				return <%= $objTable->ClassName; %>::QueryArray(QQ::All(), $objOptionalClauses);
+			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
@@ -55,5 +55,5 @@
 		 */
 		public static function CountAll() {
 			// Call <%= $objTable->ClassName %>::QueryCount to perform the CountAll query
-			return <%= $objTable->ClassName %>::QueryCount(\QQ::All());
+			return <%= $objTable->ClassName %>::QueryCount(QQ::All());
 		}

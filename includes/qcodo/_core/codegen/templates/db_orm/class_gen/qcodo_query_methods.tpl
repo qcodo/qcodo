@@ -12,12 +12,12 @@
 		 * @param boolean $blnCountOnly only select a rowcount
 		 * @return string the query statement
 		 */
-		protected static function BuildQueryStatement(&$objQueryBuilder, \QQCondition $objConditions, $objOptionalClauses, $mixParameterArray, $blnCountOnly) {
+		protected static function BuildQueryStatement(&$objQueryBuilder, QQCondition $objConditions, $objOptionalClauses, $mixParameterArray, $blnCountOnly) {
 			// Get the Database Object for this Class
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
 
 			// Create/Build out the QueryBuilder object with <%= $objTable->ClassName %>-specific SELET and FROM fields
-			$objQueryBuilder = new \QQueryBuilder($objDatabase, '<%= $objTable->Name %>');
+			$objQueryBuilder = new QQueryBuilder($objDatabase, '<%= $objTable->Name %>');
 			<%= $objTable->ClassName %>::GetSelectFields($objQueryBuilder);
 			$objQueryBuilder->AddFromItem('<%= $objTable->Name %>');
 
@@ -29,20 +29,20 @@
 			if ($objConditions)
 				try {
 					$objConditions->UpdateQueryBuilder($objQueryBuilder);
-				} catch (\QCallerException $objExc) {
+				} catch (QCallerException $objExc) {
 					$objExc->IncrementOffset();
 					throw $objExc;
 				}
 
 			// Iterate through all the Optional Clauses (if any) and perform accordingly
 			if ($objOptionalClauses) {
-				if ($objOptionalClauses instanceof \QQClause)
+				if ($objOptionalClauses instanceof QQClause)
 					$objOptionalClauses->UpdateQueryBuilder($objQueryBuilder);
 				else if (is_array($objOptionalClauses))
 					foreach ($objOptionalClauses as $objClause)
 						$objClause->UpdateQueryBuilder($objQueryBuilder);
 				else
-					throw new \QCallerException('Optional Clauses must be a QQClause object or an array of QQClause objects');
+					throw new QCallerException('Optional Clauses must be a QQClause object or an array of QQClause objects');
 			}
 
 			// Get the SQL Statement
@@ -55,10 +55,10 @@
 						$strQuery = $objDatabase->PrepareStatement($strQuery, $mixParameterArray);
 
 					// Ensure that there are no other Unresolved Named Parameters
-					if (strpos($strQuery, chr(\QQNamedValue::DelimiterCode) . '{') !== false)
-						throw new \QCallerException('Unresolved named parameters in the query');
+					if (strpos($strQuery, chr(QQNamedValue::DelimiterCode) . '{') !== false)
+						throw new QCallerException('Unresolved named parameters in the query');
 				} else
-					throw new \QCallerException('Parameter Array must be an array of name-value parameter pairs');
+					throw new QCallerException('Parameter Array must be an array of name-value parameter pairs');
 			}
 
 			// Return the Objects
@@ -73,11 +73,11 @@
 		 * @param mixed[] $mixParameterArray a array of name-value pairs to perform PrepareStatement with
 		 * @return <%= $objTable->ClassName %> the queried object
 		 */
-		public static function QuerySingle(\QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+		public static function QuerySingle(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
-			} catch (\QCallerException $objExc) {
+			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
@@ -117,11 +117,11 @@
 		 * @param mixed[] $mixParameterArray a array of name-value pairs to perform PrepareStatement with
 		 * @return <%= $objTable->ClassName %>[] the queried objects as an array
 		 */
-		public static function QueryArray(\QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+		public static function QueryArray(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
-			} catch (\QCallerException $objExc) {
+			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
@@ -139,11 +139,11 @@
 		 * @param mixed[] $mixParameterArray a array of name-value pairs to perform PrepareStatement with
 		 * @return QDatabaseResultBase the cursor resource instance
 		 */
-		public static function QueryCursor(\QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+		public static function QueryCursor(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
 			// Get the query statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
-			} catch (\QCallerException $objExc) {
+			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
@@ -164,11 +164,11 @@
 		 * @param mixed[] $mixParameterArray a array of name-value pairs to perform PrepareStatement with
 		 * @return integer the count of queried objects as an integer
 		 */
-		public static function QueryCount(\QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+		public static function QueryCount(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, true);
-			} catch (\QCallerException $objExc) {
+			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
@@ -180,7 +180,7 @@
 			$blnGrouped = false;
 
 			if ($objOptionalClauses) foreach ($objOptionalClauses as $objClause) {
-				if ($objClause instanceof \QQGroupBy) {
+				if ($objClause instanceof QQGroupBy) {
 					$blnGrouped = true;
 					break;
 				}
@@ -192,7 +192,7 @@
 			else {
 				// No Groups - return the sql-calculated count(*) value
 				$strDbRow = $objDbResult->FetchRow();
-				return \QType::Cast($strDbRow[0], \QType::Integer);
+				return QType::Cast($strDbRow[0], QType::Integer);
 			}
 		}
 
@@ -201,17 +201,17 @@
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
 
 			// Lookup the QCache for This Query Statement
-			$objCache = new \QCache('query', '<%= $objTable->Name %>_' . serialize($strConditions));
+			$objCache = new QCache('query', '<%= $objTable->Name %>_' . serialize($strConditions));
 			if (!($strQuery = $objCache->GetData())) {
 				// Not Found -- Go ahead and Create/Build out a new QueryBuilder object with <%= $objTable->ClassName %>-specific fields
-				$objQueryBuilder = new \QQueryBuilder($objDatabase);
+				$objQueryBuilder = new QQueryBuilder($objDatabase);
 				<%= $objTable->ClassName %>::GetSelectFields($objQueryBuilder);
 				<%= $objTable->ClassName %>::GetFromFields($objQueryBuilder);
 
 				// Ensure the Passed-in Conditions is a string
 				try {
-					$strConditions = \QType::Cast($strConditions, \QType::String);
-				} catch (\QCallerException $objExc) {
+					$strConditions = QType::Cast($strConditions, QType::String);
+				} catch (QCallerException $objExc) {
 					$objExc->IncrementOffset();
 					throw $objExc;
 				}
@@ -244,7 +244,7 @@
 		 * @param QQueryBuilder $objBuilder the Query Builder object to update
 		 * @param string $strPrefix optional prefix to add to the SELECT fields
 		 */
-		public static function GetSelectFields(\QQueryBuilder $objBuilder, $strPrefix = null) {
+		public static function GetSelectFields(QQueryBuilder $objBuilder, $strPrefix = null) {
 			if ($strPrefix) {
 				$strTableName = $strPrefix;
 				$strAliasPrefix = $strPrefix . '__';
