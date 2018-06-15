@@ -1,9 +1,12 @@
 <?php
 
+/**
+ * This file is auto-generated.  Do not make any changes.
+ */
 use %NAME%\Managers;
 
 class BootstrapHelper {
-	public static function loadQcodo() {
+	public static function loadQcodo($consoleModeFlag) {
 		// Autorun Applicable Configuration Directory Items
 		$configurationPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'configuration';
 		$configurationDirectory =  opendir($configurationPath);
@@ -17,6 +20,6 @@ class BootstrapHelper {
 		require_once(__QCODO_CORE__ . '/qcodo.inc.php');
 		require_once(__APPLICATION__. DIRECTORY_SEPARATOR . '/Managers/Application.php');
 
-		Managers\Application::application();
+		Managers\Application::application()->initialize($consoleModeFlag);
 	}
 }

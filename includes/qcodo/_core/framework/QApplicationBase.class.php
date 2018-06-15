@@ -37,6 +37,13 @@
 		 */
 		public $configuration = array();
 
+		/**
+		 * An array of Database objects, as initialized by QApplication::InitializeDatabaseConnections()
+		 *
+		 * @var QDatabaseBase[] $database
+		 */
+		public $database;
+
 
 		/**
 		 * This should be the first call to initialize all the static variables
@@ -49,6 +56,10 @@
 		 */
 		public function __construct($rootNamespace) {
 			$this->rootNamespace = $rootNamespace;
+		}
+
+		public function initialize($consoleModeFlag) {
+			$this->consoleModeFlag = $consoleModeFlag;
 
 //			// Basic Initailization Routines
 //			$this->InitializeEnvironment();
@@ -81,8 +92,8 @@
 
 			$this->initializeErrorHandling();
 
-//			// Next, Initialize the Database Connections
-//			QApplication::InitializeDatabaseConnections();
+			// Next, Initialize the Database Connections
+			$this->initializeDatabaseConnections();
 //
 //			// Then Preload all required "Prepload" Class Files
 //			foreach (QApplication::$PreloadedClassFile as $strClassFile) require($strClassFile);
@@ -102,7 +113,7 @@
 			$configurationPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'configuration';
 			$configurationDirectory = opendir($configurationPath);
 			while ($file = readdir($configurationDirectory)) {
-				if (is_file($file)) {
+				if (is_file($configurationPath . DIRECTORY_SEPARATOR . $file)) {
 					switch (substr($file, 0, 1)) {
 						case '.':
 						case '_':
@@ -116,8 +127,11 @@
 			}
 		}
 
+		/**
+		 * @throws Exception
+		 */
 		public function runConsole() {
-			$this->consoleModeFlag = true;
+			if (!$this->consoleModeFlag) throw new Exception('Cannot runConsole if not set to console mode');
 
 			// Did we ask for a script to be run?
 			if (!array_key_exists(1, $_SERVER['argv']) ||
@@ -281,12 +295,6 @@
 		 */
 		public static $EnableSession = true;
 
-		/**
-		 * An array of Database objects, as initialized by QApplication::InitializeDatabaseConnections()
-		 *
-		 * @var DatabaseBase[] Database
-		 */
-		public static $Database;
 
 		/**
 		 * A flag to indicate whether or not this script is run as a CLI (Command Line Interface)
@@ -590,28 +598,20 @@
 		 *
 		 * @return void
 		 */
-		public static function InitializeDatabaseConnections() {
-			for ($intIndex = 0; $intIndex <= 9; $intIndex++) {
-				$strConstantName = sprintf('DB_CONNECTION_%s', $intIndex);
-
-				if (defined($strConstantName)) {
-					// Lookup the Serialized Array from the DB_CONFIG constants and unserialize it
-					$strSerialArray = constant($strConstantName);
-					$objConfigArray = unserialize($strSerialArray);
-
-					// Use Helper Method to instantiate and store db connection/adapter
-					QApplication::$Database[$intIndex] = self::CreateDatabaseConnection($intIndex, $objConfigArray);
-				}
+		public function initializeDatabaseConnections() {
+			foreach ($this->configuration['database'] as $index => $configuration) {
+				$this->database[$index] = $this->createDatabaseConnection($configuration, $index);
 			}
 		}
 
 		/**
 		 * Given a ConfigArray, create a QDatabaseBase adapter instance.  Only used internally by InitializeDatabaseConnections.
-		 * @param integer $intIndex
-		 * @param string[] $objConfigArray
+		 * @param string[] $configuration
+		 * @param string $index
 		 * @return QDatabaseBase
+		 * @throws
 		 */
-		protected static function CreateDatabaseConnection($intIndex, $objConfigArray) {
+		protected function createDatabaseConnection($configuration, $index) {
 			// Expected Keys to be Set
 			$strExpectedKeys = array(
 				'adapter', 'server', 'port', 'database',
@@ -620,28 +620,28 @@
 
 			// Set All Expected Keys
 			foreach ($strExpectedKeys as $strExpectedKey)
-				if (!array_key_exists($strExpectedKey, $objConfigArray))
-					$objConfigArray[$strExpectedKey] = null;
+				if (!array_key_exists($strExpectedKey, $configuration))
+					$configuration[$strExpectedKey] = null;
 
-			if (!$objConfigArray['adapter'])
-				throw new Exception('No Adapter Defined for ' . $strConstantName . ': ' . var_export($objConfigArray, true));
+			if (!$configuration['adapter'])
+				throw new Exception('No Adapter Defined for ' . $index);
 
-			if (!$objConfigArray['server'])
-				throw new Exception('No Server Defined for ' . $strConstantName . ': ' . constant($strConstantName));
+			if (!$configuration['server'])
+				throw new Exception('No Server Defined for ' . $index);
 
-			$strDatabaseType = 'Q' . $objConfigArray['adapter'] . 'Database';
+			$strDatabaseType = 'Q' . $configuration['adapter'] . 'Database';
 			if (!class_exists($strDatabaseType)) {
 				$strDatabaseAdapter = sprintf('%s/database/%s.class.php', __QCODO_CORE__, $strDatabaseType);
 				if (!file_exists($strDatabaseAdapter))
-					throw new Exception('Database Type is not valid: ' . $objConfigArray['adapter']);
+					throw new Exception('Database Type is not valid: ' . $configuration['adapter']);
 				require($strDatabaseAdapter);
 			}
 
-			$objToReturn = new $strDatabaseType($intIndex, $objConfigArray);
+			$objToReturn = new $strDatabaseType($index, $configuration);
 
 			// Add Journaling (if applicable)
-			if (array_key_exists('journaling', $objConfigArray)) {
-				$objToReturn->JournalingDatabase = self::CreateDatabaseConnection($intIndex * 1000, $objConfigArray['journaling']);
+			if (array_key_exists('journaling', $configuration)) {
+				$objToReturn->JournalingDatabase = $this->createDatabaseConnection($configuration['journaling'], $index . '_journal');
 			}
 
 			return $objToReturn;
