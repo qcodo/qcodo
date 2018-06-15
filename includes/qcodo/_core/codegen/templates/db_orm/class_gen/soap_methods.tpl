@@ -44,7 +44,7 @@
 <% if ($objColumn->VariableType != QType::DateTime) { %>
 				$objToReturn-><%= $objColumn->VariableName %> = $objSoapObject-><%= $objColumn->PropertyName %>;
 <% } %><% if ($objColumn->VariableType == QType::DateTime) { %>
-				$objToReturn-><%= $objColumn->VariableName %> = new \QDateTime($objSoapObject-><%= $objColumn->PropertyName %>);
+				$objToReturn-><%= $objColumn->VariableName %> = new QDateTime($objSoapObject-><%= $objColumn->PropertyName %>);
 <% } %>
 	<% } %><% if ($objColumn->Reference && (!$objColumn->Reference->IsType)) { %>
 			if ((property_exists($objSoapObject, '<%= $objColumn->Reference->PropertyName %>')) &&
