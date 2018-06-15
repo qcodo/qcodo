@@ -1,5 +1,9 @@
-<template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTypeTable->ClassName %>Gen.class.php"/>
+<template OverwriteFlag="true" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATAGEN_CLASSES__ %>" TargetFileName="<%= $objTypeTable->ClassName %>Gen.php"/>
 <?php
+	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
+	use QBaseClass;
+	use QCallerException;
+
 	/**
 	 * The <%= $objTypeTable->ClassName %> class defined here contains
 	 * code for the <%= $objTypeTable->ClassName %> enumerated type.  It represents
@@ -83,4 +87,3 @@
 
 <% } %>
 	}
-?>

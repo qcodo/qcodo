@@ -1,6 +1,7 @@
-<template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_CLASSES__ %>" TargetFileName="<%= $objTypeTable->ClassName %>.class.php"/>
+<template OverwriteFlag="false" DocrootFlag="false" DirectorySuffix="" TargetDirectory="<%= __DATA_CLASSES__ %>" TargetFileName="<%= $objTypeTable->ClassName %>.php"/>
 <?php
-	require(__DATAGEN_CLASSES__ . '/<%= $objTypeTable->ClassName %>Gen.class.php');
+	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
+	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '<%= $objTypeTable->ClassName %>Gen.php');
 
 	/**
 	 * The <%= $objTypeTable->ClassName %> class defined here contains any
@@ -18,4 +19,3 @@
 	 */
 	abstract class <%= $objTypeTable->ClassName %> extends <%= $objTypeTable->ClassName %>Gen {
 	}
-?>
