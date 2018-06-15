@@ -147,9 +147,7 @@ class QcodoSetup {
 			),
 			'Models' => array(),
 			'Models' . DIRECTORY_SEPARATOR . 'Database' => array(),
-			'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Generated' => array(),
-			'Models' . DIRECTORY_SEPARATOR . 'JsonSchema' => array(),
-			'Models' . DIRECTORY_SEPARATOR . 'JsonSchema' . DIRECTORY_SEPARATOR . 'Generated' => array()
+			'Models' . DIRECTORY_SEPARATOR . 'JsonSchema' => array()
 		);
 
 		// Execute Setup Directories
