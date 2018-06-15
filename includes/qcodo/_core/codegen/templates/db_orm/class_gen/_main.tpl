@@ -15,7 +15,7 @@
 
 	use QQ;
 	use QQN;
-	use	QQAssociationNode;
+	use QQAssociationNode;
 	use QQNode;
 	use QQClause;
 	use QQCondition;
