@@ -106,6 +106,7 @@
 			spl_autoload_register(array($this, 'autoload'));
 			$loader = new \Composer\Autoload\ClassLoader();
 			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
+			$loader->setPsr4('Qcodo\\Handlers\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Handlers');
 			$loader->register(true);
 		}
 
