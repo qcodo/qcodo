@@ -714,7 +714,7 @@
 				return true;
 
 			// Check to make sure the parent(s) exist, or create if not
-			if (!QApplication::MakeDirectory(dirname($strPath), $intMode))
+			if (!self::MakeDirectory(dirname($strPath), $intMode))
 				return false;
 
 			// Create the current node/directory, and return its result
@@ -724,9 +724,9 @@
 				// Manually CHMOD to $intMode (if applicable)
 				// mkdir doesn't do it for mac, and this will error on windows
 				// Therefore, ignore any errors that creep up
-				QApplication::SetErrorHandler(null);
+				self::SetErrorHandler(null);
 				chmod($strPath, $intMode);
-				QApplication::RestoreErrorHandler();
+				self::RestoreErrorHandler();
 			}
 
 			return $blnReturn;

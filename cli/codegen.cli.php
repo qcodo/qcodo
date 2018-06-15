@@ -25,6 +25,15 @@
 	$strSettingsXmlPath = $objParameters->GetValue('s');
 	$strDbIndex = $objParameters->GetDefaultValue('db_index');
 
+	define('__DATAGEN_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Generated');
+	define('__DATA_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models');
+
+	define('__DATAGEN_META_CONTROLS__', null);
+	define('__DATA_META_CONTROLS__', null);
+
+	define('__FORM_DRAFTS__', null);
+	define('__PANEL_DRAFTS__', null);
+
 	try {
 		/////////////////////
 		// Run Code Gen	

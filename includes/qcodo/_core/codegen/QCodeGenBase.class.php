@@ -362,7 +362,7 @@
 
 				// Create Directory (if needed)
 				if (!is_dir($strTargetDirectory))
-					if (!QApplication::MakeDirectory($strTargetDirectory, 0777))
+					if (!QApplicationBase::MakeDirectory($strTargetDirectory, 0777))
 						throw new Exception('Unable to mkdir ' . $strTargetDirectory);
 
 				// Save to Disk
@@ -372,9 +372,9 @@
 
 					// CHMOD to full read/write permissions (applicable only to nonwindows)
 					// Need to ignore error handling for this call just in case
-					QApplication::SetErrorHandler(null);
+					QApplicationBase::SetErrorHandler(null);
 					chmod($strFilePath, 0666);
-					QApplication::RestoreErrorHandler();
+					QApplicationBase::RestoreErrorHandler();
 
 					return ($intBytesSaved == strlen($strTemplate));
 				} else
