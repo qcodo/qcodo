@@ -14,14 +14,7 @@
 	$objParameters = new QCliParameterProcessor('codegen', 'Qcodo Code Generator v' . QCODO_VERSION);
 
 	// Optional Parameters for Path to Codegen Settings
-	$strDefaultPath = __DEVTOOLS_CLI__ . '/settings/codegen.xml';
-
-	// Small cleanup on the text
-	$strDefaultPath = str_replace('/html/../', '/', $strDefaultPath);
-	$strDefaultPath = str_replace('/docroot/../', '/', $strDefaultPath);
-	$strDefaultPath = str_replace('/wwwroot/../', '/', $strDefaultPath);
-	$strDefaultPath = str_replace('/www/../', '/', $strDefaultPath);
-
+	$strDefaultPath = __APPLICATION__ . '/configuration/codegen/codegen.xml';
 	$objParameters->AddNamedParameter('s', 'settings-path', QCliParameterType::Path, $strDefaultPath, 'path to the Codegen Settings XML file; defaults to ' . $strDefaultPath);
 	$objParameters->Run();
 
@@ -69,4 +62,3 @@
 		print 'error: ' . trim($objExc->getMessage()) . "\r\n";
 		exit(1);
 	}
-?>
