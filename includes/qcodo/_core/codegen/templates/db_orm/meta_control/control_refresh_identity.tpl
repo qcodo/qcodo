@@ -1,1 +1,0 @@
-			if ($this-><%= $strControlId %>) if ($this->blnEditMode) $this-><%= $strControlId %>->Text = $this-><%= $strObjectName %>-><%= $objColumn->PropertyName %>;
