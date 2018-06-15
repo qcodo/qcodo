@@ -4,6 +4,7 @@
 		 * by <%= $objCodeGen->ImplodeObjectArray(', ', '', '', 'PropertyName', $objCodeGen->GetColumnArray($objTable, $objIndex->ColumnNameArray)) %> Index(es)
 <% foreach ($objColumnArray as $objColumn) { %> 
 		 * @param <%= $objColumn->VariableType %> $<%= $objColumn->VariableName %>
+		 * @param QQClause[] $objOptionalClauses additional optional QQClause objects for this query
 <% } %>
 		 * @return <%= $objTable->ClassName %>
 		*/

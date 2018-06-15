@@ -4,10 +4,20 @@
 	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
 
 	use QDateTime;
-	use QQ;
-	use QQNode;
 	use QBaseClass;
 	use QCallerException;
+	use QDatabaseResultBase;
+	use QDatabaseRowBase;
+	use QType;
+
+	use QQ;
+	use QQN;
+	use QQNode;
+	use QQClause;
+	use QQCondition;
+	use QQGroupBy;
+	use QQNamedValue;
+	use QQueryBuilder;
 
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is

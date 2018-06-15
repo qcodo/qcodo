@@ -397,6 +397,10 @@
 		}
 	}
 
+	/**
+	 * Class QDatabaseResultBase
+	 * @property QQueryBuilder $QueryBuilder
+	 */
 	abstract class QDatabaseResultBase extends QBaseClass {
 		// Allow to attach a QQueryBuilder object to use the result object as cursor resource for cursor queries.
 		protected $objQueryBuilder;

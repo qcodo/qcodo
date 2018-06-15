@@ -35,6 +35,7 @@
 <% foreach ($objColumnArray as $objColumn) { %> 
 		 * @param <%= $objColumn->VariableType %> $<%= $objColumn->VariableName %>
 <% } %>
+		 * @param QQClause[] $objOptionalClauses additional optional QQClause objects for this query
 		 * @return int
 		*/
 		public static function CountBy<%= $objCodeGen->ImplodeObjectArray('', '', '', 'PropertyName', $objColumnArray); %>(<%= $objCodeGen->ParameterListFromColumnArray($objColumnArray); %>, $objOptionalClauses = null) {

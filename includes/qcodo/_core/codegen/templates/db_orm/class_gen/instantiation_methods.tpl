@@ -9,10 +9,10 @@
 		 * early binding on referenced objects.
 		 * @param QDatabaseRowBase $objDbRow
 		 * @param string $strAliasPrefix
-		 * @param string $strExpandAsArrayNodes
-		 * @param QBaseClass $objPreviousItem
+		 * @param string[] $strExpandAsArrayNodes
+		 * @param <%= $objTable->ClassName %> $objPreviousItem
 		 * @param string[] $strColumnAliasArray
-		 * @return <%= $objTable->ClassName %>
+		 * @return <%= $objTable->ClassName %>|boolean
 		*/
 		public static function InstantiateDbRow($objDbRow, $strAliasPrefix = null, $strExpandAsArrayNodes = null, $objPreviousItem = null, $strColumnAliasArray = array()) {
 			// If blank row, return null

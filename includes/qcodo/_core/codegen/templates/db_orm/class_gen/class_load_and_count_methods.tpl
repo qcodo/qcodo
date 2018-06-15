@@ -4,7 +4,7 @@
 
 		/**
 		 * Static method to retrieve the Database object that owns this class.
-		 * @return QDatabaseBase reference to the Database object that can query this class
+		 * @return \QDatabaseBase reference to the Database object that can query this class
 		 */
 		public static function GetDatabase() {
 			return Application::application()->database['<%= $objCodeGen->DatabaseIndex; %>'];

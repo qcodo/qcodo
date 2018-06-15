@@ -1523,6 +1523,15 @@
 	// Users can use the QQuery or the shortcut "QQ"
 	class QQuery extends QQ {}
 
+	/**
+	 * Class QQueryBuilder
+	 * @property string $EscapeIdentifierBegin
+	 * @property string $EscapeIdentifierEnd
+	 * @property QDatabaseBase $Database
+	 * @property string $RootTableName
+	 * @property string[] $ColumnAliasArray
+	 * @property string[] $ExpandAsArrayNodes
+	 */
 	class QQueryBuilder extends QBaseClass {
 		protected $strSelectArray;
 		protected $strColumnAliasArray;
