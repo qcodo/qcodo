@@ -55,10 +55,6 @@
 			print("\r\n");
 		}
 
-		foreach (QCodeGen::GenerateAggregate() as $strMessage) {
-			printf("%s\r\n\r\n", $strMessage);
-		}
-
 		$intEndTime = microtime();
 		$intEndTime = explode(" ", $intEndTime);
 		$intEndTime = $intEndTime[1] + $intEndTime[0];

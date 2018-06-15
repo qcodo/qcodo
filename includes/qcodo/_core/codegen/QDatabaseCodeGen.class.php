@@ -178,42 +178,6 @@
 
 			return $strReport;
 		}
-		
-		public static function GenerateAggregateHelper($objCodeGenArray) {
-			$strToReturn = array();
-
-			if (count($objCodeGenArray)) {
-				// Standard ORM Tables
-				$objTableArray = array();
-				foreach ($objCodeGenArray as $objCodeGen) {
-					$objCurrentTableArray = $objCodeGen->TableArray;
-					foreach ($objCurrentTableArray as $objTable)
-						$objTableArray[$objTable->ClassName] = $objTable;
-				}
-
-				$mixArgumentArray = array('objTableArray' => $objTableArray);
-				if ($objCodeGenArray[0]->GenerateFiles('aggregate_db_orm', $mixArgumentArray))
-					$strToReturn[] = 'Successfully generated Aggregate DB ORM file(s)';
-				else
-					$strToReturn[] = 'FAILED to generate Aggregate DB ORM file(s)';
-
-				// Type Tables
-				$objTableArray = array();
-				foreach ($objCodeGenArray as $objCodeGen) {
-					$objCurrentTableArray = $objCodeGen->TypeTableArray;
-					foreach ($objCurrentTableArray as $objTable)
-						$objTableArray[$objTable->ClassName] = $objTable;
-				}
-
-				$mixArgumentArray = array('objTableArray' => $objTableArray);
-				if ($objCodeGenArray[0]->GenerateFiles('aggregate_db_type', $mixArgumentArray))
-					$strToReturn[] = 'Successfully generated Aggregate DB Type file(s)';
-				else
-					$strToReturn[] = 'FAILED to generate Aggregate DB Type file(s)';
-			}
-
-			return $strToReturn;
-		}
 
 		public function __construct($objSettingsXml, $strDbIndex) {
 			// Setup Local Arrays
