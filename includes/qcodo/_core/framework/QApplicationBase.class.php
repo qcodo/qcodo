@@ -672,15 +672,15 @@
 		 * @param integer $intLevel if a error handler function is defined, then the new error reporting level (if any)
 		 */
 		public static function SetErrorHandler($strName, $intLevel = null) {
-			if (!is_null(QApplication::$intStoredErrorLevel))
+			if (!is_null(self::$intStoredErrorLevel))
 				throw new QCallerException('Error handler is already currently overridden.  Cannot override twice.  Call RestoreErrorHandler before calling SetErrorHandler again.');
 			if (!$strName) {
 				// No Error Handling is wanted -- simulate a "On Error, Resume" type of functionality
 				set_error_handler(array('QErrorHandler', 'HandleError'), 0);
-				QApplication::$intStoredErrorLevel = error_reporting(0);
+				self::$intStoredErrorLevel = error_reporting(0);
 			} else {
 				set_error_handler($strName, $intLevel);
-				QApplication::$intStoredErrorLevel = -1;
+				self::$intStoredErrorLevel = -1;
 			}
 		}
 
@@ -688,12 +688,12 @@
 		 * Restores the temporarily overridden default error handling mechanism back to the default.
 		 */
 		public static function RestoreErrorHandler() {
-			if (is_null(QApplication::$intStoredErrorLevel))
+			if (is_null(self::$intStoredErrorLevel))
 				throw new QCallerException('Error handler is not currently overridden.  Cannot reset something that was never overridden.');
-			if (QApplication::$intStoredErrorLevel != -1)
-				error_reporting(QApplication::$intStoredErrorLevel);
+			if (self::$intStoredErrorLevel != -1)
+				error_reporting(self::$intStoredErrorLevel);
 			restore_error_handler();
-			QApplication::$intStoredErrorLevel = null;
+			self::$intStoredErrorLevel = null;
 		}
 		protected static $intStoredErrorLevel = null;
 

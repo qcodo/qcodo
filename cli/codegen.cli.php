@@ -13,6 +13,9 @@
 	// Setup the Parameters for codegen
 	$objParameters = new QCliParameterProcessor('codegen', 'Qcodo Code Generator v' . QCODO_VERSION);
 
+	// Add new default parameter -- db index
+	$objParameters->AddDefaultParameter('db_index', QCliParameterType::String, 'the DB Index name in configuration/database.php which is being codegenned');
+
 	// Optional Parameters for Path to Codegen Settings
 	$strDefaultPath = __APPLICATION__ . '/configuration/codegen/codegen.xml';
 	$objParameters->AddNamedParameter('s', 'settings-path', QCliParameterType::Path, $strDefaultPath, 'path to the Codegen Settings XML file; defaults to ' . $strDefaultPath);
@@ -20,11 +23,12 @@
 
 	// Pull the Parameter Values
 	$strSettingsXmlPath = $objParameters->GetValue('s');
+	$strDbIndex = $objParameters->GetDefaultValue('db_index');
 
 	try {
 		/////////////////////
 		// Run Code Gen	
-		QCodeGen::Run($strSettingsXmlPath);
+		QCodeGen::Run($strDbIndex, $strSettingsXmlPath);
 		/////////////////////
 
 		if ($strErrors = QCodeGen::$RootErrors) {

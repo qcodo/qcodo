@@ -110,8 +110,8 @@
 		}
 
 		public function GetTitle() {
-			if (array_key_exists($this->intDatabaseIndex, QApplication::$Database)) {
-				$objDatabase = QApplication::$Database[$this->intDatabaseIndex];
+			if (array_key_exists($this->intDatabaseIndex, QApplicationBase::$application->database)) {
+				$objDatabase = QApplicationBase::$application->database[$this->intDatabaseIndex];
 				return sprintf('Database Index #%s (%s / %s / %s)', $this->intDatabaseIndex, $objDatabase->Adapter, $objDatabase->Server, $objDatabase->Database);
 			} else
 				return sprintf('Database Index #%s (N/A)', $this->intDatabaseIndex);
@@ -215,7 +215,7 @@
 			return $strToReturn;
 		}
 
-		public function __construct($objSettingsXml) {
+		public function __construct($objSettingsXml, $strDbIndex) {
 			// Setup Local Arrays
 			$this->strAssociationTableNameArray = array();
 			$this->objTableArray = array();
@@ -223,7 +223,7 @@
 			$this->strExcludedTableArray = array();
 
 			// Set the DatabaseIndex
-			$this->intDatabaseIndex = QCodeGen::LookupSetting($objSettingsXml, null, 'index', QType::Integer);
+			$this->intDatabaseIndex = $strDbIndex;
 
 			// Append Suffix/Prefixes
 			$this->strClassPrefix = QCodeGen::LookupSetting($objSettingsXml, 'className', 'prefix');			
@@ -349,8 +349,8 @@
 
 		protected function AnalyzeDatabase() {
 			// Set aside the Database object
-			if (array_key_exists($this->intDatabaseIndex, QApplication::$Database))
-				$this->objDb = QApplication::$Database[$this->intDatabaseIndex];
+			if (array_key_exists($this->intDatabaseIndex, QApplicationBase::$application->database))
+				$this->objDb = QApplicationBase::$application->database[$this->intDatabaseIndex];
 
 			// Ensure the DB Exists
 			if (!$this->objDb) {

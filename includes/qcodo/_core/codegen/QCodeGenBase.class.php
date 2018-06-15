@@ -109,7 +109,7 @@
 			return $strToReturn;
 		}
 
-		public static function Run($strSettingsXmlFilePath) {
+		public static function Run($strDbIndex, $strSettingsXmlFilePath) {
 			QCodeGen::$CodeGenArray = array();
 			QCodeGen::$SettingsFilePath = $strSettingsXmlFilePath;
 
@@ -125,9 +125,9 @@
 
 			// Try Parsing the Xml Settings File
 			try {
-				QApplication::SetErrorHandler('QcodoHandleCodeGenParseError', E_ALL);
+				QApplicationBase::SetErrorHandler('QcodoHandleCodeGenParseError', E_ALL);
 				QCodeGen::$SettingsXml = new SimpleXMLElement(file_get_contents($strSettingsXmlFilePath));
-				QApplication::RestoreErrorHandler();
+				QApplicationBase::RestoreErrorHandler();
 			} catch (Exception $objExc) {
 				QCodeGen::$RootErrors .= 'FATAL ERROR: Unable to parse CodeGenSettings XML File: ' . $strSettingsXmlFilePath;
 				QCodeGen::$RootErrors .= "\r\n";
@@ -154,7 +154,7 @@
 				foreach (QCodeGen::$SettingsXml->dataSources->children() as $objChildNode) {
 					switch (dom_import_simplexml($objChildNode)->nodeName) {
 						case 'database':
-							QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode);
+							QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
 							break;
 						case 'restService':
 							QCodeGen::$CodeGenArray[] = new QRestServiceCodeGen($objChildNode);
@@ -427,8 +427,8 @@
 			$intPosition = strpos($strTemplate, QCodeGen::$TemplateEscapeBegin);
 			
 			// Get Database Escape Identifiers
-			$strEscapeIdentifierBegin = QApplication::$Database[$this->intDatabaseIndex]->EscapeIdentifierBegin;
-			$strEscapeIdentifierEnd = QApplication::$Database[$this->intDatabaseIndex]->EscapeIdentifierEnd;
+			$strEscapeIdentifierBegin = QApplicationBase::$application->database[$this->intDatabaseIndex]->EscapeIdentifierBegin;
+			$strEscapeIdentifierEnd = QApplicationBase::$application->database[$this->intDatabaseIndex]->EscapeIdentifierEnd;
 
 			// Evaluate All Escaped Clauses
 			while ($intPosition !== false) {
