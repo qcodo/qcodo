@@ -22,6 +22,7 @@
 		 * Count <%= $objTable->ClassNamePlural %> for a given <%= $objManyToManyReference->ObjectDescription %>
 		 * via the <%= $objManyToManyReference->Table %> table
 		 * @param <%= $objManyToManyReference->OppositeVariableType %> $<%= $objManyToManyReference->OppositeVariableName %>
+		 * @param QQClause[] $objOptionalClauses additional optional QQClause objects for this query
 		 * @return int
 		*/
 		public static function CountBy<%= $objManyToManyReference->ObjectDescription %>($<%= $objManyToManyReference->OppositeVariableName %>, $objOptionalClauses = null) {

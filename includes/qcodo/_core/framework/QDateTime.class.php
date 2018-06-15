@@ -154,7 +154,7 @@
 			} else {
 				$intTimestamp = null;
 				$blnValid = false;
-				QApplication::SetErrorHandler('QDateTimeErrorHandler');
+				QApplicationBase::SetErrorHandler('QDateTimeErrorHandler');
 				try {
 					if ($objTimeZone)
 						$blnValid = parent::__construct($mixValue, $objTimeZone);
@@ -163,7 +163,7 @@
 				} catch (Exception $objExc) {}
 				if ($blnValid !== false)
 					$intTimestamp = parent::format('U');
-				QApplication::RestoreErrorHandler();
+				QApplicationBase::RestoreErrorHandler();
 
 				// Valid Value String
 				if ($intTimestamp) {

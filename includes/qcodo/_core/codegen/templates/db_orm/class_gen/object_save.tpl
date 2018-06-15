@@ -6,12 +6,15 @@
 	foreach ($objArray = $objTable->ColumnArray as $objColumn)
 		if ($objColumn->Identity)
 			return '		 * @return int';
-	return '		 * @return void';
+	return '		 * @return null';
 %>
 		 */
 		public function Save($blnForceInsert = false, $blnForceUpdate = false) {
 			// Get the Database Object for this Class
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase();
+
+			// IDE Cleanup
+			if (false) print($blnForceUpdate);
 
 			$mixToReturn = null;
 

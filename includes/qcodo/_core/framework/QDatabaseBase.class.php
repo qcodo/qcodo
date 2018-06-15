@@ -38,6 +38,11 @@
 
 		// Abstract Methods that ALL Database Adapters MUST implement
 		abstract public function Connect();
+
+		/**
+		 * @param $strQuery
+		 * @return QDatabaseResultBase
+		 */
 		abstract public function Query($strQuery);
 		abstract public function NonQuery($strNonQuery);
 
@@ -417,6 +422,9 @@
 		abstract public function CountRows();
 		abstract public function CountFields();
 
+		/**
+		 * @return QDatabaseRowBase or null
+		 */
 		abstract public function GetNextRow();
 		abstract public function GetRows();
 

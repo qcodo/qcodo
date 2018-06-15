@@ -74,6 +74,11 @@
 		 * @return <%= $objTable->ClassName %> the queried object
 		 */
 		public static function QuerySingle(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+			/**
+			 * @var QQueryBuilder $objQueryBuilder
+			 */
+			$objQueryBuilder = null;
+
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
@@ -118,6 +123,11 @@
 		 * @return <%= $objTable->ClassName %>[] the queried objects as an array
 		 */
 		public static function QueryArray(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+			/**
+			 * @var QQueryBuilder $objQueryBuilder
+			 */
+			$objQueryBuilder = null;
+
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
@@ -140,6 +150,11 @@
 		 * @return QDatabaseResultBase the cursor resource instance
 		 */
 		public static function QueryCursor(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+			/**
+			 * @var QQueryBuilder $objQueryBuilder
+			 */
+			$objQueryBuilder = null;
+
 			// Get the query statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, false);
@@ -165,6 +180,11 @@
 		 * @return integer the count of queried objects as an integer
 		 */
 		public static function QueryCount(QQCondition $objConditions, $objOptionalClauses = null, $mixParameterArray = null) {
+			/**
+			 * @var QQueryBuilder $objQueryBuilder
+			 */
+			$objQueryBuilder = null;
+
 			// Get the Query Statement
 			try {
 				$strQuery = <%= $objTable->ClassName %>::BuildQueryStatement($objQueryBuilder, $objConditions, $objOptionalClauses, $mixParameterArray, true);

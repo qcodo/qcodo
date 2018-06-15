@@ -54,6 +54,7 @@
 		/**
 		 * Journals the <%= $objManyToManyReference->ObjectDescription %> relationship into the Log database.
 		 * Used internally as a helper method.
+		 * @param integer $intAssociatedId
 		 * @param string $strJournalCommand
 		 */
 		public function Journal<%= $objManyToManyReference->ObjectDescription %>Association($intAssociatedId, $strJournalCommand) {
@@ -79,7 +80,7 @@
 		/**
 		 * Gets the historical journal for an object's <%= $objManyToManyReference->ObjectDescription %> relationship from the log database.
 		 * @param integer <%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>
-		 * @return QDatabaseResult $objResult
+		 * @return QDatabaseResultBase $objResult
 		 */
 		public static function GetJournal<%= $objManyToManyReference->ObjectDescription %>AssociationForId($<%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>) {
 			$objDatabase = <%= $objTable->ClassName %>::GetDatabase()->JournalingDatabase;
@@ -90,7 +91,7 @@
 
 		/**
 		 * Gets the historical journal for this object's <%= $objManyToManyReference->ObjectDescription %> relationship from the log database.
-		 * @return QDatabaseResult $objResult
+		 * @return QDatabaseResultBase $objResult
 		 */
 		public function GetJournal<%= $objManyToManyReference->ObjectDescription %>Association() {
 			return <%= $objTable->ClassName %>::GetJournal<%= $objManyToManyReference->ObjectDescription %>AssociationForId($this-><%= $objTable->PrimaryKeyColumnArray[0]->VariableName %>);
