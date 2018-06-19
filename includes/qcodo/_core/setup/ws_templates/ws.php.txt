@@ -1,0 +1,7 @@
+<?php
+
+// Bootstrap the Qcodo WebService
+require(dirname(__FILE__) %APPLICATION% . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'webservice.php');
+
+// Finally, run the WebService itself utilizing the selected API specification
+%NAME%\Managers\Application::application()->runWebService(require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'ws-settings.php'));

@@ -1,0 +1,8 @@
+<?php
+
+return array(
+	'openApiSpecificationRelativePath' => '%OPENAPI%',
+	'wsRootRelativePath' => '%WSROOT%',
+	'urlDirectory' => '%URLDIRECTORY%',
+	'viewSpecificationCommand' => %VIEWSPEC%
+);

@@ -107,6 +107,7 @@
 			$loader = new \Composer\Autoload\ClassLoader();
 			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
 			$loader->setPsr4('Qcodo\\Handlers\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Handlers');
+			$loader->setPsr4('Qcodo\\Utilities\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Utilities');
 			$loader->register(true);
 		}
 
@@ -126,6 +127,16 @@
 					}
 				}
 			}
+		}
+
+		/**
+		 * @param $settings string[] the settings for this specific webservice handler
+		 * @throws Exception
+		 */
+		public function runWebService($settings) {
+			if ($this->consoleModeFlag) throw new Exception('Cannot runWebService if set to console mode');
+
+			$swagger = new Qcodo\Utilities\Swagger(__APPLICATION__ . DIRECTORY_SEPARATOR . $settings['openApiSpecificationRelativePath']);
 		}
 
 		/**
@@ -175,10 +186,7 @@
 			print "\r\n";
 			print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
 			print "  codegen        Code generates your ORM-layer\r\n";
-			print "  qcodo-updater  Updates your installed Qcodo framework to a new version\r\n";
-			print "  qpm-download   Download and installs an external QPM package\r\n";
-			print "  qpm-upload     Packages custom code you wrote into a QPM package\r\n";
-			print "  phpunit        Run bundled PHPUnit\r\n";
+			print "  ws-setup       Creates a new webservice handler for a given URL path and specification doc\r\n";
 			print "\r\n";
 			print "Other custom scripts can be created as well.\r\n";
 			print "\r\n";
