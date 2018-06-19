@@ -614,6 +614,16 @@
 		}
 
 		/**
+		 * @param $label string
+		 * @return QDatabaseBase
+		 * @throws Exception
+		 */
+		public function getDatabase($label) {
+			if (array_key_exists($label, $this->database)) return $this->database[$label];
+			throw new Exception('Database label does not exist: ' . $label);
+		}
+
+		/**
 		 * Given a ConfigArray, create a QDatabaseBase adapter instance.  Only used internally by InitializeDatabaseConnections.
 		 * @param string[] $configuration
 		 * @param string $index
