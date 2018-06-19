@@ -7,8 +7,8 @@ class QcodoWebServiceSetup {
 	protected $stdin;
 
 	const DefaultOpenApiSpecificationRelativePath = '..' . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'swagger.json';
-	const DefaultWsRootRelativePath = '..' . DIRECTORY_SEPARATOR . 'www' . DIRECTORY_SEPARATOR . 'ws';
-	const DefaultUrlDirectory = '/ws';
+	const DefaultWsRootRelativePath = '..' . DIRECTORY_SEPARATOR . 'public';
+	const DefaultUrlDirectory = '/';
 	const DefaultViewSpecificationCommand = '/display/swagger';
 
 	protected $openApiSpecificationRelativePath;
@@ -100,7 +100,7 @@ class QcodoWebServiceSetup {
 			'.htaccess' => false,
 			'ws.php' => array(
 				'APPLICATION' => $applicationRelativePath,
-				'NAME' => \MyApplication\Managers\Application::application()->rootNamespace
+				'NAME' => QApplicationBase::$application->rootNamespace
 			),
 			'ws-settings.php' => array(
 				'OPENAPI' => $this->openApiSpecificationRelativePath,

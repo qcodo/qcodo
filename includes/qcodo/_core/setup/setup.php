@@ -123,6 +123,9 @@ class QcodoSetup {
 				),
 				'console.php' => array(
 					'NAME' => $this->applicationName
+				),
+				'webservice.php' => array(
+					'NAME' => $this->applicationName
 				)
 			),
 			'configuration' => array(
