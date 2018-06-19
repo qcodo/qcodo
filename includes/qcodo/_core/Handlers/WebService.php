@@ -10,6 +10,11 @@ use Exception;
 abstract class WebService extends Base {
 	const ConfigurationNamespace = '.ws';
 
+	/**
+	 * @var $request HttpRequest
+	 */
+	protected $request;
+
 	public static function Run(Swagger $swagger, $settings) {
 		$request = new HttpRequest();
 
@@ -60,7 +65,12 @@ abstract class WebService extends Base {
 
 			if (($content instanceof \stdClass) || is_array($content)) $content = json_encode($content);
 			$response = new HttpResponse(200, $content);
-			$response->execute();
 		}
+
+		$response->execute();
+	}
+
+	public function __construct(HttpRequest $request) {
+		$this->request = $request;
 	}
 }
