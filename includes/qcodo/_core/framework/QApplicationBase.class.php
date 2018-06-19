@@ -1,4 +1,7 @@
 <?php
+	use \Qcodo\Handlers\WebService;
+	use \Qcodo\Utilities\Swagger;
+
 	/**
 	 * This abstract class should never be instantiated.  It contains static methods,
 	 * variables and constants to be used throughout the application.
@@ -111,7 +114,7 @@
 			$loader->register(true);
 		}
 
-		public function initializeConfiguration() {
+		protected function initializeConfiguration() {
 			$configurationPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'configuration';
 			$configurationDirectory = opendir($configurationPath);
 			while ($file = readdir($configurationDirectory)) {
@@ -121,12 +124,46 @@
 						case '_':
 							break;
 						default:
-							$key = basename(strtolower($file), '.php');
-							$this->configuration[$key] = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+							$namespace = basename(strtolower($file), '.php');
+							$valuesArray = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+							$this->addConfiguration($namespace, $valuesArray);
 							break;
 					}
 				}
 			}
+		}
+
+		/**
+		 * @param $namespace string the namespace for this set of config values
+		 * @param $valuesArray string[] key/value pairs of configuration options
+		 * @throws Exception
+		 */
+		public function addConfiguration($namespace, $valuesArray) {
+			$namespace = trim(strtolower($namespace));
+			if (!strlen($namespace)) throw new Exception('Namespace is required');
+			if (array_key_exists($namespace, $this->configuration)) throw new Exception('Namespace already exists: ' . $namespace);
+
+			$this->configuration[$namespace] = $valuesArray;
+		}
+
+		/**
+		 * If namespace does not exist, it will throw.
+		 *
+		 * If key does not exist, it will return NULL.
+		 *
+		 * Otherwise, it will return the value.
+		 *
+		 * @param $namespace string
+		 * @param $key string
+		 * @return mixed
+		 * @throws Exception
+		 */
+		public function getConfiguration($namespace, $key) {
+			$namespace = trim(strtolower($namespace));
+			if (!array_key_exists($namespace, $this->configuration)) throw new Exception('Configuration namespace not found: ' . $namespace);
+
+			if (!array_key_exists($key, $this->configuration[$namespace])) return null;
+			return $this->configuration[$namespace][$key];
 		}
 
 		/**
@@ -136,7 +173,10 @@
 		public function runWebService($settings) {
 			if ($this->consoleModeFlag) throw new Exception('Cannot runWebService if set to console mode');
 
-			$swagger = new Qcodo\Utilities\Swagger(__APPLICATION__ . DIRECTORY_SEPARATOR . $settings['openApiSpecificationRelativePath']);
+			$this->addConfiguration(WebService::ConfigurationNamespace, $settings);
+
+			$swagger = new Swagger(__APPLICATION__ . DIRECTORY_SEPARATOR . $this->getConfiguration(WebService::ConfigurationNamespace, 'openApiSpecificationRelativePath'));
+			WebService::Run($swagger, $settings);
 		}
 
 		/**
