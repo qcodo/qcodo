@@ -382,13 +382,13 @@
 			return parent::format($strFormat);
 		}
 
-		public function setTime($intHour, $intMinute, $intSecond = null) {
+		public function setTime($intHour, $intMinute, $intSecond = null, $intMicrosecond = null) {
 			// For compatibility with PHP 5.3
 			if (is_null($intSecond)) $intSecond = 0;
 
 			// If HOUR or MINUTE is NULL...
 			if (is_null($intHour) || is_null($intMinute)) {
-				parent::setTime($intHour, $intMinute, $intSecond);
+				parent::setTime(null, null, null, null);
 				$this->blnTimeNull = true;
 				return $this;
 			}
@@ -402,7 +402,11 @@
 			else
 				$this->blnTimeNull = false;
 
-			parent::setTime($intHour, $intMinute, $intSecond);
+			if (is_null($intMicrosecond))
+				parent::setTime($intHour, $intMinute, $intSecond);
+			else
+				parent::setTime($intHour, $intMinute, $intSecond, $intMicrosecond);
+
 			return $this;
 		}
 
@@ -809,4 +813,3 @@
       void DateTime::setTimezone(DateTimeZone object)
       - Sets the timezone for the DateTime object
 */
-?>

@@ -40,7 +40,7 @@
 			}
 		}
 		
-		abstract public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection);
+		abstract public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection, QQCondition $objJoinCondition = null);
 	}
 
 
@@ -385,7 +385,7 @@
 			}
 		}
 		
-		public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection) {
+		public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection, QQCondition $objJoinCondition = null) {
 			// Are we at the Parent Node?
 			if (is_null($this->objParentNode))
 				// Yep -- Simply return the Parent Node Name
@@ -1231,7 +1231,7 @@
 			$this->objParentNode = true;
 		}
 
-		public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection) {}
+		public function GetColumnAliasHelper(QQueryBuilder $objBuilder, $strBegin, $strEnd, $blnExpandSelection, QQCondition $objJoinCondition = null) {}
 
 		public function GetColumnAlias(QQueryBuilder $objBuilder, $blnExpandSelection = false, QQCondition $objJoinCondition = null) {
 			return $this->strName;
