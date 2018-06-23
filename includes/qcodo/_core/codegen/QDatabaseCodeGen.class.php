@@ -969,7 +969,7 @@
 			$objColumn->NotNull = $objField->NotNull;
 			$objColumn->Identity = $objField->Identity;
 			$objColumn->Unique = $objField->Unique;
-			if (($objField->PrimaryKey) && $objTable && (count($objTable->PrimaryKeyColumnArray) == 1))
+			if (($objField->PrimaryKey) && $objTable && $objTable->PrimaryKeyColumnArray && (count($objTable->PrimaryKeyColumnArray) == 1))
 				$objColumn->Unique = true;
 			$objColumn->Timestamp = $objField->Timestamp;
 
