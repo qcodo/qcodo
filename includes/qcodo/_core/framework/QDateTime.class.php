@@ -260,6 +260,8 @@
 		 *
 		 *  ttt - Timezone Abbreviation as a three-letter code (e.g. PDT, GMT)
 		 *  tttt - Timezone Identifier (e.g. America/Los_Angeles)
+		 *  ttttt - GMT Offset (e.g. +0200)
+		 *  tttttt - GMT Offset with colon (e.g. +02:00)
 		 *
 		 * @param string $strFormat the format of the date
 		 * @return string the formatted date as a string
@@ -363,6 +365,9 @@
 							break;
 						case 'ttttt':
 							$strToReturn .= parent::format('O');
+							break;
+						case 'tttttt':
+							$strToReturn .= parent::format('P');
 							break;
 
 						default:
@@ -813,3 +818,4 @@
       void DateTime::setTimezone(DateTimeZone object)
       - Sets the timezone for the DateTime object
 */
+?>
