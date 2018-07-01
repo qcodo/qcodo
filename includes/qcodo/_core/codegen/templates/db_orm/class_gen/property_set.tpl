@@ -46,7 +46,7 @@
 					} else {
 						// Make sure $mixValue actually is a <%= $objColumn->Reference->VariableType %> object
 						try {
-							$mixValue = QType::Cast($mixValue, '<%= $objColumn->Reference->VariableType %>');
+							$mixValue = QType::Cast($mixValue, <%= $objColumn->Reference->VariableType %>::class);
 						} catch (QInvalidCastException $objExc) {
 							$objExc->IncrementOffset();
 							throw $objExc;
@@ -83,7 +83,7 @@
 					} else {
 						// Make sure $mixValue actually is a <%= $objReverseReference->VariableType %> object
 						try {
-							$mixValue = QType::Cast($mixValue, '<%= $objReverseReference->VariableType %>');
+							$mixValue = QType::Cast($mixValue, <%= $objReverseReference->VariableType %>::class);
 						} catch (QInvalidCastException $objExc) {
 							$objExc->IncrementOffset();
 							throw $objExc;
