@@ -1,0 +1,26 @@
+<?php
+	namespace %s\Models\Schema;
+	use QJsonBaseClass;
+	use QDateTime;
+
+	/**
+	 * @class %s
+	 * @extends QJsonBaseClass
+%s
+	 */
+	class %s extends QJsonBaseClass {
+		protected static $_Model = array(
+%s
+		);
+
+		/**
+		 * Creates a %s from a JSON-decoded stdClass object
+		 *
+		 * @param mixed $json can be a string-based JSON or a stdClass
+		 * @return %s
+		 * @throws
+		 */
+		public static function JsonDecode($json) {
+			return self::JsonDecodeForClass(get_called_class(), $json);
+		}
+	}
