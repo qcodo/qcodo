@@ -116,6 +116,7 @@
 
 		protected function initializeConfiguration() {
 			$configurationPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'configuration';
+			$configurationPathOverride = __APPLICATION__ . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . SERVER_INSTANCE;
 			$configurationDirectory = opendir($configurationPath);
 			while ($file = readdir($configurationDirectory)) {
 				if (is_file($configurationPath . DIRECTORY_SEPARATOR . $file)) {
@@ -125,7 +126,10 @@
 							break;
 						default:
 							$namespace = basename(strtolower($file), '.php');
-							$valuesArray = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+							if (is_file($configurationPathOverride . DIRECTORY_SEPARATOR . $file))
+								$valuesArray = require_once($configurationPathOverride . DIRECTORY_SEPARATOR . $file);
+							else
+								$valuesArray = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
 							$this->addConfiguration($namespace, $valuesArray);
 							break;
 					}
