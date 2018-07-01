@@ -1782,20 +1782,20 @@
 				implode("\r\n    ", $this->strJoinArray));
 
 			// Custom "FROM" Columns
-			if (count($this->strCustomFromArray))
+			if ($this->strCustomFromArray && count($this->strCustomFromArray))
 				$strSql .= ",\r\n    " . implode(",\r\n    ", $this->strCustomFromArray);
 
 			// WHERE Clause
-			if (count($this->strWhereArray)) {
+			if ($this->strWhereArray && count($this->strWhereArray)) {
 				$strWhere = implode("\r\n    ", $this->strWhereArray);
 				if (trim($strWhere) != '1=1')
 					$strSql .= "\r\nWHERE\r\n    " . $strWhere;
 			}
 
 			// Additional Ordering/Grouping clauses
-			if (count($this->strGroupByArray))
+			if ($this->strGroupByArray && count($this->strGroupByArray))
 				$strSql .= "\r\nGROUP BY\r\n    " . implode(",\r\n    ", $this->strGroupByArray);
-			if (count($this->strOrderByArray))
+			if ($this->strOrderByArray && count($this->strOrderByArray))
 				$strSql .= "\r\nORDER BY\r\n    " . implode(",\r\n    ", $this->strOrderByArray);
 
 			// Limit Suffix (if applicable)

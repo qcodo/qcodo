@@ -230,7 +230,9 @@
 						return $mixValue;
 
 					default:
-						if ($mixValue instanceof $this::$_Model[$strIndex]) {
+						$strFullyQualifiedClassName = substr(get_called_class(), 0, strrpos(get_called_class(), '\\')) . '\\' . $this::$_Model[$strIndex];
+
+						if ($mixValue instanceof $strFullyQualifiedClassName) {
 							$this->mixPropertiesDictionary[$strIndex] = $mixValue;
 							return $mixValue;
 						}

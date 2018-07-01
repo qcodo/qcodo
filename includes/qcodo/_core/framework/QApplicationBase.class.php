@@ -720,7 +720,7 @@
 				require(QApplicationBase::$ClassFile[strtolower($className)]);
 				return true;
 			} else if (strtolower($className) == 'qqn') {
-				require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Generated' . DIRECTORY_SEPARATOR . 'QQN.class.php');
+				require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . 'QQN.class.php');
 				return true;
 			}
 
