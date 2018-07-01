@@ -104,6 +104,7 @@
 		$rendered = sprintf($templateClass,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
+			ucfirst($schemaName) . 'Gen',
 			ucfirst($schemaName),
 			ucfirst($schemaName) . 'Gen',
 			ucfirst($schemaName),

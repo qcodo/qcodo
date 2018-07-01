@@ -2,7 +2,7 @@
 	namespace %s\Models\Schema;
 	use %s\Managers\Application;
 
-	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . 'AccountGen.php');
+	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '%s.php');
 
 	/**
 	 * @class %s

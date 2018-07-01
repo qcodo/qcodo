@@ -47,8 +47,9 @@
 							break;
 
 						default:
-							if (!is_subclass_of($mixType, 'QJsonClass')) throw new QCallerException('Unsupported Type for ' . $strClassName . '::' . $strName . ': ' . $mixType);
-							$objToReturn->mixPropertiesDictionary[$strName] = $mixType::JsonDecode($objJson->$strName);
+							$strFullyQualifiedClassName = substr($strClassName, 0, strrpos($strClassName, '\\')) . '\\' . $mixType;
+							if (!is_subclass_of($strFullyQualifiedClassName, 'QJsonBaseClass')) throw new QCallerException('Unsupported Type for ' . $strClassName . '::' . $strName . ': ' . $mixType);
+							$objToReturn->mixPropertiesDictionary[$strName] = $strFullyQualifiedClassName::JsonDecode($objJson->$strName);
 							break;
 					}
 				}
@@ -86,7 +87,7 @@
 
 				default:
 					$arrToReturn = new ArrayObject();
-					if (!is_subclass_of($mixType, 'QJsonClass')) throw new Exception('JsonDecodeArray() cannot decode Unsupported Type: ' . $mixType);
+					if (!is_subclass_of($mixType, 'QJsonBaseClass')) throw new Exception('JsonDecodeArray() cannot decode Unsupported Type: ' . $mixType);
 					foreach ($objJsonArray as $objJson) $arrToReturn[] = $mixType::JsonDecode($objJson);
 					break;
 			}
@@ -112,7 +113,7 @@
 			$objToExport = $this->mixPropertiesDictionary;
 
 			foreach ($objToExport as $mixIndex => $mixValue) {
-				if ($mixValue instanceof QJsonClass) {
+				if ($mixValue instanceof QJsonBaseClass) {
 					$objToExport[$mixIndex] = $mixValue->GetJsonHelper();
 				} else if ($mixValue instanceof ArrayObject) {
 					$objToExport[$mixIndex] = self::GetJsonArrayHelper($mixValue->getArrayCopy());
@@ -126,7 +127,7 @@
 
 		protected static function GetJsonArrayHelper($objArray) {
 			foreach ($objArray as $mixIndex => $mixValue) {
-				if ($mixValue instanceof QJsonClass) {
+				if ($mixValue instanceof QJsonBaseClass) {
 					$objArray[$mixIndex] = $mixValue->GetJsonHelper();
 				} else if ($mixValue instanceof ArrayObject) {
 					$objArray[$mixIndex] = self::GetJsonArrayHelper($mixValue->getArrayCopy());
