@@ -59,6 +59,10 @@ abstract class WebService extends Base {
 			$apiHandlerObject = new $fullyQualifiedClassName($request);
 			$response = $apiHandlerObject->$methodName();
 			if (!$response) $response = new HttpResponse(500, 'No HttpResponse when calling ' . $className . '::' . $methodName);
+			if (!($response instanceof HttpResponse)) {
+				$responseClassName = get_class($response);
+				$response = new HttpResponse(500, 'Not a valid HttpResponse when calling ' . $className . '::' . $methodName . ' - a ' . $responseClassName . ' was returned');
+			}
 		} else {
 			// No -- we are making a mock
 			$content = $swagger->getExampleAtPathAndMethod($foundPath, $request->method);

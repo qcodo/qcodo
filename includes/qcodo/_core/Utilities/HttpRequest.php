@@ -83,6 +83,19 @@ class HttpRequest extends QBaseClass {
 		while (substr($this->path, 0, 2) == '//') $this->path = substr($this->path, 1);
 	}
 
+	/**
+	 * This will return the path parameter that was in the URL request based on the $key (if it exists).
+	 *
+	 * If not, this will return NULL.
+	 *
+	 * @param string $key of the path parameter to look up
+	 * @return string or null if not found.
+	 */
+	public function getPathParameter($key) {
+		if (array_key_exists($key, $this->pathParametersArray)) return $this->pathParametersArray[$key];
+		return null;
+	}
+
 	public function setPathParametersArray($pathParametersArray) {
 		$this->pathParametersArray = $pathParametersArray;
 	}
