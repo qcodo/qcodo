@@ -113,9 +113,15 @@
 			return $strData;
 		}
 
+		public static function HandleThrowable(Throwable $objThrowable) {
+			self::HandleThrowableOrException($objThrowable);
+		}
 
+		public static function HandleException(Exception $objException) {
+			self::HandleThrowableOrException($objException);
+		}
 
-		public static function HandleException(Throwable $objException) {
+		protected static function HandleThrowableOrException($objException) {
 			// If we still have access to QApplicationBase, set the error flag on the Application
 			if (class_exists('QApplicationBase'))
 				QApplicationBase::$application->errorFlag = true;
@@ -284,4 +290,4 @@
 			$this->MultiLine = $blnMultiLine;
 		}
 	}
-?>
+

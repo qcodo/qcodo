@@ -424,7 +424,11 @@
 		 */
 		protected function InitializeErrorHandling() {
 			set_error_handler(array('QErrorHandler', 'HandleError'), error_reporting());
-			set_exception_handler(array('QErrorHandler', 'HandleException'));
+
+			if (PHP_MAJOR_VERSION < 7)
+				set_exception_handler(array('QErrorHandler', 'HandleException'));
+			else
+				set_exception_handler(array('QErrorHandler', 'HandleThrowable'));
 		}
 
 		/**
