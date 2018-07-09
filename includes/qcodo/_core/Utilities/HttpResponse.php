@@ -5,6 +5,7 @@ namespace Qcodo\Utilities;
 use QBaseClass;
 use QJsonBaseClass;
 use Exception;
+use ArrayObject;
 
 class HttpResponse extends QBaseClass {
 	protected $statusCode;
@@ -40,6 +41,9 @@ class HttpResponse extends QBaseClass {
 			if ($content instanceof QJsonBaseClass) {
 				if (!$contentType) $contentType = 'application/json';
 				$content = $content->JsonEncode();
+			} else if (is_array($content) || ($content instanceof ArrayObject)) {
+				if (!$contentType) $contentType = 'application/json';
+				$content = QJsonBaseClass::JsonEncodeArray($content);
 			}
 
 			$this->setContent($content, $contentType);
