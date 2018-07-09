@@ -6,6 +6,7 @@ use Qcodo\Utilities\HttpRequest;
 use Qcodo\Utilities\HttpResponse;
 use QApplicationBase;
 use Exception;
+use stdClass;
 
 abstract class WebService extends Base {
 	const ConfigurationNamespace = '.ws';
@@ -67,7 +68,7 @@ abstract class WebService extends Base {
 			// No -- we are making a mock
 			$content = $swagger->getExampleAtPathAndMethod($foundPath, $request->method);
 
-			if (($content instanceof \stdClass) || is_array($content)) $content = json_encode($content);
+			if (($content instanceof stdClass) || is_array($content)) $content = json_encode($content);
 			$response = new HttpResponse(200, $content);
 		}
 
