@@ -19,6 +19,13 @@ abstract class WebService extends Base {
 	public static function Run(Swagger $swagger, $settings) {
 		$request = new HttpRequest();
 
+		// CORS Pre-Flight
+		if ($request->method == "OPTIONS") {
+			$response = new HttpResponse(200, 'OK');
+			$response->execute();
+			return;
+		}
+
 		// Are we explicitly asking to view the swagger spec?
 		$viewSpecificationCommand = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewSpecificationCommand');
 		if ($viewSpecificationCommand && ($viewSpecificationCommand == $request->path)) {

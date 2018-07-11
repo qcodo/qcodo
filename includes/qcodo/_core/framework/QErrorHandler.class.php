@@ -74,13 +74,15 @@
 			unset($strMicrotime);
 			unset($intTimestamp);
 
+			if (!QApplicationBase::$application->consoleModeFlag) header("HTTP/1.1 500 Internal Server Error");
+
 			// Generate the Error Dump
 			if (!ob_get_level()) ob_start();
 			if (QApplicationBase::$application->consoleModeFlag)
 				require(__QCODO_CORE__ . '/assets/error_dump_cli.inc.php');
 			else
 				require(__QCODO_CORE__ . '/assets/error_dump.inc.php');
-				
+
 			// Do We Log???
 			if (defined('__ERROR_LOG__') && __ERROR_LOG__ && defined('ERROR_LOG_FLAG') && ERROR_LOG_FLAG) {
 				// Log to File in __ERROR_LOG__
@@ -92,7 +94,6 @@
 				@chmod($strFileName, 0666);
 			}
 
-			if (!QApplicationBase::$application->consoleModeFlag) header("HTTP/1.1 500 Internal Server Error");
 			if (defined('ERROR_FRIENDLY_PAGE_PATH') && ERROR_FRIENDLY_PAGE_PATH && !QApplicationBase::$application->consoleModeFlag) {
 				// Reset the Buffer
 				while(ob_get_level()) ob_end_clean();

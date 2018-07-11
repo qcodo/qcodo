@@ -17,9 +17,21 @@
 				$objJson = $mixJson;
 			} else {
 				$objJson = json_decode($mixJson);
+
+				// If there was an error, this may have returned as null
+				if (is_null($objJson)) {
+//					$intJsonLastError = json_last_error();
+//					$strJsonLastErrorMessage = json_last_error_msg();
+//
+//					if ($intJsonLastError != JSON_ERROR_NONE) {
+//						throw new Exception('JSON Decode (' . $intJsonLastError . ') - ' . $strJsonLastErrorMessage);
+//					}
+				}
 			}
 
-			if (!$objJson) return null;
+			if (is_null($objJson)) return null;
+			if ($objJson === false) return false;
+			if ($objJson === true) return true;
 
 			// Go Through Each Property in the Model
 			foreach ($objToReturn::$_Model as $strName => $mixType) {
