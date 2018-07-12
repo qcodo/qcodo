@@ -151,6 +151,12 @@
 			return $objArray;
 		}
 
+		public function IsPropertySet($strName) {
+			$strIndex = strtolower(substr($strName, 0, 1)) . substr($strName, 1);
+
+			return array_key_exists($strIndex, $this::$_Model);
+		}
+
 		public function __get($strName) {
 			$strIndex = strtolower(substr($strName, 0, 1)) . substr($strName, 1);
 
