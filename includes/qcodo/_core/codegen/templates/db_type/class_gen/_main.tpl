@@ -77,6 +77,20 @@
 			}
 		}
 
+		/**
+		 * Returns the Id value corresponding to the Token or the Name value being passed in.
+		 *
+		 * If none exists, it will return NULL.
+		 *
+		 * @param string $strTokenOrName the token or the name value to look up
+		 * @return integer or null if it does not exist
+		 */
+		public static function ToId($strTokenOrName) {
+			if (($intId = array_search($strTokenOrName, self::$TokenArray)) !== false) return $intId;
+			if (($intId = array_search($strTokenOrName, self::$NameArray)) !== false) return $intId;
+			return null;
+		}
+
 <% foreach ($objTypeTable->ExtraFieldNamesArray as $strColName) { %>
 		public static function To<%= $strColName %>($int<%= $objTypeTable->ClassName %>Id) {
 			if (array_key_exists($int<%= $objTypeTable->ClassName %>Id, <%= $objTypeTable->ClassName %>::$ExtraColumnValuesArray))
