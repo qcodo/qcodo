@@ -100,9 +100,9 @@
 
 			// Then Preload all required "Prepload" Class Files
 			foreach (self::$PreloadedClassFile as $strPath) if (is_file($strPath)) require($strPath);
-//
-//			// Finally, go through any other auto_includes that this application requires
-//			QApplication::InitializeAutoIncludes();
+
+			// Finally, run any Autorun items
+			$this->initializeAutoRun();
 		}
 
 		protected function initializeAutoload() {
@@ -602,26 +602,32 @@
 
 		/**
 		 * This is called during the Initialization stage of the Qcodo application -- it will go
-		 * through the /includes/auto_includes directory and find any and all *.inc.php files in there
-		 * and include them one at a time in alphabetical order.
-		 * 
-		 * This will do the search as a convenience for development.
-		 * 
-		 * In production, for performance reasons, it would be advantageous to override this method in QApplication.class.php
-		 * and make calls to require() or require_once() on each file you want to include explicitly, thus alleviating
-		 * the need to process the directory on each and every hit
+		 * through the application's list of AutoRun Handlers *.php files in there
+		 * and run them one at a time, in alphabetical order.
+		 *
 		 * @return void
 		 */
-		protected static function InitializeAutoIncludes() {
-			$objDirectory = opendir(__INCLUDES__ . '/auto_includes');
+		protected function initializeAutoRun() {
+			$objDirectory = @opendir(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Handlers' . DIRECTORY_SEPARATOR . 'Autorun');
 			$strFileArray = array();
-			while ($strFile = readdir($objDirectory)) {
-				if (strtolower(substr($strFile, strlen($strFile) - 8)) == '.inc.php')
-					$strFileArray[] = __INCLUDES__ . '/auto_includes/' . $strFile;
+
+			if ($objDirectory) while ($strFile = readdir($objDirectory)) {
+				if (strtolower(substr($strFile, strlen($strFile) - 4)) == '.php') {
+					$strFileArray[] = substr($strFile, 0, strlen($strFile) - 4);
+				}
 			}
 
 			asort($strFileArray);
-			foreach ($strFileArray as $strFile) require($strFile);
+
+			foreach ($strFileArray as $strBaseName) {
+				$strFqcn = $this->rootNamespace . '\\Handlers\\Autorun\\' . $strBaseName;
+				if (!class_exists($strFqcn)) throw new Exception('Cannot call Autorun for file: ' . $strFile);
+
+				$objAutoRun = new $strFqcn;
+				if (!($objAutoRun instanceof \Qcodo\Handlers\Autorun)) throw new Exception('Class is not an Autorun Handler: ' . $strFqcn);
+
+				$objAutoRun->Run();
+			}
 		}
 
 		/**
