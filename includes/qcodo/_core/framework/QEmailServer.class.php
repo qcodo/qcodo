@@ -37,7 +37,15 @@
 		 * an SMTP server or the Internet.  Instead of messages being sent out,
 		 * the messages and corresponding SMTP communication will be saved to disk.
 		 *
-		 * @var boolean $TestMode
+		 * Alternatively, you can specify an email address, and when specified,
+		 * it will send LIVE emails, but always send to the same exact email address.
+		 * Any To, CC, or BCC data will be specified in the email a the top of the message.
+		 * 
+		 * In short, specify "FALSE" on a live enviornment, "TRUE" if you want to
+		 * save to disk, or an email address if you want to send all messages to the same
+		 * address.
+		 * 
+		 * @var mixed $TestMode
 		 */
 		public static $TestMode = false;
 
@@ -80,11 +88,13 @@
 		public static $SmtpPassword = '';
 
 		/**
-		 * Encoding Type (if null, will default to the QApplication::$EncodingType)
+		 * Encoding Type (if null, will default to the QApplicationBase::$EncodingType)
 		 * 
 		 * @var string $EncodingType
 		 */
 		public static $EncodingType = null;
+
+		public static $StartTls = false;
 
 		/**
 		 * Uses regular expression matching to return an array of valid e-mail addresses
@@ -157,10 +167,10 @@
 		public static function SendRawMessage($strMailFrom, $strRcptToArray, $mixMessageHeader, $strMessageBody) {
 			self::$objSmtpSocket = null;
 
-			if (QEmailServer::$TestMode) {
+			if (QEmailServer::$TestMode === true) {
 				// Open up a File Resource to the TestModeDirectory
 				$strArray = explode(' ', microtime());
-				$strFileName = sprintf('%s/email_%s%s.txt', QEmailServer::$TestModeDirectory, $strArray[1], substr($strArray[0], 1));
+				$strFileName = sprintf('%s/email_%s%s.eml', QEmailServer::$TestModeDirectory, $strArray[1], substr($strArray[0], 1));
 				self::$objSmtpSocket = fopen($strFileName, 'w');
 				if (!self::$objSmtpSocket)
 					throw new QEmailException(sprintf('Unable to open Test SMTP connection to: %s', $strFileName));
@@ -182,6 +192,18 @@
 			// EHLO
 			self::SendCommand(sprintf('EHLO %s', QEmailServer::$OriginatingServerIp));
 			self::ReceiveResponse('250', 'EHLO');
+
+			// Start TLS
+			if (QEmailServer::$StartTls && (QEmailServer::$TestMode !== true)) {
+				self::SendCommand('STARTTLS');
+				self::ReceiveResponse('220', 'STARTTLS');
+				if	(!stream_socket_enable_crypto(self::$objSmtpSocket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+					throw new Exception('Unable to start TLS Connection');
+				}
+
+				self::SendCommand(sprintf('EHLO %s', QEmailServer::$OriginatingServerIp));
+				self::ReceiveResponse('250', 'EHLO (TLS)');
+			}
 
 			// AUTH PLAIN
 			if (QEmailServer::$AuthPlain) {
@@ -249,7 +271,7 @@
 			if (!feof(self::$objSmtpSocket)) fgets(self::$objSmtpSocket);
 			fclose(self::$objSmtpSocket);
 			
-			if (QEmailServer::$TestMode) chmod($strFileName, 0777);
+			if (QEmailServer::$TestMode === true) chmod($strFileName, 0777);
 		}
 
 		protected static $objSmtpSocket;
@@ -260,7 +282,7 @@
 			fputs(self::$objSmtpSocket, $strData);
 		}
 		protected static function ReceiveResponse($strExpectedStatusCode, $strCurrentAction) {
-			if (!self::$TestMode) {
+			if (self::$TestMode !== true) {
 				$strResponse = '000-';
 				$strFullResponse = null;
 				while (!feof(self::$objSmtpSocket) && (substr($strResponse, 3, 1) == '-')) {
@@ -275,6 +297,26 @@
 			}
 		}
 
+		/**
+		 * Extracts all email addresses (using the to, cc and bcc fields) from a QEmailMessage object
+		 * @param QEmailMessage $objMessage
+		 * @return array
+		 * @throws QEmailException
+		 */
+		public static function GetRecipientEmailAddressArray(QEmailMessage $objMessage) {
+			// Setup RCPT TO Addresses
+			$strAddressToArray = QEmailServer::GetEmailAddresses($objMessage->To);
+			if (!$strAddressToArray || !count($strAddressToArray)) throw new QEmailException(sprintf('Not a valid To address: %s', $objMessage->To));
+
+			$strAddressCcArray = QEmailServer::GetEmailAddresses($objMessage->Cc);
+			if (!$strAddressCcArray) $strAddressCcArray = array();
+
+			$strAddressBccArray = QEmailServer::GetEmailAddresses($objMessage->Bcc);
+			if (!$strAddressBccArray) $strAddressBccArray = array();
+
+			$strAddressCcBccArray = array_merge($strAddressCcArray, $strAddressBccArray);
+			return array_merge($strAddressToArray, $strAddressCcBccArray);
+		}
 		
 		/**
 		 * Uses SendRawMessage to sends a message out via SMTP according to the server, ip, etc. preferences
@@ -287,26 +329,55 @@
 		 * @return void
 		 */
 		public static function Send(QEmailMessage $objMessage) {
+			// Alter $objMessage if we are in a TestMode where we are redirecting messages
+			if ((self::$TestMode !== false) && (self::$TestMode !== true)) {
+				$objMessage = clone($objMessage);
+				$strTopText = null;
+				$strTopHtml = null;
+
+				if ($objMessage->From) {
+					$strTopText .= 'From: ' . $objMessage->From . "\r\n";
+					$strTopHtml .= 'From: <strong>' . QApplicationBase::HtmlEntities($objMessage->From) . "</strong><br/>\r\n";
+				}
+			
+				if ($objMessage->To) {
+					$strTopText .= 'To: ' . $objMessage->To . "\r\n";
+					$strTopHtml .= 'To: <strong>' . QApplicationBase::HtmlEntities($objMessage->To) . "</strong><br/>\r\n";
+				}
+			
+				if ($objMessage->Cc) {
+					$strTopText .= 'Cc: ' . $objMessage->Cc . "\r\n";
+					$strTopHtml .= 'Cc: <strong>' . QApplicationBase::HtmlEntities($objMessage->Cc) . "</strong><br/>\r\n";
+				}
+			
+				if ($objMessage->Bcc) {
+					$strTopText .= 'Bcc: ' . $objMessage->Bcc . "\r\n";
+					$strTopHtml .= 'Bcc: <strong>' . QApplicationBase::HtmlEntities($objMessage->Bcc) . "</strong><br/>\r\n";
+				}
+
+				if ($objMessage->Body)
+					$objMessage->Body = sprintf("%s\r\n\r\n**********************************************\r\n\r\n%s", trim($strTopText), trim($objMessage->Body));
+
+				if ($objMessage->HtmlBody)
+					$objMessage->HtmlBody = sprintf("%s<br/><hr/><br/><br/>%s", trim($strTopHtml), trim($objMessage->HtmlBody));
+
+				$objMessage->From = self::$TestMode;
+				$objMessage->To = self::$TestMode;
+				$objMessage->Cc = null;
+				$objMessage->Bcc = null;
+			}
+
 			// Set Up Fields
 			$strAddressArray = QEmailServer::GetEmailAddresses($objMessage->From);
 			if (count($strAddressArray) != 1) throw new QEmailException(sprintf('Not a valid From address: %s', $objMessage->From));
 			$strMailFrom = $strAddressArray[0];
 
-			// Setup RCPT TO Addresses
-			$strAddressToArray = QEmailServer::GetEmailAddresses($objMessage->To);
-			if (!$strAddressToArray || !count($strAddressToArray)) throw new QEmailException(sprintf('Not a valid To address: %s', $objMessage->To));
-
-			$strAddressCcArray = QEmailServer::GetEmailAddresses($objMessage->Cc);
-			if (!$strAddressCcArray) $strAddressCcArray = array();
-
-			$strAddressBccArray = QEmailServer::GetEmailAddresses($objMessage->Bcc);
-			if (!$strAddressBccArray) $strAddressBccArray = array();
-
-			$strAddressCcBccArray = array_merge($strAddressCcArray, $strAddressBccArray);
-			$strRcptToArray = array_merge($strAddressToArray, $strAddressCcBccArray);
-
+			if(strlen($objMessage->ExclusiveRecipient)) {
+				$strRcptToArray = array($objMessage->ExclusiveRecipient);
+			} else {
+				$strRcptToArray = QEmailServer::GetRecipientEmailAddressArray($objMessage);
+			}
 			$strMessageArray = $objMessage->CalculateMessageHeaderAndBody(self::$EncodingType);
-
 			self::SendRawMessage($strMailFrom, $strRcptToArray, $strMessageArray[0], $strMessageArray[1]);
 		}
 	}
@@ -318,6 +389,7 @@
 		protected $strMimeType;
 		protected $strFileName;
 		protected $strEncodedFileData;
+		protected $strContentId;
 
 		public function __construct($strFilePath, $strSpecifiedMimeType = null, $strSpecifiedFileName = null) {
 			// Set File Path
@@ -347,12 +419,18 @@
 			$this->strEncodedFileData = chunk_split(base64_encode($strFileContents));
 		}
 
+		public function SetContentId($strContentId) {
+			$this->strContentId = $strContentId;
+		}
+
 		public function __get($strName) {
 			switch ($strName) {
 				case 'FilePath': return $this->strFilePath;
 				case 'MimeType': return $this->strMimeType; 
 				case 'FileName': return $this->strFileName;
 				case 'EncodedFileData': return $this->strEncodedFileData;
+				case 'ContentId': return $this->strContentId;
+				case 'InlineUrl': return 'cid:' . $this->strContentId;
 				default:
 					try {
 						return parent::__get($strName);
@@ -364,22 +442,34 @@
 		}
 	}
 
-	class QEmailMessage extends QBaseClass {
+/**
+ * @property boolean ExclusiveRecipient
+ * @property string To
+ */
+class QEmailMessage extends QBaseClass {
 		protected $strFrom;
 		protected $strTo;
 		protected $strSubject;
 		protected $strBody;
 		protected $strHtmlBody;
+		protected $strExclusiveRecipient;
 
 		protected $strCc;
 		protected $strBcc;
 		protected $objFileArray = array();
+		protected $objInlineArray = array();
 
 		protected $strHeaderArray;
 		protected $strHeaderKeyArray;
 
 		public function AddAttachment(QEmailAttachment $objFile) {						
 			$this->objFileArray[$objFile->FileName] = $objFile;
+		}
+
+		public function AddInline(QEmailAttachment $objFile) {
+			$strContentId = md5(microtime());
+			$this->objInlineArray[$strContentId] = $objFile;
+			$objFile->SetContentId($strContentId);
 		}
 
 		public function Attach($strFilePath, $strSpecifiedMimeType = null, $strSpecifiedFileName = null) {
@@ -470,19 +560,24 @@
 			$this->RemoveHeader('Content-Transfer-Encoding');
 			
 			// Setup MIME Boundaries
-			$strBoundary = sprintf('qcodo_mixed_%s', strtolower(md5(microtime())));
-			$strAltBoundary = sprintf('qcodo_alt_%s', strtolower(md5(microtime())));
-			$strArrayToReturn = array($strBoundary, $strAltBoundary);
-
-			if ($this->HasFiles || $this->HtmlBody) {
+			if ($this->HasInline) {
+				$strBoundary = sprintf('qcodo_alt_%s', strtolower(md5(microtime())));
+				$strAltBoundary = sprintf('qcodo_rel_%s', strtolower(md5(microtime())));
+				$this->SetHeader('MIME-Version', '1.0');
+				$this->SetHeader('Content-Type', sprintf('multipart/alternative; boundary="%s"', $strBoundary));
+			} else if ($this->HasFiles || $this->HtmlBody) {
+				$strBoundary = sprintf('qcodo_mixed_%s', strtolower(md5(microtime())));
+				$strAltBoundary = sprintf('qcodo_alt_%s', strtolower(md5(microtime())));
 				$this->SetHeader('MIME-Version', '1.0');
 				$this->SetHeader('Content-Type', sprintf('multipart/mixed; boundary="%s"', $strBoundary));
 			} else {
+				$strBoundary = null;
+				$strAltBoundary = null;
 				$this->SetHeader('Content-Type', sprintf('text/plain; charset="%s"', $strEncodingType));
 				$this->SetHeader('Content-Transfer-Encoding', 'quoted-printable');
 			}
 
-			return $strArrayToReturn;
+			return array($strBoundary, $strAltBoundary);
 		}
 
 		protected function CalculateMessageHeader() {
@@ -497,8 +592,53 @@
 		}
 
 		protected function CalculateMessageBody($strEncodingType, $strBoundary, $strAltBoundary) {
+			// Messages with Inline Imgaes with HTML are treated differently
+			if ($this->HasInline) {
+				// Message Body Explanation (for non-MIME based Email Readers)
+				$strBody = "This is a multipart message in MIME format.\r\n\r\n";
+				
+				// Add Primary Boundary Marker
+				$strBody .= sprintf("--%s\r\n", $strBoundary);
+
+				// Provide PlainText Version of Email
+				$strBody .= sprintf("Content-Type: text/plain; charset=\"%s\"\r\n", $strEncodingType);
+				$strBody .= sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n");
+				$strBody .= QString::QuotedPrintableEncode($this->Body);
+				$strBody .= "\r\n\r\n";
+
+				// Add Primary Boundary Marker
+				$strBody .= sprintf("--%s\r\n", $strBoundary);
+
+				// Add Alternate Boundary Marker
+				$strBody .= sprintf("Content-Type: multipart/related;\r\n type=\"text/html\";\r\n boundary=\"%s\"\r\n\r\n", $strAltBoundary);
+
+				// Provide Html Version of Email
+				$strBody .= sprintf("--%s\r\n", $strAltBoundary);
+				$strBody .= sprintf("Content-Type: text/html; charset=\"%s\"\r\n", $strEncodingType);
+				$strBody .= sprintf("Content-Transfer-Encoding: quoted-printable\r\n\r\n");
+				$strBody .= QString::QuotedPrintableEncode($this->HtmlBody);
+				$strBody .= "\r\n\r\n";
+
+				// Add Inline Images
+				foreach ($this->objInlineArray as $objFile) {
+					$strBody .= sprintf("--%s\r\n", $strAltBoundary);
+					$strBody .= sprintf("Content-Type: %s; name=\"%s\"\r\n", $objFile->MimeType, $objFile->FileName);
+					$strBody .= sprintf("Content-Length: %s\r\n", strlen($objFile->EncodedFileData));
+					$strBody .= sprintf("Content-Disposition: inline; filename=\"%s\"\r\n", $objFile->FileName);
+					$strBody .= sprintf("Content-Id: <%s>\r\n", $objFile->ContentId);
+					$strBody .= "Content-Transfer-Encoding: base64\r\n\r\n";
+					$strBody .= $objFile->EncodedFileData;
+					$strBody .= "\r\n\r\n";
+				}
+
+				// Close Alternate Boundary Marker
+				$strBody .= sprintf("--%s--\r\n\r\n", $strAltBoundary);
+
+				// Close Primary Boundary Marker
+				$strBody .= sprintf("--%s--\r\n", $strBoundary);
+
 			// Messages with HTML and/or FileAttachments are treated differently than simple, plain-text messages
-			if ($this->HasFiles || $this->HtmlBody)  {
+			} else if ($this->HasFiles || $this->HtmlBody)  {
 				// Message Body Explanation (for non-MIME based Email Readers)
 				$strBody = "This is a multipart message in MIME format.\r\n\r\n";
 
@@ -557,11 +697,14 @@
 		 * 
 		 * This will make changes, cleanup and any additional setup to the HeaderArray in order to complete its task
 		 * 
-		 * @param string $strEncodingType the encoding type to use (if null, then it uses QApplication's)
+		 * @param string $strEncodingType the encoding type to use (if null, then it uses QApplicationBase's)
 		 * @param QDateTime $dttSendDate the optional QDateTime to use for the Date field or NULL if you want to use Now()
 		 * @return string[] index 0 is the Header and index 1 is the Body
 		 */
 		public function CalculateMessageHeaderAndBody($strEncodingType = null, QDateTime $dttSendDate = null) {
+			// Quick Check
+			if ($this->HasInline && !$this->strHtmlBody) throw new QCallerException('Cannot have Inline File Attachments but no HTML Body');
+
 			// Setup Headers
 			$this->RemoveHeader('Message-Id');
 			$this->SetHeader('From', $this->From);
@@ -572,8 +715,8 @@
 			else
 				$this->SetHeader('Date', QDateTime::NowToString(QDateTime::FormatRfc5322));
 
-			// Setup Encoding Type (default to QApplication's if not specified)
-			if (!$strEncodingType) $strEncodingType = QApplication::$EncodingType;
+			// Setup Encoding Type (default to QApplicationBase's if not specified)
+			if (!$strEncodingType) $strEncodingType = QApplicationBase::$EncodingType;
 
 			// Additional "Optional" Headers
 			if ($this->Subject) {
@@ -610,13 +753,15 @@
 				case 'Subject': return $this->strSubject;
 				case 'Body': return $this->strBody;
 				case 'HtmlBody': return $this->strHtmlBody;
+				case 'ExclusiveRecipient': return $this->strExclusiveRecipient;
 
 				case 'Cc': return $this->strCc;
 				case 'Bcc': return $this->strBcc;
 
 				case 'FileArray': return $this->objFileArray;
 				case 'HasFiles': return (count($this->objFileArray) > 0) ? true : false;
-
+				case 'HasInline': return (count($this->objInlineArray) > 0) ? true : false;
+				
 				default:
 					try {
 						return parent::__get($strName);
@@ -632,6 +777,12 @@
 				switch ($strName) {
 					case 'From': return ($this->strFrom = QType::Cast($mixValue, QType::String));
 					case 'To': return ($this->strTo = QType::Cast($mixValue, QType::String));
+					case 'ExclusiveRecipient':
+						$strEmailAddressesArray = QEmailServer::GetEmailAddresses(QType::Cast($mixValue, QType::String));
+						if(count($strEmailAddressesArray) != 1) {
+							throw new QCallerException(sprintf('Unable to discern a single email address from the input string for ExclusiveRecipient: %s', $mixValue));
+						}
+						return ($this->strExclusiveRecipient = $strEmailAddressesArray[0]);
 					case 'Subject':
 						$strSubject = trim(QType::Cast($mixValue, QType::String));
 						$strSubject = str_replace("\r", "", $strSubject);
