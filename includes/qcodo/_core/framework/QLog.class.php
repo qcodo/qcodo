@@ -51,7 +51,7 @@
 			if (!__QCODO_LOG__) return;
 
 			// Create the Log Directory if it does NOT yet exist
-			if (!is_dir(__QCODO_LOG__)) QApplication::MakeDirectory(__QCODO_LOG__, 0777);
+			if (!is_dir(__QCODO_LOG__)) QApplicationBase::MakeDirectory(__QCODO_LOG__, 0777);
 
 			// Setup the Line
 			$strLine = sprintf("%5s | %s | %s | %s\r\n",
@@ -82,13 +82,6 @@
 		 * @return void
 		 */
 		public static function LogObject($objObject, $intLogLevel = QLogLevel::Normal, $strLogModule = 'default') {
-
-			// QForms and QControls get a special treatment because var_export cannot deal with recursion
-			if ($objObject instanceof QForm || $objObject instanceof QControl) {
-				$objObject = unserialize(serialize($objObject));
-				$strMessage = $objObject->PrepForVarExport(false);
-			}
-
 			ob_start();
 			var_dump($objObject);
 			$strMessage = ob_get_clean();
