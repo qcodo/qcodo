@@ -10,8 +10,15 @@
 	 * This DateTime class manages datetimes for the entire system.  It basically
 	 * provides a nice wrapper around the PHP DateTime class, which is included with
 	 * all versions of PHP >= 5.2.0.
-	 * 
-	 * For legacy PHP users (PHP < 5.2.0), please refer to QDateTime.legacy
+	 *
+	 * @property integer $Year
+	 * @property integer $Month
+	 * @property integer $Day
+	 * @property integer $Hour
+	 * @property integer $Minute
+	 * @property integer $Second
+	 * @property integer $Timestamp
+	 * @property-read string $Age
 	 */
 	class QDateTime extends DateTime {
 		const Now = 'now';
