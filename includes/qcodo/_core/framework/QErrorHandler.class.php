@@ -42,6 +42,8 @@
 				ob_clean();
 			}
 
+			while (ob_get_level()) ob_end_clean();
+
 			// Setup the FileLinesArray
 			if (is_file(QErrorHandler::$Filename))
 				QErrorHandler::$FileLinesArray = file(QErrorHandler::$Filename);
