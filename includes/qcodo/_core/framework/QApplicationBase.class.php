@@ -125,12 +125,14 @@
 						case '_':
 							break;
 						default:
-							$namespace = basename(strtolower($file), '.php');
-							if (is_file($configurationPathOverride . DIRECTORY_SEPARATOR . $file))
-								$valuesArray = require_once($configurationPathOverride . DIRECTORY_SEPARATOR . $file);
-							else
-								$valuesArray = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
-							$this->addConfiguration($namespace, $valuesArray);
+							if (strtolower(substr($file, strlen($file) - 4)) == '.php') {
+								$namespace = basename(strtolower($file), '.php');
+								if (is_file($configurationPathOverride . DIRECTORY_SEPARATOR . $file))
+									$valuesArray = require_once($configurationPathOverride . DIRECTORY_SEPARATOR . $file);
+								else
+									$valuesArray = require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+								$this->addConfiguration($namespace, $valuesArray);
+							}
 							break;
 					}
 				}

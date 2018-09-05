@@ -12,7 +12,7 @@ class BootstrapHelper {
 		$configurationDirectory =  opendir($configurationPath);
 
 		while ($file = readdir($configurationDirectory)) {
-			if (substr($file, 0, 1) == '_') require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
+			if ((substr($file, 0, 1) == '_') && strtolower(substr($file, strlen($file) - 4)) == '.php') require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
 		}
 		closedir($configurationDirectory);
 
