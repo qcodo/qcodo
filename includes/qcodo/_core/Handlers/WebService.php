@@ -22,6 +22,10 @@ abstract class WebService extends Base {
 		// CORS Pre-Flight
 		if ($request->method == "OPTIONS") {
 			$response = new HttpResponse(200, 'OK');
+
+			if (array_key_exists('Origin', $request->headersArray))
+				$response->setHeader('Access-Control-Allow-Origin', $request->headersArray['Origin']);
+
 			$response->execute();
 			return;
 		}
