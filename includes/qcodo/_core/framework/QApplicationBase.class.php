@@ -686,7 +686,7 @@
 		 * @return QDatabaseBase
 		 * @throws
 		 */
-		protected function createDatabaseConnection($configuration, $index) {
+		public function createDatabaseConnection($configuration, $index) {
 			// Expected Keys to be Set
 			$strExpectedKeys = array(
 				'adapter', 'server', 'port', 'database',

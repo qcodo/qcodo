@@ -108,6 +108,11 @@
 			QCodeGen::$CodeGenArray = array();
 			QCodeGen::$SettingsFilePath = $strSettingsXmlFilePath;
 
+			if (!array_key_exists($strDbIndex, QApplicationBase::$application->database)) {
+				QCodeGen::$RootErrors = 'FATAL ERROR: CodeGen Database Index (' . $strDbIndex . ') was not found.';
+				return;
+			}
+
 			if (!file_exists($strSettingsXmlFilePath)) {
 				QCodeGen::$RootErrors = 'FATAL ERROR: CodeGen Settings XML File (' . $strSettingsXmlFilePath . ') was not found.';
 				return;

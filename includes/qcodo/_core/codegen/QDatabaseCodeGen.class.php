@@ -330,6 +330,13 @@
 			if ($this->strErrors)
 				return;
 
+			// Fixup DB Connection for Codegen
+			$configuration = QApplicationBase::$application->configuration['database'][$strDbIndex];
+			if (array_key_exists('databaseCodegen', $configuration)) {
+				$configuration['database'] = $configuration['databaseCodegen'];
+				QApplicationBase::$application->database[$strDbIndex] = QApplicationBase::$application->createDatabaseConnection($configuration, $strDbIndex);
+			}
+
 			$this->AnalyzeDatabase();
 		}
 
