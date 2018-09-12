@@ -400,7 +400,7 @@
 
 			// If HOUR or MINUTE is NULL...
 			if (is_null($intHour) || is_null($intMinute)) {
-				parent::setTime(null, null, null, null);
+				parent::setTime(null, null, null);
 				$this->blnTimeNull = true;
 				return $this;
 			}
