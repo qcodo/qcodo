@@ -96,6 +96,19 @@ class HttpRequest extends QBaseClass {
 		return null;
 	}
 
+	/**
+	 * This will return the Query String parameter that was in the URL request (if it exists)
+	 *
+	 * If not, this will return NULL.
+	 *
+	 * @param string $name of the query string parameter to look up
+	 * @return string or null if not found
+	 */
+	public function getQueryStringParameter($name) {
+		if (array_key_exists($name, $this->queryStringParametersArray)) return $this->queryStringParametersArray[$name];
+		return null;
+	}
+
 	public function setPathParametersArray($pathParametersArray) {
 		$this->pathParametersArray = $pathParametersArray;
 	}
