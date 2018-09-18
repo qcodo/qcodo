@@ -5,8 +5,9 @@ define('__ROOT__', __APPLICATION__ %ROOT%);
 define('__VENDOR__', __ROOT__ %VENDOR%);
 define('__INCLUDES__', __VENDOR__ . DIRECTORY_SEPARATOR . 'qcodo' . DIRECTORY_SEPARATOR . 'qcodo'. DIRECTORY_SEPARATOR . 'includes');
 
-define ('__QCODO__', __INCLUDES__ . '/qcodo');
-define ('__QCODO_CORE__', __INCLUDES__ . '/qcodo/_core');
+define ('__QCODO__', __INCLUDES__ . DIRECTORY_SEPARATOR . 'qcodo');
+define ('__QCODO_CORE__', __INCLUDES__ . DIRECTORY_SEPARATOR . 'qcodo' . DIRECTORY_SEPARATOR . '_core');
 
-define('__ERROR_LOG__', __ROOT__ . '/error_log');
-define('__QCODO_LOG__', __ROOT__ . '/log');
+define('__ERROR_LOG__', __ROOT__ . DIRECTORY_SEPARATOR . 'error_log');
+define('__QCODO_LOG__', __ROOT__ . DIRECTORY_SEPARATOR . 'log');
+define('__LOCK_FILES__', __ROOT__ . DIRECTORY_SEPARATOR . 'lock_files');

@@ -86,4 +86,74 @@ abstract class Console extends Base {
 		print "\r\n";
 		exit(1);
 	}
+
+
+	/**
+	 * Checks to see if this Console process being called is running uniquely.
+	 * @return boolean true if this is a uniquely running process, false if there is at least one other process running it
+	 */
+	public function isConsoleProcessUnique() {
+		// Get Process List
+		$resultArray = array();
+		exec('ps aux', $resultArray);
+
+		$matchCount = 0;
+		$commandString = strtolower(sprintf('%s %s', $this->argumentArray[0], $this->argumentArray[1]));
+		foreach ($resultArray as $processLineItem) {
+			$processLineItem = strtolower($processLineItem);
+
+			// If not a CommandString match, move to the next processLineItem
+			if (strpos($processLineItem, $commandString) === false) continue;
+
+			// Filter out any entries that are there as a wrapper/shell process
+			if (strpos($processLineItem, '/dev/null') !== false) continue;
+
+			// We have a match
+			$matchCount++;
+		}
+
+		// Return the result
+		return ($matchCount == 1);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function calculateLockFileName() {
+		$name = strtolower($this->argumentArray[1]);
+		$name = str_replace('/', '__', $name);
+		$name = str_replace('\\', '__', $name);
+		$name = str_replace('::', '__', $name);
+		$name = str_replace(':', '__', $name);
+
+		$name .= '.lock';
+
+		return $name;
+	}
+
+	/**
+	 * Sets up a lock file for this process
+	 * @return void
+	 */
+	protected function setupConsoleProcessLockFile() {
+		if (!is_dir(__LOCK_FILES__)) QApplicationBase::MakeDirectory(__LOCK_FILES__ . DIRECTORY_SEPARATOR, 0777);
+
+		$path = __LOCK_FILES__ . DIRECTORY_SEPARATOR . $this->calculateLockFileName();
+		if (is_file($path)) unlink($path);
+
+		file_put_contents($path, getmypid());
+	}
+
+	/**
+	 * Checks to see if there is a lock file and if matches the PID for this process.
+	 * @return boolean whether or not the lock file is considered valid for this process
+	 */
+	protected function isConsoleProcessLockFileValid() {
+		$path = __LOCK_FILES__ . DIRECTORY_SEPARATOR . $this->calculateLockFileName();
+		if (!is_file($path)) return false;
+
+		$pid = null;
+		$pid = @file_get_contents($path);
+		return ($pid == getmypid());
+	}
 }
