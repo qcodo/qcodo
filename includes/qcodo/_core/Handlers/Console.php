@@ -87,12 +87,29 @@ abstract class Console extends Base {
 		exit(1);
 	}
 
+	/**
+	 * This will print out the list of Public methods
+	 */
+	protected function executeMethodList() {
+		$class = new \ReflectionClass($this);
+		print 'Accessible console methods in [' . $class->getShortName() . ']:' . PHP_EOL;
+
+		foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+			if (!$method->isStatic() &&
+				($method->getDeclaringClass()->getName() == $class->getName())) {
+				print '    ' . $method->getDeclaringClass()->getShortName() . '::' . $method->getName() . PHP_EOL;
+			}
+		}
+
+		exit(0);
+	}
+
 
 	/**
 	 * Checks to see if this Console process being called is running uniquely.
 	 * @return boolean true if this is a uniquely running process, false if there is at least one other process running it
 	 */
-	public function isConsoleProcessUnique() {
+	protected function isConsoleProcessUnique() {
 		// Get Process List
 		$resultArray = array();
 		exec('ps aux', $resultArray);
