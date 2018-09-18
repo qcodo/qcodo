@@ -185,59 +185,6 @@
 			WebService::Run($swagger, $settings);
 		}
 
-		/**
-		 * @throws Exception
-		 */
-		public function runConsole() {
-			if (!$this->consoleModeFlag) throw new Exception('Cannot runConsole if not set to console mode');
-
-			// Did we ask for a script to be run?
-			if (!array_key_exists(1, $_SERVER['argv']) ||
-				(substr($_SERVER['argv'][1], 0, 1) == '-')) {
-				$this->executeConsoleWelcome();
-			}
-
-			if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, $_SERVER['argv'][1]))) {
-				$handler = new $classPath();
-				$handler->run();
-			} else if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, str_replace('::', '\\', $_SERVER['argv'][1])))) {
-				$handler = new $classPath();
-				$handler->run();
-			} else if (class_exists($classPath = sprintf('%s\\Handlers\\Console\\%s', $this->rootNamespace, str_replace(':', '\\', $_SERVER['argv'][1])))) {
-				$handler = new $classPath();
-				$handler->run();
-			} else {
-				if (strpos($_SERVER['argv'][1], '.cli.php') === false)
-					$scriptFilename = $_SERVER['argv'][1] . '.cli.php';
-				else
-					$scriptFilename = $_SERVER['argv'][1];
-
-				if (file_exists($path = __VENDOR__ . '/qcodo/qcodo/cli/' . $scriptFilename)) {
-					$this->scriptName = $scriptFilename;
-					require($path);
-				} else {
-					print "error: the script '" . $_SERVER['argv'][1] . "' does not exist.\r\n";
-					exit(1);
-				}
-			}
-		}
-
-		protected function executeConsoleWelcome() {
-			print "Qcodo CLI Runner v" . QCODO_VERSION . "\r\n";
-			print "usage: " . $_SERVER['argv'][0] . " SCRIPT [SCRIPT-SPECIFIC ARGS]\r\n";
-			print "\r\n";
-			print "required parameters:\r\n";
-			print "  SCRIPT         the name of the handler in the Handlers/Console directory\r\n";
-			print "                 in " . $this->rootNamespace . " that you wish to run\r\n";
-			print "\r\n";
-			print "the following SCRIPTs are included with the Qcodo distribution:\r\n";
-			print "  codegen        Code generates your ORM-layer\r\n";
-			print "  ws-setup       Creates a new webservice handler for a given URL path and specification doc\r\n";
-			print "\r\n";
-			print "Other custom scripts can be created as well.\r\n";
-			print "\r\n";
-			exit(1);
-		}
 
 		//////////////////////////
 		// Public Static Variables

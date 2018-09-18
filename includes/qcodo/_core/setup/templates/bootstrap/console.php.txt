@@ -9,5 +9,5 @@ use %NAME%\Managers\Application;
 require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BootstrapHelper.php');
 BootstrapHelper::loadQcodo(true);
 
-// Finally, run the ScriptFilename that is being run/executed
-Application::application()->runConsole();
+// Call RunConsole in the Handler to perform Run Duties
+Qcodo\Handlers\Console::RunConsole($_SERVER['argv']);

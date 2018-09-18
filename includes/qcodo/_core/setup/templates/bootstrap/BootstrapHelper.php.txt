@@ -17,8 +17,8 @@ class BootstrapHelper {
 		closedir($configurationDirectory);
 
 		require_once(__VENDOR__ . DIRECTORY_SEPARATOR . 'autoload.php');
-		require_once(__QCODO_CORE__ . '/qcodo.inc.php');
-		require_once(__APPLICATION__. DIRECTORY_SEPARATOR . '/Managers/Application.php');
+		require_once(__QCODO_CORE__ . DIRECTORY_SEPARATOR . 'qcodo.inc.php');
+		require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . 'Application.php');
 
 		Application::application()->initialize($consoleModeFlag);
 	}
