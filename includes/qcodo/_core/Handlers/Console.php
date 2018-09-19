@@ -143,12 +143,12 @@ abstract class Console extends Base {
 			if (count($this->argumentArray) > $index) {
 				$this->executeConsoleError('invalid argument [' . $this->argumentArray[$index] . ']');
 			}
+		}
 
-			// Not enough arguments passed in?
-			foreach ($this->parameterArray as $array) {
-				if (($array['type'] == 'required') && is_nuLL($array['value']))
-					$this->executeConsoleError('missing value for [' . $array['name'] . ']');
-			}
+		// Not enough arguments passed in?
+		foreach ($this->parameterArray as $array) {
+			if (($array['type'] == 'required') && is_nuLL($array['value']))
+				$this->executeConsoleError('missing value for [' . $array['name'] . ']');
 		}
 
 		// Get the Values in an Array
