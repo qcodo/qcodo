@@ -116,4 +116,28 @@ class HttpRequest extends QBaseClass {
 	public function setPathParametersArrayForNamedPath($namedPath) {
 		$this->setPathParametersArray(self::getPathParametersForPaths($this->path, $namedPath));
 	}
+
+	/**
+	 * Searches the headers to find the value (if set)
+	 *
+	 * Will first attempt to do a case-sensitive search of header keys.
+	 * If not found, it will do a subsequent case-insensitive search.
+	 *
+	 * If still not found, it will return null.
+	 *
+	 * @param string $key
+	 * @return string or null
+	 */
+	public function getHeaderParameter($key) {
+		// Return if key exists
+		if (array_key_exists($key, $this->headersArray)) return $this->headersArray[$key];
+
+		// Secondary check -- case insensitive search by key
+		$headersArrayLowercase = array_change_key_case($this->headersArray);
+		$key = strtolower($key);
+		if (array_key_exists($key, $headersArrayLowercase)) return $headersArrayLowercase[$key];
+
+		// Not found -- return null
+		return null;
+	}
 }
