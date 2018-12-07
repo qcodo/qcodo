@@ -103,7 +103,7 @@
 		 * @return string[] An array of e-mail addresses only, or NULL if none
 		 */
 		public static function GetEmailAddresses($strAddresses) {
-			$strAddressArray = null;
+			$strAddressArray = array();
 
 			// Define the ATEXT-based DOT-ATOM pattern which defines the LOCAL-PART of
 			// an ADDRESS-SPEC in RFC 2822
@@ -149,6 +149,7 @@
 		 */
 		public static function IsEmailValid($strEmailAddress) {
 			$strEmailAddressArray = QEmailServer::GetEmailAddresses($strEmailAddress);
+			if (!$strEmailAddressArray) return false;
 			return ((count($strEmailAddressArray) == 1) && ($strEmailAddressArray[0] == $strEmailAddress));  
 		}
 
@@ -369,7 +370,7 @@
 
 			// Set Up Fields
 			$strAddressArray = QEmailServer::GetEmailAddresses($objMessage->From);
-			if (count($strAddressArray) != 1) throw new QEmailException(sprintf('Not a valid From address: %s', $objMessage->From));
+			if (!$strAddressArray || (count($strAddressArray) != 1)) throw new QEmailException(sprintf('Not a valid From address: %s', $objMessage->From));
 			$strMailFrom = $strAddressArray[0];
 
 			if(strlen($objMessage->ExclusiveRecipient)) {
@@ -779,7 +780,7 @@ class QEmailMessage extends QBaseClass {
 					case 'To': return ($this->strTo = QType::Cast($mixValue, QType::String));
 					case 'ExclusiveRecipient':
 						$strEmailAddressesArray = QEmailServer::GetEmailAddresses(QType::Cast($mixValue, QType::String));
-						if(count($strEmailAddressesArray) != 1) {
+						if(!$strEmailAddressesArray || (count($strEmailAddressesArray) != 1)) {
 							throw new QCallerException(sprintf('Unable to discern a single email address from the input string for ExclusiveRecipient: %s', $mixValue));
 						}
 						return ($this->strExclusiveRecipient = $strEmailAddressesArray[0]);
