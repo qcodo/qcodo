@@ -157,9 +157,9 @@ EOT
 		}
 	}
 
-	$output .= implode(",\r\n", $propertyArray) . "\r\n";
+	$output .= implode(",\n", $propertyArray) . "\n";
 	$output .= "			}
 	}";
 
-	print $output . "\r\n";
+	print $output . "\n";
 }
