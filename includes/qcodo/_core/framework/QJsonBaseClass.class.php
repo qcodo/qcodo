@@ -45,7 +45,8 @@
 
 					// Is the TYPE: Array?
 					} else if (is_array($mixType)) {
-						$objToReturn->mixPropertiesDictionary[$strName] = self::JsonDecodeArrayForType($mixType[0], $objJson->$strName);
+						$strFullyQualifiedClassName = substr($strClassName, 0, strrpos($strClassName, '\\')) . '\\' . $mixType[0];
+						$objToReturn->mixPropertiesDictionary[$strName] = self::JsonDecodeArrayForType($strFullyQualifiedClassName, $objJson->$strName);
 
 					// Otherwise, operate based on TYPE
 					} else switch ($mixType) {
