@@ -121,6 +121,9 @@ class QcodoSetup {
 				'BootstrapHelper.php' => array(
 					'NAME' => $this->applicationName
 				),
+				'autoload.php' => array(
+					'NAME' => $this->applicationName
+				),
 				'console.php' => array(
 					'NAME' => $this->applicationName
 				),

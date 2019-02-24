@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * This file is auto-generated.  Do not make any changes.
+ */
+use %NAME%\Managers\Application;
+
+// Use BootstrapHelper to load Qcodo
+require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'BootstrapHelper.php');
+BootstrapHelper::loadQcodo(true);
