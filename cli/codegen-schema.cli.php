@@ -81,6 +81,7 @@
 		$comment = array();
 		$model = array();
 
+		if (!isset($schema->properties)) throw new Exception('No properties defined on: ' . $schemaName);
 		foreach ($schema->properties as $propertyName => $property) {
 			if (isset($property->description) && $property->description)
 				$comment[] = sprintf('	 * @property %s $%s %s', GetPhpDocPropertyForProperty($property), ucfirst($propertyName), $property->description);
