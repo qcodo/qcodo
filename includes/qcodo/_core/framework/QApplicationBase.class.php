@@ -686,6 +686,11 @@
 				$classNameObject = substr($classNameObject, strlen(QApplicationBase::$application->rootNamespace . '\\Models\\Database\\QQNode'));
 				require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . $classNameObject . '.php');
 				return true;
+			} else if (strpos($className, QApplicationBase::$application->rootNamespace . '\\Models\\Database\\QQReverseReferenceNode') === 0) {
+				$classNameObject = $className;
+				$classNameObject = substr($classNameObject, strlen(QApplicationBase::$application->rootNamespace . '\\Models\\Database\\QQReverseReferenceNode'));
+				require_once(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . $classNameObject . '.php');
+				return true;
 			}
 
 			return false;
