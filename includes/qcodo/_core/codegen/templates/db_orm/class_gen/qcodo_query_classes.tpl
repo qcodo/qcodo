@@ -54,6 +54,8 @@
 		protected $strTableName = '<%= $objTable->Name %>';
 		protected $strPrimaryKey = '<%= $objTable->PrimaryKeyColumnArray[0]->Name %>';
 		protected $strClassName = '<%= $objTable->ClassName %>';
+		protected $strClassNamespace = '<%= QApplicationBase::$application->rootNamespace %>\Models\Database';
+
 		public function __get($strName) {
 			switch ($strName) {
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
@@ -102,6 +104,8 @@
 		protected $strTableName = '<%= $objTable->Name %>';
 		protected $strPrimaryKey = '<%= $objTable->PrimaryKeyColumnArray[0]->Name %>';
 		protected $strClassName = '<%= $objTable->ClassName %>';
+		protected $strClassNamespace = '<%= QApplicationBase::$application->rootNamespace %>\Models\Database';
+
 		public function __get($strName) {
 			switch ($strName) {
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
