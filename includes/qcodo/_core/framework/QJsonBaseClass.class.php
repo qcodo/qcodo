@@ -31,7 +31,7 @@
 
 			if (is_null($objJson)) return null;
 			if ($objJson === false) return false;
-			if ($objJson === true) return true;
+			if ($objJson === true) return null;
 
 			// Go Through Each Property in the Model
 			foreach ($objToReturn::$_Model as $strName => $mixType) {
