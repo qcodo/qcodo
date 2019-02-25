@@ -9,6 +9,7 @@
 		protected $strTableName;
 		protected $strPrimaryKey;
 		protected $strClassName;
+		protected $strClassNamespace;
 
 		public function __get($strName) {
 			switch ($strName) {
@@ -137,7 +138,7 @@
 							$strParentAlias, $this->strName, $this->strPrimaryKey, $objJoinCondition);
 
 						if ($blnExpandSelection)
-							call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+							call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 					}
 				} catch (QCallerException $objExc) {
 					$objExc->IncrementOffset();
@@ -171,7 +172,7 @@
 
 				// Next, Expand the Selection Fields for this Table (if applicable)
 				if ($blnExpandSelection) {
-					call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+					call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 				}
 
 				// Return the Parent Alias
@@ -295,7 +296,7 @@
 					$objBuilder->AddJoinItem($this->strTableName, $strParentAlias . '__' . $this->strName, $strParentAlias, $this->objParentNode->_PrimaryKey, $this->strForeignKey, $objJoinCondition);
 
 					if ($blnExpandSelection)
-						call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+						call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 				}
 
 				// Finally, return the final column alias name (Parent Prefix with Current Node Name)
@@ -321,7 +322,7 @@
 				// Next, Expand the Selection Fields for this Table (if applicable)
 				// TODO: If/when we add assn-based attributes, possibly add selectionfields addition here?
 				if ($blnExpandSelection) {
-					call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+					call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 				}
 
 				// Return the Parent Alias
@@ -375,7 +376,7 @@
 						$strParentAlias, $this->strName, $this->strPrimaryKey);
 
 					if ($blnExpandSelection)
-						call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+						call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 				}
 
 				// Finally, return the final column alias name (Parent Prefix with Current Node Name)
@@ -401,7 +402,7 @@
 				// Next, Expand the Selection Fields for this Table (if applicable)
 				// TODO: If/when we add assn-based attributes, possibly add selectionfields addition here?
 //				if ($blnExpandSelection) {
-//					call_user_func(array($this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
+//					call_user_func(array($this->strClassNamespace . '\\' . $this->strClassName, 'GetSelectFields'), $objBuilder, $strParentAlias . '__' . $this->strName);
 //				}
 
 				// Return the Parent Alias

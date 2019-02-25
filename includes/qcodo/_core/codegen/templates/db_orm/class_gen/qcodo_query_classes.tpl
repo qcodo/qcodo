@@ -15,6 +15,7 @@
 		protected $strTableName = '<%= $objReference->Table %>';
 		protected $strPrimaryKey = '<%= $objReference->Column %>';
 		protected $strClassName = '<%= $objReference->VariableType %>';
+		protected $strClassNamespace = '<%= QApplicationBase::$application->rootNamespace %>\Models\Database';
 
 		public function __get($strName) {
 			switch ($strName) {
