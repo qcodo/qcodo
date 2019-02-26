@@ -97,6 +97,8 @@
 			ucfirst($schemaName) . 'Gen',
 			implode("\r\n", $model),
 			ucfirst($schemaName),
+			ucfirst($schemaName),
+			ucfirst($schemaName),
 			ucfirst($schemaName)
 		);
 

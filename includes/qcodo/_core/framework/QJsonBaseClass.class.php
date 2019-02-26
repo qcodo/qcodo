@@ -45,8 +45,8 @@
 
 					// Is the TYPE: Array?
 					} else if (is_array($mixType)) {
-						$strFullyQualifiedClassName = substr($strClassName, 0, strrpos($strClassName, '\\')) . '\\' . $mixType[0];
-						$objToReturn->mixPropertiesDictionary[$strName] = self::JsonDecodeArrayForType($strFullyQualifiedClassName, $objJson->$strName);
+						$strNamespace = substr($strClassName, 0, strrpos($strClassName, '\\'));
+						$objToReturn->mixPropertiesDictionary[$strName] = self::JsonDecodeArrayForType($mixType[0], $objJson->$strName, $strNamespace);
 
 					// Otherwise, operate based on TYPE
 					} else switch ($mixType) {
@@ -71,7 +71,7 @@
 			return $objToReturn;
 		}
 
-		public static function JsonDecodeArrayForType($mixType, $mixJson) {
+		public static function JsonDecodeArrayForType($mixType, $mixJson, $strNamespace = null) {
 			if (is_array($mixJson)) {
 				$objJsonArray = $mixJson;
 			} else if (is_object($mixJson) && (get_class($mixJson) == 'stdClass')) {
@@ -100,6 +100,7 @@
 
 				default:
 					$arrToReturn = new ArrayObject();
+					$mixType = $strNamespace . '\\' . $mixType;
 					if (!is_subclass_of($mixType, 'QJsonBaseClass')) throw new Exception('JsonDecodeArray() cannot decode Unsupported Type: ' . $mixType);
 					foreach ($objJsonArray as $objJson) $arrToReturn[] = $mixType::JsonDecode($objJson);
 					break;

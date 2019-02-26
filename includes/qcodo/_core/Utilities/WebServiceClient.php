@@ -4,18 +4,17 @@ namespace Qcodo\Utilities;
 use QBaseClass;
 use Exception;
 use QJsonBaseClass;
-use ArrayObject;
 
-class HttpClient extends QBaseClass {
-	public $latestResponseBody;
-	public $latestResponseHeadersArray;
-	public $latestResponseStatusCode;
+class WebServiceClient extends QBaseClass {
+	public $lastResponseBody;
+	public $lastResponseHeadersArray;
+	public $lastResponseStatusCode;
 
 	public $requestHeadersArray;
 	public $baseUrl;
 
 	/**
-	 * HttpClient constructor
+	 * WebServiceClient constructor
 	 * @param string $baseUrl includes the scheme (http or https) and the base domain of all subsequent requests
 	 */
 	public function __construct($baseUrl) {
@@ -50,8 +49,10 @@ class HttpClient extends QBaseClass {
 
 		if ($json instanceof QJsonBaseClass) {
 			$content = $json->JsonEncode();
-		} else if (is_array($content) || ($content instanceof ArrayObject)) {
+		} else if (ArrayObject::IsArray($json)) {
 			$content = QJsonBaseClass::JsonEncodeArray($json);
+		} else if (is_null($json)) {
+			$content = null;
 		} else {
 			throw new Exception('Must be a JsonBaseClass or Array');
 		}
@@ -72,10 +73,10 @@ class HttpClient extends QBaseClass {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
 
 		$result = curl_exec($curl);
-		$this->latestResponseBody = $result;
+		$this->lastResponseBody = $result;
 
 		$statusCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-		$this->latestResponseStatusCode = $statusCode;
+		$this->lastResponseStatusCode = $statusCode;
 
 		curl_close($curl);
 	}
@@ -97,10 +98,10 @@ class HttpClient extends QBaseClass {
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 
 		$result = curl_exec($curl);
-		$this->latestResponseBody = $result;
+		$this->lastResponseBody = $result;
 
 		$statusCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-		$this->latestResponseStatusCode = $statusCode;
+		$this->lastResponseStatusCode = $statusCode;
 
 		curl_close($curl);
 	}

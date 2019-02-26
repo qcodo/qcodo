@@ -14,7 +14,7 @@
 		);
 
 		/**
-		 * Creates a %s from a JSON-decoded stdClass object
+		 * Creates a %s from a JSON string or JSON-decoded stdClass object
 		 *
 		 * @param mixed $json can be a string-based JSON or a stdClass
 		 * @return %s
@@ -22,5 +22,16 @@
 		 */
 		public static function JsonDecode($json) {
 			return self::JsonDecodeForClass(get_called_class(), $json);
+		}
+
+		/**
+		 * Creates an array of %s from a JSON string or an array of JSON-decoded stdClass objects
+		 *
+		 * @param mixed $json can be a string-based JSON or an array of stdClass
+		 * @return %s[]
+		 * @throws
+		 */
+		public static function JsonDecodeArray($json) {
+			return self::JsonDecodeArrayForType(get_called_class(), $json);
 		}
 	}
