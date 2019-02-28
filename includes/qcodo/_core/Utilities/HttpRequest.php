@@ -15,6 +15,10 @@ class HttpRequest extends QBaseClass {
 	public $rawPost;
 	public $headersArray;
 
+	public $httpHost;
+	public $httpScheme;
+	public $httpUri;
+
 	/**
 	 * Given a requestPath and a namedPath, this will parse out path-based parameters (if any)
 	 * and place into the array by order of parameter.
@@ -67,7 +71,15 @@ class HttpRequest extends QBaseClass {
 		$this->rawPost = file_get_contents("php://input");
 		$this->headersArray = getallheaders();
 
-		$requestParts = explode('?', $_SERVER['REQUEST_URI']);
+		// HTTP Properties
+		$this->httpHost = $_SERVER['HTTP_HOST'];
+		if (array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER))
+			$this->httpScheme = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+		else
+			$this->httpScheme = $_SERVER['REQUEST_SCHEME'];
+		$this->httpUri = $_SERVER['REQUEST_URI'];
+
+		$requestParts = explode('?', $this->httpUri);
 		$this->path = $requestParts[0];
 
 		if (array_key_exists('CONTEXT_PREFIX', $_SERVER) &&
