@@ -39,7 +39,7 @@ abstract class WebServiceTestCase extends TestCase {
 		$this->webServiceClient->postJson($method, $json);
 		if ($this->exitOnNextFlag) exit('[' . $this->webServiceClient->lastResponseBody . "]\r\n");
 
-		$this->assertEquals($statusCode, $this->webServiceClient->lastResponseStatusCode, 'HTTP Status Code Mismatch on [' . $method . ']');
+		$this->assertEquals($statusCode, $this->webServiceClient->lastResponseStatusCode, 'HTTP Status Code Mismatch on [' . $method . '] - ' . $this->webServiceClient->lastResponseBody);
 	}
 
 	/**
@@ -82,7 +82,7 @@ abstract class WebServiceTestCase extends TestCase {
 		$this->webServiceClient->get($method);
 		if ($this->exitOnNextFlag) exit('[' . $this->webServiceClient->lastResponseBody . "]\r\n");
 
-		$this->assertEquals($statusCode, $this->webServiceClient->lastResponseStatusCode, 'HTTP Status Code Mismatch on [' . $method . ']');
+		$this->assertEquals($statusCode, $this->webServiceClient->lastResponseStatusCode, 'HTTP Status Code Mismatch on [' . $method . '] - ' . $this->webServiceClient->lastResponseBody);
 	}
 
 	/**
