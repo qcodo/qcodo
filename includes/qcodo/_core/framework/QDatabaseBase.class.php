@@ -53,7 +53,7 @@
 		abstract public function GetIndexesForTable($strTableName);
 		abstract public function GetForeignKeysForTable($strTableName);
 
-		abstract public function TransactionBegin();
+		abstract public function TransactionBegin($strTransactionIdentifier = null);
 		abstract public function TransactionCommit();
 		abstract public function TransactionRollBack();
 

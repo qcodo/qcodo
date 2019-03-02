@@ -137,27 +137,44 @@
 			$this->objMySqli->close();
 			$this->blnConnectedFlag = false;
 		}
-		
-		public function TransactionBegin() {
+
+		protected $strTransactionStackArray = array();
+
+		public function TransactionBegin($strTransactionIdentifier = null) {
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
 
-			// Set to AutoCommit
-			$this->NonQuery('SET AUTOCOMMIT=0;');
+			if (count($this->strTransactionStackArray)) {
+				// Set to AutoCommit
+				$this->NonQuery('SET AUTOCOMMIT=0;');
+			}
+
+			if (!$strTransactionIdentifier) $strTransactionIdentifier = 'Transaction Level ' . count($this->strTransactionStackArray);
+			array_push($this->strTransactionStackArray, $strTransactionIdentifier);
 		}
 
 		public function TransactionCommit() {
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
 
-			$this->NonQuery('COMMIT;');
-			// Set to AutoCommit
-			$this->NonQuery('SET AUTOCOMMIT=1;');
+			if (!count($this->strTransactionStackArray)) throw new QCallerException('Unable to commit -- no transaction has begun');
+
+			array_pop($this->strTransactionStackArray);
+
+			if (!count($this->strTransactionStackArray)) {
+				$this->NonQuery('COMMIT;');
+				// Set to AutoCommit
+				$this->NonQuery('SET AUTOCOMMIT=1;');
+			}
 		}
 
 		public function TransactionRollback() {
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
+
+			$strPoppedTransaction = array_pop($this->strTransactionStackArray);
+
+			if (count($this->strTransactionStackArray)) throw new QCallerException('Rollback of a nested transactions is not supported: ' . $strPoppedTransaction);
 
 			$this->NonQuery('ROLLBACK;');
 			// Set to AutoCommit
