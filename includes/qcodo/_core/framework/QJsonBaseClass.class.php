@@ -33,11 +33,13 @@
 			if ($objJson === false) return false;
 			if ($objJson === true) return null;
 
+			$variables = get_object_vars($objJson);
+
 			// Go Through Each Property in the Model
 			foreach ($objToReturn::$_Model as $strName => $mixType) {
 
 				// If we have defined this Property in the JSON...
-				if (isset($objJson->$strName)) {
+				if (array_key_exists($strName, $variables)) {
 
 					// Is it NULL?
 					if (is_null($objJson->$strName)) {
