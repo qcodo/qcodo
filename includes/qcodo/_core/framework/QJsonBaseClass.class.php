@@ -156,7 +156,7 @@
 		public function IsPropertySet($strName) {
 			$strIndex = strtolower(substr($strName, 0, 1)) . substr($strName, 1);
 
-			return array_key_exists($strIndex, $this::$_Model);
+			return array_key_exists($strIndex, $this->mixPropertiesDictionary);
 		}
 
 		public function __get($strName) {
