@@ -75,8 +75,13 @@ class HttpRequest extends QBaseClass {
 		$this->httpHost = $_SERVER['HTTP_HOST'];
 		if (array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER))
 			$this->httpScheme = $_SERVER['HTTP_X_FORWARDED_PROTO'];
-		else
+		else if (array_key_exists('REQUEST_SCHEME', $_SERVER))
 			$this->httpScheme = $_SERVER['REQUEST_SCHEME'];
+		else if (array_key_exists('SERVER_PORT', $_SERVER) && ($_SERVER['SERVER_PORT'] == 443))
+			$this->httpScheme = 'https';
+		else
+			$this->httpScheme = 'http';
+
 		$this->httpUri = $_SERVER['REQUEST_URI'];
 
 		$requestParts = explode('?', $this->httpUri);
