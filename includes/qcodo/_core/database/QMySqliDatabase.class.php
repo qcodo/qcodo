@@ -144,7 +144,7 @@
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
 
-			if (count($this->strTransactionStackArray)) {
+			if (!count($this->strTransactionStackArray)) {
 				// Set to AutoCommit
 				$this->NonQuery('SET AUTOCOMMIT=0;');
 			}

@@ -195,7 +195,7 @@
 				// Get Rid of Unnecessary Backtrace Info
 				$intLength = count($objDebugBacktrace);
 				for ($intIndex = 0; $intIndex < $intLength; $intIndex++) {
-					if (($intIndex < 2) || ($intIndex > 3))
+					if ($intIndex > 5)
 						$objDebugBacktrace[$intIndex] = 'BackTrace ' . $intIndex;
 					else {
 						if (array_key_exists('args', $objDebugBacktrace[$intIndex])) {
@@ -330,23 +330,7 @@
 		 */
 		public function OutputProfiling() {
 			if ($this->blnEnableProfiling) {
-				printf('<form method="post" id="frmDbProfile%s" action="%s/_core/profile.php"><div>',
-					$this->intDatabaseIndex, __VIRTUAL_DIRECTORY__ . __PHP_ASSETS__);
-				printf('<input type="hidden" name="strProfileData" value="%s" />',
-					base64_encode(serialize($this->strProfileArray)));
-				printf('<input type="hidden" name="intDatabaseIndex" value="%s" />', $this->intDatabaseIndex);
-				printf('<input type="hidden" name="strReferrer" value="%s" /></div></form>', QApplication::HtmlEntities(QApplication::$RequestUri));
-
-				$intCount = round(count($this->strProfileArray) / 2);
-				if ($intCount == 0)
-					printf('<b>PROFILING INFORMATION FOR DATABASE CONNECTION #%s</b>: No queries performed.  Please <a href="#" onclick="var frmDbProfile = document.getElementById(\'frmDbProfile%s\'); frmDbProfile.target = \'_blank\'; frmDbProfile.submit(); return false;">click here to view profiling detail</a><br />',
-						$this->intDatabaseIndex, $this->intDatabaseIndex);
-				else if ($intCount == 1)
-					printf('<b>PROFILING INFORMATION FOR DATABASE CONNECTION #%s</b>: 1 query performed.  Please <a href="#" onclick="var frmDbProfile = document.getElementById(\'frmDbProfile%s\'); frmDbProfile.target = \'_blank\'; frmDbProfile.submit(); return false;">click here to view profiling detail</a><br />',
-						$this->intDatabaseIndex, $this->intDatabaseIndex);
-				else
-					printf('<b>PROFILING INFORMATION FOR DATABASE CONNECTION #%s</b>: %s queries performed.  Please <a href="#" onclick="var frmDbProfile = document.getElementById(\'frmDbProfile%s\'); frmDbProfile.target = \'_blank\'; frmDbProfile.submit(); return false;">click here to view profiling detail</a><br />',
-						$this->intDatabaseIndex, $intCount, $this->intDatabaseIndex);
+				print json_encode($this->strProfileArray);
 			} else {
 				_p('<form></form><b>Profiling was not enabled for this database connection (#' . $this->intDatabaseIndex . ').</b>  To enable, ensure that ENABLE_PROFILING is set to TRUE.', false);
 			}
