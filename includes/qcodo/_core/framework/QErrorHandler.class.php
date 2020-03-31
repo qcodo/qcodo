@@ -168,6 +168,9 @@
 			if (error_reporting() == 0)
 				return;
 
+			if (!($intErrorNumber & error_reporting()))
+				return;
+
 			// If we still have access to QApplicationBase, set the error flag on the Application
 			if (class_exists('QApplicationBase'))
 				QApplicationBase::$application->errorFlag = true;
