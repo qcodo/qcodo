@@ -2,6 +2,7 @@
 	namespace %s\Models\Schema;
 	use QJsonBaseClass;
 	use QDateTime;
+	use stdClass;
 
 	/**
 	 * @class %s
