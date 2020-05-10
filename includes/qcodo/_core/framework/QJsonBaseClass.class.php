@@ -251,6 +251,14 @@
 						$this->mixPropertiesDictionary[$strIndex] = $mixValue;
 						return $mixValue;
 
+					case 'stdClass':
+						if ($mixValue instanceof stdClass) {
+							$this->mixPropertiesDictionary[$strIndex] = $mixValue;
+							return $mixValue;
+						}
+
+						throw new QCallerException('Mismatched DataType for field [' . get_called_class() . '::'. $strIndex . ']: ' . $this::$_Model[$strIndex]);
+
 					default:
 						$strFullyQualifiedClassName = substr(get_called_class(), 0, strrpos(get_called_class(), '\\')) . '\\' . $this::$_Model[$strIndex];
 
