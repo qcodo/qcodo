@@ -31,6 +31,8 @@
 				return 'boolean';
 			case 'number':
 				return 'float';
+			case 'object':
+				return 'stdClass';
 			case 'string':
 				if (isset($property->format)) {
 					switch ($property->format) {
@@ -59,6 +61,8 @@
 				return "'boolean'";
 			case 'number':
 				return "'float'";
+			case 'object':
+				return "'stdClass'";
 			case 'string':
 				if (isset($property->format)) {
 					switch ($property->format) {
