@@ -112,7 +112,7 @@
 		}
 
 		public function JsonEncode() {
-			return json_encode($this->GetJsonHelper());
+			return json_encode($this->GetJsonHelper(), JSON_INVALID_UTF8_SUBSTITUTE);
 		}
 
 		public static function JsonEncodeArray($objArray) {
@@ -122,7 +122,7 @@
 
 			$objArray = self::GetJsonArrayHelper($objArray);
 			if ($objArray instanceof ArrayObject) $objArray = $objArray->GetArrayCopy();
-			return json_encode($objArray);
+			return json_encode($objArray, JSON_INVALID_UTF8_SUBSTITUTE);
 		}
 
 		protected function GetJsonHelper() {
