@@ -104,13 +104,17 @@
 			return $strToReturn;
 		}
 
-		public static function Run($strDbIndex, $strSettingsXmlFilePath) {
+		public static function Run($strDbIndexes, $strSettingsXmlFilePath) {
 			QCodeGen::$CodeGenArray = array();
 			QCodeGen::$SettingsFilePath = $strSettingsXmlFilePath;
 
-			if (!array_key_exists($strDbIndex, QApplicationBase::$application->database)) {
-				QCodeGen::$RootErrors = 'FATAL ERROR: CodeGen Database Index (' . $strDbIndex . ') was not found.';
-				return;
+			$strDbIndexArray = array();
+			foreach (explode(',', $strDbIndexes) as $strDbIndex) {
+				if (!array_key_exists($strDbIndex, QApplicationBase::$application->database)) {
+					QCodeGen::$RootErrors = 'FATAL ERROR: CodeGen Database Index (' . $strDbIndex . ') was not found.';
+					return;
+				}
+				$strDbIndexArray[$strDbIndex] = $strDbIndex;
 			}
 
 			if (!file_exists($strSettingsXmlFilePath)) {
@@ -161,10 +165,10 @@
 							$strAttributeArray = $objChildNode->attributes();
 							$strDataSourceIndex = (string) $strAttributeArray['index'];
 
-							if (($intDataSourceCount == 1) && ($strDataSourceIndex == '1')) {
-								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
-							} else if ($strDataSourceIndex == $strDbIndex) {
-								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
+							if (($intDataSourceCount == 1) && ($strDataSourceIndex == '1') && count($strDbIndexArray) == 1) {
+								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndexArray[0]);
+							} else if (array_key_exists($strDataSourceIndex, $strDbIndexArray)) {
+								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDataSourceIndex);
 							}
 							break;
 						case 'restService':
