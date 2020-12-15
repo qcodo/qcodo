@@ -55,7 +55,7 @@
 		 * @var SimpleXmlObject the XML representation
 		 */
 		protected static $SettingsXml;
-		
+
 		public static $SettingsFilePath;
 
 		/**
@@ -80,13 +80,13 @@
 		 */
 		protected static $TemplateEscapeEnd;
 		protected static $TemplateEscapeEndLength;
-		
+
 		public static $RootErrors = '';
 
 		/**
 	  	 * @var string[] array of directories to be excluded in codegen
 		 * @access protected
-		 */  						
+		 */
 		protected static $DirectoriesToExcludeArray = array('.','..','.svn','cvs','.git');
 
 		public static function GetSettingsXml() {
@@ -151,10 +151,21 @@
 
 			// Iterate Through DataSources
 			if (QCodeGen::$SettingsXml->dataSources->asXML())
+				$intDataSourceCount = count(QCodeGen::$SettingsXml->dataSources);
+
 				foreach (QCodeGen::$SettingsXml->dataSources->children() as $objChildNode) {
 					switch (dom_import_simplexml($objChildNode)->nodeName) {
 						case 'database':
-							QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
+							// We run this if there is just one data source count AND the index is "1" (this is the default)
+							// Otherwise, we only run if DB_INDEX matches the index name
+							$strAttributeArray = $objChildNode->attributes();
+							$strDataSourceIndex = (string) $strAttributeArray['index'];
+
+							if (($intDataSourceCount == 1) && ($strDataSourceIndex == '1')) {
+								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
+							} else if ($strDataSourceIndex == $strDbIndex) {
+								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndex);
+							}
 							break;
 						case 'restService':
 							QCodeGen::$CodeGenArray[] = new QRestServiceCodeGen($objChildNode);
@@ -171,7 +182,7 @@
 		 * This will lookup either the node value (if no attributename is passed in) or the attribute value
 		 * for a given Tag.  Node Searches only apply from the root level of the configuration XML being passed in
 		 * (e.g. it will not be able to lookup the tag name of a grandchild of the root node)
-		 * 
+		 *
 		 * If No Tag Name is passed in, then attribute/value lookup is based on the root node, itself.
 		 *
 		 * @param SimpleXmlElement $objNode
@@ -209,7 +220,7 @@
 				return $strToReturn;
 			}
 		}
-		
+
 		/**
 		 *
 		 */
@@ -397,7 +408,7 @@
 
 			// Look for the Escape Begin
 			$intPosition = strpos($strTemplate, QCodeGen::$TemplateEscapeBegin);
-			
+
 			// Get Database Escape Identifiers
 			$strEscapeIdentifierBegin = QApplicationBase::$application->database[$this->intDatabaseIndex]->EscapeIdentifierBegin;
 			$strEscapeIdentifierEnd = QApplicationBase::$application->database[$this->intDatabaseIndex]->EscapeIdentifierEnd;
@@ -407,7 +418,7 @@
 				$intPositionEnd = strpos($strTemplate, QCodeGen::$TemplateEscapeEnd, $intPosition);
 
 				// Get and cleanup the Eval Statement
-				$strStatement = substr($strTemplate, $intPosition + QCodeGen::$TemplateEscapeBeginLength, 
+				$strStatement = substr($strTemplate, $intPosition + QCodeGen::$TemplateEscapeBeginLength,
 										$intPositionEnd - $intPosition - QCodeGen::$TemplateEscapeEndLength);
 				$strStatement = trim($strStatement);
 
@@ -418,7 +429,7 @@
 
 					// Remove Head '='
 					$strStatement = trim(substr($strStatement, 1));
-					
+
 					// Add 'return' eval
 					$strStatement = sprintf('return (%s);', $strStatement);
 				} else if (substr($strStatement, 0, 1) == '@') {
@@ -431,7 +442,7 @@
 
 					// Calculate Template Filename
 					$intVariablePosition = strpos($strStatement, '(');
-					
+
 					if ($intVariablePosition === false)
 						throw new Exception('Invalid include subtemplate Command: ' . $strStatement);
 					$strTemplateFile = substr($strStatement, 0, $intVariablePosition);
@@ -446,10 +457,10 @@
 					for ($intIndex = 0; $intIndex < count($strVariableArray); $intIndex++) {
 						// Trim
 						$strVariableArray[$intIndex] = trim($strVariableArray[$intIndex]);
-						
+
 						// Remove trailing and head "'"
 						$strVariableArray[$intIndex] = substr($strVariableArray[$intIndex], 1, strlen($strVariableArray[$intIndex]) - 2);
-						
+
 						// Trim Again
 						$strVariableArray[$intIndex] = trim($strVariableArray[$intIndex]);
 					}
@@ -476,8 +487,8 @@
 					// Backup a number of characters
 					$intPosition = $intPosition - strlen($strStatement);
 					$strStatement = '';
-					
-					
+
+
 				// Check if we're starting an open-ended statemen
 				} else if (substr($strStatement, strlen($strStatement) - 1) == '{') {
 					// We ARE in an open-ended statement
@@ -495,7 +506,7 @@
 						$strFragment = substr($strSubTemplate, $intSubPosition + QCodeGen::$TemplateEscapeEndLength,
 							$intSubPositionEnd - $intSubPosition - QCodeGen::$TemplateEscapeEndLength);
 						$strFragment = trim($strFragment);
-						
+
 						$strFragmentLastCharacter = substr($strFragment, strlen($strFragment) - 1);
 
 						if ($strFragmentLastCharacter == '{') {
@@ -533,7 +544,7 @@
 							$strSubTemplate = substr($strSubTemplate, 0, $intCrPosition + 1);
 						}
 					}
-					
+
 					// Figure out the Command and calculate SubTemplate
 					$strCommand = substr($strStatement, 0, strpos($strStatement, ' '));
 					switch ($strCommand) {
@@ -544,18 +555,18 @@
 							$strStatement = substr($strStatement, strlen('foreach'));
 							$strStatement = substr($strStatement, 0, strlen($strStatement) - 1);
 							$strStatement = trim($strStatement);
-							
+
 							// Ensure that we've got a "(" and a ")"
 							if ((QString::FirstCharacter($strStatement) != '(') ||
 								(QString::LastCharacter($strStatement) != ')'))
 								throw new Exception("Improperly Formatted foreach: $strFullStatement");
 							$strStatement = trim(substr($strStatement, 1, strlen($strStatement) - 2));
-							
+
 							// Pull out the two sides of the "as" clause
 							$strStatement = explode(' as ', $strStatement);
 							if (count($strStatement) != 2)
 								throw new Exception("Improperly Formatted foreach: $strFullStatement");
-							
+
 							$objArray = eval(sprintf('return %s;', trim($strStatement[0])));
 							$strSingleObjectName = trim($strStatement[1]);
 							$strNameKeyPair = explode('=>', $strSingleObjectName);
@@ -564,7 +575,7 @@
 							if (count($strNameKeyPair) == 2) {
 								$strSingleObjectKey = trim($strNameKeyPair[0]);
 								$strSingleObjectValue = trim($strNameKeyPair[1]);
-								
+
 								// Remove leading '$'
 								$strSingleObjectKey = substr($strSingleObjectKey, 1);
 								$strSingleObjectValue = substr($strSingleObjectValue, 1);
@@ -574,7 +585,7 @@
 								if ($objArray) foreach ($objArray as $$strSingleObjectKey => $$strSingleObjectValue) {
 									$mixArgumentArray[$strSingleObjectKey] = $$strSingleObjectKey;
 									$mixArgumentArray[$strSingleObjectValue] = $$strSingleObjectValue;
-									
+
 									$strStatement .= $this->EvaluateTemplate($strSubTemplate, $strModuleName, $mixArgumentArray);
 									$mixArgumentArray['_INDEX']++;
 								}
@@ -586,14 +597,14 @@
 								$strStatement = '';
 								if ($objArray) foreach ($objArray as $$strSingleObjectName) {
 									$mixArgumentArray[$strSingleObjectName] = $$strSingleObjectName;
-									
+
 									$strStatement .= $this->EvaluateTemplate($strSubTemplate, $strModuleName, $mixArgumentArray);
 									$mixArgumentArray['_INDEX']++;
 								}
 							}
-							
+
 							break;
-							
+
 						case 'if':
 							$strFullStatement = $strStatement;
 
@@ -601,21 +612,21 @@
 							$strStatement = substr($strStatement, strlen('if'));
 							$strStatement = substr($strStatement, 0, strlen($strStatement) - 1);
 							$strStatement = trim($strStatement);
-							
-							
+
+
 							if (eval(sprintf('return (%s);', $strStatement))) {
 								$strStatement = $this->EvaluateTemplate($strSubTemplate, $strModuleName, $mixArgumentArray);
 							} else
 								$strStatement = '';
-							
+
 							break;
 						default:
 							throw new Exception("Invalid OpenEnded Command: $strStatement");
 					}
-					
+
 					// Reclculate intPositionEnd
 					$intPositionEnd = $intPositionEnd + QCodeGen::$TemplateEscapeEndLength + $intSubPositionEnd;
-					
+
 					// If nothing but whitespace between $intPositionEnd and the next CR, then remove the CR
 					$intCrPosition = strpos($strTemplate, "\n", $intPositionEnd + QCodeGen::$TemplateEscapeEndLength);
 					if ($intCrPosition !== false) {
@@ -634,14 +645,14 @@
 						}
 					}
 
-					
-					
+
+
 					// Recalcualte intPosition
 					// If nothing but whitespace between $intPosition and the previous CR, then remove the Whitespace (keep the CR)
 					$strFragment = substr($strTemplate, 0, $intPosition);
 					$intCrPosition = strrpos($strFragment, "\n");
 
-					
+
 					if ($intCrPosition !== false) {
 						$intLfLength = 1;
 					} else {
@@ -656,7 +667,7 @@
 					} else
 						$intCrLength = 0;
 					$strFragment = substr($strTemplate, $intCrPosition, $intPosition - $intCrPosition);
-					
+
 					if (trim($strFragment) == '') {
 						// Nothing exists before the escapebegin and the previous CR
 						// Go ahead and chop it off (but not the CR or CR/LF)
@@ -710,11 +721,11 @@
 		protected function TypeNameFromColumnName($strName) {
 			return QConvertNotation::CamelCaseFromUnderscore($strName);
 		}
-		
+
 		protected function ReferenceColumnNameFromColumn(QColumn $objColumn) {
 			$strColumnName = $objColumn->Name;
 			$intNameLength = strlen($strColumnName);
-			
+
 			// Does the column name for this reference column end in "_id"?
 			if (($intNameLength > 3) && (substr($strColumnName, $intNameLength - 3) == "_id")) {
 				// It ends in "_id" but we don't want to include the "Id" suffix
@@ -729,7 +740,7 @@
 				// to make this deliniation.
 				$strColumnName = sprintf("%s_object", $strColumnName);
 			}
-			
+
 			return $strColumnName;
 		}
 
@@ -749,7 +760,7 @@
 			return QConvertNotation::PrefixFromType(QType::Object) .
 				QConvertNotation::CamelCaseFromUnderscore($strTableName);
 		}
-		
+
 		protected function ReverseReferenceVariableNameFromTable($strTableName) {
 			$strTableName = $this->StripPrefixFromTable($strTableName);
 			return $this->VariableNameFromTable($strTableName);
@@ -779,7 +790,7 @@
 			if ($objArrayToImplode) foreach ($objArrayToImplode as $objObject) {
 				array_push($strArrayToReturn, sprintf('%s%s%s', $strPrefix, $objObject->__get($strProperty), $strSuffix));
 			}
-			
+
 			return implode($strGlue, $strArrayToReturn);
 		}
 
@@ -803,7 +814,7 @@
 		protected function FormControlVariableNameForColumn(QColumn $objColumn) {
 			if ($objColumn->Identity)
 				return sprintf('lbl%s', $objColumn->PropertyName);
-				
+
 			if ($objColumn->Timestamp)
 				return sprintf('lbl%s', $objColumn->PropertyName);
 
@@ -822,7 +833,7 @@
 		protected function FormControlClassForColumn(QColumn $objColumn) {
 			if ($objColumn->Identity)
 				return 'QLabel';
-				
+
 			if ($objColumn->Timestamp)
 				return 'QLabel';
 
@@ -922,7 +933,7 @@
 
 			if ($blnPluralize)
 				$strToReturn = $this->Pluralize($strToReturn);
-				
+
 			if ($strTableName == $strReferencedTableName) {
 				// Self-referencing Reference to Describe
 
@@ -931,15 +942,15 @@
 				if (($strColumnName == $strReferencedTableName) ||
 					($strColumnName == $strReferencedTableName . '_id'))
 					return sprintf('Child%s', $strToReturn);
-				
+
 				// Rip out trailing "_id" if applicable
 				$intLength = strlen($strColumnName);
 				if (($intLength > 3) && (substr($strColumnName, $intLength - 3) == "_id"))
 					$strColumnName = substr($strColumnName, 0, $intLength - 3);
-	
+
 				// Rip out the referenced table name from the column name
 				$strColumnName = str_replace($strReferencedTableName, "", $strColumnName);
-				
+
 				// Change any double "_" to single "_"
 				$strColumnName = str_replace("__", "_", $strColumnName);
 				$strColumnName = str_replace("__", "_", $strColumnName);
@@ -964,20 +975,20 @@
 				$intLength = strlen($strColumnName);
 				if (($intLength > 3) && (substr($strColumnName, $intLength - 3) == "_id"))
 					$strColumnName = substr($strColumnName, 0, $intLength - 3);
-	
+
 				// Rip out the referenced table name from the column name
 				$strColumnName = str_replace($strReferencedTableName, "", $strColumnName);
-				
+
 				// Change any double "_" to single "_"
 				$strColumnName = str_replace("__", "_", $strColumnName);
 				$strColumnName = str_replace("__", "_", $strColumnName);
-				
+
 				return sprintf("%sAs%s",
 					$strToReturn,
 					QConvertNotation::CamelCaseFromUnderscore($strColumnName));
 			}
 		}
-		
+
 		// this is called for ReverseReference Object Descriptions for association tables (many-to-many)
 		protected function CalculateObjectDescriptionForAssociation($strAssociationTableName, $strTableName, $strReferencedTableName, $blnPluralize) {
 			// Strip Prefixes (if applicable)
@@ -1022,7 +1033,7 @@
 					$this->strAssociatedObjectPrefix,
 					$strToReturn,
 					$this->strAssociatedObjectSuffix);
-			
+
 			// Otherwise, add "As" and the predicate
 			return sprintf("%s%sAs%s%s",
 				$this->strAssociatedObjectPrefix,
@@ -1077,7 +1088,7 @@
 
 		protected function Pluralize($strName) {
 			// Special Rules go Here
-			switch (true) {	
+			switch (true) {
 				case (strtolower($strName) == 'play'):
 					return $strName . 's';
 			}
