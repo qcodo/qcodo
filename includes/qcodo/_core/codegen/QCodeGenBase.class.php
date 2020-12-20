@@ -166,7 +166,8 @@
 							$strDataSourceIndex = (string) $strAttributeArray['index'];
 
 							if (($intDataSourceCount == 1) && ($strDataSourceIndex == '1') && count($strDbIndexArray) == 1) {
-								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDbIndexArray[0]);
+								$values = array_values($strDbIndexArray);
+								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $values[0]);
 							} else if (array_key_exists($strDataSourceIndex, $strDbIndexArray)) {
 								QCodeGen::$CodeGenArray[] = new QDatabaseCodeGen($objChildNode, $strDataSourceIndex);
 							}
