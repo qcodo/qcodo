@@ -58,6 +58,7 @@
 						case 'float':
 						case 'integer':
 						case 'string':
+						case 'stdClass':
 							$objToReturn->mixPropertiesDictionary[$strName] = $objJson->$strName;
 							break;
 
