@@ -411,30 +411,22 @@
 			else if (array_key_exists('SERVER_ADDR', $_SERVER))
 				QApplication::$ServerAddress = $_SERVER['SERVER_ADDR'];
 		}
-		
+
 		/**
 		 * Called by QApplication::Initialize() to initialize the various
 		 * QApplication settings on ScriptName, DocumentRoot, etc.
 		 * @return void
 		 */
-		protected static function InitializeScriptInfo() {
+		public static function InitializeScriptInfo() {
 			// Setup ScriptFilename and ScriptName
-			QApplication::$ScriptFilename = $_SERVER['SCRIPT_FILENAME'];
-			QApplication::$ScriptName = $_SERVER['SCRIPT_NAME'];
-			
-			// Ensure both are set, or we'll have to abort
-			if (!QApplication::$ScriptFilename) {
-				throw new Exception('Error on QApplication::Initialize() - ScriptFilename or ScriptName was not set');
-			}
+			QApplicationBase::$ScriptFilename = $_SERVER['SCRIPT_FILENAME'];
+			QApplicationBase::$ScriptName = $_SERVER['SCRIPT_NAME'];
 
 			// Setup PathInfo and QueryString (if applicable)
-			QApplication::$PathInfo = array_key_exists('PATH_INFO', $_SERVER) ? trim($_SERVER['PATH_INFO']) : null;
-			QApplication::$QueryString = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : null;
-			
-			// Setup DocumentRoot
-			QApplication::$DocumentRoot = trim(__DOCROOT__);
+			QApplicationBase::$PathInfo = array_key_exists('PATH_INFO', $_SERVER) ? trim($_SERVER['PATH_INFO']) : null;
+			QApplicationBase::$QueryString = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : null;
 		}
-		
+
 		/**
 		 * Called by QApplication::Initialize() to initialize the QApplication::$RequestUri setting.
 		 * @return void
@@ -461,7 +453,7 @@
 					(QApplication::$QueryString) ? sprintf('?%s', QApplication::$QueryString) : null);
 			}
 		}
-		
+
 		/**
 		 * Called by QApplication::Initialize() to initialize the QApplication::$BrowserType setting.
 		 * @return void
@@ -732,7 +724,7 @@
 		/**
 		 * Same as mkdir but correctly implements directory recursion.
 		 * At its core, it will use the php MKDIR function.
-		 * 
+		 *
 		 * This method does no special error handling.  If you want to use special error handlers,
 		 * be sure to set that up BEFORE calling MakeDirectory.
 		 *
@@ -876,7 +868,7 @@
 		 * By default, this is used by the codegen and form drafts to do a quick check
 		 * on the ALLOW_REMOTE_ADMIN constant (as defined in configuration.inc.php).  If enabled,
 		 * then anyone can access the page.  If disabled, only "localhost" can access the page.
-		 * 
+		 *
 		 * If you want to run a script that should be accessible regardless of
 		 * ALLOW_REMOTE_ADMIN, simply remove the CheckRemoteAdmin() method call from that script.
 		 *
@@ -920,7 +912,7 @@
 		public static function PathInfo($intIndex = null) {
 			// Lookup PathInfoArray from cache, or create it into cache if it doesn't yet exist
 			if (!isset(self::$arrPathInfo)) {
-				$strPathInfo = QApplication::$PathInfo;
+				$strPathInfo = QApplicationBase::$PathInfo;
 				self::$arrPathInfo = array();
 
 				if ($strPathInfo != '' ) {
@@ -1046,23 +1038,23 @@
 		/**
 		 * Global/Central HtmlEntities command to perform the PHP equivalent of htmlentities.
 		 * Feel free to override to specify encoding/quoting specific preferences (e.g. ENT_QUOTES/ENT_NOQUOTES, etc.)
-		 * 
+		 *
 		 * This method is also used by the global print "_p" function.
 		 *
 		 * @param string $strText text string to perform html escaping
 		 * @return string the html escaped string
 		 */
 		public static function HtmlEntities($strText) {
-			return htmlentities($strText, ENT_COMPAT, QApplication::$EncodingType);
+			return htmlentities($strText, ENT_COMPAT, QApplicationBase::$EncodingType);
 		}
 
 		/**
 		 * This function displays helpful development info like queries sent to database and memory usage.
 		 * By default it shows only if database profiling is enabled in any configured database connections.
-		 * 
+		 *
 		 * If forced to show when profiling is disabled you can monitor qcodo memory usage more accurately,
 		 * as collecting database profiling information tends to noticeable bigger memory consumption.
-		 * 
+		 *
 		 * @param boolean $blnForceDisplay optional parameter, set true to always display info even if DB profiling is disabled
 		 * @return void
 		 */
@@ -1152,7 +1144,7 @@
 		const InternetExplorer_7_0 = 4;
 		const InternetExplorer_8_0 = 8;
 		const InternetExplorer_9_0 = 16;
-		
+
 		const Firefox = 32;
 		const Firefox_1_0 = 64;
 		const Firefox_1_5 = 128;
@@ -1160,13 +1152,13 @@
 		const Firefox_3_0 = 512;
 		const Firefox_3_5 = 1024;
 		const Firefox_4   = 2048;
-		
+
 		const Safari = 4096;
 		const Safari_2_0 = 8192;
 		const Safari_3_0 = 16384;
 		const Safari_4_0 = 32768;
 		const Safari_5_0 = 65536;
-		
+
 		const Chrome     = 131072;
 		const Chrome_2_0 = 262144;
 		const Chrome_3_0 = 524288;

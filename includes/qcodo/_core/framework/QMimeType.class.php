@@ -7,6 +7,7 @@
 		const Gzip = 'application/x-gzip';
 		const Html = 'text/html';
 		const Jpeg = 'image/jpeg';
+		const JpegProgressive = 'image/pjpeg';
 		const Mp3 = 'audio/mpeg';
 		const MpegVideo = 'video/mpeg';
 		const MsExcel = 'application/vnd.ms-excel';
@@ -130,10 +131,10 @@
 		/**
 		 * To more easily process a file repository based on Mime Types, it's sometimes
 		 * easier to tokenize a mimetype and process using the tokens (e.g. if you have a
-		 * directory of image icons that you want to map back to a mime type or a 
+		 * directory of image icons that you want to map back to a mime type or a
 		 * collection of mime types, a tokenized-version of the mime type would be more
 		 * appropriate).
-		 * 
+		 *
 		 * Given a string-based mime type, this will return a "tokenized" version
 		 * of the mime type, which only consists of lower case characters and underscores (_).
 		 * @param string $strMimeType
