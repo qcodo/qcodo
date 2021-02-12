@@ -70,7 +70,7 @@
 		const ArrayType = 'array';
 
 		const DateTime = 'QDateTime';
-		
+
 		const Resource = 'resource';
 
 		private static function CastObjectTo($objItem, $strType) {
@@ -95,6 +95,10 @@
 							else
 								return true;
 					}
+				}
+
+				if (($objReflection->getName() == 'ArrayObject') && $strType == Qtype::ArrayType) {
+					return $objItem->getArrayCopy();
 				}
 
 				if ($objItem instanceof $strType)
@@ -159,7 +163,7 @@
 					throw new QInvalidCastException(sprintf('Unable to cast %s value to %s', $strItemType, $strType));
 			}
 		}
-		
+
 		private static function CastArrayTo($arrItem, $strType) {
 			if ($strType == QType::ArrayType)
 				return $arrItem;
@@ -225,7 +229,7 @@
 					throw new QInvalidCastException(sprintf('Unable to determine type of item to be cast: %s', $mixItem));
 			}
 		}
-		
+
 		/**
 		 * Used by the Qcodo Code Generator to allow for the code generation of
 		 * the actual "Type::Xxx" constant, instead of the text of the constant,
@@ -252,7 +256,7 @@
 					throw new QInvalidCastException(sprintf('Unable to determine type of item to lookup its constant: %s', $strType));
 			}
 		}
-		
+
 		public final static function TypeFromDoc($strType) {
 			switch (strtolower($strType)) {
 				case 'string':
@@ -295,7 +299,7 @@
 					}
 			}
 		}
-		
+
 		/**
 		 * Used by the Qcodo Code Generator and QSoapService class to allow for the xml generation of
 		 * the actual "s:type" Soap Variable types.
@@ -359,7 +363,7 @@
 
 			if (!array_key_exists($strArrayName, $strComplexTypeArray))
 				$strComplexTypeArray[$strArrayName] = sprintf(
-					'<s:complexType name="%s"><s:sequence>' . 
+					'<s:complexType name="%s"><s:sequence>' .
 					'<s:element minOccurs="0" maxOccurs="unbounded" name="%s" type="%s"/>' .
 					'</s:sequence></s:complexType>',
 					QType::SoapArrayType($strType),
