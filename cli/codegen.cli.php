@@ -14,7 +14,7 @@
 	$objParameters = new QCliParameterProcessor('codegen', 'Qcodo Code Generator v' . QCODO_VERSION);
 
 	// Add new default parameter -- db index
-	$objParameters->AddDefaultParameter('db_index', QCliParameterType::String, 'the DB Index name in configuration/database.php which is being codegenned');
+	$objParameters->AddDefaultParameter('db_indexes', QCliParameterType::String, 'the DB Index name in configuration/database.php which is being codegenned -- if multiple, separate by comma');
 
 	// Optional Parameters for Path to Codegen Settings
 	$strDefaultPath = __APPLICATION__ . '/configuration/codegen/codegen.xml';
@@ -23,7 +23,7 @@
 
 	// Pull the Parameter Values
 	$strSettingsXmlPath = $objParameters->GetValue('s');
-	$strDbIndex = $objParameters->GetDefaultValue('db_index');
+	$strDbIndexes = $objParameters->GetDefaultValue('db_indexes');
 
 	define('__DATAGEN_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'generated');
 	define('__DATA_CLASSES__', __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Database');
@@ -36,8 +36,8 @@
 
 	try {
 		/////////////////////
-		// Run Code Gen	
-		QCodeGen::Run($strDbIndex, $strSettingsXmlPath);
+		// Run Code Gen
+		QCodeGen::Run($strDbIndexes, $strSettingsXmlPath);
 		/////////////////////
 
 		if ($strErrors = QCodeGen::$RootErrors) {
