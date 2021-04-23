@@ -16,6 +16,59 @@ abstract class WebService extends Base {
 	 */
 	protected $request;
 
+	private static function RunErrorIndex($viewErrorLogCommand) {
+		$template = file_get_contents(dirname(__FILE__) . '/ErrorPageTemplate.html');
+
+		$viewer = new \QErrorLogViewer(__ERROR_LOG__);
+		$errorXmlArray = $viewer->GetAsDataSource();
+
+		$body = '';
+
+		foreach ($errorXmlArray as $errorXml) {
+			$date = new \QDateTime($errorXml->isoDateTime);
+			$type = (htmlentities((string) $errorXml->type)) ?? 'Other';
+			$title = htmlentities($errorXml->title);
+			$serverAndScript = sprintf('<strong>%s</strong><br/><span class="meta">%s</span>',
+				htmlentities($errorXml->script),
+				htmlentities($errorXml->server)
+			);
+			$agent = sprintf('<span class="meta">%s</span>',
+				htmlentities($errorXml->agent)
+			);
+
+			$body .= '<tr>';
+			$body .= sprintf('<td><a href="%s/view/%s">View</a></td>', $viewErrorLogCommand, $errorXml->filename);
+			$body .= sprintf('<td><a href="%s/delete/%s">Delete</a></td>', $viewErrorLogCommand, $errorXml->filename);
+			$body .= sprintf('<td>%s</td>', $date);
+			$body .= sprintf('<td>%s</td>', $type);
+			$body .= sprintf('<td>%s</td>', $title);
+			$body .= sprintf('<td>%s</td>', $serverAndScript);
+			$body .= sprintf('<td>%s</td>', $agent);
+			$body .= '</tr>';
+		}
+
+		print (str_replace('%BODY%', $body, $template));
+	}
+
+	private static function RunErrorView($viewErrorLogCommand, $errorLogFile) {
+		$path = __ERROR_LOG__ . '/' . $errorLogFile;
+		if (is_file($path)) {
+			readfile($path);
+			return true;
+		}
+		return false;
+	}
+
+	private static function RunErrorDelete($viewErrorLogCommand, $errorLogFile) {
+		$path = __ERROR_LOG__ . '/' . $errorLogFile;
+		if (is_file($path)) {
+			@unlink($path);
+			header('Location: ' . $viewErrorLogCommand);
+			return true;
+		}
+		return false;
+	}
+
 	public static function Run(Swagger $swagger, $settings) {
 		$request = new HttpRequest();
 
@@ -28,6 +81,28 @@ abstract class WebService extends Base {
 
 			$response->execute();
 			return;
+		}
+
+		// Are we explicitly asking to view the error log?
+		$viewErrorLogCommand = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewErrorLogCommand');
+		if ($viewErrorLogCommand && (strpos($request->path, $viewErrorLogCommand) === 0)) {
+			$path = substr($request->path, strlen($viewErrorLogCommand));
+
+			if (!$path) {
+				self::RunErrorIndex($viewErrorLogCommand);
+				return;
+			}
+
+			$parts = explode('/', $path);
+			switch ($parts[1]) {
+				case 'view':
+					if (self::RunErrorView($viewErrorLogCommand, $parts[2])) return;
+					break;
+
+				case 'delete':
+					if (self::RunErrorDelete($viewErrorLogCommand, $parts[2])) return;
+					break;
+			}
 		}
 
 		// Are we explicitly asking to view the swagger spec?
