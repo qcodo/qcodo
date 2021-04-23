@@ -12,6 +12,12 @@ abstract class WebService extends Base {
 	const ConfigurationNamespace = '.ws';
 
 	/**
+	 * Singleton-style access to the HttpRequest that is being operated on, for example, for ErrorLogging purposes
+	 * @var HttpRequest
+	 */
+	public static $HttpRequest;
+
+	/**
 	 * @var $request HttpRequest
 	 */
 	protected $request;
@@ -163,5 +169,6 @@ abstract class WebService extends Base {
 
 	public function __construct(HttpRequest $request) {
 		$this->request = $request;
+		self::$HttpRequest = $request;
 	}
 }
