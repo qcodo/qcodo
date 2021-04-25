@@ -13,7 +13,7 @@
 		protected static $_Model = array(
 %s
 		);
-
+%s
 		/**
 		 * Creates a %s from a JSON string or JSON-decoded stdClass object
 		 *

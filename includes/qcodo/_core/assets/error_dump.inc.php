@@ -2,6 +2,10 @@
 	/**
 	 * Qcodo Error Dump
 	 */
+
+    if (\Qcodo\Handlers\WebService::$HttpRequest) {
+        $_SERVER['PHP_SELF'] = \Qcodo\Handlers\WebService::$HttpRequest->path;
+	}
 ?>
 <html>
 	<head>
@@ -19,11 +23,14 @@
 			.code { background-color: #f4eeff; padding: 1px 10px 1px 10px; }
 		</style>
 		<script type="text/javascript">
-			function RenderPage(strHtml) { document.rendered.strHtml.value = strHtml; document.rendered.submit(); }
+			function RenderPage(strHtml) {
+				var win = window.open("", "Rendered Error Information");
+				win.document.body.innerHTML = strHtml;
+            }
 			function ToggleHidden(strDiv) { var obj = document.getElementById(strDiv); var stlSection = obj.style; var isCollapsed = obj.style.display.length; if (isCollapsed) stlSection.display = ''; else stlSection.display = 'none'; }
 		</script>
 	</head>
-	<body bgcolor="white" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0"> 
+	<body bgcolor="white" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
 
 	<table border="0" cellspacing="0" width="100%">
 		<tr>
@@ -34,10 +41,9 @@
 				<b>HTTP User Agent:</b> <?php if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) print($_SERVER['HTTP_USER_AGENT']); ?></td>
 		</tr>
 	</table>
-	
+
 	<div class="page">
 		<span class="title"><?php print(QErrorHandler::$MessageBody); ?></span><br />
-		<form method="post" action="<?php print(__VIRTUAL_DIRECTORY__ . _printHP_ASSETS__) ;?>/_core/error_already_renderedprintage.php" target="blank" name="rendered"><input type="hidden" name="strHtml" value=""></form>
 
 			<b><?php print(QErrorHandler::$Type); ?> Type:</b>&nbsp;&nbsp;
 			<?php print(QErrorHandler::$ObjectType); ?>
@@ -72,7 +78,7 @@
 						unset($__exc_IntLine);
 ?>
 			</div><br />
-			
+
 <?php
 			if (isset(QErrorHandler::$ErrorAttributeArray)) {
 				foreach (QErrorHandler::$ErrorAttributeArray as $__exc_ObjErrorAttribute) {
@@ -103,14 +109,13 @@
 			<br /><br />
 			<div id="VariableDump" class="code" style="Display: none;">
 <?php
-				print('<pre>');
-
 				// Dump All Variables
 				foreach ($GLOBALS as $__exc_Key => $__exc_Value) {
 					if (isset($__exc_Key)) global $$__exc_Key;
 				}
 
 				$__exc_ObjVariableArray = get_defined_vars();
+				if (\Qcodo\Handlers\WebService::$HttpRequest) $__exc_ObjVariableArray['WebService_HttpRequest'] = \Qcodo\Handlers\WebService::$HttpRequest;
 				$__exc_ObjVariableArrayKeys = array_keys($__exc_ObjVariableArray);
 				sort($__exc_ObjVariableArrayKeys);
 
@@ -129,16 +134,17 @@
 							} else
 								$__exc_StrVarExport = QErrorHandler::VarExport($__exc_ObjVariableArray[$__exc_Key]);
 
-							$__exc_StrToDisplay .= sprintf("  <a href=\"javascript:RenderPage(%s)\" title=\"%s\">%s</a>\n", $__exc_Key, $__exc_StrVarExport, $__exc_Key);
-							$__exc_StrToScript .= sprintf("  %s = \"<pre>%s</pre>\";\n", $__exc_Key, QErrorHandler::PrepDataForScript($__exc_StrVarExport));
+							$__exc_StrToDisplay .= sprintf("  <a href=\"#\" onclick=\"RenderPage(%s); return false;\" title=\"%s\">%s</a>\n", $__exc_Key, $__exc_StrVarExport, $__exc_Key);
+							$__exc_StrToScript .= sprintf("  const %s = \"<pre>%s</pre>\";\n", $__exc_Key, QErrorHandler::PrepDataForScript($__exc_StrVarExport));
 						} catch (Exception $__exc_objExcOnVarDump) {
 							$__exc_StrToDisplay .= sprintf("  Fatal error:  Nesting level too deep - recursive dependency?\n", $__exc_objExcOnVarDump->Message);
 						}
 					}
 				}
 
+                printf('<script type="text/javascript">%s</script>', $__exc_StrToScript);
+                print('<pre>');
 				print($__exc_StrToDisplay . '</pre>');
-				printf('<script type="text/javascript">%s</script>', $__exc_StrToScript);
 ?>
 			</div><br />
 			<hr width="100%" size="1" color="#dddddd" />

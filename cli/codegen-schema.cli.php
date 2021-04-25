@@ -113,6 +113,7 @@
 	foreach ($swagger->definitions as $schemaName => $schema) {
 		$comment = array();
 		$model = array();
+		$resultParametersEnum = array();
 
 		if (!isset($schema->properties)) throw new Exception('No properties defined on: ' . $schemaName);
 		foreach ($schema->properties as $propertyName => $property) {
@@ -121,6 +122,24 @@
 			else
 				$comment[] = sprintf('	 * @property %s $%s', GetPhpDocPropertyForProperty($property), ucfirst($propertyName));
 			$model[] = sprintf('			\'%s\' => %s,', $propertyName, GetModelDefinitionForProperty($property));
+
+			// For ResultParameter properties, if the description is an enum like [Foo,Bar,Jaz]
+			// Then we should codegen the enum options
+			if ($propertyName == 'resultParameter') {
+				$description = trim($property->description);
+				if ((substr($description, 0, 1) == '[') && (substr($description, strlen($description) - 1) == ']')) {
+					$description = substr($description, 1, strlen($description) - 2);
+					foreach (explode(',', $description) as $enum) {
+						$enum = trim($enum);
+						if ($enum) {
+							$resultParametersEnum[] = sprintf("		const OrderBy%s = '%s';",
+								ucfirst($enum),
+								strtolower($enum)
+							);
+						}
+					}
+				}
+			}
 		}
 
 		$rendered = sprintf($templateGenerated,
@@ -129,6 +148,7 @@
 			implode("\r\n", $comment),
 			ucfirst($schemaName) . 'Gen',
 			implode("\r\n", $model),
+			count($resultParametersEnum) ? sprintf("\r\n		// ResultParameter Order By Enums\r\n%s\r\n", implode("\r\n", $resultParametersEnum)) : null,
 			ucfirst($schemaName),
 			ucfirst($schemaName),
 			ucfirst($schemaName),
