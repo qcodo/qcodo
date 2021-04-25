@@ -1131,6 +1131,28 @@
 			}
 			_p('</ul></div>', false);
 		}
+
+		/**
+		 * @param string[][] $csvRowsArray
+		 * @return string
+		 */
+		public static function generateCsvContent($csvRowsArray) {
+			$rowContentArray = array();
+			foreach ($csvRowsArray as $csvRow) {
+				$itemArray = array();
+				foreach ($csvRow as $csvItem) {
+					if ((strlen($csvItem) > 0) && !is_numeric($csvItem)) {
+						$itemArray[] = '"' . str_replace('"', '""', $csvItem) . '"';
+					} else {
+						$itemArray[] = $csvItem;
+					}
+				}
+				$rowContentArray[] = implode(',', $itemArray);
+			}
+
+			return implode("\r\n", $rowContentArray);
+		}
+
 	}
 
 	class QRequestMode {

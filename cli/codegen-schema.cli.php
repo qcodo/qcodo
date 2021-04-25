@@ -5,6 +5,9 @@
 	// Add new default parameter -- db index
 	$objParameters->AddDefaultParameter('swagger_path', QCliParameterType::Path, 'the path to the Swagger file which has Schema definitions being codegenned');
 
+	// Add an optional flag -- csv -- this is to report
+	$objParameters->AddFlagParameter('c', 'csv', 'generate only a CSV report of the paths');
+
 	$objParameters->Run();
 	if (!is_file($path = $objParameters->GetDefaultValue('swagger_path'))) {
 		print ("error: swagger file not found: " . $path . "\r\n");
@@ -79,6 +82,32 @@
 	}
 
 	$swagger = json_decode($swaggerText);
+
+	if ($objParameters->GetValue('csv')) {
+		$rowArray = array(array(
+			'Section',
+			'URL Path',
+			'HTTP Method',
+			'Operation Method Name',
+			'Summary'
+		));
+		foreach ($swagger->paths as $pathName => $path) {
+			foreach ($path as $methodName => $definition) {
+				$rowArray[] = array(
+					$definition->tags[0],
+					$pathName,
+					$methodName,
+					$definition->operationId,
+					$definition->summary
+				);
+			}
+		}
+
+		print QApplicationBase::generateCsvContent($rowArray);
+		return;
+	}
+
+
 	$templateClass = file_get_contents(dirname(__FILE__) . '/template-schema-class.txt');
 	$templateGenerated = file_get_contents(dirname(__FILE__) . '/template-schema-generated.txt');
 	foreach ($swagger->definitions as $schemaName => $schema) {
