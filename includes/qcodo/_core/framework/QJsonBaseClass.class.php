@@ -139,6 +139,8 @@
 				}
 			}
 
+			if (!count($objToExport)) return new stdClass();
+
 			return $objToExport;
 		}
 
