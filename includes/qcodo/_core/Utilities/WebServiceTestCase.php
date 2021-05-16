@@ -86,6 +86,18 @@ abstract class WebServiceTestCase extends TestCase {
 	}
 
 	/**
+	 * @param string $method the webservice method we are calling
+	 * @param integer $statusCode the expected HTTP Status Code
+	 * @return null
+	 */
+	public function delete($method, $statusCode) {
+		$this->webServiceClient->get($method, 'DELETE');
+		if ($this->exitOnNextFlag) exit('[' . $this->webServiceClient->lastResponseBody . "]\r\n");
+
+		$this->assertEquals($statusCode, $this->webServiceClient->lastResponseStatusCode, 'HTTP Status Code Mismatch on [' . $method . '] - ' . $this->webServiceClient->lastResponseBody);
+	}
+
+	/**
 	 * @param integer $statusCode the expected HTTP Status Code
 	 * @param string $schemaClass the expected JSON Schema Class
 	 * @return QJsonBaseClass

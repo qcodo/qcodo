@@ -81,7 +81,7 @@ class WebServiceClient extends QBaseClass {
 		curl_close($curl);
 	}
 
-	public function get($method) {
+	public function get($method, $customRequest = null) {
 		if (substr($method, 0, 1) != '/') throw new Exception('Method must begin with a /');
 
 		$this->setRequestHeader('Content-Type');
@@ -96,6 +96,10 @@ class WebServiceClient extends QBaseClass {
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headerArray);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+
+		if ($customRequest) {
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $customRequest);
+		}
 
 		$result = curl_exec($curl);
 		$this->lastResponseBody = $result;
