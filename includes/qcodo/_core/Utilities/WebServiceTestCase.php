@@ -113,6 +113,19 @@ abstract class WebServiceTestCase extends TestCase {
 	/**
 	 * @param integer $statusCode the expected HTTP Status Code
 	 * @param string $schemaClass the expected JSON Schema Class
+	 * @return QJsonBaseClass
+	 */
+	public function schemaFromDelete($method, $statusCode, $schemaClass) {
+		$this->delete($method, $statusCode);
+
+		$responseSchema = $schemaClass::JsonDecode($this->webServiceClient->lastResponseBody);
+		$this->assertNotNull($responseSchema, 'Received [' . $this->webServiceClient->lastResponseBody . '] when expecting ' . $schemaClass);
+		return $responseSchema;
+	}
+
+	/**
+	 * @param integer $statusCode the expected HTTP Status Code
+	 * @param string $schemaClass the expected JSON Schema Class
 	 * @return QJsonBaseClass[]
 	 */
 	public function schemaArrayFromGet($method, $statusCode, $schemaClass) {
