@@ -171,8 +171,26 @@
 				if (array_key_exists($strIndex, $this->mixPropertiesDictionary)) {
 					switch ($this::$_Model[$strIndex]) {
 						case 'date':
-							if (!$this->mixPropertiesDictionary[$strIndex]) return null;
-							$dttToReturn = new QDateTime($this->mixPropertiesDictionary[$strIndex]);
+							$strDateString = trim($this->mixPropertiesDictionary[$strIndex]);
+							if (!$strDateString) return null;
+
+							// Account for YYYYMMDD
+							if (strlen($strDateString) == 8) {
+								$strDateString = sprintf('%s-%s-%s',
+									substr($strDateString, 0, 4),
+									substr($strDateString, 4, 2),
+									substr($strDateString, 6));
+								$dttToReturn = new QDateTime($strDateString);
+
+							// Account for YYYY-MM-DD...
+							} else if (strlen($strDateString) >= 10) {
+								$dttToReturn = new QDateTime(substr($strDateString, 0, 10));
+
+							} else {
+								// Catch all, maybe not the best idea
+								$dttToReturn = new QDateTime($strDateString);
+							}
+
 							$dttToReturn->SetTime(null, null, null);
 							return $dttToReturn;
 
