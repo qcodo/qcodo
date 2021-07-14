@@ -3,7 +3,7 @@ Quick Installation
 Begin by installing the package through Composer.
 
 ```
-composer require qcodo/qcodo:dev-qcodo5
+composer require qcodo/qcodo
 ```
 
 Run the command line installer for Qcodo
