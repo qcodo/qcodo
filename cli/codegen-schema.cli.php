@@ -10,7 +10,7 @@
 
 	$objParameters->Run();
 	if (!is_file($path = $objParameters->GetDefaultValue('swagger_path'))) {
-		print ("error: swagger file not found: " . $path . "\r\n");
+		print ("error: swagger file not found: " . $path . "\n");
 		exit(1);
 	}
 
@@ -115,6 +115,9 @@
 		$model = array();
 		$resultParametersEnum = array();
 
+		$getSchemaLineArray = array();
+		$updateFromSchemaLineArray = array();
+
 		if (!isset($schema->properties)) throw new Exception('No properties defined on: ' . $schemaName);
 		foreach ($schema->properties as $propertyName => $property) {
 			if (isset($property->description) && $property->description)
@@ -122,6 +125,15 @@
 			else
 				$comment[] = sprintf('	 * @property %s $%s', GetPhpDocPropertyForProperty($property), ucfirst($propertyName));
 			$model[] = sprintf('			\'%s\' => %s,', $propertyName, GetModelDefinitionForProperty($property));
+
+			$getSchemaLineArray[] = sprintf('			$%s->%s = $this->%s;', lcfirst($schemaName), ucfirst($propertyName), ucfirst($propertyName));
+			$updateFromSchemaLineArray[] = sprintf('			if ($%s->IsPropertySet(\'%s\'))		$this->%s = $%s->%s;',
+				lcfirst($schemaName),
+				$propertyName,
+				ucfirst($propertyName),
+				lcfirst($schemaName),
+				ucfirst($propertyName)
+			);
 
 			// For ResultParameter properties, if the description is an enum like [Foo,Bar,Jaz]
 			// Then we should codegen the enum options
@@ -145,14 +157,28 @@
 		$rendered = sprintf($templateGenerated,
 			QApplicationBase::$application->rootNamespace,
 			ucfirst($schemaName) . 'Gen',
-			implode("\r\n", $comment),
+			implode("\n", $comment),
 			ucfirst($schemaName) . 'Gen',
-			implode("\r\n", $model),
-			count($resultParametersEnum) ? sprintf("\r\n		// ResultParameter Order By Enums\r\n%s\r\n", implode("\r\n", $resultParametersEnum)) : null,
+			implode("\n", $model),
+			count($resultParametersEnum) ? sprintf("\n		// ResultParameter Order By Enums\n%s\n", implode("\n", $resultParametersEnum)) : null,
 			ucfirst($schemaName),
 			ucfirst($schemaName),
 			ucfirst($schemaName),
-			ucfirst($schemaName)
+			ucfirst($schemaName),
+
+			// GetSchema()
+			ucfirst($schemaName),
+			lcfirst($schemaName),
+			ucfirst($schemaName),
+			implode("\n", $getSchemaLineArray),
+			lcfirst($schemaName),
+
+			// UpdateFromSchema()
+			ucfirst($schemaName),
+			lcfirst($schemaName),
+			ucfirst($schemaName),
+			lcfirst($schemaName),
+			implode("\n", $updateFromSchemaLineArray)
 		);
 
 		file_put_contents($schemaGeneratedPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . 'Gen.php', $rendered);

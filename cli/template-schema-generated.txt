@@ -35,4 +35,29 @@
 		public static function JsonDecodeArray($json) {
 			return self::JsonDecodeArrayForType(get_called_class(), $json);
 		}
+
+
+
+/*
+		/**
+		 *
+		 * @return Schema\%s
+		 *
+		public function GetSchema() {
+			$%s = new Schema\%s();
+
+%s
+
+			return $%s;
+		}
+
+		/**
+		 * @param Schema\%s $%s
+		 *
+		protected function UpdateFromSchema(Schema\%s $%s) {
+%s
+
+			$this->Save();
+		}
+*/
 	}
