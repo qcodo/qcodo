@@ -2,7 +2,7 @@
 	/**
 	 * This EmailServer (and its dependent EmailMessage class) allows the application to send
 	 * messages via any accessible SMTP server.
-	 * 
+	 *
 	 * The QEmailServer class, specifically, is an abstract class and is NOT meant to be instantiated.
 	 * It has one public static method, Send, which takes in a QEmailMessage object.
 	 */
@@ -40,11 +40,11 @@
 		 * Alternatively, you can specify an email address, and when specified,
 		 * it will send LIVE emails, but always send to the same exact email address.
 		 * Any To, CC, or BCC data will be specified in the email a the top of the message.
-		 * 
+		 *
 		 * In short, specify "FALSE" on a live enviornment, "TRUE" if you want to
 		 * save to disk, or an email address if you want to send all messages to the same
 		 * address.
-		 * 
+		 *
 		 * @var mixed $TestMode
 		 */
 		public static $TestMode = false;
@@ -56,45 +56,47 @@
 		 * will likely need to set up their own temp directories.
 		 *
 		 * @var string $TestModeDirectory
-		 */		
+		 */
 		public static $TestModeDirectory = '/tmp';
 
 		/**
 		 * Boolean flag signifying whether SMTP's AUTH PLAIN should be used
-		 * 
+		 *
 		 * @var bool $AuthPlain
 		 */
 		public static $AuthPlain = false;
 
 		/**
 		 * Boolean flag signifying whether SMTP's AUTH LOGIN should be used
-		 * 
+		 *
 		 * @var bool $AuthLogin
 		 */
 		public static $AuthLogin = false;
 
 		/**
 		 * SMTP Username to use for AUTH PLAIN or LOGIN
-		 * 
+		 *
 		 * @var string $SmtpUsername
 		 */
 		public static $SmtpUsername = '';
 
 		/**
 		 * SMTP Password to use for AUTH PLAIN or LOGIN
-		 * 
+		 *
 		 * @var string $SmtpPassword
 		 */
 		public static $SmtpPassword = '';
 
 		/**
 		 * Encoding Type (if null, will default to the QApplicationBase::$EncodingType)
-		 * 
+		 *
 		 * @var string $EncodingType
 		 */
 		public static $EncodingType = null;
 
 		public static $StartTls = false;
+
+		public static $StartTlsInsecure = false;
 
 		/**
 		 * Uses regular expression matching to return an array of valid e-mail addresses
@@ -150,7 +152,7 @@
 		public static function IsEmailValid($strEmailAddress) {
 			$strEmailAddressArray = QEmailServer::GetEmailAddresses($strEmailAddress);
 			if (!$strEmailAddressArray) return false;
-			return ((count($strEmailAddressArray) == 1) && ($strEmailAddressArray[0] == $strEmailAddress));  
+			return ((count($strEmailAddressArray) == 1) && ($strEmailAddressArray[0] == $strEmailAddress));
 		}
 
 		/**
@@ -158,7 +160,7 @@
 		 *
 		 * Does absolutely no validation -- assumes that the raw data being sent in is valid.  If not,
 		 * this will throw a QEmailException exception on any error.
-		 * 
+		 *
 		 * @param string $strMailFrom the email address to use for "MAIL FROM"
 		 * @param string[] $strRcptToArray the array of email addresse to send to via "RCPT TO"
 		 * @param mixed $mixMessageHeader can either be the raw string for the message header or a string-indexed array of header elements
@@ -182,7 +184,15 @@
 				// Write the Connection Command
 				fwrite(self::$objSmtpSocket, sprintf("telnet %s %s\r\n", QEmailServer::$SmtpServer, QEmailServer::$SmtpPort));
 			} else {
-				self::$objSmtpSocket = fsockopen(QEmailServer::$SmtpServer, QEmailServer::$SmtpPort);
+				if (QEmailServer::$StartTls && QEmailServer::$StartTlsInsecure && (QEmailServer::$TestMode !== true)) {
+					$context = stream_context_create();
+					stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
+					stream_context_set_option($context, 'ssl', 'verify_peer', false);
+					stream_context_set_option($context, 'ssl', 'verify_peer_name', false);
+					self::$objSmtpSocket = stream_socket_client('tcp://' . QEmailServer::$SmtpServer . ':' . QEmailServer::$SmtpPort, $errno, $error, 30, STREAM_CLIENT_CONNECT, $context);
+				} else {
+					self::$objSmtpSocket = fsockopen(QEmailServer::$SmtpServer, QEmailServer::$SmtpPort);
+				}
 				if (!self::$objSmtpSocket)
 					throw new QEmailException(sprintf('Unable to open SMTP connection to: %s %s', QEmailServer::$SmtpServer, QEmailServer::$SmtpPort));
 			}
@@ -220,10 +230,10 @@
 
 				self::SendCommand('AUTH LOGIN');
 				self::ReceiveResponse('334', 'AUTH LOGIN');
-				
+
 				self::SendCommand($strUsername);
 				self::ReceiveResponse('334', 'AUTH LOGIN - USERNAME');
-				
+
 				self::SendCommand($strPassword);
 				self::ReceiveResponse('235', 'AUTH LOGIN - PASSWORD');
 			}
@@ -260,7 +270,7 @@
 
 			// Body
 			self::SendData(str_replace("\n.", "\n..", trim($strMessageBody)));
-					
+
 			// Message End
 			self::SendData("\r\n.\r\n");
 			self::ReceiveResponse('250', 'DATA FINISH');
@@ -271,7 +281,7 @@
 			// Clear Buffer and Close Resource
 			if (!feof(self::$objSmtpSocket)) fgets(self::$objSmtpSocket);
 			fclose(self::$objSmtpSocket);
-			
+
 			if (QEmailServer::$TestMode === true) chmod($strFileName, 0777);
 		}
 
@@ -318,7 +328,7 @@
 			$strAddressCcBccArray = array_merge($strAddressCcArray, $strAddressBccArray);
 			return array_merge($strAddressToArray, $strAddressCcBccArray);
 		}
-		
+
 		/**
 		 * Uses SendRawMessage to sends a message out via SMTP according to the server, ip, etc. preferences
 		 * as set up on the class.  Takes in a QEmailMessage object to calculate the appropriate fields
@@ -340,17 +350,17 @@
 					$strTopText .= 'From: ' . $objMessage->From . "\r\n";
 					$strTopHtml .= 'From: <strong>' . QApplicationBase::HtmlEntities($objMessage->From) . "</strong><br/>\r\n";
 				}
-			
+
 				if ($objMessage->To) {
 					$strTopText .= 'To: ' . $objMessage->To . "\r\n";
 					$strTopHtml .= 'To: <strong>' . QApplicationBase::HtmlEntities($objMessage->To) . "</strong><br/>\r\n";
 				}
-			
+
 				if ($objMessage->Cc) {
 					$strTopText .= 'Cc: ' . $objMessage->Cc . "\r\n";
 					$strTopHtml .= 'Cc: <strong>' . QApplicationBase::HtmlEntities($objMessage->Cc) . "</strong><br/>\r\n";
 				}
-			
+
 				if ($objMessage->Bcc) {
 					$strTopText .= 'Bcc: ' . $objMessage->Bcc . "\r\n";
 					$strTopHtml .= 'Bcc: <strong>' . QApplicationBase::HtmlEntities($objMessage->Bcc) . "</strong><br/>\r\n";
@@ -384,7 +394,7 @@
 	}
 
 	class QEmailException extends QCallerException {}
-	
+
 	class QEmailAttachment extends QBaseClass {
 		protected $strFilePath;
 		protected $strMimeType;
@@ -427,7 +437,7 @@
 		public function __get($strName) {
 			switch ($strName) {
 				case 'FilePath': return $this->strFilePath;
-				case 'MimeType': return $this->strMimeType; 
+				case 'MimeType': return $this->strMimeType;
 				case 'FileName': return $this->strFileName;
 				case 'EncodedFileData': return $this->strEncodedFileData;
 				case 'ContentId': return $this->strContentId;
@@ -463,7 +473,7 @@ class QEmailMessage extends QBaseClass {
 		protected $strHeaderArray;
 		protected $strHeaderKeyArray;
 
-		public function AddAttachment(QEmailAttachment $objFile) {						
+		public function AddAttachment(QEmailAttachment $objFile) {
 			$this->objFileArray[$objFile->FileName] = $objFile;
 		}
 
@@ -559,7 +569,7 @@ class QEmailMessage extends QBaseClass {
 			$this->RemoveHeader('MIME-Version');
 			$this->RemoveHeader('Content-Type');
 			$this->RemoveHeader('Content-Transfer-Encoding');
-			
+
 			// Setup MIME Boundaries
 			if ($this->HasInline) {
 				$strBoundary = sprintf('qcodo_alt_%s', strtolower(md5(microtime())));
@@ -597,7 +607,7 @@ class QEmailMessage extends QBaseClass {
 			if ($this->HasInline) {
 				// Message Body Explanation (for non-MIME based Email Readers)
 				$strBody = "This is a multipart message in MIME format.\r\n\r\n";
-				
+
 				// Add Primary Boundary Marker
 				$strBody .= sprintf("--%s\r\n", $strBoundary);
 
@@ -695,9 +705,9 @@ class QEmailMessage extends QBaseClass {
 		/**
 		 * Given the way this object is set up, it will return two-index string array containing the correct
 		 * SMTP Message Header and Message Body for this object.
-		 * 
+		 *
 		 * This will make changes, cleanup and any additional setup to the HeaderArray in order to complete its task
-		 * 
+		 *
 		 * @param string $strEncodingType the encoding type to use (if null, then it uses QApplicationBase's)
 		 * @param QDateTime $dttSendDate the optional QDateTime to use for the Date field or NULL if you want to use Now()
 		 * @return string[] index 0 is the Header and index 1 is the Body
@@ -762,7 +772,7 @@ class QEmailMessage extends QBaseClass {
 				case 'FileArray': return $this->objFileArray;
 				case 'HasFiles': return (count($this->objFileArray) > 0) ? true : false;
 				case 'HasInline': return (count($this->objInlineArray) > 0) ? true : false;
-				
+
 				default:
 					try {
 						return parent::__get($strName);
