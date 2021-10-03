@@ -1,0 +1,19 @@
+	/**
+%s
+	 * @return %s%sResponse
+	 */
+	public function %s(%s) {
+%s
+		$urlPath = %s;
+
+		$this->client->executeApiCall($urlPath, '%s'%s);
+
+		$response = new %s%sResponse();
+		$response->statusCode = $this->client->LastResponseStatusCode;
+		switch ($response->statusCode) {
+%s
+			default:	$response->else = $this->client->LastResponseBody; break;
+		}
+
+		return $response;
+	}

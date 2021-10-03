@@ -55,7 +55,7 @@ class HttpRequest extends QBaseClass {
 		for ($index = 0; $index < count($namedPathParts); $index++) {
 			// If we are a Path Argument -- save to the parameters list
 			if (substr($namedPathParts[$index][0], 0, 1) == '{') {
-				$parameters[substr($namedPathParts[$index], 1, strlen($namedPathParts[$index]) - 2)] = $requestParts[$index];
+				$parameters[substr($namedPathParts[$index], 1, strlen($namedPathParts[$index]) - 2)] = urldecode($requestParts[$index]);
 			}
 		}
 

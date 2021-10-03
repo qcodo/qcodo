@@ -1,0 +1,20 @@
+<?php
+namespace %s\Managers\WebService\Proxy;
+use %s\Managers\WebService\Client;
+use %s\Models\Schema;
+use QBaseClass;
+
+%s
+
+class %sClient extends QBaseClass {
+	/**
+	 * @var Client $client
+	 */
+	protected $client;
+
+	public function __construct(Client $client) {
+		$this->client = $client;
+	}
+
+	%s
+}

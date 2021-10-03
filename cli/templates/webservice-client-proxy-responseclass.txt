@@ -1,0 +1,13 @@
+class %s%sResponse {
+	/**
+	 * @var integer $statusCode
+	 */
+	public $statusCode;
+
+%s
+
+	/**
+	 * @var string $else
+	 */
+	public $else;
+}

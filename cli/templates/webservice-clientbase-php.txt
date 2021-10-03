@@ -1,0 +1,188 @@
+<?php
+
+namespace %s\Managers\WebService;
+use %s\Managers\WebService\Proxy;
+use QBaseClass;
+use QJsonBaseClass;
+use Exception;
+use ArrayObject;
+use QCallerException;
+
+%s
+
+/**
+ * Code-Generated ClientBase class for the overall WebService/Client handler for this application's swagger.
+ * @class ClientBase
+ * @abstract
+ * @extends QBaseClass
+ *
+ * @property-read string $LastResponseBody
+ * @property-read string $LastResponseHeader
+ * @property-read integer $LastResponseStatusCode
+ * @property-read resource $Curl
+ * @property-read string $UrlPath
+ * @property-read string $HttpMethod e.g. get, post, etc.
+ * @property-read null|string|string[]|QJsonBaseClass $RequestBody
+ * @property-read null|string $RequestBodyType json, text or form
+ * @property-read string[] $HeaderArray
+ *
+%s
+ */
+abstract class ClientBase extends QBaseClass {
+	/**
+	 * @var string $lastResponseBody
+	 */
+	protected $lastResponseBody;
+
+	/**
+	 * @var string $lastResponseHeader
+	 */
+	protected $lastResponseHeader;
+
+	/**
+	 * @var integer $lastResponseStatusCode
+	 */
+	protected $lastResponseStatusCode;
+
+	/**
+	 * @var resource $curl
+	 */
+	protected $curl;
+
+	/**
+	 * @var string $urlPath
+	 */
+	protected $urlPath;
+
+	/**
+	 * @var string $httpMethod e.g. get, post, etc.
+	 */
+	protected $httpMethod;
+
+	/**
+	 * @var string|string[]|QJsonBaseClass $requestBody
+	 */
+	protected $requestBody;
+
+	/**
+	 * @var string $requestBodyType json, text or form
+	 */
+	protected $requestBodyType;
+
+	/**
+	 * @var string[] $headerArray
+	 */
+	protected $headerArray;
+
+%s
+
+	public function __construct() {
+	}
+
+	public function __get($strName) {
+		switch ($strName) {
+			case 'LastResponseBody':		return $this->lastResponseBody;
+			case 'LastResponseHeader':		return $this->lastResponseHeader;
+			case 'LastResponseStatusCode':	return $this->lastResponseStatusCode;
+			case 'Curl':					return $this->curl;
+			case 'UrlPath':					return $this->urlPath;
+			case 'HttpMethod':				return $this->httpMethod;
+			case 'RequestBody':				return $this->requestBody;
+			case 'RequestBodyType':			return $this->requestBodyType;
+			case 'HeaderArray':				return $this->headerArray;
+
+%s
+
+			default:
+				try {
+					return parent::__get($strName);
+				} catch (QCallerException $objExc) {
+					$objExc->IncrementOffset();
+					throw $objExc;
+				}
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	abstract public function getEndpointUrl();
+	abstract public function generateRequestHeaders();
+	abstract public function onApiCall();
+	abstract public function onApiResponse();
+
+	/**
+	 * This method is called on EVERY API call.
+	 * This is designed to be altered.
+	 *
+	 * @param string $urlPath
+	 * @param string $httpMethod e.g. get, post, etc.
+	 * @param null|string|string[]|QJsonBaseClass|QJsonBaseClass[] $requestBody
+	 * @param null|string $requestBodyType text, form or json
+	 */
+	public function executeApiCall($urlPath, $httpMethod, $requestBody = null, $requestBodyType = null) {
+		$this->urlPath = $urlPath;
+		$this->httpMethod = $httpMethod;
+		$this->requestBody = $requestBody;
+		$this->requestBodyType = $requestBodyType;
+
+		$this->curl = curl_init($this->getEndpointUrl() . $urlPath);
+		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($this->curl, CURLOPT_HEADER, true);
+		curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, trim(strtoupper($httpMethod)));
+
+		$this->headerArray = $this->generateRequestHeaders();
+
+		if ($requestBody) {
+			switch ($requestBodyType) {
+				case 'json':
+					$this->headerArray['Content-Type'] = 'application/json';
+					curl_setopt($this->curl, CURLOPT_POST, true);
+					if ($requestBody instanceof QJsonBaseClass) {
+						curl_setopt($this->curl, CURLOPT_POSTFIELDS, $requestBody->JsonEncode());
+					} else if (is_array($requestBody) || ($requestBody instanceof ArrayObject)) {
+						curl_setopt($this->curl, CURLOPT_POSTFIELDS, QJsonBaseClass::JsonEncodeArray($requestBody));
+					} else {
+						throw new Exception('requestBody not json-encodable for requestBodyType of json');
+					}
+					break;
+
+				case 'text':
+					if (!is_string($requestBody)) throw new Exception('requestBody not string for requestBodyType of text');
+					$this->headerArray['Content-Type'] = 'text/plain';
+					curl_setopt($this->curl, CURLOPT_POST, true);
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $requestBody);
+					break;
+
+				case 'form':
+					if (!is_array($requestBody)) throw new Exception('requestBody not string[] for requestBodyType of form');
+					$this->headerArray['Content-Type'] = 'application/x-www-form-urlencoded';
+					curl_setopt($this->curl, CURLOPT_POST, true);
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($requestBody));
+					break;
+
+				default:
+					throw new Exception('unhandled requestBodyType: ' . $requestBodyType);
+			}
+		}
+
+		$headerArray = array();
+		foreach ($this->headerArray as $name => $value) {
+			$headerArray[] = sprintf('%%s: %%s', $name, $value);
+		}
+		curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headerArray);
+
+		$fullResponse = curl_exec($this->curl);
+		if ($error = curl_error($this->curl)) throw new Exception('cURL error: ' . $error, curl_errno($this->curl));
+
+		$statusCode = curl_getinfo($this->curl, CURLINFO_RESPONSE_CODE);
+		$headerSize = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
+
+		$this->lastResponseHeader = substr($fullResponse, 0, $headerSize);
+		$this->lastResponseBody = substr($fullResponse, $headerSize);
+		$this->lastResponseStatusCode = $statusCode;
+
+		curl_close($this->curl);
+	}
+}

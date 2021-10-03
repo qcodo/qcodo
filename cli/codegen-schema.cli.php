@@ -14,20 +14,82 @@
 		exit(1);
 	}
 
-	$swaggerText = file_get_contents($path);
+	$codegenSchema = new CodegenSchema(file_get_contents($path));
 
-	if (!is_dir($schemaPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema')) QApplicationBase::MakeDirectory($schemaPath, 0777);
-	if (!is_dir($schemaGeneratedPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema' . DIRECTORY_SEPARATOR . 'generated')) QApplicationBase::MakeDirectory($schemaGeneratedPath, 0777);
+	if ($objParameters->GetValue('csv')) {
+		$rowArray = $codegenSchema->GeneratePathReport();
+		print QApplicationBase::generateCsvContent($rowArray);
+	} else {
+		$codegenSchema->GenerateSchema();
+		$codegenSchema->GenerateClient();
+	}
 
 
+class CodegenSchema {
+	protected $swagger;
+	protected $schemaPath;
+	protected $schemaGeneratedPath;
+	protected $clientPath;
+	protected $clientGeneratedPath;
 
-	function GetPhpDocPropertyForProperty($property) {
+	/**
+	 * @param string $swaggerText
+	 */
+	public function __construct($swaggerText) {
+		$this->swagger = json_decode($swaggerText);
+		if (!$this->swagger) {
+			exit("invalid swagger format\r\n");
+		}
+
+		$this->schemaPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema';
+		$this->schemaGeneratedPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema' . DIRECTORY_SEPARATOR . 'generated';
+
+		$this->clientPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . 'WebService';
+		$this->clientGeneratedPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . 'WebService' . DIRECTORY_SEPARATOR . 'generated';
+
+		// Create Directories
+		foreach (array($this->schemaPath, $this->schemaGeneratedPath, $this->clientPath, $this->clientGeneratedPath) as $path) {
+			if (!is_dir($path)) QApplicationBase::MakeDirectory($path, 0777);
+		}
+	}
+
+	/**
+	 * @return string[][]
+	 */
+	public function GeneratePathReport() {
+		$rowArray = array(array(
+			'Section',
+			'URL Path',
+			'HTTP Method',
+			'Operation Method Name',
+			'Summary'
+		));
+		foreach ($swagger->paths as $pathName => $path) {
+			foreach ($path as $methodName => $definition) {
+				$rowArray[] = array(
+					$definition->tags[0],
+					$pathName,
+					$methodName,
+					$definition->operationId,
+					$definition->summary
+				);
+			}
+		}
+
+		return $rowArray;
+	}
+
+	/**
+	 * @param string $property
+	 * @return string
+	 */
+	protected static function GetPhpDocPropertyForProperty($property) {
 		$ref = '$ref';
 		if (isset($property->$ref)) return str_replace('#/definitions/', null, $property->$ref) . '';
 
 		switch ($property->type) {
 			case 'array':
-				return GetPhpDocPropertyForProperty($property->items) . '[]';
+				return self::GetPhpDocPropertyForProperty($property->items) . '[]';
 			case 'integer':
 				return 'integer';
 			case 'boolean':
@@ -51,13 +113,17 @@
 		}
 	}
 
-	function GetModelDefinitionForProperty($property) {
+	/**
+	 * @param string $property
+	 * @return string
+	 */
+	protected static function GetModelDefinitionForProperty($property) {
 		$ref = '$ref';
 		if (isset($property->$ref)) return "'" . str_replace('#/definitions/', null, $property->$ref) . '' . "'";
 
 		switch ($property->type) {
 			case 'array':
-				return "array('" . GetPhpDocPropertyForProperty($property->items) . "')";
+				return "array('" . self::GetPhpDocPropertyForProperty($property->items) . "')";
 			case 'integer':
 				return "'integer'";
 			case 'boolean':
@@ -81,36 +147,22 @@
 		}
 	}
 
-	$swagger = json_decode($swaggerText);
+	public function GenerateSchema() {
+		$templateClass = file_get_contents(dirname(__FILE__) . '/templates/schema-class.txt');
+		$templateGenerated = file_get_contents(dirname(__FILE__) . '/templates/schema-generated.txt');
 
-	if ($objParameters->GetValue('csv')) {
-		$rowArray = array(array(
-			'Section',
-			'URL Path',
-			'HTTP Method',
-			'Operation Method Name',
-			'Summary'
-		));
-		foreach ($swagger->paths as $pathName => $path) {
-			foreach ($path as $methodName => $definition) {
-				$rowArray[] = array(
-					$definition->tags[0],
-					$pathName,
-					$methodName,
-					$definition->operationId,
-					$definition->summary
-				);
-			}
+		foreach ($this->swagger->definitions as $schemaName => $schema) {
+			$this->GenerateSchema_Helper($schema, $schemaName, $templateClass, $templateGenerated);
 		}
-
-		print QApplicationBase::generateCsvContent($rowArray);
-		return;
 	}
 
-
-	$templateClass = file_get_contents(dirname(__FILE__) . '/template-schema-class.txt');
-	$templateGenerated = file_get_contents(dirname(__FILE__) . '/template-schema-generated.txt');
-	foreach ($swagger->definitions as $schemaName => $schema) {
+	/**
+	 * @param stdClass $schema
+	 * @param string $schemaName
+	 * @param string $templateClass
+	 * @param string $templateGenerated
+	 */
+	protected function GenerateSchema_Helper(stdClass $schema, $schemaName, $templateClass, $templateGenerated) {
 		$comment = array();
 		$model = array();
 		$resultParametersEnum = array();
@@ -121,10 +173,10 @@
 		if (!isset($schema->properties)) throw new Exception('No properties defined on: ' . $schemaName);
 		foreach ($schema->properties as $propertyName => $property) {
 			if (isset($property->description) && $property->description)
-				$comment[] = sprintf('	 * @property %s $%s %s', GetPhpDocPropertyForProperty($property), ucfirst($propertyName), $property->description);
+				$comment[] = sprintf('	 * @property %s $%s %s', self::GetPhpDocPropertyForProperty($property), ucfirst($propertyName), $property->description);
 			else
-				$comment[] = sprintf('	 * @property %s $%s', GetPhpDocPropertyForProperty($property), ucfirst($propertyName));
-			$model[] = sprintf('			\'%s\' => %s,', $propertyName, GetModelDefinitionForProperty($property));
+				$comment[] = sprintf('	 * @property %s $%s', self::GetPhpDocPropertyForProperty($property), ucfirst($propertyName));
+			$model[] = sprintf('			\'%s\' => %s,', $propertyName, self::GetModelDefinitionForProperty($property));
 
 			$getSchemaLineArray[] = sprintf('			$%s->%s = $this->%s;', lcfirst($schemaName), ucfirst($propertyName), ucfirst($propertyName));
 			$updateFromSchemaLineArray[] = sprintf('			if ($%s->IsPropertySet(\'%s\'))		$this->%s = $%s->%s;',
@@ -181,7 +233,7 @@
 			implode("\n", $updateFromSchemaLineArray)
 		);
 
-		file_put_contents($schemaGeneratedPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . 'Gen.php', $rendered);
+		file_put_contents($this->schemaGeneratedPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . 'Gen.php', $rendered);
 
 		$rendered = sprintf($templateClass,
 			QApplicationBase::$application->rootNamespace,
@@ -193,6 +245,247 @@
 			ucfirst($schemaName) . 'Gen'
 		);
 
-		$path = $schemaPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . '.php';
+		$path = $this->schemaPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . '.php';
 		if (!file_exists($path)) file_put_contents($path, $rendered);
 	}
+
+	public function GenerateClient() {
+		$this->GenerateClient_SuperClass();
+
+		// Clients
+		$clientObjectArray = array();
+
+		foreach ($this->swagger->paths as $path => $methods) {
+			foreach ($methods as $method => $apiDefinition) {
+				$operationId = $apiDefinition->operationId;
+				if (!$operationId) throw new Exception(sprintf('%s at %s has no operationId', $method, $path));
+
+				$operationParts = explode('::', $operationId);
+				if (count($operationParts) != 2) throw new Exception(sprintf('%s at %s has an invalid operationId: %s', $method, $path, $operationId));
+
+				$clientName = $operationParts[0];
+				$methodName = $operationParts[1];
+
+				if (!array_key_exists($clientName, $clientObjectArray)) $clientObjectArray[$clientName] = array();
+
+				$clientObjectArray[$clientName][$methodName] = $apiDefinition;
+				$apiDefinition->path = $path;
+				$apiDefinition->method = $method;
+			}
+		}
+
+		foreach ($clientObjectArray as $clientName => $clientObject) {
+			$this->GenerateClient_ProxyClass($clientName, $clientObject);
+		}
+
+		$this->GenerateClient_BaseClass($clientObjectArray);
+	}
+
+	protected function GenerateClient_ProxyClass($clientName, $clientObject) {
+		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . $clientName . 'Client.php';
+
+		$responseClassArray = array();
+		$methodArray = array();
+
+		foreach ($clientObject as $methodName => $apiDefinition) {
+			$responseClassArray[] = $this->GenerateClient_ProxyClass_ResponseClass($clientName, $methodName, $apiDefinition);
+			$methodArray[] = $this->GenerateClient_ProxyClass_Method($clientName, $methodName, $apiDefinition);
+		}
+
+		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy.txt');
+		$rendered = sprintf($template,
+			QApplicationBase::$application->rootNamespace,
+			QApplicationBase::$application->rootNamespace,
+			QApplicationBase::$application->rootNamespace,
+			implode("\n\n", $responseClassArray),
+			$clientName,
+			implode("\n\n", $methodArray));
+
+		file_put_contents($path, $rendered);
+	}
+
+	protected function GenerateClient_ProxyClass_Method($clientName, $methodName, $apiDefinition) {
+		$phpDocArray = array();
+		$parameterArray = array();
+		$caseArray = array();
+
+		$requestPayloadSetupQuery = null;
+
+		$urlDefinition = sprintf("'%s'", $apiDefinition->path);
+		$apiRequest = null;
+		$isFormData = false;
+		$isJsonBody = false;
+
+		if (isset($apiDefinition->parameters)) {
+			foreach ($apiDefinition->parameters as $parameterDefinition) {
+				$parameterName = str_replace('_', ' ', $parameterDefinition->name);
+				$parameterName = ucwords($parameterName);
+				$parameterName = str_replace(' ', '', $parameterName);
+				$parameterName = lcfirst($parameterName);
+
+				$phpDocProperty = null;
+
+				switch ($parameterDefinition->in) {
+					case 'query':
+						if (!$requestPayloadSetupQuery) $requestPayloadSetupQuery = "\n\t\t\$queryArray = [];\n";
+						$requestPayloadSetupQuery .= "\t\tif (strlen(trim($" . $parameterName . '))) ' .
+							'$queryArray[] = \'' . $parameterDefinition->name . "=' . urlencode($" . $parameterName . ");\n";
+						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+						$parameterArray[] = '$' . $parameterName;
+						break;
+					case 'formData':
+						if ($isJsonBody) throw new Error('Cannot have both body and formData in the same request: ' . $methodName);
+						$isFormData = true;
+
+						throw new Exception('Not Implemented');
+						break;
+					case 'path':
+						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+						$parameterArray[] = '$' . $parameterName;
+						$urlDefinition = str_replace(
+							'{' . $parameterDefinition->name . '}',
+							"' . \n\t\t\t($" . $parameterName . " ? urlencode($" . $parameterName . ") : '') . '",
+							$urlDefinition
+						);
+						break;
+					case 'body':
+						if ($isFormData) throw new Error('Cannot have both body and formData in the same request: ' . $methodName);
+						$isJsonBody = true;
+
+						$apiRequest = sprintf(", $%s, 'json'", $parameterName);
+						$phpDocProperty = 'Schema\\' . self::GetPhpDocPropertyForProperty($parameterDefinition->schema);
+
+						$length = strlen($phpDocProperty);
+						if (substr($phpDocProperty, $length-2) == '[]') {
+							$parameterArray[] = '$' . $parameterName;
+						} else {
+							$parameterArray[] = $phpDocProperty . ' $' . $parameterName;
+						}
+						break;
+					default:
+						throw new Exception('Unhandled IN parameterDefinition: ' . $methodName);
+				}
+
+				$phpDocArray[] = sprintf('	 * @param %s $%s', $phpDocProperty, $parameterName);
+			}
+		}
+
+		if ($requestPayloadSetupQuery) {
+			$urlDefinition .= " .\n\t\t\t(count(\$queryArray) ? '?' . implode('&', \$queryArray) : null)";
+		}
+
+		foreach ($apiDefinition->responses as $statusCode => $responseDefinition) {
+			$decorator = 'trim';
+			if (isset($responseDefinition->schema)) {
+				$phpDocProperty = self::GetPhpDocPropertyForProperty($responseDefinition->schema);
+				$length = strlen($phpDocProperty);
+				if (substr($phpDocProperty, $length-2) == '[]') {
+					// Array
+					$phpDocProperty = substr($phpDocProperty, 0, $length - 2);
+					$decorator = 'Schema\\' . $phpDocProperty . '::JsonDecodeArray';
+				} else {
+					$decorator = 'Schema\\' . $phpDocProperty . '::JsonDecode';
+				}
+			}
+
+			$caseArray[] = sprintf('		case %s: $response->status%s = %s($this->client->LastResponseBody); break;',
+				$statusCode,
+				$statusCode,
+				$decorator
+			);
+		}
+
+		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy-method.txt');
+		$rendered = sprintf($template,
+			implode("\n", $phpDocArray),
+			$clientName,
+			ucfirst($methodName),
+			$methodName,
+			implode(', ', $parameterArray),
+
+			$requestPayloadSetupQuery,
+			str_replace(" . ''", '', $urlDefinition),
+
+			$apiDefinition->method,
+			$apiRequest,
+
+			$clientName,
+			ucfirst($methodName),
+			implode("\n", $caseArray));
+
+		return $rendered;
+	}
+
+	protected function GenerateClient_ProxyClass_ResponseClass($clientName, $methodName, $apiDefinition) {
+		$propertyArray = array();
+
+		foreach ($apiDefinition->responses as $statusCode => $responseDefinition) {
+
+			if (isset($responseDefinition->schema)) {
+				$type = 'Schema\\' . self::GetPhpDocPropertyForProperty($responseDefinition->schema);
+			} else {
+				$type = 'string';
+			}
+
+			$propertyArray[] = sprintf('	/**
+	 * @var %s $status%s
+	 */
+	public $status%s;', $type, $statusCode, $statusCode);
+		}
+
+		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy-responseclass.txt');
+		$rendered = sprintf($template,
+			$clientName,
+			ucfirst($methodName),
+			implode("\n\n", $propertyArray));
+
+		return $rendered;
+	}
+
+	protected function GenerateClient_SuperClass() {
+		$path = $this->clientPath . DIRECTORY_SEPARATOR . 'Client.php';
+		if (file_exists($path)) return;
+
+		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-php.txt');
+		$rendered = sprintf($template,
+			QApplicationBase::$application->rootNamespace,
+			QApplicationBase::$application->rootNamespace);
+
+		file_put_contents($path, $rendered);
+	}
+
+	/**
+	 * @param array $clientObjectArray
+	 */
+	protected function GenerateClient_BaseClass($clientObjectArray) {
+		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . 'ClientBase.php';
+
+		$importListArray = array();
+		$phpDocArray = array();
+		$propertyArray = array();
+		$getterArray = array();
+
+		foreach ($clientObjectArray as $clientName => $clientObject) {
+			$importListArray[] = sprintf("require(dirname(__FILE__) . '/%sClient.php');", $clientName);
+			$phpDocArray[] = sprintf(' * @property-read Proxy\%sClient $%s', $clientName, $clientName);
+			$propertyArray[] = sprintf('	/**
+	 * @var Proxy\%sClient $%s
+	 */
+	protected $%s;', $clientName, lcfirst($clientName), lcfirst($clientName));
+			$getterArray[] = sprintf('			case \'%s\':
+				if (!$this->%s) $this->%s = new Proxy\%sClient($this);
+				return $this->%s;', $clientName, lcfirst($clientName), lcfirst($clientName), $clientName, lcfirst($clientName));
+		}
+
+		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-clientbase-php.txt');
+		$rendered = sprintf($template,
+			QApplicationBase::$application->rootNamespace,
+			QApplicationBase::$application->rootNamespace,
+			implode("\n", $importListArray),
+			implode("\n", $phpDocArray),
+			implode("\n\n", $propertyArray),
+			implode("\n", $getterArray));
+
+		file_put_contents($path, $rendered);
+	}
+}

@@ -1,0 +1,47 @@
+<?php
+
+namespace %s\Managers\WebService;
+use %s\Managers\Application;
+
+require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . 'ClientBase.php');
+
+class Client extends ClientBase {
+	/**
+	 * The root Endpoint URL for all webservice method calls in this Client.
+	 * This is designed to be altered.
+	 * @return string
+	 */
+	public function getEndpointUrl() {
+		return 'http://www.domain.localhost';
+	}
+
+	/**
+	 * Should return an array of headers, e.g. [
+	 * 	'X-Foo' => 'Bar',
+	 *  'X-Baz' => 'Foo',
+	 * ]
+	 *
+	 * This is designed to be altered.
+	 *
+	 * @return string[] indexed by header name, value is the header value
+	 */
+	public function generateRequestHeaders() {
+		return array();
+	}
+
+	/**
+	 * This method is called on EVERY API call.
+	 * This is designed to be altered.
+	 */
+	public function onApiCall() {
+
+	}
+
+	/**
+	 * This method is called on EVERY API call.
+	 * This is designed to be altered.
+	 */
+	public function onApiResponse() {
+
+	}
+}
