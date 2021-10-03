@@ -344,7 +344,7 @@ class CodegenSchema {
 						$parameterArray[] = '$' . $parameterName;
 						$urlDefinition = str_replace(
 							'{' . $parameterDefinition->name . '}',
-							"' . \n\t\t\t($" . $parameterName . " ? urlencode($" . $parameterName . ") : '') . '",
+							"' . \n\t\t\t(strlen($" . $parameterName . ") ? urlencode($" . $parameterName . ") : '') . '",
 							$urlDefinition
 						);
 						break;
