@@ -68,14 +68,24 @@ class HttpResponse extends QBaseClass {
 	}
 
 	public function execute() {
+		// Set the Response Code itself
 		header('X-PHP-Response-Code: ' . $this->statusCode, true, $this->statusCode);
+		http_response_code($this->statusCode);
 
+		// Additional Non-Standard Response Code Support (if applicable)
+		if (in_array($this->statusCode, array(420))) {
+			header(sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->content));
+		}
+
+		// Setup Headers
 		foreach ($this->headersArray as $header => $value) {
 			header(sprintf('%s: %s', $header, $value));
 		}
 
+		// Output Content
 		print $this->content;
 
+		// Done
 		exit();
 	}
 }
