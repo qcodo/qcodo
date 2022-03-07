@@ -7,9 +7,19 @@ use Qcodo\Utilities\HttpResponse;
 use QApplicationBase;
 use Exception;
 use stdClass;
+use QLog;
+use QLogLevel;
 
 abstract class WebService extends Base {
 	const ConfigurationNamespace = '.ws';
+
+	/**
+	 * whether to log all raw request/responses to the qcodo log
+	 * @var boolean|string $LogFlag
+	 */
+	public static $LogFlag = true;
+	public static $LogLevel = QLogLevel::Normal;
+	public static $LogModule = 'default';
 
 	/**
 	 * Singleton-style access to the HttpRequest that is being operated on, for example, for ErrorLogging purposes
@@ -162,6 +172,12 @@ abstract class WebService extends Base {
 
 			if (($content instanceof stdClass) || is_array($content)) $content = json_encode($content);
 			$response = new HttpResponse(200, $content);
+		}
+
+		if (self::$LogFlag) {
+			QLog::Log(sprintf('%s %s', self::$HttpRequest->method, self::$HttpRequest->httpUri), self::$LogLevel, self::$LogModule);
+			QLog::LogObject(self::$HttpRequest, self::$LogLevel, self::$LogModule);
+			QLog::LogObject($response, self::$LogLevel, self::$LogModule);
 		}
 
 		$response->execute();
