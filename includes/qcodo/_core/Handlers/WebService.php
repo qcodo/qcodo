@@ -17,7 +17,7 @@ abstract class WebService extends Base {
 	 * whether to log all raw request/responses to the qcodo log
 	 * @var boolean|string $LogFlag
 	 */
-	public static $LogFlag = true;
+	public static $LogFlag = false;
 	public static $LogLevel = QLogLevel::Normal;
 	public static $LogModule = 'default';
 
