@@ -58,15 +58,29 @@ class CodegenSchema {
 	 */
 	public function GeneratePathReport() {
 		$rowArray = array(array(
+			'',
 			'Section',
 			'URL Path',
 			'HTTP Method',
 			'Operation Method Name',
 			'Summary'
 		));
-		foreach ($swagger->paths as $pathName => $path) {
+		foreach ($this->swagger->paths as $pathName => $path) {
 			foreach ($path as $methodName => $definition) {
+				$operationParts = explode('::', $definition->operationId);
+				$className = $operationParts[0];
+				$phpMethodName = $operationParts[1];
+
+				$reflection = new ReflectionClass(QApplicationBase::$application->rootNamespace . '\\Handlers\\WebService\\' . $className);
+				$missing = null;
+				try {
+					$reflection->getMethod($phpMethodName);
+				} catch (ReflectionException $exception) {
+					$missing = 'MISSING';
+				}
+
 				$rowArray[] = array(
+					$missing,
 					$definition->tags[0],
 					$pathName,
 					$methodName,
