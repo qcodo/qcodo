@@ -30,16 +30,18 @@ abstract class Console extends Base {
 
 
 	/**
-	 * This is the default "Run" method that MUST be declared on all Console handlers.
+	 * This is the default "Run" method.  It is recommended that you use the default approach to execute the Method List.
+	 *
+	 * But if needed, this can be overriden by the specific Console handlers.
 	 *
 	 * It is the method called when no method is specified at run time,
 	 * and it must take no parameters
 	 *
 	 * @return void
 	 */
-	abstract public function run();
-
-
+	public function Run() {
+		$this->executeMethodList();
+	}
 
 	/**
 	 * Responsible for performing the actual Run for this CLI
@@ -560,7 +562,7 @@ abstract class Console extends Base {
 
 		foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 			if (!$method->isStatic() &&
-				($method->getDeclaringClass()->getName() == $class->getName())) {
+				!in_array($method->getDeclaringClass()->getShortName(), array('Console', 'QBaseClass'))) {
 				print '    ' . $method->getDeclaringClass()->getShortName() . '::' . $method->getName() . PHP_EOL;
 			}
 		}

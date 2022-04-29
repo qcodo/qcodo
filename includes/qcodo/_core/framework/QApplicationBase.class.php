@@ -110,6 +110,7 @@
 			$loader = new \Composer\Autoload\ClassLoader();
 			$loader->setPsr4($this->rootNamespace . '\\', __APPLICATION__);
 			$loader->setPsr4('Qcodo\\Handlers\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Handlers');
+			$loader->setPsr4('Qcodo\\Managers\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Managers');
 			$loader->setPsr4('Qcodo\\Utilities\\', __QCODO_CORE__ . DIRECTORY_SEPARATOR . 'Utilities');
 			$loader->register(true);
 		}
