@@ -71,9 +71,9 @@ class CodegenSchema {
 				$className = $operationParts[0];
 				$phpMethodName = $operationParts[1];
 
-				$reflection = new ReflectionClass(QApplicationBase::$application->rootNamespace . '\\Handlers\\WebService\\' . $className);
 				$missing = null;
 				try {
+					$reflection = new ReflectionClass(QApplicationBase::$application->rootNamespace . '\\Handlers\\WebService\\' . $className);
 					$reflection->getMethod($phpMethodName);
 				} catch (ReflectionException $exception) {
 					$missing = 'MISSING';
