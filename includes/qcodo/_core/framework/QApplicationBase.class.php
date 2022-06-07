@@ -1135,9 +1135,10 @@
 
 		/**
 		 * @param string[][] $csvRowsArray
+		 * @param boolean $utf8Flag whether to add a UTF-8 identifier/prefix at the beginning, defaults to false
 		 * @return string
 		 */
-		public static function generateCsvContent($csvRowsArray) {
+		public static function generateCsvContent($csvRowsArray, $utf8Flag = false) {
 			$rowContentArray = array();
 			foreach ($csvRowsArray as $csvRow) {
 				$itemArray = array();
@@ -1149,6 +1150,10 @@
 					}
 				}
 				$rowContentArray[] = implode(',', $itemArray);
+			}
+
+			if ($utf8FLag) {
+				return "\xEF\xBB\xBF" . implode("\r\n", $rowContentArray);
 			}
 
 			return implode("\r\n", $rowContentArray);
