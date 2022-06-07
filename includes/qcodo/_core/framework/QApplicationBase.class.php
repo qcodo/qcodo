@@ -1152,7 +1152,7 @@
 				$rowContentArray[] = implode(',', $itemArray);
 			}
 
-			if ($utf8FLag) {
+			if ($utf8Flag) {
 				return "\xEF\xBB\xBF" . implode("\r\n", $rowContentArray);
 			}
 
