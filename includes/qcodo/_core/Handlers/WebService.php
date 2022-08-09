@@ -23,14 +23,19 @@ abstract class WebService extends Base {
 
 	/**
 	 * Singleton-style access to the HttpRequest that is being operated on, for example, for ErrorLogging purposes
-	 * @var HttpRequest
+	 * @var HttpRequest $HttpRequest
 	 */
 	public static $HttpRequest;
 
 	/**
-	 * @var $request HttpRequest
+	 * @var HttpRequest $request
 	 */
 	protected $request;
+
+	/**
+	 * @var string $operationId
+	 */
+	public $operationId;
 
 	private static function RunErrorIndex($viewErrorLogCommand) {
 		$template = file_get_contents(dirname(__FILE__) . '/ErrorPageTemplate.html');
@@ -142,6 +147,7 @@ abstract class WebService extends Base {
 
 		try {
 			$operationInfo = $swagger->getOperationForPathAndMethod($foundPath, $request->method);
+			$request->operationId = implode('::', $operationInfo);
 		} catch (Exception $exception) {
 			if ($exception->getMessage() == 'Method Not Defined') {
 				$response = new HttpResponse(405, 'No ' . $request->method . ' method at Path: ' . $request->path);
