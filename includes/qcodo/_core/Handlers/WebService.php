@@ -147,7 +147,7 @@ abstract class WebService extends Base {
 
 		try {
 			$operationInfo = $swagger->getOperationForPathAndMethod($foundPath, $request->method);
-			$request->operationId = implode('::', $operationInfo);
+			$this->operationId = implode('::', $operationInfo);
 		} catch (Exception $exception) {
 			if ($exception->getMessage() == 'Method Not Defined') {
 				$response = new HttpResponse(405, 'No ' . $request->method . ' method at Path: ' . $request->path);
