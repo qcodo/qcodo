@@ -147,7 +147,6 @@ abstract class WebService extends Base {
 
 		try {
 			$operationInfo = $swagger->getOperationForPathAndMethod($foundPath, $request->method);
-			$this->operationId = implode('::', $operationInfo);
 		} catch (Exception $exception) {
 			if ($exception->getMessage() == 'Method Not Defined') {
 				$response = new HttpResponse(405, 'No ' . $request->method . ' method at Path: ' . $request->path);
@@ -165,7 +164,7 @@ abstract class WebService extends Base {
 		// Does the class and method exist?
 		if (class_exists($fullyQualifiedClassName) && method_exists($fullyQualifiedClassName, $methodName)) {
 			// Yes -- we are making the call
-			$apiHandlerObject = new $fullyQualifiedClassName($request);
+			$apiHandlerObject = new $fullyQualifiedClassName($request, implode('::', $operationInfo));
 			$response = $apiHandlerObject->$methodName();
 			if (!$response) $response = new HttpResponse(500, 'No HttpResponse when calling ' . $className . '::' . $methodName);
 			if (!($response instanceof HttpResponse)) {
@@ -189,8 +188,9 @@ abstract class WebService extends Base {
 		$response->execute();
 	}
 
-	public function __construct(HttpRequest $request) {
+	public function __construct(HttpRequest $request, $operationId) {
 		$this->request = $request;
+		$this->operationId = $operationId;
 		self::$HttpRequest = $request;
 	}
 }
