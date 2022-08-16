@@ -122,6 +122,8 @@ class CodegenSchema {
 					}
 				}
 				return 'string';
+			case 'file':
+				return 'CURLFile';
 			default:
 				throw new Exception('Unhandled GetPhpDocPropertyForProperty: ' . $property->type);
 		}
@@ -324,6 +326,7 @@ class CodegenSchema {
 		$caseArray = array();
 
 		$requestPayloadSetupQuery = null;
+		$requestPayloadSetupForm = null;
 
 		$urlDefinition = sprintf("'%s'", $apiDefinition->path);
 		$apiRequest = null;
@@ -351,7 +354,29 @@ class CodegenSchema {
 						if ($isJsonBody) throw new Error('Cannot have both body and formData in the same request: ' . $methodName);
 						$isFormData = true;
 
-						throw new Exception('Not Implemented');
+						$apiRequest = ', $postFieldsArray, \'form\'';
+						if (!$requestPayloadSetupForm) $requestPayloadSetupForm = "\n\t\t\$postFieldsArray = [];\n";
+
+						$parameterType = trim(strtolower($parameterDefinition->type));
+						switch ($parameterType) {
+							case 'string':
+								$requestPayloadSetupForm .= "\t\tif (!is_null($" . $parameterName . ')) ' .
+									'$postFieldsArray[\'' . $parameterDefinition->name . "'] = $" . $parameterName . ";\n";
+								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+								$parameterArray[] = '$' . $parameterName;
+								break;
+
+							case 'file':
+								$requestPayloadSetupForm .= "\t\tif (!is_null($" . $parameterName . ')) ' .
+									'$postFieldsArray[\'' . $parameterDefinition->name . "'] = $" . $parameterName . ";\n";
+								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+								$parameterArray[] = '$' . $parameterName;
+								break;
+
+							default:
+								throw new Exception('formData parameter type not supported: ' . $parameterType);
+						}
+
 						break;
 					case 'path':
 						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
@@ -419,6 +444,7 @@ class CodegenSchema {
 
 			$requestPayloadSetupQuery,
 			str_replace(" . ''", '', $urlDefinition),
+			$requestPayloadSetupForm,
 
 			$apiDefinition->method,
 			$apiRequest,

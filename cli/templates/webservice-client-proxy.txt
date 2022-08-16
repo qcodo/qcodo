@@ -3,6 +3,7 @@ namespace %s\Managers\WebService\Proxy;
 use %s\Managers\WebService\Client;
 use %s\Models\Schema;
 use QBaseClass;
+use CURLFile;
 
 %s
 

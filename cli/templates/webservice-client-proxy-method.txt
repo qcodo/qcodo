@@ -5,7 +5,7 @@
 	public function %s(%s) {
 %s
 		$urlPath = %s;
-
+%s
 		$this->client->executeApiCall($urlPath, '%s'%s);
 
 		$response = new %s%sResponse();

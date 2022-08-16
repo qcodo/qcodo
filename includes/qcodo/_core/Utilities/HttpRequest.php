@@ -113,6 +113,35 @@ class HttpRequest extends QBaseClass {
 		return null;
 	}
 
+
+	/**
+	 * This will return the file parameter that was in the request body based on the $key (if it exists).
+	 *
+	 * If not, this will return NULL.
+	 *
+	 * @param string $key of the File parameter to look up
+	 * @return string or null if not found.
+	 */
+	public function getFileParameter($key) {
+		if (array_key_exists($key, $this->fileParametersArray)) return $this->fileParametersArray[$key];
+		return null;
+	}
+
+
+	/**
+	 * This will return the post parameter that was in the request body based on the $key (if it exists).
+	 *
+	 * If not, this will return NULL.
+	 *
+	 * @param string $key of the Post parameter to look up
+	 * @return string or null if not found.
+	 */
+	public function getPostParameter($key) {
+		if (array_key_exists($key, $this->postParametersArray)) return $this->postParametersArray[$key];
+		return null;
+	}
+
+
 	/**
 	 * This will return the Query String parameter that was in the URL request (if it exists)
 	 *

@@ -157,9 +157,9 @@ abstract class ClientBase extends QBaseClass {
 
 				case 'form':
 					if (!is_array($requestBody)) throw new Exception('requestBody not string[] for requestBodyType of form');
-					$this->headerArray['Content-Type'] = 'application/x-www-form-urlencoded';
+					$this->headerArray['Content-Type'] = 'multipart/form-data';
 					curl_setopt($this->curl, CURLOPT_POST, true);
-					curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($requestBody));
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $requestBody);
 					break;
 
 				default:
