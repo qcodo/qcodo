@@ -95,7 +95,7 @@ abstract class FileQueue extends QBaseClass {
 		} else {
 			$directory = opendir($this->GetPathFor('inbox'));
 			$filename = null;
-			while ($file = readdir() && is_null($filename)) {
+			while ( ($file = readdir($directory)) && is_null($filename) ) {
 				if (substr($file, 0, 1) != '.') $filename = $file;
 			}
 
