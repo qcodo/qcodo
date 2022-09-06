@@ -5,7 +5,17 @@ use PHPUnit\Util\Exception;
 use Qcodo\Handlers;
 
 class ScheduledTasks extends Handlers\Console {
-	public function Execute($type) {
+	public function ExecuteMinutely()	{ $this->Execute('minutely'); }
+	public function ExecuteHourly()		{ $this->Execute('hourly'); }
+	public function ExecuteDaily()		{ $this->Execute('daily'); }
+	public function ExecuteNightly()	{ $this->Execute('nightly'); }
+	public function ExecuteWeekly()		{ $this->Execute('weekly'); }
+	public function ExecuteBiweekly()	{ $this->Execute('biweekly'); }
+	public function ExecuteMonthly()	{ $this->Execute('monthly'); }
+	public function ExecuteBimonthly()	{ $this->Execute('bimonthly'); }
+	public function ExecuteQuarterly()	{ $this->Execute('quarterly'); }
+
+	private function Execute($type) {
 		if (!$this->isConsoleProcessUnique()) throw new Exception('Already Running: ' . $this->argumentArray[1]);
 
 		// Go thru each method...
