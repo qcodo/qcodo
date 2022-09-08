@@ -87,7 +87,7 @@ abstract class FileQueue extends QBaseClass {
 	 * OR, a specific file in the inbox can optionally be specified.
 	 *
 	 * @param string|null $filename optional, if not specified, it will take the first file readdir() returns
-	 * @return void
+	 * @return string the filename that was processed (if any) or NULL if none
 	 */
 	public function ProcessQueue($filename = null) {
 		if ($filename) {
@@ -99,7 +99,7 @@ abstract class FileQueue extends QBaseClass {
 				if (substr($file, 0, 1) != '.') $filename = $file;
 			}
 
-			if (is_null($filename)) return;
+			if (is_null($filename)) return null;
 		}
 
 		$inboxPath = $this->GetPathFor('inbox', $filename);
@@ -109,6 +109,8 @@ abstract class FileQueue extends QBaseClass {
 		rename($inboxPath, $errorPath);
 		$this->ProcessFile($errorPath);
 		rename($errorPath, $donePath);
+
+		return $filename;
 	}
 
 	/**
