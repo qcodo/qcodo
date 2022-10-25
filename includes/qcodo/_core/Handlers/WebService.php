@@ -90,7 +90,50 @@ abstract class WebService extends Base {
 		return false;
 	}
 
-	public static function Run(Swagger $swagger, $settings) {
+	private static function RunError($viewErrorLogCommand, HttpRequest $request) {
+		// Error Log Authentication (if applicable)
+		$viewErrorLogAuthentication = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewErrorLogAuthentication');
+		if ($viewErrorLogAuthentication) {
+			if (!is_array($viewErrorLogAuthentication)) throw new Exception('error log authentication is non-array');
+			if (count($viewErrorLogAuthentication) != 2) throw new Exception('error log authentication is malformed');
+			$username = $viewErrorLogAuthentication[0];
+			$password = $viewErrorLogAuthentication[1];
+
+			if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+				($_SERVER['PHP_AUTH_USER'] != $username) || ($_SERVER['PHP_AUTH_PW'] != $password)) {
+				header('WWW-Authenticate: Basic realm="Qcodo Error Viewer"');
+				header('HTTP/1.0 401 Unauthorized');
+				print('<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Unauthorized</title>
+</head><body>
+<h1>Unauthorized</h1>
+<p>You are not authorized to view this page.</p>
+</body></html>');
+				exit;
+			}
+		}
+
+		$path = substr($request->path, strlen($viewErrorLogCommand));
+
+		if (!$path) {
+			self::RunErrorIndex($viewErrorLogCommand);
+			return;
+		}
+
+		$parts = explode('/', $path);
+		switch ($parts[1]) {
+			case 'view':
+				if (self::RunErrorView($viewErrorLogCommand, $parts[2])) return;
+				break;
+
+			case 'delete':
+				if (self::RunErrorDelete($viewErrorLogCommand, $parts[2])) return;
+				break;
+		}
+	}
+
+	public static function Run(Swagger $swagger) {
 		$request = new HttpRequest();
 
 		// CORS Pre-Flight
@@ -107,23 +150,7 @@ abstract class WebService extends Base {
 		// Are we explicitly asking to view the error log?
 		$viewErrorLogCommand = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewErrorLogCommand');
 		if ($viewErrorLogCommand && (strpos($request->path, $viewErrorLogCommand) === 0)) {
-			$path = substr($request->path, strlen($viewErrorLogCommand));
-
-			if (!$path) {
-				self::RunErrorIndex($viewErrorLogCommand);
-				return;
-			}
-
-			$parts = explode('/', $path);
-			switch ($parts[1]) {
-				case 'view':
-					if (self::RunErrorView($viewErrorLogCommand, $parts[2])) return;
-					break;
-
-				case 'delete':
-					if (self::RunErrorDelete($viewErrorLogCommand, $parts[2])) return;
-					break;
-			}
+			return self::RunError($viewErrorLogCommand, $request);
 		}
 
 		// Are we explicitly asking to view the swagger spec?
