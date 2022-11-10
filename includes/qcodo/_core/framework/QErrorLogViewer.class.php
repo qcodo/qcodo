@@ -26,7 +26,7 @@
 		 * To view the logged errors in a given path, specify the folder path of the folder containing
 		 * the logged errors.  It is assumed that the filenames of the logged errors are in the format
 		 * of "qcodo_error_YYYY-MM-DD_hhhhmmss_X.html", where "X" is the microseconds
-		 * 
+		 *
 		 * Because this will cache a log.xml file in this directory, make sure this folder is writable
 		 * by the user of the process running this class.
 		 * @param string $strErrorLogPath absolute path to the folder containing error log files
@@ -53,9 +53,9 @@
 		/**
 		 * If you wish to view the logged error files in this path, you can do so
 		 * in a QDataGrid by using this method as the DataSource for the datagrid.
-		 * 
+		 *
 		 * Note that pagination is not allowed for this -- you must view all items.
-		 * 
+		 *
 		 * Also note that the return is an array of SimpleXMLElements which can
 		 * be used in the QDataGridColumn to render out the contents of the metadata of
 		 * a given error.
@@ -75,12 +75,14 @@
 				$strFileContent = file_get_contents($this->strErrorLogPath . '/' . $strFile);
 				if ($intPos = strpos($strFileContent, '<!--qcodo--')) {
 					$strFileContent = substr($strFileContent, $intPos + strlen('<!--qcodo--'));
-					$strFileContent = substr($strFileContent, 0, strlen($strFileContent) - 3);
+					$intPos = strpos($strFileContent, '</error>');
+					if ($intPos) $strFileContent = substr($strFileContent, 0, $intPos + strlen('</error>'));
 					$strContent .= $strFileContent;
 				} else {
 					$strDate = substr($strFile, 12, 10) . ' ' . substr($strFile, 23, 2) . ':' . substr($strFile, 25, 2) . ':' . substr($strFile, 27, 2);
 					$strContent .= '<error valid="false"><filename>' . $strFile . '</filename><isoDateTime>' . $strDate . '</isoDateTime></error>';
 				}
+				$strContent .= "\n";
 			}
 			$strContent .= '</errors></errorLog>';
 
