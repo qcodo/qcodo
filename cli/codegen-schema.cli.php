@@ -360,6 +360,8 @@ class CodegenSchema {
 						$parameterType = trim(strtolower($parameterDefinition->type));
 						switch ($parameterType) {
 							case 'string':
+							case 'number':
+							case 'integer':
 								$requestPayloadSetupForm .= "\t\tif (!is_null($" . $parameterName . ')) ' .
 									'$postFieldsArray[\'' . $parameterDefinition->name . "'] = $" . $parameterName . ";\n";
 								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
