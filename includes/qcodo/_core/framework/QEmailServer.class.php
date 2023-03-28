@@ -105,6 +105,8 @@
 		 * @return string[] An array of e-mail addresses only, or NULL if none
 		 */
 		public static function GetEmailAddresses($strAddresses) {
+			if (!$strAddresses) return null;
+
 			$strAddressArray = array();
 
 			// Define the ATEXT-based DOT-ATOM pattern which defines the LOCAL-PART of
@@ -177,9 +179,6 @@
 				self::$objSmtpSocket = fopen($strFileName, 'w');
 				if (!self::$objSmtpSocket)
 					throw new QEmailException(sprintf('Unable to open Test SMTP connection to: %s', $strFileName));
-
-				// Clear the Read Buffer
-				if (!feof(self::$objSmtpSocket)) fgets(self::$objSmtpSocket, 4096);
 
 				// Write the Connection Command
 				fwrite(self::$objSmtpSocket, sprintf("telnet %s %s\r\n", QEmailServer::$SmtpServer, QEmailServer::$SmtpPort));
@@ -279,7 +278,9 @@
 			self::SendCommand('QUIT');
 
 			// Clear Buffer and Close Resource
-			if (!feof(self::$objSmtpSocket)) fgets(self::$objSmtpSocket);
+			if (QEmailServer::$TestMode !== true) {
+				if (!feof(self::$objSmtpSocket)) fgets(self::$objSmtpSocket);
+			}
 			fclose(self::$objSmtpSocket);
 
 			if (QEmailServer::$TestMode === true) chmod($strFileName, 0777);
@@ -383,7 +384,7 @@
 			if (!$strAddressArray || (count($strAddressArray) != 1)) throw new QEmailException(sprintf('Not a valid From address: %s', $objMessage->From));
 			$strMailFrom = $strAddressArray[0];
 
-			if(strlen($objMessage->ExclusiveRecipient)) {
+			if($objMessage->ExclusiveRecipient && strlen($objMessage->ExclusiveRecipient)) {
 				$strRcptToArray = array($objMessage->ExclusiveRecipient);
 			} else {
 				$strRcptToArray = QEmailServer::GetRecipientEmailAddressArray($objMessage);

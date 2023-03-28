@@ -6,7 +6,7 @@
 	/**
 	 * QDateTime (Standard)
 	 * REQUIRES: PHP >= 5.2.0
-	 * 
+	 *
 	 * This DateTime class manages datetimes for the entire system.  It basically
 	 * provides a nice wrapper around the PHP DateTime class, which is included with
 	 * all versions of PHP >= 5.2.0.
@@ -215,7 +215,8 @@
 			$this->strSerializedData = parent::format(DateTime::ISO8601);
 			return array('blnDateNull', 'blnTimeNull', 'strSerializedData');
 		}
-		public function __wakeup() {
+
+		public function __wakeup() : void {
 			parent::__construct($this->strSerializedData);
 		}
 
@@ -309,7 +310,7 @@
 						case 'MMMM':
 							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('F')) : parent::format('F');
 							break;
-			
+
 						case 'D':
 							$strToReturn .= parent::format('j');
 							break;
@@ -322,14 +323,14 @@
 						case 'DDDD':
 							$strToReturn .= (self::$Translate) ? QApplication::Translate(parent::format('l')) : parent::format('l');
 							break;
-			
+
 						case 'YY':
 							$strToReturn .= parent::format('y');
 							break;
 						case 'YYYY':
 							$strToReturn .= parent::format('Y');
 							break;
-			
+
 						case 'h':
 							$strToReturn .= parent::format('g');
 							break;
@@ -346,11 +347,11 @@
 						case 'mm':
 							$strToReturn .= parent::format('i');
 							break;
-			
+
 						case 'ss':
 							$strToReturn .= parent::format('s');
 							break;
-			
+
 						case 'z':
 							$strToReturn .= parent::format('a');
 							break;
@@ -389,18 +390,18 @@
 			return $strToReturn;
 		}
 
-		public function format($strFormat) {
+		public function format($strFormat) : string {
 			$this->ReinforceNullProperties();
 			return parent::format($strFormat);
 		}
 
-		public function setTime($intHour, $intMinute, $intSecond = null, $intMicrosecond = null) {
+		public function setTime($intHour, $intMinute, $intSecond = null, $intMicrosecond = null) : QDateTime {
 			// For compatibility with PHP 5.3
 			if (is_null($intSecond)) $intSecond = 0;
 
 			// If HOUR or MINUTE is NULL...
 			if (is_null($intHour) || is_null($intMinute)) {
-				parent::setTime(null, null, null);
+				parent::setTime(0, 0);
 				$this->blnTimeNull = true;
 				return $this;
 			}
@@ -422,7 +423,7 @@
 			return $this;
 		}
 
-		public function setDate($intYear, $intMonth, $intDay) {
+		public function setDate($intYear, $intMonth, $intDay) : QDateTime {
 			$intYear = QType::Cast($intYear, QType::Integer);
 			$intMonth = QType::Cast($intMonth, QType::Integer);
 			$intDay = QType::Cast($intDay, QType::Integer);
@@ -442,18 +443,18 @@
 			if ($this->blnTimeNull)
 				parent::setTime(0, 0, 0);
 		}
-		
+
 		/**
 		 * Converts the current QDateTime object to a different TimeZone.
-		 * 
+		 *
 		 * TimeZone should be passed in as a string-based identifier.
-		 * 
+		 *
 		 * Note that this is different than the built-in DateTime::SetTimezone() method which expicitly
 		 * takes in a DateTimeZone object.  QDateTime::ConvertToTimezone allows you to specify any
 		 * string-based Timezone identifier.  If none is specified and/or if the specified timezone
 		 * is not a valid identifier, it will simply remain unchanged as opposed to throwing an exeception
 		 * or error.
-		 * 
+		 *
 		 * @param string $strTimezoneIdentifier a string-based parameter specifying a timezone identifier (e.g. America/Los_Angeles)
 		 * @return void
 		 */
@@ -574,7 +575,7 @@
 			return new QDateTimeSpan($intDifference);
 		}
 
-		public function Add($dtsSpan){
+		public function Add($dtsSpan) : QDateTime {
 			if ($dtsSpan instanceof QDateTimeSpan) {
 				// And add the Span Second count to it
 				$this->Timestamp = $this->Timestamp + $dtsSpan->Seconds;
@@ -613,8 +614,8 @@
 			$this->Year += $intYears;
 			return $this;
 		}
-		
-		public function Modify($mixValue) {
+
+		public function Modify($mixValue) : QDateTime|false {
 			parent::modify($mixValue);
 			return $this;
 		}
@@ -667,7 +668,7 @@
 				case 'Age':
 					// Figure out the Difference from "Now"
 					$dtsFromCurrent = $this->Difference(QDateTime::Now());
-					
+
 					// It's in the future ('about 2 hours from now')
 					if ($dtsFromCurrent->IsPositive())
 						return $dtsFromCurrent->SimpleDisplay() . ' from now';
@@ -797,31 +798,31 @@
 
       DateTime::__construct([string time[, DateTimeZone object]])
       - Returns new DateTime object
-      
+
       string DateTime::format(string format)
       - Returns date formatted according to given format
-      
+
       long DateTime::getOffset()
       - Returns the DST offset
-      
+
       DateTimeZone DateTime::getTimezone()
       - Return new DateTimeZone object relative to give DateTime
-      
+
       void DateTime::modify(string modify)
       - Alters the timestamp
-      
+
       array DateTime::parse(string date)
       - Returns associative array with detailed info about given date
-      
+
       void DateTime::setDate(long year, long month, long day)
       - Sets the date
-      
+
       void DateTime::setISODate(long year, long week[, long day])
       - Sets the ISO date
-      
+
       void DateTime::setTime(long hour, long minute[, long second])
       - Sets the time
-      
+
       void DateTime::setTimezone(DateTimeZone object)
       - Sets the timezone for the DateTime object
 */

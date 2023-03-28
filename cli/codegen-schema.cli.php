@@ -99,7 +99,7 @@ class CodegenSchema {
 	 */
 	protected static function GetPhpDocPropertyForProperty($property) {
 		$ref = '$ref';
-		if (isset($property->$ref)) return str_replace('#/definitions/', null, $property->$ref) . '';
+		if (isset($property->$ref)) return str_replace('#/definitions/', '', $property->$ref) . '';
 
 		switch ($property->type) {
 			case 'array':
@@ -135,7 +135,7 @@ class CodegenSchema {
 	 */
 	protected static function GetModelDefinitionForProperty($property) {
 		$ref = '$ref';
-		if (isset($property->$ref)) return "'" . str_replace('#/definitions/', null, $property->$ref) . '' . "'";
+		if (isset($property->$ref)) return "'" . str_replace('#/definitions/', '', $property->$ref) . '' . "'";
 
 		switch ($property->type) {
 			case 'array':
@@ -345,7 +345,7 @@ class CodegenSchema {
 				switch ($parameterDefinition->in) {
 					case 'query':
 						if (!$requestPayloadSetupQuery) $requestPayloadSetupQuery = "\n\t\t\$queryArray = [];\n";
-						$requestPayloadSetupQuery .= "\t\tif (strlen(trim($" . $parameterName . '))) ' .
+						$requestPayloadSetupQuery .= "\t\tif (strlen(trim((string) $" . $parameterName . '))) ' .
 							'$queryArray[] = \'' . $parameterDefinition->name . "=' . urlencode($" . $parameterName . ");\n";
 						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
 						$parameterArray[] = '$' . $parameterName;
@@ -385,7 +385,7 @@ class CodegenSchema {
 						$parameterArray[] = '$' . $parameterName;
 						$urlDefinition = str_replace(
 							'{' . $parameterDefinition->name . '}',
-							"' . \n\t\t\t(strlen($" . $parameterName . ") ? urlencode($" . $parameterName . ") : '') . '",
+							"' . \n\t\t\t(strlen((string) $" . $parameterName . ") ? urlencode($" . $parameterName . ") : '') . '",
 							$urlDefinition
 						);
 						break;

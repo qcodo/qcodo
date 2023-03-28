@@ -704,6 +704,7 @@
 				set_error_handler(array('QErrorHandler', 'HandleError'), 0);
 				self::$intStoredErrorLevel = error_reporting(0);
 			} else {
+				if (is_null($intLevel)) $intLevel = error_reporting();
 				set_error_handler($strName, $intLevel);
 				self::$intStoredErrorLevel = -1;
 			}

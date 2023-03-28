@@ -171,7 +171,7 @@
 				if (array_key_exists($strIndex, $this->mixPropertiesDictionary)) {
 					switch ($this::$_Model[$strIndex]) {
 						case 'date':
-							$strDateString = trim($this->mixPropertiesDictionary[$strIndex]);
+							$strDateString = trim((string) $this->mixPropertiesDictionary[$strIndex]);
 							if (!$strDateString) return null;
 
 							// Account for YYYYMMDD
