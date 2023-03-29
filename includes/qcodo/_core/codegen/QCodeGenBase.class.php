@@ -488,14 +488,14 @@
 					$strStatement = null;
 				}
 
-				if (substr($strStatement, 0, 1) == '-') {
+				if ($strStatement && substr($strStatement, 0, 1) == '-') {
 					// Backup a number of characters
 					$intPosition = $intPosition - strlen($strStatement);
 					$strStatement = '';
 
 
 				// Check if we're starting an open-ended statemen
-				} else if (substr($strStatement, strlen($strStatement) - 1) == '{') {
+				} else if ($strStatement && substr($strStatement, strlen($strStatement) - 1) == '{') {
 					// We ARE in an open-ended statement
 
 					// SubTemplate is the contents of this open-ended template
