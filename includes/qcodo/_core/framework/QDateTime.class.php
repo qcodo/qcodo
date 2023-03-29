@@ -615,11 +615,6 @@
 			return $this;
 		}
 
-		public function Modify($mixValue) : QDateTime|false {
-			parent::modify($mixValue);
-			return $this;
-		}
-
 		public function __get($strName) {
 			$this->ReinforceNullProperties();
 
