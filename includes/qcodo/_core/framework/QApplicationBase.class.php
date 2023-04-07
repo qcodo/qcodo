@@ -1144,7 +1144,7 @@
 			foreach ($csvRowsArray as $csvRow) {
 				$itemArray = array();
 				foreach ($csvRow as $csvItem) {
-					if ((strlen($csvItem) > 0) && !is_numeric($csvItem)) {
+					if ((strlen((string) $csvItem) > 0) && !is_numeric($csvItem)) {
 						$itemArray[] = '"' . str_replace('"', '""', $csvItem) . '"';
 					} else {
 						$itemArray[] = $csvItem;
