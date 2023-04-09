@@ -7,7 +7,7 @@
 	 * * DatabaseRowBase
 	 * * DatabaseExceptionBase
 	 *
-	 * This Database library also has the following classes already defined, and 
+	 * This Database library also has the following classes already defined, and
 	 * Database adapters are assumed to use them internally:
 	 * * DatabaseIndex
 	 * * DatabaseForeignKey
@@ -340,6 +340,7 @@
 	abstract class QDatabaseFieldBase extends QBaseClass {
 		protected $strName;
 		protected $strOriginalName;
+		protected $strOriginalType;
 		protected $strTable;
 		protected $strOriginalTable;
 		protected $strDefault;
@@ -349,8 +350,10 @@
 		protected $blnIdentity;
 		protected $blnNotNull;
 		protected $blnPrimaryKey;
+		protected $blnIndexed;
 		protected $blnUnique;
 		protected $blnTimestamp;
+		protected $blnUnsigned;
 
 		protected $strType;
 
@@ -360,6 +363,8 @@
 					return $this->strName;
 				case "OriginalName":
 					return $this->strOriginalName;
+				case "OriginalType":
+					return $this->strOriginalType;
 				case "Table":
 					return $this->strTable;
 				case "OriginalTable":
@@ -374,10 +379,14 @@
 					return $this->blnNotNull;
 				case "PrimaryKey":
 					return $this->blnPrimaryKey;
+				case "Indexed":
+					return $this->blnIndexed;
 				case "Unique":
 					return $this->blnUnique;
 				case "Timestamp":
 					return $this->blnTimestamp;
+				case "Unsigned":
+					return $this->blnUnsigned;
 				case "Type":
 					return $this->strType;
 				default:
@@ -510,14 +519,14 @@
 		protected $blnPrimaryKey;
 		protected $blnUnique;
 		protected $strColumnNameArray;
-		
+
 		public function __construct($strKeyName, $blnPrimaryKey, $blnUnique, $strColumnNameArray) {
 			$this->strKeyName = $strKeyName;
 			$this->blnPrimaryKey = $blnPrimaryKey;
 			$this->blnUnique = $blnUnique;
 			$this->strColumnNameArray = $strColumnNameArray;
 		}
-		
+
 		public function __get($strName) {
 			switch ($strName) {
 				case "KeyName":

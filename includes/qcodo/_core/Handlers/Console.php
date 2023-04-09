@@ -65,8 +65,15 @@ abstract class Console extends Base {
 			exit(1);
 		}
 
+		// Figure out full classpath
+		if (strtolower($scriptNameParts[0]) == 'qcodo') {
+			$classPath = 'Qcodo\\Handlers\\Console\\Qcodo';
+			require(dirname(__FILE__) . '/Console/Qcodo.php');
+		} else {
+			$classPath = sprintf('%s\\Handlers\\Console\\%s', QApplicationBase::$application->rootNamespace, $scriptNameParts[0]);
+		}
+
 		// Get the Console Handler for the requested Script
-		$classPath = sprintf('%s\\Handlers\\Console\\%s', QApplicationBase::$application->rootNamespace, $scriptNameParts[0]);
 		if (class_exists($classPath)) {
 			$handler = new $classPath();
 			$handler->argumentArray = $argumentArray;
@@ -258,7 +265,7 @@ abstract class Console extends Base {
 	 * @return string
 	 */
 	protected static function RenderHelpText($strHelpText, $intMaxWidth, $strPadding) {
-		$strHelpText = wordwrap(trim($strHelpText), $intMaxWidth, "\r\n", true);
+		$strHelpText = wordwrap(trim((string) $strHelpText), $intMaxWidth, "\r\n", true);
 		$strHelpText = str_replace("\r\n", "\r\n" . $strPadding, $strHelpText);
 		return $strHelpText;
 	}

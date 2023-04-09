@@ -1,7 +1,7 @@
 <?php
 
 namespace Qcodo\Handlers\Console;
-use PHPUnit\Util\Exception;
+use \Exception;
 use Qcodo\Handlers;
 
 class ScheduledTasks extends Handlers\Console {

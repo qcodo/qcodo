@@ -18,7 +18,7 @@
 		}
 
 		public function SqlLimitVariableSuffix($strLimitInfo) {
-			// Setup limit suffix (if applicable) via a LIMIT clause 
+			// Setup limit suffix (if applicable) via a LIMIT clause
 			if (strlen($strLimitInfo)) {
 				if (strpos($strLimitInfo, ';') !== false)
 					throw new Exception('Invalid Semicolon in LIMIT Info');
@@ -40,7 +40,7 @@
 
 				return "ORDER BY $strSortByInfo";
 			}
-			
+
 			return null;
 		}
 
@@ -50,7 +50,7 @@
 
 			if (!$this->objMySqli)
 				throw new QMySqliDatabaseException("Unable to connect to Database", -1, null);
-			
+
 			if ($this->objMySqli->error)
 				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, null);
 
@@ -108,7 +108,7 @@
 			if ($this->objMySqli->error)
 				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, $strNonQuery);
 		}
-		
+
 		public function GetTables() {
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
@@ -120,7 +120,7 @@
 				array_push($strToReturn, $strRowArray[0]);
 			return $strToReturn;
 		}
-		
+
 		public function GetFieldsForTable($strTableName) {
 			// Connect if Applicable
 			if (!$this->blnConnectedFlag) $this->Connect();
@@ -249,10 +249,10 @@
 			else if ($intPosition == 0)
 				// No Key Name Defined
 				return null;
-			
+
 			// If we're here, then we have a key name defined
 			$strName = trim(substr($strKeyDefinition, 0, $intPosition));
-			
+
 			// Rip Out leading and trailing "`" character (if applicable)
 			if (substr($strName, 0, 1) == '`')
 				return substr($strName, 1, strlen($strName) - 2);
@@ -264,7 +264,7 @@
 		// This will return an array of strings that are the names [COL], etc.
 		private function ParseColumnNameArrayFromKeyDefinition($strKeyDefinition) {
 			$strKeyDefinition = trim($strKeyDefinition);
-			
+
 			// Get rid of the opening "(" and the closing ")"
 			$intPosition = strpos($strKeyDefinition, '(');
 			if ($intPosition === false)
@@ -300,7 +300,7 @@
 			$strLineArray = explode("\n", $strCreateStatement);
 
 			$objIndexArray = array();
-			
+
 			// We don't care about the first line or the last line
 			for ($intIndex = 1; $intIndex < (count($strLineArray) - 1); $intIndex++) {
 				$strLine = $strLineArray[$intIndex];
@@ -361,7 +361,7 @@
 				if ((strpos($strLine, "CONSTRAINT") == 2) &&
 					(strpos($strLine, "FOREIGN KEY") !== false)) {
 					$strLine = substr($strLine, strlen('  CONSTRAINT '));
-					
+
 					// By the end of the following lines, we will end up with a strTokenArray
 					// Index 0: the FK name
 					// Index 1: the list of columns that are the foreign key
@@ -374,7 +374,7 @@
 					$strTokenArray[2] = explode(' ', $strTokenArray[2]);
 					$strTokenArray[3] = $strTokenArray[2][1];
 					$strTokenArray[2] = $strTokenArray[2][0];
-					
+
 					// Cleanup, and change Index 1 and Index 3 to be an array based on the
 					// parsed column name list
 					if (substr($strTokenArray[0], 0, 1) == '`')
@@ -383,11 +383,11 @@
 					if (substr($strTokenArray[2], 0, 1) == '`')
 						$strTokenArray[2] = substr($strTokenArray[2], 1, strlen($strTokenArray[2]) - 2);
 					$strTokenArray[3] = $this->ParseColumnNameArrayFromKeyDefinition($strTokenArray[3]);
-					
+
 					// Create the FK object and add it to the return array
 					$objForeignKey = new QDatabaseForeignKey($strTokenArray[0], $strTokenArray[1], $strTokenArray[2], $strTokenArray[3]);
 					array_push($objForeignKeyArray, $objForeignKey);
-					
+
 					// Ensure the FK object has matching column numbers (or else, throw)
 					if ((count($objForeignKey->ColumnNameArray) == 0) ||
 						(count($objForeignKey->ColumnNameArray) != count($objForeignKey->ReferenceColumnNameArray)))
@@ -475,10 +475,10 @@
 		public function Close() {
 			$this->objMySqliResult->free();
 		}
-		
+
 		public function GetNextRow() {
 			$strColumnArray = $this->FetchArray();
-			
+
 			if ($strColumnArray)
 				return new QMySqliDatabaseRow($strColumnArray);
 			else
@@ -561,12 +561,13 @@
 			// Set strOriginalName to Name if it isn't set
 			if (!$this->strOriginalName)
 				$this->strOriginalName = $this->strName;
-			
+
 			// Calculate MaxLength of this column (e.g. if it's a varchar, calculate length of varchar
 			// NOTE: $mixFieldData->max_length in the MySQL spec is **DIFFERENT**
 			$objDescriptionResult = $objDb->Query(sprintf("DESCRIBE `%s`", $this->strOriginalTable));
 			while (($objRow = $objDescriptionResult->FetchArray())) {
 				if ($objRow["Field"] == $this->strOriginalName) {
+					$this->strOriginalType = $objRow["Type"];
 					$strLengthArray = explode("(", $objRow["Type"]);
 					if ((count($strLengthArray) > 1) &&
 						(strtolower($strLengthArray[0]) != 'enum') &&
@@ -589,6 +590,8 @@
 			$this->blnNotNull = ($mixFieldData->flags & MYSQLI_NOT_NULL_FLAG) ? true : false;
 			$this->blnPrimaryKey = ($mixFieldData->flags & MYSQLI_PRI_KEY_FLAG) ? true : false;
 			$this->blnUnique = ($mixFieldData->flags & MYSQLI_UNIQUE_KEY_FLAG) ? true : false;
+			$this->blnIndexed = ($mixFieldData->flags & MYSQLI_MULTIPLE_KEY_FLAG) ? true : false;
+			$this->blnUnsigned = ($mixFieldData->flags & MYSQLI_UNSIGNED_FLAG) ? true : false;
 
 			$this->SetFieldType($mixFieldData->type);
 		}
