@@ -1160,6 +1160,18 @@
 			return implode("\r\n", $rowContentArray);
 		}
 
+		/**
+		 * @param string $path
+		 * @param string[] $replacementArray
+		 * @return string
+		 */
+		public static function renderTemplateFromPath($path, $replacementArray) {
+			$template = file_get_contents($path);
+			foreach ($replacementArray as $key => $value) {
+				$template = str_replace('%' . $key . '%', $value, $template);
+			}
+			return $template;
+		}
 	}
 
 	class QRequestMode {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body { margin: 0; padding: 0; font-family: arial, serif; font-size: 10pt; }
+        table { width: 100%; border-collapse: collapse; border: 0; }
+        div { box-sizing: border-box; }
+
+        h2 { color: #278; padding: 0; margin: 0 0 2pt 0; background-color: #ffffff; margin-top: 18pt;}
+        h2.first { margin-top: 0; }
+
+        div.tablecontainer { margin-left: 20pt; }
+        table { border: 0; border-collapse: collapse; width: 100%; }
+        table thead tr th { text-align: left; background-color: #666; color: #fff; padding: 1pt 0; font-size: 7pt; }
+        table tbody tr td { border-bottom: 1px solid #eee; vertical-align: top;}
+        table tbody tr td.propertyName { font-size: 9pt; }
+        table tbody tr td.propertyType { font-family: monospace; font-size: 8pt; }
+        table tbody tr td.propertyDescription { font-style: italic; font-size: 8pt; }
+    </style>
+</head>
+<body>
+<h2 %FIRST%>Schema: %NAME%</h2>
+<div class="tablecontainer">
+<table><thead><tr>
+    <th style="width: 30%; padding-left: 2pt;">Name</th>
+    <th style="width: 30%;">Type</th>
+    <th style="width: 40%;">Description</th>
+</tr></thead>
+<tbody>
+    %ROWS%
+</tbody>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body { margin: 0; padding: 0; font-family: arial, serif; font-size: 10pt; }
+        table { width: 100%; border-collapse: collapse; border: 0; }
+        div { box-sizing: border-box; }
+
+        h2 { margin: 0; background-color: #278; color: #fff; padding: 2pt 5pt 2pt 5pt; margin-top: 18pt; }
+        h2.first { margin-top: 0; }
+
+        div.methodcontainer { margin-top: 18pt; }
+        h3 { font-weight: normal; padding: 0; margin: 0; color: #fff; font-size: 0pt; }
+
+        table.title tr td { border-top: 3pt solid #eee; border-bottom: 1pt solid #eee; padding: 2pt 0 2pt 0; }
+        table.title tr td.endpoint { text-align: right; font-family: monospace; font-size: 8pt; }
+        div.methoddescription { font-style: italic; padding-top: 2pt; font-size: 9pt; margin-left: 16pt; }
+
+        table.specs { margin-top: 12pt; margin-left: 16pt; }
+        table.specs td.label { font-weight: bold; width: 0.01in; vertical-align: top; border-right: 1px solid #eee; padding-right: 8pt; font-size: 7pt; }
+        table.specs td.content { vertical-align: top; padding-left: 8pt; }
+
+        table.specs tr.gutter td { padding: 0; height: 8pt; }
+
+        table.inputs { }
+        table.inputs thead tr th { text-align: left; color: #000; font-size: 7pt; font-weight: bold; }
+        table.inputs tbody tr td { vertical-align: top; font-size: 9pt; }
+        table.inputs tbody tr:nth-child(odd) {background-color: #eee; }
+
+        div.paramDefinition { font-size: 9pt; }
+        div.paramDescription { font-size: 8pt; font-style: italic; }
+        div.responseText { font-family: monospace; font-size: 8pt; }
+
+        span.operationClass { color: #999; }
+        span.operationName { font-weight: bold; }
+
+    </style>
+</head>
+<body>
+<h2 %FIRST%>API: %NAME%</h2>
+%ITEMS%
+</body>
+</html>

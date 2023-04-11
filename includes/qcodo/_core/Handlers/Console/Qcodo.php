@@ -12,6 +12,23 @@ use Mpdf;
 use \stdClass;
 
 class Qcodo extends Handlers\Console {
+	/**
+	 * Used for Swagger-related rendering
+	 * @var string[] indexed by schema name
+	 */
+	private $schemaDefinitionsToRender;
+	/**
+	 * Used for swagger-related rendering
+	 * @var stdClass[] indexed by schema name
+	 */
+	private $schemaDefinitionArrayByName;
+
+	/**
+	 * Used for swagger-related rendering
+	 * @var stdClass[] indexed by Tag
+	 */
+	private $methodDefinitionArrayByTag;
+
 	public function Run() {
 		$this->executeMethodList();
 	}
@@ -19,10 +36,11 @@ class Qcodo extends Handlers\Console {
 	/**
 	 * @param string $path the path to the swagger file to generate
 	 * @param string $command should be codegen, csv or pdf
-	 * @param string $output if command is PDF, the path/folder to output the PDF to
+	 * @param string $output if command is PDF, the path/folder to output the PDF to (required)
+	 * @param string $size if command is PDF, the size of the paper (defaults to 'letter', but can be 'A4')
 	 * @return void
 	 */
-	public function Swagger($path, $command, $output = null) {
+	public function Swagger($path, $command, $output = null, $size = 'letter') {
 		$swagger = json_decode(file_get_contents($path));
 		if (!$swagger) exit("invalid swagger: " . $path . "\n");
 
@@ -36,12 +54,12 @@ class Qcodo extends Handlers\Console {
 
 			case 'pdf':
 				if (!$output || !is_dir($output)) exit("path not found: " . $output . "\n");
-				$this->Swagger_Pdf($swagger, $output . '/' . basename($path, '.json') . '.pdf');
+				$this->Swagger_Pdf($swagger, $output . '/' . basename($path, '.json') . '.pdf', $size);
 				break;
 		}
 	}
 
-	private static function TypeDefinition($type) {
+	private function TypeDefinition($type) {
 		$ref = '$ref';
 
 		if (isset($type->type)) {
@@ -54,58 +72,108 @@ class Qcodo extends Handlers\Console {
 		return '?';
 	}
 
-	private static function TypeHtml($typeDefinition, $requestOrResponse, &$schemaDefinitionsToRender, $schemaDefinitionArrayByName) {
+	private function TypeDetails($typeDefinition, $requestOrResponse) {
 		if (substr($typeDefinition, strlen($typeDefinition) - strlen($requestOrResponse)) == $requestOrResponse) {
-			if (array_key_exists($typeDefinition, $schemaDefinitionsToRender)) unset($schemaDefinitionsToRender[$typeDefinition]);
+			if (array_key_exists($typeDefinition, $this->schemaDefinitionsToRender)) $this->schemaDefinitionsToRender[$typeDefinition] = null;
 
-			$schema = $schemaDefinitionArrayByName[$typeDefinition];
+			$schema = $this->schemaDefinitionArrayByName[$typeDefinition];
 
-			$typeHtml = $typeDefinition . '<ul>';
+			$typeHtml = '';
 			foreach ($schema->properties as $propertyName => $property) {
-				$typeHtml .= sprintf('<li>%s <strong>$%s</strong>%s<em>%s</em></li>',
+				$typeHtml .= sprintf('<div class="paramDefinition">&bull; %s <strong>$%s</strong></div>',
 					self::TypeDefinition($property),
 					$propertyName,
-					isset($property->description) ? '<br/>' : '',
-					isset($property->description) ? $property->description : '',
 				);
+				if (isset($property->description)) $typeHtml .= sprintf('<div class="paramDescription">%s</div>', htmlentities($property->description));
 			}
-			$typeHtml .= '</ul>';
-		} else {
-			$typeHtml = $typeDefinition;
+
+			return $typeHtml;
 		}
 
-		return $typeHtml;
+		return null;
 	}
 
-	private function Swagger_Pdf(stdClass $swagger, $outputFilePath) {
-		$methodDefinitionArrayByTag = array();
+	private function Swagger_Pdf(stdClass $swagger, $outputFilePath, $size) {
+		$this->methodDefinitionArrayByTag = array();
 		foreach ($swagger->paths as $pathName => $path) {
 			foreach ($path as $methodName => $definition) {
 				$definition->pathName = $pathName;
 				$definition->methodName = $methodName;
 				foreach ($definition->tags as $tag) {
-					if (!array_key_exists($tag, $methodDefinitionArrayByTag)) $methodDefinitionArrayByTag[$tag] = array();
-					$methodDefinitionArrayByTag[$tag][] = $definition;
+					if (!array_key_exists($tag, $this->methodDefinitionArrayByTag)) $this->methodDefinitionArrayByTag[$tag] = array();
+					$this->methodDefinitionArrayByTag[$tag][] = $definition;
 				}
 			}
 		}
 
-		$schemaDefinitionArrayByName = array();
-		$schemaDefinitionsToRender = array();
+		$this->schemaDefinitionArrayByName = array();
+		$this->schemaDefinitionsToRender = array();
 		foreach ($swagger->definitions as $name => $definition) {
-			$schemaDefinitionArrayByName[$name] = $definition;
-			$schemaDefinitionsToRender[$name] = $name;
+			$this->schemaDefinitionArrayByName[$name] = $definition;
+			$this->schemaDefinitionsToRender[$name] = $name;
 		}
 
-		$htmlArrayByTable = array();
-		foreach ($methodDefinitionArrayByTag as $tag => $methodDefinitionArray) {
-			$html = '<div class="tag">';
-			$html .= '<h3>' . $tag . '</h3>';
+		$mpdf = new Mpdf\Mpdf([
+			'tempDir' => '/tmp',
+			'mode' => 'utf-8',
+			'orientation' => 'P',
+			'format' => $size,
+			'margin_left' => 6,
+			'margin_right' => 6,
+			'margin_top' => 6,
+			'margin_bottom' => 6,
+			'margin_header' => 0,
+			'margin_footer' => 3,
+		]);
+		$mpdf->setAutoTopMargin = 'stretch'; // Set pdf top margin to stretch to avoid content overlapping
+		$mpdf->setAutoBottomMargin = 'false'; // Set pdf bottom margin to stretch to avoid content overlapping
+		$mpdf->TOCpagebreakByArray(array(
+			'links' => true,
+			'toc-margin-left' => 10,
+			'toc-margin-right' => 10,
+			'toc-margin-top' => 10,
+			'toc-margin-bottom' => 10,
+		));
+		$mpdf->h2toc = array(
+			'H1' => 0,
+			'H2' => 1,
+			'H3' => 2
+		);
 
-			foreach ($methodDefinitionArray as $definition) {
+		$this->Swagger_Pdf_ApiMethods($mpdf, $swagger);
+		$this->Swagger_Pdf_SchemaDefinitions($mpdf, $swagger);
+
+		// Set Footer for TOC
+		$mpdf->AddPage();
+		$replacementArray = array(
+			'TITLE' => $swagger->info->title,
+			'SUBTITLE' => 'Table of Contents',
+		);
+		$html = QApplicationBase::renderTemplateFromPath(dirname(__FILE__) . '/swagger-footer.html', $replacementArray);
+		$mpdf->SetHTMLFooter($html);
+
+		$mpdf->OutputFile($outputFilePath);
+	}
+
+	private function Swagger_Pdf_ApiMethods(Mpdf\Mpdf $mpdf, stdClass $swagger) {
+		$mpdf->WriteHTML('<h1 style="font-weight: normal; padding: 0; margin: 0; color: #fff; font-size: 0pt;">API Methods</h1>');
+
+		$tagArray = array_keys($this->methodDefinitionArrayByTag);
+		sort($tagArray);
+
+		$firstFlag = true;
+		foreach ($tagArray as $tag) {
+			$methodDefinitionArray = $this->methodDefinitionArrayByTag[$tag];
+			$htmlArrayByTable = array();
+
+			foreach ($methodDefinitionArray as $methodDefinitionIndex => $definition) {
 				$parts = explode('::', $definition->operationId);
 
+				$html = '<h3>' . $definition->operationId . '</h3>';
 				$html .= '<div class="methodcontainer">';
+
+				// Method - Title
+
 				$html .= '<table class="title"><tbody>';
 				$html .= sprintf('<tr><td><span class="operationClass">%s::</span><span class="operationName">%s</span></td><td class="endpoint">%s %s</td></tr>',
 					$parts[0],
@@ -114,119 +182,141 @@ class Qcodo extends Handlers\Console {
 					$definition->pathName);
 				$html .= '</tbody></table>';
 
+				// Method - Description
+
 				$html .= sprintf('<div class="methoddescription">%s</div>', $definition->summary);
 
-				if ($definition->parameters && count($definition->parameters)) {
-					$html .= '<table class="specs"><tbody><tr><td class="label">Input(s)</td><td class="content">';
+				// Method - Specs (Request and/or Response)
 
-					$html .= '<table class="inputs"><thead><tr><th style="width: 25%;">Name</th><th style="width: 25%;">Description</th><th style="width: 50%;">Type</th></tr></thead><tbody>';
+				$html .= '<table class="specs"><tbody>';
+
+				$requestRendered = false;
+				if ($definition->parameters && count($definition->parameters)) {
+					$requestRendered = true;
+					$html .= '<tr><td class="label">Request</td><td class="content">';
+
+					$html .= '<table class="inputs"><thead><tr><th style="width: 35%;">Name / Type</th><th style="width: 65%;">Description</th></tr></thead><tbody>';
 					foreach ($definition->parameters as $parameter) {
-						if (isset($parameter->type)) {
-							$typeDefinition = self::TypeDefinition($parameter);
-						} else {
-							$typeDefinition = self::TypeDefinition($parameter->schema);
+						$descriptionHtml = isset($parameter->description) ? '<em style="font-size: 7pt;">' . htmlentities($parameter->description) . '</em>' : '';
+
+						switch ($parameter->in) {
+							case 'body':
+								$typeDefinition = $this->TypeDefinition(isset($parameter->type) ? $parameter : $parameter->schema);
+								$typeDetailsHtml = $this->TypeDetails($typeDefinition, 'Request');
+
+								$name = 'Body: ' . $typeDefinition;
+								if ($typeDetailsHtml) {
+									$name .= '<br/>' . $descriptionHtml;
+									$descriptionHtml = $typeDetailsHtml;
+								}
+								break;
+							default:
+								$name = ucfirst($parameter->in) . ': ' . $parameter->name;
+								break;
 						}
 
-						$typeHtml = self::TypeHtml($typeDefinition, 'Request', $schemaDefinitionsToRender, $schemaDefinitionArrayByName);
-
-						$html .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', $parameter->name, isset($parameter->description) ? $parameter->description : '', $typeHtml);
+						$html .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $name, $descriptionHtml);
 					}
 					$html .= '</tbody></table>';
 
-					$html .= '</td></tbody></table>';
+					$html .= '</td></tr>';
 				}
 
 				if ($definition->responses) {
-					$html .= '<table class="specs"><tbody><tr><td class="label">Output(s)</td><td class="content">';
-					$html .= '<table class="inputs"><thead><tr><th style="width: 15%;">Code</th><th style="width: 35%;">Description</th><th style="width: 50%;">Type</th></tr></thead><tbody>';
+					// Gutter
+					if ($requestRendered) $html .= '<tr class="gutter"><td colspan="2"></td></tr>';
+
+					$html .= '<tr><td class="label">Response</td><td class="content">';
+					$html .= '<table class="inputs"><thead><tr><th style="width: 5%;">Code</th><th style="width: 95%;">Response</th></tr></thead><tbody>';
 					foreach ($definition->responses as $statusCode => $response) {
 						if (isset($response->schema)) {
-							$typeDefinition = self::TypeDefinition($response->schema);
-							$typeHtml = self::TypeHtml($typeDefinition, 'Response', $schemaDefinitionsToRender, $schemaDefinitionArrayByName);
+							$typeDefinition = $this->TypeDefinition($response->schema);
+							$typeDetailsHtml = $typeDefinition . '<br>' . $this->TypeDetails($typeDefinition, 'Response');
 						} else {
-							$typeHtml = '';
+							$typeDetailsHtml = '<div class="responseText">' . htmlentities($response->description) . '</div>';
 						}
 
-						$html .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', $statusCode, isset($response->description) ? $response->description : '', $typeHtml);
+						$html .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $statusCode, $typeDetailsHtml);
 					}
 					$html .= '</tbody></table>';
 
-					$html .= '</td></tbody></table>';
+					$html .= '</td></tr>';
 				}
 
+				$html .= '</tbody></table>';
+
 				$html .= '</div>';
+
+				$htmlArrayByTable[] = $html;
 			}
 
-			$html .= '</div>';
 
-			$htmlArrayByTable[] = $html;
+			// Set Footer for Tag
+			$replacementArray = array(
+				'TITLE' => $swagger->info->title,
+				'SUBTITLE' => 'API: ' . $tag,
+			);
+			$html = QApplicationBase::renderTemplateFromPath(dirname(__FILE__) . '/swagger-footer.html', $replacementArray);
+			$mpdf->SetHTMLFooter($html);
+
+			// Write Content for Tag
+			$replacementArray = array(
+				'NAME' => $tag,
+				'ITEMS' => implode("\n", $htmlArrayByTable)
+			);
+
+			if ($firstFlag) {
+				$firstFlag = false;
+				$replacementArray['FIRST'] = 'class="first"';
+			}
+
+			$html = QApplicationBase::renderTemplateFromPath(dirname(__FILE__) . '/swagger-api.html', $replacementArray);
+			$mpdf->WriteHTML($html);
 		}
+	}
 
-		$htmlTop = '<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<style type="text/css">
-		table { border: 0; border-collapse: collapse; width: 100%; }
+	private function Swagger_Pdf_SchemaDefinitions(Mpdf\Mpdf $mpdf, stdClass $swagger) {
+		$mpdf->AddPage();
+		$mpdf->WriteHTML('<h1 style="font-weight: normal; padding: 0; margin: 0; color: #fff; font-size: 0pt;">Schema Definitions</h1>');
 
-        div.page { box-sizing: border-box; padding: 0.25in; }
+		// Set Footer for Schema
+		$replacementArray = array(
+			'TITLE' => $swagger->info->title,
+			'SUBTITLE' => 'Schema Definitions',
+		);
+		$html = QApplicationBase::renderTemplateFromPath(dirname(__FILE__) . '/swagger-footer.html', $replacementArray);
+		$mpdf->SetHTMLFooter($html);
 
-		div.tag { margin-bottom: 24pt; }
+		sort($this->schemaDefinitionsToRender);
 
-		div.methodcontainer { margin-left: 20pt; margin-bottom: 24px;}
-		h3 { color: #278; padding: 0; margin: 0 0 2pt 0; }
+		$firstFlag = true;
+		foreach ($this->schemaDefinitionsToRender as $schemaName) {
+			if (!$schemaName) continue;
+			$schemaDefinition = $this->schemaDefinitionArrayByName[$schemaName];
 
-		table.title tr td { border-top: 3px solid #eee; border-bottom: 1px solid #eee; padding: 2pt 0 2pt 0; }
-		table.title tr td.endpoint { text-align: right; font-family: monospace; }
-		div.methoddescription { font-style: italic; padding-left: 20pt; padding-top: 2pt; }
+			// Write Content for Schema
+			$rowArray = array();
+			foreach ($schemaDefinition->properties as $name => $property) {
+				$typeDefinition = $this->TypeDefinition($property);
+				$rowArray[] = sprintf('<tr><td class="propertyName">%s</td><td class="propertyType">%s</td><td class="propertyDescription">%s</td></tr>',
+					htmlentities($name),
+					$typeDefinition,
+					isset($property->description) ? htmlentities($property->description) : '');
+			}
 
-		table.specs { margin-top: 12pt; }
-		table.specs td.label { font-weight: bold; text-align: right; width: 20%; vertical-align: top; border-right: 1px solid #eee; padding-right: 12pt; }
-		table.specs td.content { width: 80%; vertical-align: top; padding-left: 12pt; }
+			$replacementArray = array(
+				'NAME' => $schemaName,
+				'ROWS' => implode("\n", $rowArray)
+			);
 
-		table.inputs { }
-		table.inputs thead tr th { text-align: left; color: #000; font-size: 8pt; font-weight: bold; }
-		table.inputs tbody tr td { vertical-align: top;}
-		table.inputs tbody tr:nth-child(odd) {background-color: #eee; }
+			if ($firstFlag) {
+				$firstFlag = false;
+				$replacementArray['FIRST'] = 'class="first"';
+			}
 
-		table.inputs tbody tr td ul { padding: 0; padding-left: 9pt; margin: 0; font-size: 9pt; }
-		table.inputs tbody tr td li { padding: 0; margin: 0; }
-
-		table tbody tr.method td { border-top: 1px solid #eee; }
-		table tbody tr.description td { 
-		table tbody tr.spec td.label { text-align: right; font-weight: bold; padding-right: 12pt;}
-
-		span.operationClass { color: #999; }
-		span.operationName { font-weight: bold; }
-		
-	</style>
-</head>
-<body style="margin: 0; padding: 0; width: 11.0in; height: 8.5in; font-family: arial, serif; font-size: 10pt; ">
-<div class="page">';
-
-		$htmlBottom = '</div></body></html>';
-
-		$html = $htmlTop . implode("\n", $htmlArrayByTable) . $htmlBottom;
-
-//		file_put_contents($outputFilePath, $html); exit();
-
-		$mpdf = new Mpdf\Mpdf([
-			'tempDir' => '/tmp',
-			'mode' => 'utf-8',
-			'orientation' => 'P',
-			'format' => 'A4',
-			'margin_left' => 0,
-			'margin_right' => 0,
-			'margin_top' => 0,
-			'margin_bottom' => 0,
-			'margin_header' => 0,
-			'margin_footer' => 0,
-		]);
-		$mpdf->setAutoTopMargin = 'stretch'; // Set pdf top margin to stretch to avoid content overlapping
-		$mpdf->setAutoBottomMargin = 'false'; // Set pdf bottom margin to stretch to avoid content overlapping
-
-		$mpdf->WriteHTML($html);
-		$mpdf->OutputFile($outputFilePath);
+			$html = QApplicationBase::renderTemplateFromPath(dirname(__FILE__) . '/swagger-schema.html', $replacementArray);
+			$mpdf->WriteHTML($html);
+		}
 	}
 
 	/**
