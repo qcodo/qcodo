@@ -84,6 +84,11 @@ class Qcodo extends Handlers\Console {
 					self::TypeDefinition($property),
 					$propertyName,
 				);
+
+				if (isset($property->enum) && is_array($property->enum)) {
+					$typeHtml .= sprintf('<div class="paramEnum">%s</div>', implode(', ', $property->enum));
+				}
+
 				if (isset($property->description)) $typeHtml .= sprintf('<div class="paramDescription">%s</div>', htmlentities($property->description));
 			}
 
