@@ -106,7 +106,7 @@ class HttpRequest extends QBaseClass {
 	 * If not, this will return NULL.
 	 *
 	 * @param string $key of the path parameter to look up
-	 * @return string or null if not found.
+	 * @return string|null the value or null if not found
 	 */
 	public function getPathParameter($key) {
 		if (array_key_exists($key, $this->pathParametersArray)) return $this->pathParametersArray[$key];
@@ -120,7 +120,7 @@ class HttpRequest extends QBaseClass {
 	 * If not, this will return NULL.
 	 *
 	 * @param string $key of the File parameter to look up
-	 * @return string or null if not found.
+	 * @return string[]|null the posted file data, or null if not found
 	 */
 	public function getFileParameter($key) {
 		if (array_key_exists($key, $this->fileParametersArray)) return $this->fileParametersArray[$key];
@@ -134,7 +134,7 @@ class HttpRequest extends QBaseClass {
 	 * If not, this will return NULL.
 	 *
 	 * @param string $key of the Post parameter to look up
-	 * @return string or null if not found.
+	 * @return string|null the value or null if not found
 	 */
 	public function getPostParameter($key) {
 		if (array_key_exists($key, $this->postParametersArray)) return $this->postParametersArray[$key];
@@ -148,7 +148,7 @@ class HttpRequest extends QBaseClass {
 	 * If not, this will return NULL.
 	 *
 	 * @param string $name of the query string parameter to look up
-	 * @return string or null if not found
+	 * @return string|null the value or null if not found
 	 */
 	public function getQueryStringParameter($name) {
 		if (array_key_exists($name, $this->queryStringParametersArray)) return $this->queryStringParametersArray[$name];
@@ -172,7 +172,7 @@ class HttpRequest extends QBaseClass {
 	 * If still not found, it will return null.
 	 *
 	 * @param string $key
-	 * @return string or null
+	 * @return string|null the value or null if not found
 	 */
 	public function getHeaderParameter($key) {
 		// Return if key exists
