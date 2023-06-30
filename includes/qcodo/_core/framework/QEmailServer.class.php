@@ -479,7 +479,10 @@ class QEmailMessage extends QBaseClass {
 		}
 
 		public function AddInline(QEmailAttachment $objFile) {
-			$strContentId = md5(microtime());
+			if ($objFile->ContentId)
+				$strContentId = $objFile->ContentId;
+			else
+				$strContentId = md5(microtime());
 			$this->objInlineArray[$strContentId] = $objFile;
 			$objFile->SetContentId($strContentId);
 		}
