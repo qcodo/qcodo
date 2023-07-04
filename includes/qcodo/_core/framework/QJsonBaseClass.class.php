@@ -75,6 +75,8 @@
 		}
 
 		public static function JsonDecodeArrayForType($mixType, $mixJson, $strNamespace = null) {
+			if (is_null($mixJson)) return null;
+
 			if (is_array($mixJson)) {
 				$objJsonArray = $mixJson;
 			} else if (is_object($mixJson) && (get_class($mixJson) == 'stdClass')) {
