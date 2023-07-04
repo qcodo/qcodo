@@ -29,12 +29,12 @@
 
 		/**
 		 * This will log a message to the Qcodo Log.  Location of the log file is defined in __QCODO_LOG__
-		 * 
+		 *
 		 * By default, this will log a "Normal" level log entry in the "default" Qcodo log file, which is
 		 * located at __QCODO_LOG__/default.log.txt
-		 * 
+		 *
 		 * Either parameter can be overridden.
-		 * 
+		 *
 		 * @param string $strMessage
 		 * @param integer $intLogLevel
 		 * @param string $strLogModule
@@ -106,13 +106,13 @@
 			$strMessage = null;
 			for ($intIndex = 1; $intIndex < count($objBackTrace); $intIndex++) {
 				$objItem = $objBackTrace[$intIndex];
-				
+
 				$strKeyFile = (array_key_exists('file', $objItem)) ? $objItem['file'] : '';
 				$strKeyLine = (array_key_exists('line', $objItem)) ? $objItem['line'] : '';
 				$strKeyClass = (array_key_exists('class', $objItem)) ? $objItem['class'] : '';
 				$strKeyType = (array_key_exists('type', $objItem)) ? $objItem['type'] : '';
 				$strKeyFunction = (array_key_exists('function', $objItem)) ? $objItem['function'] : '';
-				
+
 				$strMessage .= sprintf("#%s %s(%s): %s%s%s()\r\n",
 					$intIndex,
 					$strKeyFile,
@@ -131,7 +131,7 @@
 		 * @return string
 		 */
 		protected static function FormatMessage($strMessage) {
-			$strMessage = trim($strMessage);
+			$strMessage = trim((string) $strMessage);
 			$strMessage = str_replace("\r", "", $strMessage);
 
 			$strToReturn = null;
