@@ -18,8 +18,14 @@ abstract class FileQueue extends QBaseClass {
 	 */
 	protected $logArrayByType;
 
-	public function __construct() {
+	/**
+	 * @var boolean $verboseFlag
+	 */
+	protected $verboseFlag;
+
+	public function __construct($verboseFlag = false) {
 		if (!$this->token) throw new Exception('no FileQueue token is defined');
+		$this->verboseFlag = $verboseFlag;
 
 		// Setup Paths
 		if (!is_dir($this->GetPathFor('inbox'))) QApplicationBase::MakeDirectory($this->GetPathFor('inbox'), 0777);
@@ -30,6 +36,15 @@ abstract class FileQueue extends QBaseClass {
 		$this->logArrayByType = array();
 		$this->logArrayByType[] = array();
 		$this->logArrayByType[] = array();
+	}
+
+	/**
+	 * @param string $message
+	 * @return void
+	 */
+	protected function LogToConsole($message) {
+		if (!$this->verboseFlag) return;
+		print $message . "\n";
 	}
 
 	/**
