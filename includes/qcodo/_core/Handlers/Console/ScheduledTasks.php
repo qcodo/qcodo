@@ -18,21 +18,13 @@ class ScheduledTasks extends Handlers\Console {
 	private function Execute($type) {
 		if (!$this->isConsoleProcessUnique()) throw new Exception('Already Running: ' . $this->argumentArray[1]);
 
+		$methodNameArray = $this->GetMethodArrayFor($type);
+
 		// Go thru each method...
 		$foundFlag = false;
-
-		foreach ($this->reflectionClass->getMethods() as $reflectionMethod) {
-			// Get docComment for this method
-			if (!($docComment = $reflectionMethod->getDocComment())) continue;
-
-			// Ensure that this method is "uses" the type
-			if (!strpos($docComment, '@uses ' . $type)) continue;
-
+		foreach ($methodNameArray as $methodName) {
 			// We found at least one!
 			$foundFlag = true;
-
-			// If we are here, we are going to be processing this method
-			$methodName = $reflectionMethod->name;
 
 			switch ($pid = pcntl_fork()) {
 				case -1:
@@ -50,6 +42,28 @@ class ScheduledTasks extends Handlers\Console {
 
 		if (!$foundFlag) {
 			throw new Exception('No Scheduled Tasks Found for Type: ' . $type);
+		}
+	}
+
+	private function GetMethodArrayFor($type) {
+		$methodNameArray = array();
+		foreach ($this->reflectionClass->getMethods() as $reflectionMethod) {
+			// Get docComment for this method
+			if (!($docComment = $reflectionMethod->getDocComment())) continue;
+
+			// Ensure that this method is "uses" the type
+			if (!strpos($docComment, '@uses ' . $type)) continue;
+
+			$methodNameArray[] = $reflectionMethod->name;
+		}
+
+		return $methodNameArray;
+	}
+
+	public function ListFor($type) {
+		printf("List of [%s] methods in [%s]:\n", $type, $this->reflectionClass->getShortName());
+		foreach ($this->GetMethodArrayFor($type) as $methodName) {
+			printf("    %s::%s\n", $this->reflectionClass->getShortName(), $methodName);
 		}
 	}
 }

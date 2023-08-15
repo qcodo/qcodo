@@ -97,35 +97,53 @@ abstract class FileQueue extends QBaseClass {
 	}
 
 	/**
+	 * Gets a list of files in the Inbox
+	 * @param boolean $ordered defaults to false
+	 * @return string[]
+	 */
+	public function GetFilesInInbox($ordered = false) {
+		$directory = opendir($this->GetPathFor('inbox'));
+		$filenameArray = array();
+		while ( $file = readdir($directory) ) {
+			if (substr($file, 0, 1) != '.') $filenameArray[] = $file;
+		}
+
+		if ($ordered) sort($filenameArray);
+
+		return $filenameArray;
+	}
+
+	/**
 	 * Processes the queue.  It will take the first item readdir() returns (if any), or is a no-op if nothing is in the inbox.
 	 *
 	 * OR, a specific file in the inbox can optionally be specified.
 	 *
-	 * @param string|null $filename optional, if not specified, it will take the first file readdir() returns
-	 * @return string the filename that was processed (if any) or NULL if none
+	 * @param string|null $filename optional, if not specified, it will take the first file readdir() returns by default
+	 * @param boolean $ordered optional, if filename not specified, then indicate whether you want the queue to process files in alphabetical order (defaults to false)
+	 * @param integer $limit optional, if filename not specified, then indicate the max number of files to process (defaults to 1)
+	 * @return string the filename of the first file that was processed (if any) or NULL if none
 	 */
-	public function ProcessQueue($filename = null) {
+	public function ProcessQueue($filename = null, $ordered = false, $limit = 1) {
 		if ($filename) {
 			if (!is_file($this->GetPathFor('inbox', $filename))) throw new Exception('File Not Found in Inbox: ' . $filename);
+			$filenameArray = array($filename);
 		} else {
-			$directory = opendir($this->GetPathFor('inbox'));
-			$filename = null;
-			while ( ($file = readdir($directory)) && is_null($filename) ) {
-				if (substr($file, 0, 1) != '.') $filename = $file;
-			}
-
-			if (is_null($filename)) return null;
+			$filenameArray = $this->GetFilesInInbox($ordered);
+			if (!count($filenameArray)) return null;
+			if (count($filenameArray) > $limit) $filenameArray = array_slice($filenameArray, 0, $limit);
 		}
 
-		$inboxPath = $this->GetPathFor('inbox', $filename);
-		$errorPath = $this->GetPathFor('error', $filename);
-		$donePath = $this->GetPathFor('done', $filename);
+		foreach ($filenameArray as $filename) {
+			$inboxPath = $this->GetPathFor('inbox', $filename);
+			$errorPath = $this->GetPathFor('error', $filename);
+			$donePath = $this->GetPathFor('done', $filename);
 
-		rename($inboxPath, $errorPath);
-		$this->ProcessFile($errorPath);
-		rename($errorPath, $donePath);
+			rename($inboxPath, $errorPath);
+			$this->ProcessFile($errorPath);
+			rename($errorPath, $donePath);
+		}
 
-		return $filename;
+		return $filenameArray[0];
 	}
 
 	/**
