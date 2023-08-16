@@ -31,7 +31,7 @@
 	 */
 
 	// Versioning Information
-	define('QCODO_VERSION', '0.5.31');
+	define('QCODO_VERSION', '0.5.32');
 
 	// PHP Minimum Version Supported
 	define('QCODO_PHP_MIN_VERSION', '7.0.0');
