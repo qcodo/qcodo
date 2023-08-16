@@ -9,6 +9,7 @@ class ScheduledTasks extends Handlers\Console {
 	public function ExecuteHourly()		{ $this->Execute('hourly'); }
 	public function ExecuteDaily()		{ $this->Execute('daily'); }
 	public function ExecuteNightly()	{ $this->Execute('nightly'); }
+	public function ExecuteMorningly()	{ $this->Execute('morningly'); }
 	public function ExecuteWeekly()		{ $this->Execute('weekly'); }
 	public function ExecuteBiweekly()	{ $this->Execute('biweekly'); }
 	public function ExecuteMonthly()	{ $this->Execute('monthly'); }
