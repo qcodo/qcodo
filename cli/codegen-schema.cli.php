@@ -139,7 +139,7 @@ class CodegenSchema {
 
 		switch ($property->type) {
 			case 'array':
-				return "array('" . self::GetPhpDocPropertyForProperty($property->items) . "')";
+				return "array(" . self::GetModelDefinitionForProperty($property->items) . ")";
 			case 'integer':
 				return "'integer'";
 			case 'boolean':
