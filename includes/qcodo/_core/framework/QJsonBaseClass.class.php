@@ -150,6 +150,8 @@
 			foreach ($objArray as $mixIndex => $mixValue) {
 				if ($mixValue instanceof QJsonBaseClass) {
 					$objArray[$mixIndex] = $mixValue->GetJsonHelper();
+				} else if ($mixValue instanceof QDateTime) {
+					$objArray[$mixIndex] = $mixValue->IsTimeNull() ? $mixValue->ToString('YYYY-MM-DD') : $mixValue->ToString('YYYY-MM-DDThhhh:mm:sstttttt');
 				} else if ($mixValue instanceof ArrayObject) {
 					$objArray[$mixIndex] = self::GetJsonArrayHelper($mixValue->getArrayCopy());
 				} else if (is_array($mixValue)) {
