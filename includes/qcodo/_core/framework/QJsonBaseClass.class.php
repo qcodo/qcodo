@@ -123,8 +123,8 @@
 
 			if (!is_array($objArray) && !($objArray instanceof ArrayObject)) throw new QCallerException('Cannot GetJsonForArray() on a non-array parameter');
 
-			$objArray = self::GetJsonArrayHelper($objArray);
 			if ($objArray instanceof ArrayObject) $objArray = $objArray->GetArrayCopy();
+			$objArray = self::GetJsonArrayHelper($objArray);
 			return json_encode($objArray, JSON_INVALID_UTF8_SUBSTITUTE);
 		}
 
