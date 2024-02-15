@@ -140,7 +140,7 @@
 				$this->blnTimeNull = false;
 
 			// Using "Now" constant
-			} else if (strtolower($mixValue) == QDateTime::Now) {
+			} else if ($mixValue && (strtolower($mixValue) == QDateTime::Now)) {
 				if ($objTimeZone)
 					parent::__construct('now', $objTimeZone);
 				else

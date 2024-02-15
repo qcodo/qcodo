@@ -1,25 +1,14 @@
 <?php
-	/* Qcodo Development Framework for PHP
-	 * http://www.qcodo.com/
-	 *
-	 * Copyright (C) 2006
-	 * Martin Kronstad - Siteman AS - http://www.siteman.no/
-	 *
-	 * This program is free software; you can redistribute it and/or
-	 * modify it under the terms of the GNU General Public License
-	 * as published by the Free Software Foundation; either version 2
-	 * of the License, or (at your option) any later version.
-	 *
-	 * This program is distributed in the hope that it will be useful,
-	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 * GNU General Public License for more details.
-	 *
-	 * You should have received a copy of the GNU General Public License
-	 * along with this program; if not, write to the Free Software
-	 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+	/**
+	 * @class QDateTimeSpan
+	 * @property-read integer $Years
+	 * @property-read integer $Months
+	 * @property-read integer $Days
+	 * @property-read integer $Hours
+	 * @property-read integer $Minutes
+	 * @property integer $Seconds
+	 * @property-read integer[] $Timearray
 	 */
-
 	class QDateTimeSpan extends QBaseClass{
 		protected $intSeconds;
 
@@ -31,7 +20,7 @@
 			bodies into accord with the Newtonian dynamical theory of motion.
 		*/
  		const SecondsPerYear	= 31556926;
- 		
+
 		// Assume 30 Days per Month
  		const SecondsPerMonth 	= 2592000;
 		const SecondsPerDay 	= 86400;
@@ -44,8 +33,8 @@
 
 		/*
 			Is functions
-		*/ 
-		
+		*/
+
 		/**
 		 * Checks if the current DateSpan is positive
 		 *
@@ -72,7 +61,7 @@
 		public function IsZero(){
 			return ($this->intSeconds == 0);
 		}
-		
+
 		/**
 		 * Calculates the difference between this DateSpan and another DateSpan
 		 *
@@ -85,11 +74,11 @@
 			$dtsDateSpan->AddSeconds($intDifference);
 			return $dtsDateSpan;
 		}
-		
+
 		/*
 			SetFrom methods
 		*/
-		
+
 		/**
 		 * Sets current QDateTimeSpan to the difference between two QDateTime objects
 		 *
@@ -99,11 +88,11 @@
 		public function SetFromQDateTime(QDateTime $dttFrom, QDateTime $dttTo){
 			$this->Add($dttFrom->Difference($dttTo));
 		}
-		
+
 		/*
 			Add methods
-		*/	
-		
+		*/
+
 		/**
 		 * Adds an amount of seconds to the current QDateTimeSpan
 		 *
@@ -112,7 +101,7 @@
 		public function AddSeconds($intSeconds){
 			$this->intSeconds = $this->intSeconds + $intSeconds;
 		}
-		
+
 		/**
 		 * Adds an amount of minutes to the current QDateTimeSpan
 		 *
@@ -121,7 +110,7 @@
 		public function AddMinutes($intMinutes){
 			$this->intSeconds = $this->intSeconds + ($intMinutes * QDateTimeSpan::SecondsPerMinute);
 		}
-		
+
 		/**
 		 * Adds an amount of hours to the current QDateTimeSpan
 		 *
@@ -130,7 +119,7 @@
 		public function AddHours($intHours){
 			$this->intSeconds = $this->intSeconds + ($intHours * QDateTimeSpan::SecondsPerHour);
 		}
-		
+
 		/**
 		 * Adds an amount of days to the current QDateTimeSpan
 		 *
@@ -139,7 +128,7 @@
 		public function AddDays($intDays){
 			$this->intSeconds = $this->intSeconds + ($intDays * QDateTimeSpan::SecondsPerDay);
 		}
-		
+
 		/**
 		 * Adds an amount of months to the current QDateTimeSpan
 		 *
@@ -148,11 +137,11 @@
 		public function AddMonths($intMonths){
 			$this->intSeconds = $this->intSeconds + ($intMonths * QDateTimeSpan::SecondsPerMonth);
 		}
-		
-		/* 
+
+		/*
 			Get methods
 		*/
-		
+
 		/**
 		 * Calculates the total whole years in the current QDateTimeSpan
 		 *
@@ -176,7 +165,7 @@
 			if($this->IsNegative()) $intMonths = (-1) * $intMonths;
 			return $intMonths;
 		}
-		
+
 		/**
 		 * Calculates the total whole days in the current QDateTimeSpan
 		 *
@@ -200,7 +189,7 @@
 			if($this->IsNegative()) $intHours = (-1) * $intHours;
 			return $intHours;
 		}
-		
+
 		/**
 		 * Calculates the total whole minutes in the current QDateTimeSpan
 		 *
@@ -211,12 +200,12 @@
 			$intMinutes = floor($this->intSeconds / $intSecondsPerMinute);
 			if($this->IsNegative()) $intMinutes = (-1) * $intMinutes;
 			return $intMinutes;
-		} 
- 		
+		}
+
 		/*
 			DateMathSettings
 		*/
-		
+
 		/**
 		 * Adds a QDateTimeSpan to current QDateTimeSpan
 		 *
@@ -225,7 +214,7 @@
 		public function Add(QDateTimeSpan $dtsSpan){
 			$this->intSeconds = $this->intSeconds + $dtsSpan->Seconds;
 		}
-		
+
 		/**
 		 * Subtracts a QDateTimeSpan to current QDateTimeSpan
 		 *
@@ -263,14 +252,14 @@
 				$strFormat = ($arrTimearray['Seconds'] != 1) ? QApplication::Translate('%s seconds') : QApplication::Translate('a second');
 				$strToReturn = sprintf($strFormat,$arrTimearray['Seconds']);
 			}
-			
+
 			return $strToReturn;
 		}
-		
-		
+
+
 		/**
 		 * Return an array of timeunints
-		 * 
+		 *
 		 *
 		 * @return array of timeunits
 		 */
@@ -280,7 +269,7 @@
 			$intSecondsPerDay = ($this->IsPositive()) ? QDateTimeSpan::SecondsPerDay : ((-1) * QDateTimeSpan::SecondsPerDay);
 			$intSecondsPerHour = ($this->IsPositive()) ? QDateTimeSpan::SecondsPerHour : ((-1) * QDateTimeSpan::SecondsPerHour);
 			$intSecondsPerMinute = ($this->IsPositive()) ? QDateTimeSpan::SecondsPerMinute : ((-1) * QDateTimeSpan::SecondsPerMinute);
-			
+
 			$intSeconds = abs($this->intSeconds);
 
 			$intYears = floor($intSeconds / QDateTimeSpan::SecondsPerYear);
@@ -291,10 +280,10 @@
 
 			$intDays = floor($intSeconds / QDateTimeSpan::SecondsPerDay);
 			$intSeconds = $intSeconds - ($intDays * QDateTimeSpan::SecondsPerDay);
-			
+
 			$intHours = floor($intSeconds / QDateTimeSpan::SecondsPerHour);
 			$intSeconds = $intSeconds - ($intHours * QDateTimeSpan::SecondsPerHour);
-			
+
 			$intMinutes = floor($intSeconds / QDateTimeSpan::SecondsPerMinute);
 			$intSeconds = $intSeconds - ($intMinutes * QDateTimeSpan::SecondsPerMinute);
 
@@ -320,7 +309,7 @@
 		 * @param string $strName Name of the property to get
 		 * @return mixed the returned property
 		 */
-		
+
 		public function __get($strName) {
 			switch ($strName) {
 				case 'Years': return $this->GetYears();
@@ -349,7 +338,7 @@
 		 * @param string $mixValue New value of the property
 		 * @return mixed the property that was set
 		 */
-	
+
 		public function __set($strName, $mixValue) {
 			try {
 				switch ($strName) {
@@ -357,14 +346,14 @@
 						return ($this->intSeconds = QType::Cast($mixValue, QType::Integer));
 					default:
 						return (parent::__set($strName, $mixValue));
-				}				
+				}
 			} catch (QCallerException $objExc) {
 				$objExc->IncrementOffset();
 				throw $objExc;
 			}
 		}
-		
-		
+
+
 	}
 
 ?>
