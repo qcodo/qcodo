@@ -61,8 +61,12 @@
 			$this->NonQuery('SET AUTOCOMMIT=1;');
 
 			// Set NAMES (if applicable)
-			if (array_key_exists('encoding', $this->objConfigArray))
+			if (array_key_exists('encoding', $this->objConfigArray) && $this->objConfigArray['encoding'])
 				$this->NonQuery('SET NAMES ' . $this->objConfigArray['encoding'] . ';');
+
+			// Set TIMEZONE (if applicable)
+			if (array_key_exists('timezone', $this->objConfigArray) && $this->objConfigArray['timezone'])
+				$this->NonQuery(sprintf("SET time_zone='%s';", $this->objConfigArray['timezone']));
 		}
 
 		public function __get($strName) {
