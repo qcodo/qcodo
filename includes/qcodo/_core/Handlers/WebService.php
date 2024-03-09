@@ -90,6 +90,68 @@ abstract class WebService extends Base {
 		return false;
 	}
 
+	private static function emlToJson($emlFilePath) {
+		// Read .eml file
+		$emlContent = file_get_contents($emlFilePath);
+
+		// Parse .eml content
+		$emlParts = preg_split("/\r?\n\r?\n/", $emlContent, 2);
+		$headers = $emlParts[0];
+		$body = $emlParts[1] ?? '';
+
+		// Parse headers into associative array
+		$headerLines = explode("\n", $headers);
+		$headerData = [];
+		foreach ($headerLines as $headerLine) {
+			if (strpos($headerLine, ':') !== false) {
+				list($key, $value) = explode(':', $headerLine, 2);
+				$headerData[trim($key)] = trim($value);
+			}
+		}
+
+		// Return parsed data as JSON
+		return json_encode([
+			'headers' => $headerData,
+			'body' => $body
+		]);
+	}
+
+	private static function RunFailedEmailLog($viewEmailLogCommand, HttpRequest $request, $failedEmailLogRelativePath) {
+		$template = file_get_contents(dirname(__FILE__) . '/FailedEmailLogPageTemplate.html');
+
+		$array = array();
+
+		$directory = opendir($failedEmailLogRelativePath);
+		while ($file = readdir($directory)) {
+			if (strpos($file, '.eml')) {
+				$json = self::emlToJson($failedEmailLogRelativePath . '/' . $file);
+				$object = json_decode($json);
+				$object->Date = new \QDateTime($object->headers->Date);
+				$array[] = $object;
+			}
+		}
+
+		usort($array, [self::class, 'RunFailedEmailLog_Sort']);
+
+		$trArray = array();
+		foreach ($array as $object) {
+			$tr = '<tr>';
+			$tr .= sprintf('<td>%s</td>', $object->Date->ToString('YYYY-MM-DD hhhh:mm:ss'));
+			$tr .= sprintf('<td>%s</td>', htmlentities($object->headers->From));
+			$tr .= sprintf('<td>%s</td>', htmlentities($object->headers->To));
+			$tr .= sprintf('<td>%s</td>', htmlentities($object->headers->Subject));
+			$tr .= '</tr>';
+			$trArray[] = $tr;
+		}
+		print (str_replace('%BODY%', implode("\n", $trArray), $template));
+
+	}
+
+	private static function RunFailedEmailLog_Sort(stdClass $a, stdClass $b) {
+		if ($a->Date->IsEqualTo($b->Date)) return 0;
+		return ($a->Date->IsEarlierThan($b->Date)) ? -1 : 1;
+	}
+
 	private static function RunError($viewErrorLogCommand, HttpRequest $request) {
 		// Error Log Authentication (if applicable)
 		$viewErrorLogAuthentication = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewErrorLogAuthentication');
@@ -159,6 +221,13 @@ abstract class WebService extends Base {
 			$response = new HttpResponse(200, $swagger->getOriginalJson(), 'application/json');
 			$response->execute();
 			return;
+		}
+
+		// Are we explicitly asking to view the failed email logz?
+		$viewEmailLogCommand = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewFailedEmailLogCommand');
+		$failedEmailLogRelativePath = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'failedEmailLogRelativePath');
+		if ($viewEmailLogCommand && (strpos($request->path, $viewEmailLogCommand) === 0) && $failedEmailLogRelativePath) {
+			return self::RunFailedEmailLog($viewEmailLogCommand, $request, $failedEmailLogRelativePath);
 		}
 
 		// Is there no found path in the Swagger?
