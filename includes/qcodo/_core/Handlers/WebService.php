@@ -117,6 +117,26 @@ abstract class WebService extends Base {
 	}
 
 	private static function RunFailedEmailLog($viewEmailLogCommand, HttpRequest $request, $failedEmailLogRelativePath) {
+		$path = substr($request->path, strlen($viewEmailLogCommand));
+
+		if (!$path) {
+			self::RunFailedEmailIndex($viewEmailLogCommand, $request, $failedEmailLogRelativePath);
+			return;
+		}
+
+		$parts = explode('/', $path);
+		switch ($parts[1]) {
+			case 'view':
+				if (self::RunFailedEmailView($viewEmailLogCommand, $parts[2], $failedEmailLogRelativePath)) return;
+				break;
+
+			case 'delete':
+				if (self::RunFailedEmailDelete($viewEmailLogCommand, $parts[2], $failedEmailLogRelativePath)) return;
+				break;
+		}
+	}
+
+	private static function RunFailedEmailIndex($viewEmailLogCommand, HttpRequest $request, $failedEmailLogRelativePath) {
 		$template = file_get_contents(dirname(__FILE__) . '/FailedEmailLogPageTemplate.html');
 
 		$array = array();
@@ -127,6 +147,7 @@ abstract class WebService extends Base {
 				$json = self::emlToJson($failedEmailLogRelativePath . '/' . $file);
 				$object = json_decode($json);
 				$object->Date = new \QDateTime($object->headers->Date);
+				$object->Filename = $file;
 				$array[] = $object;
 			}
 		}
@@ -136,6 +157,8 @@ abstract class WebService extends Base {
 		$trArray = array();
 		foreach ($array as $object) {
 			$tr = '<tr>';
+			$tr .= sprintf('<td><a href="%s/view/%s">Download</a></td>', $viewEmailLogCommand, $object->Filename);
+//			$tr .= sprintf('<td><a href="%s/delete/%s">Delete</a></td>', $viewEmailLogCommand, $object->Filename);
 			$tr .= sprintf('<td>%s</td>', $object->Date->ToString('YYYY-MM-DD hhhh:mm:ss'));
 			$tr .= sprintf('<td>%s</td>', htmlentities($object->headers->From));
 			$tr .= sprintf('<td>%s</td>', htmlentities($object->headers->To));
@@ -150,6 +173,27 @@ abstract class WebService extends Base {
 	private static function RunFailedEmailLog_Sort(stdClass $a, stdClass $b) {
 		if ($a->Date->IsEqualTo($b->Date)) return 0;
 		return ($a->Date->IsEarlierThan($b->Date)) ? -1 : 1;
+	}
+
+	private static function RunFailedEmailView($viewEmailLogCommand, $emailLogFile, $emailLogPath) {
+		$path = $emailLogPath . '/' . $emailLogFile;
+		if (is_file($path)) {
+			header(sprintf('Content-Type: application/octet-stream; name="%s"', $emailLogFile));
+			header(sprintf('Content-Disposition: attachment; filename="%s"', $emailLogFile));
+			readfile($path);
+			return true;
+		}
+		return false;
+	}
+
+	private static function RunFailedEmailDelete($viewEmailLogCommand, $emailLogFile, $emailLogPath) {
+		$path = $emailLogPath . '/' . $emailLogFile;
+		if (is_file($path)) {
+			@unlink($path);
+			header('Location: ' . $viewEmailLogCommand);
+			return true;
+		}
+		return false;
 	}
 
 	private static function RunError($viewErrorLogCommand, HttpRequest $request) {
