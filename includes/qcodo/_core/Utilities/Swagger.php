@@ -174,7 +174,7 @@ class Swagger extends QBaseClass {
 		$ref = '$ref';
 		if (isset($operation->responses->$okResponse->schema->$ref)) {
 			$schemaName = $operation->responses->$okResponse->schema->$ref;
-			$schemaName = str_replace('#/definitions/', null, $schemaName);
+			$schemaName = str_replace('#/definitions/', '', $schemaName);
 			if (!isset($this->swaggerObject->definitions->$schemaName)) throw new Exception("Schema Not Defined: " . $operation->responses->$okResponse->schema->$ref);
 			if (isset($this->swaggerObject->definitions->$schemaName->example)) {
 				return $this->swaggerObject->definitions->$schemaName->example;
