@@ -324,7 +324,7 @@ class CodegenSwagger extends QBaseClass {
 	}
 
 	protected function GenerateClient_ProxyClass($clientName, $clientObject) {
-		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . $clientName . 'Client.php';
+		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . $this->clientPrefix . $clientName . 'Client.php';
 
 		$responseClassArray = array();
 		$methodArray = array();
@@ -338,9 +338,13 @@ class CodegenSwagger extends QBaseClass {
 		$rendered = sprintf($template,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
+			$this->clientPrefix,
 			QApplicationBase::$application->rootNamespace,
 			implode("\n\n", $responseClassArray),
+			$this->clientPrefix,
 			$clientName,
+			$this->clientPrefix,
+			$this->clientPrefix,
 			implode("\n\n", $methodArray));
 
 		file_put_contents($path, $rendered);
@@ -511,13 +515,17 @@ class CodegenSwagger extends QBaseClass {
 	}
 
 	protected function GenerateClient_SuperClass() {
-		$path = $this->clientPath . DIRECTORY_SEPARATOR . 'Client.php';
+		$path = $this->clientPath . DIRECTORY_SEPARATOR . $this->clientPrefix . 'Client.php';
 		if (file_exists($path)) return;
 
 		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-client-php.txt');
 		$rendered = sprintf($template,
 			QApplicationBase::$application->rootNamespace,
-			QApplicationBase::$application->rootNamespace);
+			QApplicationBase::$application->rootNamespace,
+			$this->clientPrefix,
+			$this->clientPrefix,
+			$this->clientPrefix,
+		);
 
 		file_put_contents($path, $rendered);
 	}
@@ -526,7 +534,7 @@ class CodegenSwagger extends QBaseClass {
 	 * @param array $clientObjectArray
 	 */
 	protected function GenerateClient_BaseClass($clientObjectArray) {
-		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . 'ClientBase.php';
+		$path = $this->clientGeneratedPath . DIRECTORY_SEPARATOR . $this->clientPrefix . 'ClientBase.php';
 
 		$importListArray = array();
 		$phpDocArray = array();
@@ -534,15 +542,15 @@ class CodegenSwagger extends QBaseClass {
 		$getterArray = array();
 
 		foreach ($clientObjectArray as $clientName => $clientObject) {
-			$importListArray[] = sprintf("require(dirname(__FILE__) . '/%sClient.php');", $clientName);
-			$phpDocArray[] = sprintf(' * @property-read Proxy\%sClient $%s', $clientName, $clientName);
+			$importListArray[] = sprintf("require(dirname(__FILE__) . '/%s%sClient.php');", $this->clientPrefix, $clientName);
+			$phpDocArray[] = sprintf(' * @property-read Proxy\%s%sClient $%s', $this->clientPrefix, $clientName, $clientName);
 			$propertyArray[] = sprintf('	/**
-	 * @var Proxy\%sClient $%s
+	 * @var Proxy\%s%sClient $%s
 	 */
-	protected $%s;', $clientName, lcfirst($clientName), lcfirst($clientName));
+	protected $%s;', $this->clientPrefix, $clientName, lcfirst($clientName), lcfirst($clientName));
 			$getterArray[] = sprintf('			case \'%s\':
-				if (!$this->%s) $this->%s = new Proxy\%sClient($this);
-				return $this->%s;', $clientName, lcfirst($clientName), lcfirst($clientName), $clientName, lcfirst($clientName));
+				if (!$this->%s) $this->%s = new Proxy\%s%sClient($this);
+				return $this->%s;', $clientName, lcfirst($clientName), lcfirst($clientName), $this->clientPrefix, $clientName, lcfirst($clientName));
 		}
 
 		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-clientbase-php.txt');
@@ -550,7 +558,11 @@ class CodegenSwagger extends QBaseClass {
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
 			implode("\n", $importListArray),
+			$this->clientPrefix,
+			$this->clientPrefix,
+			$this->clientPrefix,
 			implode("\n", $phpDocArray),
+			$this->clientPrefix,
 			implode("\n\n", $propertyArray),
 			implode("\n", $getterArray));
 

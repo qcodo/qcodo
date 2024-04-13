@@ -3,9 +3,9 @@
 namespace %s\Managers\WebService;
 use %s\Managers\Application;
 
-require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . 'ClientBase.php');
+require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '%sClientBase.php');
 
-class Client extends ClientBase {
+class %sClient extends %sClientBase {
 	/**
 	 * The root Endpoint URL for all webservice method calls in this Client.
 	 * This is designed to be altered.

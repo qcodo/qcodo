@@ -11,8 +11,8 @@ use QCallerException;
 %s
 
 /**
- * Code-Generated ClientBase class for the overall WebService/Client handler for this application's swagger.
- * @class ClientBase
+ * Code-Generated %sClientBase class for the overall WebService/%sClient handler for this application's swagger.
+ * @class %sClientBase
  * @abstract
  * @extends QBaseClass
  *
@@ -28,7 +28,7 @@ use QCallerException;
  *
 %s
  */
-abstract class ClientBase extends QBaseClass {
+abstract class %sClientBase extends QBaseClass {
 	/**
 	 * @var string $lastResponseBody
 	 */
