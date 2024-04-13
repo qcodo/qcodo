@@ -65,7 +65,7 @@ class Qcodo extends Handlers\Console {
 				if ($swagger) {
 					$codegenSwaggerArray = array(new CodegenSwagger($swagger));
 				} else {
-					$codegenSwaggerArray = CodegenSwagger::CreateArrayFromSettings($settings);
+					$codegenSwaggerArray = CodegenSwagger::CreateArrayFromSettings($settings, dirname($path));
 				}
 				foreach ($codegenSwaggerArray as $codegenSwagger) {
 					print "Generating Schema for [" . $codegenSwagger->swagger->info->title . "]\n";

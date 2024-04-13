@@ -49,22 +49,31 @@ class CodegenSwagger extends QBaseClass {
 
 	/**
 	 * @param stdClass[] $settings
-	 * @return CodegenSchema[]
+	 * @param string $baseDirectory the base directory for relative paths
+	 * @return CodegenSwagger[]
 	 */
-	public static function CreateArrayFromSettings($settings) {
+	public static function CreateArrayFromSettings($settings, $baseDirectory) {
 		$array = array();
 		foreach ($settings as $setting) {
 			if (!isset($setting->path)) throw new Exception('Invalid Swagger Setting (No Path Defined)');
-			if (!is_file($setting->path)) throw new Exception('Swagger File Not Found: ' . $setting->path);
-			$swagger = json_decode(file_get_contents($setting->path));
-			if (!$swagger) throw new Exception('Invalid Swagger File: ' . $setting->path);
 
-			$codegenSchema = new CodegenSchema($swagger);
+			// Absolute or Relative Path?
+			if (substr($setting->path, 0, 1) == '/') {
+				$path = $setting->path;
+			} else {
+				$path = $baseDirectory . '/' . $setting->path;
+			}
 
-			if (isset($setting->schemaPrefix)) $codegenSchema->schemaPrefix = $setting->schemaPrefix;
-			if (isset($setting->clientPrefix)) $codegenSchema->clientPrefix = $setting->clientPrefix;
+			if (!is_file($path)) throw new Exception('Swagger File Not Found: ' . $path);
+			$swagger = json_decode(file_get_contents($path));
+			if (!$swagger) throw new Exception('Invalid Swagger File: ' . $path);
 
-			$array[] = $codegenSchema;
+			$codegenSwagger = new CodegenSwagger($swagger);
+
+			if (isset($setting->schemaPrefix)) $codegenSwagger->schemaPrefix = $setting->schemaPrefix;
+			if (isset($setting->clientPrefix)) $codegenSwagger->clientPrefix = $setting->clientPrefix;
+
+			$array[] = $codegenSwagger;
 		}
 
 		return $array;
