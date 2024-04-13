@@ -2,11 +2,11 @@
 	namespace %s\Models\Schema;
 	use %s\Managers\Application;
 
-	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '%s.php');
+	require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'generated' . DIRECTORY_SEPARATOR . '%s%s.php');
 
 	/**
-	 * @class %s
-	 * @extends %s
+	 * @class %s%s
+	 * @extends %s%s
 	 */
-	class %s extends %s {
+	class %s%s extends %s%s {
 	}

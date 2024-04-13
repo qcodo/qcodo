@@ -5,20 +5,20 @@
 	use stdClass;
 
 	/**
-	 * @class %s
+	 * @class %s%s
 	 * @extends QJsonBaseClass
 %s
 	 */
-	class %s extends QJsonBaseClass {
+	class %s%s extends QJsonBaseClass {
 		protected static $_Model = array(
 %s
 		);
 %s
 		/**
-		 * Creates a %s from a JSON string or JSON-decoded stdClass object
+		 * Creates a %s%s from a JSON string or JSON-decoded stdClass object
 		 *
 		 * @param mixed $json can be a string-based JSON or a stdClass
-		 * @return %s
+		 * @return %s%s
 		 * @throws
 		 */
 		public static function JsonDecode($json) {
@@ -26,10 +26,10 @@
 		}
 
 		/**
-		 * Creates an array of %s from a JSON string or an array of JSON-decoded stdClass objects
+		 * Creates an array of %s%s from a JSON string or an array of JSON-decoded stdClass objects
 		 *
 		 * @param mixed $json can be a string-based JSON or an array of stdClass
-		 * @return %s[]
+		 * @return %s%s[]
 		 * @throws
 		 */
 		public static function JsonDecodeArray($json) {
@@ -41,10 +41,10 @@
 /*
 		/**
 		 *
-		 * @return Schema\%s
+		 * @return Schema\%s%s
 		 *
 		public function GetSchema() {
-			$%s = new Schema\%s();
+			$%s = new Schema\%s%s();
 
 %s
 
@@ -52,9 +52,9 @@
 		}
 
 		/**
-		 * @param Schema\%s $%s
+		 * @param Schema\%s%s $%s
 		 *
-		protected function UpdateFromSchema(Schema\%s $%s) {
+		protected function UpdateFromSchema(Schema\%s%s $%s) {
 %s
 
 			$this->Save();

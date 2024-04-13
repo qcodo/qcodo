@@ -121,15 +121,16 @@ class CodegenSwagger extends QBaseClass {
 
 	/**
 	 * @param string $property
+	 * @param string|null $schemaPrefix
 	 * @return string
 	 */
-	protected static function GetPhpDocPropertyForProperty($property) {
+	protected static function GetPhpDocPropertyForProperty($property, $schemaPrefix) {
 		$ref = '$ref';
-		if (isset($property->$ref)) return str_replace('#/definitions/', '', $property->$ref) . '';
+		if (isset($property->$ref)) return $schemaPrefix . str_replace('#/definitions/', '', $property->$ref) . '';
 
 		switch ($property->type) {
 			case 'array':
-				return self::GetPhpDocPropertyForProperty($property->items) . '[]';
+				return self::GetPhpDocPropertyForProperty($property->items, $schemaPrefix) . '[]';
 			case 'integer':
 				return 'integer';
 			case 'boolean':
@@ -215,9 +216,9 @@ class CodegenSwagger extends QBaseClass {
 		if (!isset($schema->properties)) throw new Exception('No properties defined on: ' . $schemaName);
 		foreach ($schema->properties as $propertyName => $property) {
 			if (isset($property->description) && $property->description)
-				$comment[] = sprintf('	 * @property %s $%s %s', self::GetPhpDocPropertyForProperty($property), ucfirst($propertyName), $property->description);
+				$comment[] = sprintf('	 * @property %s $%s %s', self::GetPhpDocPropertyForProperty($property, $this->schemaPrefix), ucfirst($propertyName), $property->description);
 			else
-				$comment[] = sprintf('	 * @property %s $%s', self::GetPhpDocPropertyForProperty($property), ucfirst($propertyName));
+				$comment[] = sprintf('	 * @property %s $%s', self::GetPhpDocPropertyForProperty($property, $this->schemaPrefix), ucfirst($propertyName));
 			$model[] = sprintf('			\'%s\' => %s,', $propertyName, self::GetModelDefinitionForProperty($property));
 
 			$getSchemaLineArray[] = sprintf('			$%s->%s = $this->%s;', lcfirst($schemaName), ucfirst($propertyName), ucfirst($propertyName));
@@ -250,44 +251,59 @@ class CodegenSwagger extends QBaseClass {
 
 		$rendered = sprintf($templateGenerated,
 			QApplicationBase::$application->rootNamespace,
+			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen',
 			implode("\n", $comment),
+			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen',
 			implode("\n", $model),
 			count($resultParametersEnum) ? sprintf("\n		// ResultParameter Order By Enums\n%s\n", implode("\n", $resultParametersEnum)) : null,
+			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName),
 
 			// GetSchema()
+			$this->schemaPrefix,
 			ucfirst($schemaName),
 			lcfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName),
 			implode("\n", $getSchemaLineArray),
 			lcfirst($schemaName),
 
 			// UpdateFromSchema()
+			$this->schemaPrefix,
 			ucfirst($schemaName),
 			lcfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName),
 			lcfirst($schemaName),
 			implode("\n", $updateFromSchemaLineArray)
 		);
 
-		file_put_contents($this->schemaGeneratedPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . 'Gen.php', $rendered);
+		file_put_contents($this->schemaGeneratedPath . DIRECTORY_SEPARATOR . $this->schemaPrefix . ucfirst($schemaName) . 'Gen.php', $rendered);
 
 		$rendered = sprintf($templateClass,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
+			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen',
+			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen',
+			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen'
 		);
 
-		$path = $this->schemaPath . DIRECTORY_SEPARATOR . ucfirst($schemaName) . '.php';
+		$path = $this->schemaPath . DIRECTORY_SEPARATOR . $this->schemaPrefix . ucfirst($schemaName) . '.php';
 		if (!file_exists($path)) file_put_contents($path, $rendered);
 	}
 
@@ -377,7 +393,7 @@ class CodegenSwagger extends QBaseClass {
 						if (!$requestPayloadSetupQuery) $requestPayloadSetupQuery = "\n\t\t\$queryArray = [];\n";
 						$requestPayloadSetupQuery .= "\t\tif (strlen(trim((string) $" . $parameterName . '))) ' .
 							'$queryArray[] = \'' . $parameterDefinition->name . "=' . urlencode($" . $parameterName . ");\n";
-						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix);
 						$parameterArray[] = '$' . $parameterName;
 						break;
 					case 'formData':
@@ -394,14 +410,14 @@ class CodegenSwagger extends QBaseClass {
 							case 'integer':
 								$requestPayloadSetupForm .= "\t\tif (!is_null($" . $parameterName . ')) ' .
 									'$postFieldsArray[\'' . $parameterDefinition->name . "'] = $" . $parameterName . ";\n";
-								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix);
 								$parameterArray[] = '$' . $parameterName;
 								break;
 
 							case 'file':
 								$requestPayloadSetupForm .= "\t\tif (!is_null($" . $parameterName . ')) ' .
 									'$postFieldsArray[\'' . $parameterDefinition->name . "'] = $" . $parameterName . ";\n";
-								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+								$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix);
 								$parameterArray[] = '$' . $parameterName;
 								break;
 
@@ -411,7 +427,7 @@ class CodegenSwagger extends QBaseClass {
 
 						break;
 					case 'path':
-						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition);
+						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix);
 						$parameterArray[] = '$' . $parameterName;
 						$urlDefinition = str_replace(
 							'{' . $parameterDefinition->name . '}',
@@ -424,7 +440,7 @@ class CodegenSwagger extends QBaseClass {
 						$isJsonBody = true;
 
 						$apiRequest = sprintf(", $%s, 'json'", $parameterName);
-						$phpDocProperty = 'Schema\\' . self::GetPhpDocPropertyForProperty($parameterDefinition->schema);
+						$phpDocProperty = 'Schema\\' . self::GetPhpDocPropertyForProperty($parameterDefinition->schema, $this->schemaPrefix);
 
 						$length = strlen($phpDocProperty);
 						if (substr($phpDocProperty, $length-2) == '[]') {
@@ -448,7 +464,7 @@ class CodegenSwagger extends QBaseClass {
 		foreach ($apiDefinition->responses as $statusCode => $responseDefinition) {
 			$decorator = 'trim';
 			if (isset($responseDefinition->schema)) {
-				$phpDocProperty = self::GetPhpDocPropertyForProperty($responseDefinition->schema);
+				$phpDocProperty = self::GetPhpDocPropertyForProperty($responseDefinition->schema, $this->schemaPrefix);
 				$length = strlen($phpDocProperty);
 				if (substr($phpDocProperty, $length-2) == '[]') {
 					// Array
@@ -494,7 +510,7 @@ class CodegenSwagger extends QBaseClass {
 		foreach ($apiDefinition->responses as $statusCode => $responseDefinition) {
 
 			if (isset($responseDefinition->schema)) {
-				$type = 'Schema\\' . self::GetPhpDocPropertyForProperty($responseDefinition->schema);
+				$type = 'Schema\\' . self::GetPhpDocPropertyForProperty($responseDefinition->schema, $this->schemaPrefix);
 			} else {
 				$type = 'string';
 			}
