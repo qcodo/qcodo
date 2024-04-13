@@ -160,13 +160,13 @@ class CodegenSwagger extends QBaseClass {
 	 * @param string $property
 	 * @return string
 	 */
-	protected static function GetModelDefinitionForProperty($property) {
+	protected static function GetModelDefinitionForProperty($property, $schemaPrefix) {
 		$ref = '$ref';
-		if (isset($property->$ref)) return "'" . str_replace('#/definitions/', '', $property->$ref) . '' . "'";
+		if (isset($property->$ref)) return "'" . $schemaPrefix . str_replace('#/definitions/', '', $property->$ref) . '' . "'";
 
 		switch ($property->type) {
 			case 'array':
-				return "array(" . self::GetModelDefinitionForProperty($property->items) . ")";
+				return "array(" . self::GetModelDefinitionForProperty($property->items, $schemaPrefix) . ")";
 			case 'integer':
 				return "'integer'";
 			case 'boolean':
@@ -219,7 +219,7 @@ class CodegenSwagger extends QBaseClass {
 				$comment[] = sprintf('	 * @property %s $%s %s', self::GetPhpDocPropertyForProperty($property, $this->schemaPrefix), ucfirst($propertyName), $property->description);
 			else
 				$comment[] = sprintf('	 * @property %s $%s', self::GetPhpDocPropertyForProperty($property, $this->schemaPrefix), ucfirst($propertyName));
-			$model[] = sprintf('			\'%s\' => %s,', $propertyName, self::GetModelDefinitionForProperty($property));
+			$model[] = sprintf('			\'%s\' => %s,', $propertyName, self::GetModelDefinitionForProperty($property, $this->schemaPrefix));
 
 			$getSchemaLineArray[] = sprintf('			$%s->%s = $this->%s;', lcfirst($schemaName), ucfirst($propertyName), ucfirst($propertyName));
 			$updateFromSchemaLineArray[] = sprintf('			if ($%s->IsPropertySet(\'%s\'))		$this->%s = $%s->%s;',
