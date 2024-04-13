@@ -1,45 +1,39 @@
 <?php
-	// Setup the Parameters for codegen
-	$objParameters = new QCliParameterProcessor('codegen-schema', 'Qcodo ORM Model Code Generator for JSON Schemas v' . QCODO_VERSION);
 
-	// Add new default parameter -- db index
-	$objParameters->AddDefaultParameter('swagger_path', QCliParameterType::Path, 'the path to the Swagger file which has Schema definitions being codegenned');
+namespace Qcodo\Managers;
+use QBaseClass;
+use stdClass;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
+use QApplicationBase;
 
-	// Add an optional flag -- csv -- this is to report
-	$objParameters->AddFlagParameter('c', 'csv', 'generate only a CSV report of the paths');
+class CodegenSwagger extends QBaseClass {
+	/**
+	 * @var stdClass $swagger
+	 */
+	public $swagger;
 
-	$objParameters->Run();
-	if (!is_file($path = $objParameters->GetDefaultValue('swagger_path'))) {
-		print ("error: swagger file not found: " . $path . "\n");
-		exit(1);
-	}
-
-	$codegenSchema = new CodegenSchema(file_get_contents($path));
-
-	if ($objParameters->GetValue('csv')) {
-		$rowArray = $codegenSchema->GeneratePathReport();
-		print QApplicationBase::generateCsvContent($rowArray);
-	} else {
-		$codegenSchema->GenerateSchema();
-		$codegenSchema->GenerateClient();
-	}
-
-
-class CodegenSchema {
-	protected $swagger;
 	protected $schemaPath;
 	protected $schemaGeneratedPath;
 	protected $clientPath;
 	protected $clientGeneratedPath;
 
 	/**
-	 * @param string $swaggerText
+	 * @var string $schemaPrefix
 	 */
-	public function __construct($swaggerText) {
-		$this->swagger = json_decode($swaggerText);
-		if (!$this->swagger) {
-			exit("invalid swagger format\r\n");
-		}
+	protected $schemaPrefix;
+
+	/**
+	 * @var string $clientPrefix
+	 */
+	protected $clientPrefix;
+
+	/**
+	 * @param stdClass $swagger
+	 */
+	public function __construct(stdClass $swagger) {
+		$this->swagger = $swagger;
 
 		$this->schemaPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema';
 		$this->schemaGeneratedPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'Schema' . DIRECTORY_SEPARATOR . 'generated';
@@ -51,6 +45,29 @@ class CodegenSchema {
 		foreach (array($this->schemaPath, $this->schemaGeneratedPath, $this->clientPath, $this->clientGeneratedPath) as $path) {
 			if (!is_dir($path)) QApplicationBase::MakeDirectory($path, 0777);
 		}
+	}
+
+	/**
+	 * @param stdClass[] $settings
+	 * @return CodegenSchema[]
+	 */
+	public static function CreateArrayFromSettings($settings) {
+		$array = array();
+		foreach ($settings as $setting) {
+			if (!isset($setting->path)) throw new Exception('Invalid Swagger Setting (No Path Defined)');
+			if (!is_file($setting->path)) throw new Exception('Swagger File Not Found: ' . $setting->path);
+			$swagger = json_decode(file_get_contents($setting->path));
+			if (!$swagger) throw new Exception('Invalid Swagger File: ' . $setting->path);
+
+			$codegenSchema = new CodegenSchema($swagger);
+
+			if (isset($setting->schemaPrefix)) $codegenSchema->schemaPrefix = $setting->schemaPrefix;
+			if (isset($setting->clientPrefix)) $codegenSchema->clientPrefix = $setting->clientPrefix;
+
+			$array[] = $codegenSchema;
+		}
+
+		return $array;
 	}
 
 	/**
@@ -164,8 +181,8 @@ class CodegenSchema {
 	}
 
 	public function GenerateSchema() {
-		$templateClass = file_get_contents(dirname(__FILE__) . '/templates/schema-class.txt');
-		$templateGenerated = file_get_contents(dirname(__FILE__) . '/templates/schema-generated.txt');
+		$templateClass = file_get_contents(dirname(__FILE__) . '/swagger-templates/schema-class.txt');
+		$templateGenerated = file_get_contents(dirname(__FILE__) . '/swagger-templates/schema-generated.txt');
 
 		foreach ($this->swagger->definitions as $schemaName => $schema) {
 			$this->GenerateSchema_Helper($schema, $schemaName, $templateClass, $templateGenerated);
@@ -308,7 +325,7 @@ class CodegenSchema {
 			$methodArray[] = $this->GenerateClient_ProxyClass_Method($clientName, $methodName, $apiDefinition);
 		}
 
-		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy.txt');
+		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-client-proxy.txt');
 		$rendered = sprintf($template,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
@@ -436,7 +453,7 @@ class CodegenSchema {
 			);
 		}
 
-		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy-method.txt');
+		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-client-proxy-method.txt');
 		$rendered = sprintf($template,
 			implode("\n", $phpDocArray),
 			$clientName,
@@ -475,7 +492,7 @@ class CodegenSchema {
 	public $status%s;', $type, $statusCode, $statusCode);
 		}
 
-		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-proxy-responseclass.txt');
+		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-client-proxy-responseclass.txt');
 		$rendered = sprintf($template,
 			$clientName,
 			ucfirst($methodName),
@@ -488,7 +505,7 @@ class CodegenSchema {
 		$path = $this->clientPath . DIRECTORY_SEPARATOR . 'Client.php';
 		if (file_exists($path)) return;
 
-		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-client-php.txt');
+		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-client-php.txt');
 		$rendered = sprintf($template,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace);
@@ -519,7 +536,7 @@ class CodegenSchema {
 				return $this->%s;', $clientName, lcfirst($clientName), lcfirst($clientName), $clientName, lcfirst($clientName));
 		}
 
-		$template = file_get_contents(dirname(__FILE__) . '/templates/webservice-clientbase-php.txt');
+		$template = file_get_contents(dirname(__FILE__) . '/swagger-templates/webservice-clientbase-php.txt');
 		$rendered = sprintf($template,
 			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,

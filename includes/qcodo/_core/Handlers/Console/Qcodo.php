@@ -1,6 +1,7 @@
 <?php
 
 namespace Qcodo\Handlers\Console;
+use Qcodo\Managers\CodegenSwagger;
 use \Exception;
 use Qcodo\Handlers;
 use \QApplicationBase;
@@ -34,28 +35,62 @@ class Qcodo extends Handlers\Console {
 	}
 
 	/**
-	 * @param string $path the path to the swagger file to generate
 	 * @param string $command should be codegen, csv or pdf
+	 * @param string $path the path to the swagger file (or if codegen, can also be path to swagger codegen settings json file)
 	 * @param string $output if command is PDF, the path/folder to output the PDF to (required)
 	 * @param string $size if command is PDF, the size of the paper (defaults to 'letter', but can be 'A4')
 	 * @return void
 	 */
-	public function Swagger($path, $command, $output = null, $size = 'letter') {
+	public function Swagger($command, $path, $output = null, $size = 'letter') {
 		$swagger = json_decode(file_get_contents($path));
 		if (!$swagger) exit("invalid swagger: " . $path . "\n");
 
+		if (!is_file($path)) exit("file not found: " . $path . "\n");
+		$objectOrArray = json_decode(file_get_contents($path));
+		if (!$objectOrArray) exit("invalid swagger or settings: " . $path . "\n");
+
+		$swagger = null;
+		$settings = null;
+
+		if (is_object($objectOrArray) && isset($objectOrArray->swagger) && $objectOrArray->swagger) {
+			$swagger = $objectOrArray;
+		} else if (is_array($objectOrArray)) {
+			$settings = $objectOrArray;
+		} else {
+			exit("uanble to process swagger or settings: " . $path . "\n");
+		}
+
 		switch (trim(strtolower($command))) {
 			case 'codegen':
-				exit("not yet implemented\n");
+				if ($swagger) {
+					$codegenSwaggerArray = array(new CodegenSwagger($swagger));
+				} else {
+					$codegenSwaggerArray = CodegenSwagger::CreateArrayFromSettings($settings);
+				}
+				foreach ($codegenSwaggerArray as $codegenSwagger) {
+					print "Generating Schema for [" . $codegenSwagger->swagger->info->title . "]\n";
+					$codegenSwagger->GenerateSchema();
+					print "Generating Client for [" . $codegenSwagger->swagger->info->title . "]\n";
+					$codegenSwagger->GenerateClient();
+
+				}
+				break;
 
 			case 'csv':
-				$this->Swagger_Csv($swagger);
+				if (!$swagger) exit("csv requires a swagger file\n");
+				$codegenSwagger = new CodegenSwagger($swagger);
+				$rowArray = $codegenSwagger->GeneratePathReport();
+				print QApplicationBase::generateCsvContent($rowArray);
 				break;
 
 			case 'pdf':
+				if (!$swagger) exit("pdf requires a swagger file\n");
 				if (!$output || !is_dir($output)) exit("path not found: " . $output . "\n");
 				$this->Swagger_Pdf($swagger, $output . '/' . basename($path, '.json') . '.pdf', $size);
 				break;
+
+			default:
+				exit("unknown command: " . $command . "\n");
 		}
 	}
 
