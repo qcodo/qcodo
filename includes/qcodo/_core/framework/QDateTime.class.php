@@ -157,55 +157,22 @@
 				else
 					parent::__construct('2000-01-01 00:00:00');
 
+			// timestamp
+			} else if (is_numeric($mixValue)) {
+				parent::__construct('now', $objTimeZone);
+				$this->setTimestamp($mixValue);
+				$this->blnDateNull = false;
+				$this->blnTimeNull = false;
+
 			// Parse the Value string
 			} else {
-				$intTimestamp = null;
-				$blnValid = false;
-				QApplicationBase::SetErrorHandler('QDateTimeErrorHandler');
-				try {
-					if ($objTimeZone)
-						$blnValid = parent::__construct($mixValue, $objTimeZone);
-					else
-						$blnValid = parent::__construct($mixValue);
-				} catch (Exception $objExc) {}
-				if ($blnValid !== false)
-					$intTimestamp = parent::format('U');
-				QApplicationBase::RestoreErrorHandler();
+				$blnValid = parent::__construct($mixValue, $objTimeZone);
 
-				// Valid Value String
-				if ($intTimestamp) {
-					// To deal with "Tues" and date skipping bug in PHP 5.2
-					if ($objTimeZone)
-						parent::__construct(date('Y-m-d H:i:s', parent::format('U')), $objTimeZone);
-					else
-						parent::__construct(date('Y-m-d H:i:s', parent::format('U')));
+				// We MUST assume that Date isn't null
+				$this->blnDateNull = false;
 
-					// We MUST assume that Date isn't null
-					$this->blnDateNull = false;
-
-					// Update Time Null Value if Time was Specified
-					if (strpos($mixValue, ':') !== false)
-						$this->blnTimeNull = false;
-
-				// Timestamp-based Value string
-				} else if (is_numeric($mixValue)) {
-					if ($objTimeZone)
-						parent::__construct(date('Y-m-d H:i:s', $mixValue), $objTimeZone);
-					else
-						parent::__construct(date('Y-m-d H:i:s', $mixValue));
-
-					$this->blnTimeNull = false;
-					$this->blnDateNull = false;
-
-				// Null Date
-				} else {
-					// Set to "null date"
-					// And Do Nothing Else -- Default Values are already set to Nulled out
-					if ($objTimeZone)
-						parent::__construct('2000-01-01 00:00:00', $objTimeZone);
-					else
-						parent::__construct('2000-01-01 00:00:00');
-				}
+				// Update Time Null Value if Time was Specified
+				if (strpos($mixValue, ':') !== false) $this->blnTimeNull = false;
 			}
 		}
 
