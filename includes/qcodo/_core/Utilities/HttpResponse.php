@@ -24,7 +24,7 @@ class HttpResponse extends QBaseClass {
 		$this->headersArray = array();
 
 		$this->setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-		$this->setHeader('Access-Control-Allow-Origin', '*');
+		$this->setHeader('Access-Control-Allow-Origin', array_key_exists('HTTP_ORIGIN', $_SERVER) ? $_SERVER['HTTP_ORIGIN'] : '*');
 		$this->setHeader('Access-Control-Allow-Credentials', 'true');
 
 		if (array_key_exists('HTTP_ACCESS_CONTROL_REQUEST_HEADERS', $_SERVER)) {

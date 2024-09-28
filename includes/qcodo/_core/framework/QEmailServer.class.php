@@ -396,6 +396,15 @@
 
 	class QEmailException extends QCallerException {}
 
+	/**
+	 *
+	 * @property-read string $FilePath
+	 * @property-read string $MimeType
+	 * @property-read string $FileName
+	 * @property-read string $EncodedFileData
+	 * @property-read string $ContentId
+	 * @property-read string $InlineUrl
+ */
 	class QEmailAttachment extends QBaseClass {
 		protected $strFilePath;
 		protected $strMimeType;
@@ -454,11 +463,20 @@
 		}
 	}
 
-/**
- * @property boolean ExclusiveRecipient
- * @property string To
- */
-class QEmailMessage extends QBaseClass {
+	/**
+	 * @property string $From
+	 * @property string $To
+	 * @property string $Subject
+	 * @property string $Body
+	 * @property string $HtmlBody
+	 * @property string $ExclusiveRecipient
+	 * @property string $Cc
+	 * @property string $Bcc
+	 * @property array $FileArray
+	 * @property-read boolean $HasFiles
+	 * @property-read boolean $HasInline
+	 */
+	class QEmailMessage extends QBaseClass {
 		protected $strFrom;
 		protected $strTo;
 		protected $strSubject;
