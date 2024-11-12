@@ -597,6 +597,7 @@ abstract class Console extends Base {
 
 			// Filter out any entries that are there as a wrapper/shell process
 			if (strpos($processLineItem, '/dev/null') !== false) continue;
+			if (strpos($processLineItem, '/bin/sh -c') !== false) continue;
 
 			// We have a match
 			$matchCount++;
