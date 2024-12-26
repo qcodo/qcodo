@@ -1019,6 +1019,10 @@
 			return new QQDistinct();
 		}
 
+		static public function ForUpdate() {
+			return new QQForUpdate();
+		}
+
 		static public function CustomNode($strSql) {
 			return new QQCustomNode($strSql);
 		}
@@ -1229,6 +1233,15 @@
 		}
 		public function __toString() {
 			return 'QQDistinct Clause';
+		}
+	}
+
+	class QQForUpdate extends QQClause {
+		public function UpdateQueryBuilder(QQueryBuilder $objBuilder) {
+			$objBuilder->SetForUpdateFlag();
+		}
+		public function __toString() {
+			return 'QQForUpdate Clause';
 		}
 	}
 
@@ -1555,6 +1568,7 @@
 		protected $objVirtualNodeArray;
 		protected $strLimitInfo;
 		protected $blnDistinctFlag;
+		protected $blnForUpdateFlag;
 		protected $strExpandAsArrayNodes;
 
 		protected $blnCountOnlyFlag;
@@ -1725,6 +1739,10 @@
 			$this->blnDistinctFlag = true;
 		}
 
+		public function SetForUpdateFlag() {
+			$this->blnForUpdateFlag = true;
+		}
+
 		public function SetCountOnlyFlag() {
 			$this->blnCountOnlyFlag = true;
 		}
@@ -1812,6 +1830,11 @@
 			// For Distinct Count Queries
 			if ($this->blnCountOnlyFlag && $this->blnDistinctFlag)
 				$strSql .= "\r\n) as q_count_table";
+
+			// For Update
+			if ($this->blnForUpdateFlag) {
+				$strSql .= " FOR UPDATE";
+			}
 
 			return $strSql;
 		}
