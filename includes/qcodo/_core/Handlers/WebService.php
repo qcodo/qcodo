@@ -277,7 +277,12 @@ abstract class WebService extends Base {
 		// Is there no found path in the Swagger?
 		$foundPath = $swagger->getNamedPathForRequestPath($request->path);
 		if (!$foundPath) {
-			$response = new HttpResponse(405, 'No ' . $request->method . ' method at Path: ' . $request->path);
+			$indexHtmlPath = (__APPLICATION__ . '/' . QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'wsRootRelativePath') . '/index.html');
+			if (is_file($indexHtmlPath)) {
+				$response = new HttpResponse(404, file_get_contents($indexHtmlPath));
+			} else {
+				$response = new HttpResponse(405, 'No ' . $request->method . ' method at Path: ' . $request->path);
+			}
 			$response->execute();
 			return;
 		}
