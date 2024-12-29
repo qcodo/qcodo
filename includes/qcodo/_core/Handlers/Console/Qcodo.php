@@ -35,13 +35,14 @@ class Qcodo extends Handlers\Console {
 	}
 
 	/**
-	 * @param string $command should be codegen, csv or pdf
+	 * @param string $command should be codegen, csv, pdf or diff
 	 * @param string $path the path to the swagger file (or if codegen, can also be path to swagger codegen settings json file)
 	 * @param string $output if command is PDF, the path/folder to output the PDF to (required)
 	 * @param string $size if command is PDF, the size of the paper (defaults to 'letter', but can be 'A4')
+	 * @param string $originalPath if command is DIFF, this is required to be the 'original' swagger to diff against
 	 * @return void
 	 */
-	public function Swagger($command, $path, $output = null, $size = 'letter') {
+	public function Swagger($command, $path, $output = null, $size = 'letter', $originalPath = null) {
 		$swagger = json_decode(file_get_contents($path));
 		if (!$swagger) exit("invalid swagger: " . $path . "\n");
 
@@ -89,6 +90,12 @@ class Qcodo extends Handlers\Console {
 				$this->Swagger_Pdf($swagger, $output . '/' . basename($path, '.json') . '.pdf', $size);
 				break;
 
+			case 'diff':
+				if (!$swagger) exit("pdf requires a swagger file\n");
+				if (!$originalPath || !is_file($originalPath)) exit("path not found: " . $originalPath . "\n");
+				$this->Swagger_Diff($originalPath, $path);
+				break;
+
 			default:
 				exit("unknown command: " . $command . "\n");
 		}
@@ -131,6 +138,98 @@ class Qcodo extends Handlers\Console {
 		}
 
 		return null;
+	}
+
+	private function Swagger_Diff($originalPath, $newPath) {
+		$rowArray = array();
+		$rowArray[] = array(
+			'Method/Schema',
+			'New/Change',
+			'Name',
+			'Method',
+			'Path',
+		);
+
+		$result = $this->Swagger_Diff_Calculate($originalPath, $newPath);
+
+		foreach ($result['methods'] as $method) {
+			$rowArray[] = $row = array(
+				'Method',
+				ucfirst($method['type']),
+				$method['operationId'],
+				$method['method'],
+				$method['path'],
+			);
+		}
+
+		foreach ($result['schemas'] as $schema) {
+			$rowArray[] = $row = array(
+				'Schema',
+				ucfirst($schema['type']),
+				$schema['schema'],
+			);
+		}
+
+		print QApplicationBase::generateCsvContent($rowArray) . "\n";
+	}
+
+	private function Swagger_Diff_Calculate($oldFile, $newFile) {
+		$oldSwagger = json_decode(file_get_contents($oldFile), true);
+		$newSwagger = json_decode(file_get_contents($newFile), true);
+
+		if (!$oldSwagger || !$newSwagger) {
+			die("Error: Unable to parse one or both of the Swagger files.\n");
+		}
+
+		$result = [
+			'methods' => [],
+			'schemas' => []
+		];
+
+		// Compare paths (methods)
+		$oldPaths = $oldSwagger['paths'] ?? [];
+		$newPaths = $newSwagger['paths'] ?? [];
+
+		foreach ($newPaths as $path => $methods) {
+			foreach ($methods as $method => $details) {
+				$operationId = $details['operationId'] ?? null;
+				if (!isset($oldPaths[$path][$method])) {
+					$result['methods'][] = [
+						'type' => 'new',
+						'path' => $path,
+						'operationId' => $operationId,
+						'method' => $method,
+					];
+				} else if (json_encode($oldPaths[$path][$method]) !== json_encode($details)) {
+					$result['methods'][] = [
+						'type' => 'changed',
+						'path' => $path,
+						'operationId' => $operationId,
+						'method' => $method
+					];
+				}
+			}
+		}
+
+		// Compare components (schemas)
+		$oldSchemas = $oldSwagger['definitions'] ?? [];
+		$newSchemas = $newSwagger['definitions'] ?? [];
+
+		foreach ($newSchemas as $schemaName => $schemaDetails) {
+			if (!isset($oldSchemas[$schemaName])) {
+				$result['schemas'][] = [
+					'type' => 'new',
+					'schema' => $schemaName
+				];
+			} else if (json_encode($oldSchemas[$schemaName]) !== json_encode($schemaDetails)) {
+				$result['schemas'][] = [
+					'type' => 'changed',
+					'schema' => $schemaName
+				];
+			}
+		}
+
+		return $result;
 	}
 
 	private function Swagger_Pdf(stdClass $swagger, $outputFilePath, $size) {
