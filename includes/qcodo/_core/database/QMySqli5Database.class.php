@@ -1,5 +1,5 @@
 <?php
-	// This Database Adapter depends on MySqliDatabase	
+	// This Database Adapter depends on MySqliDatabase
 	if (!class_exists('QMySqliDatabase'))
 		require(__QCODO_CORE__ . '/database/QMySqliDatabase.class.php');
 
@@ -44,7 +44,12 @@
 			$this->LogQuery($strQuery);
 
 			// Perform the Query
-			$objResult = $this->objMySqli->query($strQuery);
+			try {
+				$objResult = $this->objMySqli->query($strQuery);
+			} catch (mysqli_sql_exception $objMySqliException) {
+				throw new QMySqliDatabaseException($objMySqliException->getMessage(), $objMySqliException->getCode(), $strQuery, $objMySqliException);
+			}
+
 			if ($this->objMySqli->error)
 				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, $strQuery);
 

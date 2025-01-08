@@ -91,7 +91,12 @@
 			$this->LogQuery($strQuery);
 
 			// Perform the Query
-			$objResult = $this->objMySqli->query($strQuery);
+			try {
+				$objResult = $this->objMySqli->query($strQuery);
+			} catch (mysqli_sql_exception $objMySqliException) {
+				throw new QMySqliDatabaseException($objMySqliException->getMessage(), $objMySqliException->getCode(), $strQuery, $objMySqliException);
+			}
+
 			if ($this->objMySqli->error)
 				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, $strQuery);
 
@@ -108,7 +113,12 @@
 			$this->LogQuery($strNonQuery);
 
 			// Perform the Query
-			$this->objMySqli->query($strNonQuery);
+			try {
+				$this->objMySqli->query($strNonQuery);
+			} catch (mysqli_sql_exception $objMySqliException) {
+				throw new QMySqliDatabaseException($objMySqliException->getMessage(), $objMySqliException->getCode(), $strNonQuery, $objMySqliException);
+			}
+
 			if ($this->objMySqli->error)
 				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, $strNonQuery);
 		}
@@ -427,11 +437,20 @@
 		}
 	}
 
+	/**
+	 * @property-read mysqli_sql_exception|null $MySqliException
+	 */
 	class QMySqliDatabaseException extends QDatabaseExceptionBase {
-		public function __construct($strMessage, $intNumber, $strQuery) {
+		/**
+		 * @var mysqli_sql_exception|null $MySqliException
+		 */
+		public $MySqliException;
+
+		public function __construct($strMessage, $intNumber, $strQuery, mysqli_sql_exception $objMySqliException = null) {
 			parent::__construct(sprintf("MySqli Error: %s", $strMessage), 2);
 			$this->intErrorNumber = $intNumber;
 			$this->strQuery = $strQuery;
+			$this->MySqliException = $objMySqliException;
 		}
 	}
 

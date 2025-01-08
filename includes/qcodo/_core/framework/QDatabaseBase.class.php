@@ -464,6 +464,10 @@
 		abstract public function GetColumnNameArray();
 	}
 
+	/**
+	 * @property-read integer $ErrorNumber
+	 * @property-read string $Query
+	 */
 	abstract class QDatabaseExceptionBase extends QCallerException {
 		protected $intErrorNumber;
 		protected $strQuery;
