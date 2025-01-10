@@ -16,7 +16,7 @@ class ScheduledTasks extends Handlers\Console {
 	public function ExecuteBimonthly()	{ $this->Execute('bimonthly'); }
 	public function ExecuteQuarterly()	{ $this->Execute('quarterly'); }
 
-	private function Execute($type) {
+	protected function Execute($type) {
 		if (!$this->isConsoleProcessUnique()) throw new Exception('Already Running: ' . $this->argumentArray[1]);
 
 		$methodNameArray = $this->GetMethodArrayFor($type);
