@@ -837,6 +837,9 @@
 	class QQConditionBitwiseAnd extends QQConditionComparison {
 		protected $strOperator = ' & ';
 	}
+	class QQConditionBitwiseOr extends QQConditionComparison {
+		protected $strOperator = ' | ';
+	}
 
 	class QQ {
 		/////////////////////////
@@ -871,6 +874,9 @@
 		}
 		static public function BitwiseAnd(QQNode $objQueryNode, $mixValue) {
 			return new QQConditionBitwiseAnd($objQueryNode, $mixValue);
+		}
+		static public function BitwiseOr(QQNode $objQueryNode, $mixValue) {
+			return new QQConditionBitwiseOr($objQueryNode, $mixValue);
 		}
 		static public function GreaterThan(QQNode $objQueryNode, $mixValue) {
 			return new QQConditionGreaterThan($objQueryNode, $mixValue);
