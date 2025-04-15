@@ -8,7 +8,7 @@ use QCallerException;
 
 /**
  * @class HttpResponse
- * @property-read $integer StatusCode
+ * @property-read integer $StatusCode
  */
 class HttpResponse extends QBaseClass {
 	protected $statusCode;
