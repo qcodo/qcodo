@@ -1,12 +1,15 @@
 <?php
-
-
 namespace Qcodo\Utilities;
 use QBaseClass;
 use QJsonBaseClass;
 use Exception;
 use ArrayObject;
+use QCallerException;
 
+/**
+ * @class HttpResponse
+ * @property-read $integer StatusCode
+ */
 class HttpResponse extends QBaseClass {
 	protected $statusCode;
 	protected $headersArray;
@@ -47,6 +50,20 @@ class HttpResponse extends QBaseClass {
 			}
 
 			$this->setContent($content, $contentType);
+		}
+	}
+
+	public function __get($strName) {
+		switch ($strName) {
+			case 'StatusCode': return $this->statusCode;
+
+			default:
+				try {
+					return parent::__get($strName);
+				} catch (QCallerException $objExc) {
+					$objExc->IncrementOffset();
+					throw $objExc;
+				}
 		}
 	}
 
