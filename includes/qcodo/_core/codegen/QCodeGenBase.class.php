@@ -66,6 +66,12 @@
 		protected static $ApplicationName;
 
 		/**
+		 * Base Class Name for ORM Data Objects (can be overridden in CodeGen Settings)
+		 * @var string  $BaseClassName
+		 */
+		protected static $BaseClassName = 'QBaseClass';
+
+		/**
 		 * Template Escape Begin (from CodeGen Settings)
 		 *
 		 * @var string $TemplateEscapeBegin
@@ -152,6 +158,7 @@
 
 			// Application Name
 			QCodeGen::$ApplicationName = QCodeGen::LookupSetting(QCodeGen::$SettingsXml, 'name', 'application');
+			if ($baseClassName = QCodeGen::LookupSetting(QCodeGen::$SettingsXml, 'name', 'baseClassName')) QCodeGen::$BaseClassName = $baseClassName;
 
 			// Iterate Through DataSources
 			if (QCodeGen::$SettingsXml->dataSources->asXML())
@@ -201,6 +208,7 @@
 				$objNode = $objNode->$strTagName;
 
 			if ($strAttributeName) {
+				if (!isset($objNode[$strAttributeName])) return null;
 				switch ($strType) {
 					case QType::Integer:
 						try {

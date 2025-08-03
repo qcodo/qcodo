@@ -37,12 +37,12 @@
 	 * any information or code changes.  All customizations should be done by
 	 * overriding existing or implementing new methods, properties and variables
 	 * in the <%= $objTable->ClassName %> class.
-	 * 
+	 *
 	 * @package <%= QCodeGen::$ApplicationName; %>
 	 * @subpackage GeneratedDataObjects
 <%@ property_comments('objTable'); %>
 	 */
-	class <%= $objTable->ClassName %>Gen extends QBaseClass {
+	class <%= $objTable->ClassName %>Gen extends <%= QCodeGen::$BaseClassName; %> {
 
 		<%@ protected_member_variables('objTable'); %>
 
