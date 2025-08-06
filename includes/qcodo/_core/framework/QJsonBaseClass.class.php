@@ -114,18 +114,27 @@
 			return $arrToReturn;
 		}
 
-		public function JsonEncode() {
-			return json_encode($this->GetJsonHelper(), JSON_INVALID_UTF8_SUBSTITUTE);
+		/**
+		 * @param integer $flags defaults to JSON_INVALID_UTF8_SUBSTITUTE
+		 * @return false|string
+		 */
+		public function JsonEncode($flags = JSON_INVALID_UTF8_SUBSTITUTE) {
+			return json_encode($this->GetJsonHelper(), $flags);
 		}
 
-		public static function JsonEncodeArray($objArray) {
+		/**
+		 * @param array $objArray
+		 * @param integer $flags defaults to JSON_INVALID_UTF8_SUBSTITUTE
+		 * @return false|string
+		 */
+		public static function JsonEncodeArray($objArray, $flags = JSON_INVALID_UTF8_SUBSTITUTE) {
 			if (is_null($objArray)) return json_encode(null);
 
 			if (!is_array($objArray) && !($objArray instanceof ArrayObject)) throw new QCallerException('Cannot GetJsonForArray() on a non-array parameter');
 
 			if ($objArray instanceof ArrayObject) $objArray = $objArray->GetArrayCopy();
 			$objArray = self::GetJsonArrayHelper($objArray);
-			return json_encode($objArray, JSON_INVALID_UTF8_SUBSTITUTE);
+			return json_encode($objArray, $flags);
 		}
 
 		protected function GetJsonHelper() {
