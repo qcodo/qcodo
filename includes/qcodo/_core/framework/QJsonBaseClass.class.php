@@ -6,6 +6,13 @@
 		protected $mixPropertiesDictionary = array();
 		protected static $_Model;
 
+		/**
+		 * @return mixed[] indexed by json property name
+		 */
+		public static function GetSchemaModel() {
+			return static::$_Model;
+		}
+
 		public static function JsonDecode($mixJson) {
 			throw new QCallerException('JsonDecode() Not Implemented: ' . get_called_class());
 		}
