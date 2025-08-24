@@ -316,6 +316,7 @@ abstract class WebService extends Base {
 				$responseClassName = get_class($response);
 				$response = new HttpResponse(500, 'Not a valid HttpResponse when calling ' . $className . '::' . $methodName . ' - a ' . $responseClassName . ' was returned');
 			}
+			$apiHandlerObject->PrepareResponse($response);
 		} else {
 			// No -- we are making a mock
 			$content = $swagger->getExampleAtPathAndMethod($foundPath, $request->method);
@@ -332,6 +333,8 @@ abstract class WebService extends Base {
 
 		$response->execute();
 	}
+
+	public function PrepareResponse(HttpResponse $response) {}
 
 	public function __construct(HttpRequest $request, $operationId) {
 		$this->request = $request;
