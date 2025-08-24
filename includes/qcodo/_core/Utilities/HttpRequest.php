@@ -101,6 +101,14 @@ class HttpRequest extends QBaseClass {
 	}
 
 	/**
+	 * Returns whether the protocol used is over SSL/TLS
+	 * @return boolean
+	 */
+	public function isSecure() {
+		return ($this->httpScheme == 'https');
+	}
+
+	/**
 	 * This will return the path parameter that was in the URL request based on the $key (if it exists).
 	 *
 	 * If not, this will return NULL.
