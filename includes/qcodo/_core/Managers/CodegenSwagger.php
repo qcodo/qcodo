@@ -101,6 +101,8 @@ class CodegenSwagger extends QBaseClass {
 				try {
 					$reflection = new ReflectionClass(QApplicationBase::$application->rootNamespace . '\\Handlers\\WebService\\' . $className);
 					$reflection->getMethod($phpMethodName);
+					$method = $reflection->getMethod($phpMethodName);
+					if (strpos($method->getDocComment(), '@mock') !== false) $missing = 'MOCKED';
 				} catch (ReflectionException $exception) {
 					$missing = 'MISSING';
 				}
