@@ -395,8 +395,8 @@ class CodegenSwagger extends QBaseClass {
 						if (!$requestPayloadSetupQuery) $requestPayloadSetupQuery = "\n\t\t\$queryArray = [];\n";
 						$requestPayloadSetupQuery .= "\t\tif (strlen(trim((string) $" . $parameterName . '))) ' .
 							'$queryArray[] = \'' . $parameterDefinition->name . "=' . urlencode($" . $parameterName . ");\n";
-						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix);
-						$parameterArray[] = '$' . $parameterName;
+						$phpDocProperty = self::GetPhpDocPropertyForProperty($parameterDefinition, $this->schemaPrefix) . '|null';
+						$parameterArray[] = '$' . $parameterName . ' = null';
 						break;
 					case 'formData':
 						if ($isJsonBody) throw new Error('Cannot have both body and formData in the same request: ' . $methodName);
