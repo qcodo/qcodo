@@ -21,6 +21,7 @@ use QCallerException;
  * @property-read integer $LastResponseStatusCode
  * @property-read resource $Curl
  * @property-read string $UrlPath
+ * @property-read string $CookieFilePath
  * @property-read string $HttpMethod e.g. get, post, etc.
  * @property-read null|string|string[]|QJsonBaseClass $RequestBody
  * @property-read null|string $RequestBodyType json, text or form
@@ -55,6 +56,11 @@ abstract class %sClientBase extends QBaseClass {
 	protected $urlPath;
 
 	/**
+	 * @var string $cookieFilePath
+	 */
+	protected $cookieFilePath;
+
+	/**
 	 * @var string $httpMethod e.g. get, post, etc.
 	 */
 	protected $httpMethod;
@@ -86,6 +92,7 @@ abstract class %sClientBase extends QBaseClass {
 			case 'LastResponseStatusCode':	return $this->lastResponseStatusCode;
 			case 'Curl':					return $this->curl;
 			case 'UrlPath':					return $this->urlPath;
+			case 'CookieFilePath':			return $this->cookieFilePath;
 			case 'HttpMethod':				return $this->httpMethod;
 			case 'RequestBody':				return $this->requestBody;
 			case 'RequestBodyType':			return $this->requestBodyType;
@@ -101,6 +108,16 @@ abstract class %sClientBase extends QBaseClass {
 					throw $objExc;
 				}
 		}
+	}
+
+	/**
+	 * @param string|null $cookieFilePath optional, if not specified this will generate one
+	 * @return string the path
+	 */
+	public function setupCookie($cookieFilePath = null) {
+		if (is_null($cookieFilePath)) $cookieFilePath = sprintf('/tmp/cookie_%%s.txt', md5(microtime()));
+		$this->cookieFilePath = $cookieFilePath;
+		return $cookieFilePath;
 	}
 
 	/**
@@ -131,6 +148,11 @@ abstract class %sClientBase extends QBaseClass {
 		curl_setopt($this->curl, CURLOPT_HEADER, true);
 		curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, trim(strtoupper($httpMethod)));
+
+		if ($this->cookieFilePath) {
+			curl_setopt($this->curl, CURLOPT_COOKIEJAR, $this->cookieFilePath);
+			curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookieFilePath);
+		}
 
 		$this->headerArray = $this->generateRequestHeaders();
 
