@@ -184,6 +184,10 @@
 			return array_key_exists($strIndex, $this->mixPropertiesDictionary);
 		}
 
+		public function __isset($name) {
+			return $this->IsPropertySet($name);
+		}
+
 		public function __get($strName) {
 			$strIndex = strtolower(substr($strName, 0, 1)) . substr($strName, 1);
 
