@@ -86,8 +86,9 @@
 		 * @return integer or null if it does not exist
 		 */
 		public static function ToId($strTokenOrName) {
-			if (($intId = array_search($strTokenOrName, self::$TokenArray)) !== false) return $intId;
-			if (($intId = array_search($strTokenOrName, self::$NameArray)) !== false) return $intId;
+			if (is_null($strTokenOrName)) return null;
+			if (($intId = array_search(strtolower($strTokenOrName), array_map('strtolower', self::$TokenArray))) !== false) return $intId;
+			if (($intId = array_search(strtolower($strTokenOrName), array_map('strtolower', self::$NameArray))) !== false) return $intId;
 			return null;
 		}
 
