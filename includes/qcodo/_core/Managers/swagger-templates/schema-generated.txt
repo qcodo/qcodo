@@ -3,6 +3,7 @@
 	use QJsonBaseClass;
 	use QDateTime;
 	use stdClass;
+	use %s\Models\Database;
 
 	/**
 	 * @class %s%s
@@ -36,7 +37,7 @@
 			return self::JsonDecodeArrayForType(get_called_class(), $json);
 		}
 
-
+%s
 
 /*
 		/**

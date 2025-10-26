@@ -251,7 +251,23 @@ class CodegenSwagger extends QBaseClass {
 			}
 		}
 
+		// SetObject
+		$xQcodoStoresObject = 'x-qcodo-stores-object';
+		$setObject = null;
+		if (isset($schema->$xQcodoStoresObject)) {
+			$setObject = sprintf(
+				'		/**' . PHP_EOL .
+				'		 * @var Database\%s $object' . PHP_EOL .
+				'		 */' . PHP_EOL .
+				'		protected $object;' . PHP_EOL .
+				PHP_EOL .
+				'		public function SetObject(Database\%s $object) {' . PHP_EOL .
+				'			$this->object = $object;' . PHP_EOL .
+				'		}', $schema->$xQcodoStoresObject, $schema->$xQcodoStoresObject);
+		}
+
 		$rendered = sprintf($templateGenerated,
+			QApplicationBase::$application->rootNamespace,
 			QApplicationBase::$application->rootNamespace,
 			$this->schemaPrefix,
 			ucfirst($schemaName) . 'Gen',
@@ -268,6 +284,9 @@ class CodegenSwagger extends QBaseClass {
 			ucfirst($schemaName),
 			$this->schemaPrefix,
 			ucfirst($schemaName),
+
+			// SetObject()
+			$setObject,
 
 			// GetSchema()
 			$this->schemaPrefix,
