@@ -234,6 +234,10 @@
 			}
 		}
 
+		static protected function LookupSettingArray($objNode, $strTagName) {
+			return $objNode->$strTagName->children();
+		}
+
 		/**
 		 *
 		 */
