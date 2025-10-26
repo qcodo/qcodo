@@ -45,7 +45,7 @@
 		 * @return Schema\%s%s
 		 *
 		public function GetSchema() {
-			$%s = new Schema\%s%s();
+			$%s = new Schema\%s%s();%s
 
 %s
 

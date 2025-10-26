@@ -254,6 +254,7 @@ class CodegenSwagger extends QBaseClass {
 		// SetObject
 		$xQcodoStoresObject = 'x-qcodo-stores-object';
 		$setObject = null;
+		$setObjectCall = null;
 		if (isset($schema->$xQcodoStoresObject)) {
 			$setObject = sprintf(
 				'		/**' . PHP_EOL .
@@ -264,6 +265,8 @@ class CodegenSwagger extends QBaseClass {
 				'		public function SetObject(Database\%s $object) {' . PHP_EOL .
 				'			$this->object = $object;' . PHP_EOL .
 				'		}', $schema->$xQcodoStoresObject, $schema->$xQcodoStoresObject);
+
+			$setObjectCall = sprintf(PHP_EOL . '			$%s->SetObject($this);', lcfirst($schemaName));
 		}
 
 		$rendered = sprintf($templateGenerated,
@@ -294,6 +297,7 @@ class CodegenSwagger extends QBaseClass {
 			lcfirst($schemaName),
 			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$setObjectCall,
 			implode("\n", $getSchemaLineArray),
 			lcfirst($schemaName),
 
