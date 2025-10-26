@@ -56,6 +56,12 @@
 		 */
 		protected $arrTernaryColumns;
 
+		/**
+		 * Array of JsonSchemaColumn configurations (indexed numerically)
+		 * @var array JsonSchemaColumns
+		 */
+		protected $arrJsonSchemaColumns;
+
 
 
 		/////////////////////
@@ -75,6 +81,7 @@
 			$this->objColumnArray = array();
 			$this->objIndexArray = array();
 			$this->arrTernaryColumns = array();
+			$this->arrJsonSchemaColumns = array();
 		}
 
 
@@ -117,6 +124,8 @@
 					return (array) $this->objIndexArray;
 				case 'TernaryColumns':
 					return (array) $this->arrTernaryColumns;
+				case 'JsonSchemaColumns':
+					return (array) $this->arrJsonSchemaColumns;
 				case 'ReferenceCount':
 					$intCount = count($this->objManyToManyReferenceArray);
 					foreach ($this->objColumnArray as $objColumn)
@@ -160,6 +169,8 @@
 						return $this->objIndexArray = QType::Cast($mixValue, QType::ArrayType);
 					case 'TernaryColumns':
 						return $this->arrTernaryColumns = QType::Cast($mixValue, QType::ArrayType);
+					case 'JsonSchemaColumns':
+						return $this->arrJsonSchemaColumns = QType::Cast($mixValue, QType::ArrayType);
 					default:
 						return parent::__set($strName, $mixValue);
 				}

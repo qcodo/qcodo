@@ -764,6 +764,19 @@
 				$objTable->TernaryColumns = $arrTernaryColumn;
 			}
 
+			// Populate JsonSchemaColumns array from configuration
+			if (array_key_exists(strtolower($strTableName), $this->arrJsonSchemaColumns)) {
+				$arrJsonSchemaColumn = $this->arrJsonSchemaColumns[strtolower($strTableName)];
+
+				// Setup Column Names
+				foreach ($arrJsonSchemaColumn as $index => $mixJsonSchemaColumn) {
+					$arrJsonSchemaColumn[$index]['columnPropertyName'] = $this->PropertyNameFromColumn($objTable->ColumnArray[$mixJsonSchemaColumn['column']]);
+					$arrJsonSchemaColumn[$index]['columnVariableName'] = $this->VariableNameFromColumn($objTable->ColumnArray[$mixJsonSchemaColumn['column']]);
+				}
+
+				$objTable->JsonSchemaColumns = $arrJsonSchemaColumn;
+			}
+
 			// Get the List of Indexes
 			$objTable->IndexArray = $this->objDb->GetIndexesForTable($objTable->Name);
 
