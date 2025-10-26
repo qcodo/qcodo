@@ -50,6 +50,12 @@
 		 */
 		protected $objIndexArray;
 
+		/**
+		 * Array of TernaryColumn configurations (indexed numerically)
+		 * @var array TernaryColumns
+		 */
+		protected $arrTernaryColumns;
+
 
 
 		/////////////////////
@@ -68,6 +74,7 @@
 			$this->objManyToManyReferenceArray = array();
 			$this->objColumnArray = array();
 			$this->objIndexArray = array();
+			$this->arrTernaryColumns = array();
 		}
 
 
@@ -108,6 +115,8 @@
 					return (array) $this->objManyToManyReferenceArray;
 				case 'IndexArray':
 					return (array) $this->objIndexArray;
+				case 'TernaryColumns':
+					return (array) $this->arrTernaryColumns;
 				case 'ReferenceCount':
 					$intCount = count($this->objManyToManyReferenceArray);
 					foreach ($this->objColumnArray as $objColumn)
@@ -149,6 +158,8 @@
 						return $this->objManyToManyReferenceArray = QType::Cast($mixValue, QType::ArrayType);
 					case 'IndexArray':
 						return $this->objIndexArray = QType::Cast($mixValue, QType::ArrayType);
+					case 'TernaryColumns':
+						return $this->arrTernaryColumns = QType::Cast($mixValue, QType::ArrayType);
 					default:
 						return parent::__set($strName, $mixValue);
 				}

@@ -43,6 +43,7 @@
 <%@ property_comments('objTable'); %>
 	 */
 	class <%= $objTable->ClassName %>Gen extends <%= QCodeGen::$BaseClassName; %> {
+		<%@ ternary_columns_constants('objTable'); %>
 
 		<%@ protected_member_variables('objTable'); %>
 
@@ -80,6 +81,7 @@
 
 		<%@ object_journal('objTable'); %>
 
+		<%@ ternary_columns('objTable'); %>
 
 
 		////////////////////

@@ -751,8 +751,18 @@
 			}
 			$objTable->ColumnArray = $objColumnArray;
 
+			// Populate TernaryColumns array from configuration
+			if (array_key_exists(strtolower($strTableName), $this->arrTernaryColumns)) {
+				$arrTernaryColumn = $this->arrTernaryColumns[strtolower($strTableName)];
 
+				// Setup Column Names
+				foreach ($arrTernaryColumn as $index => $mixTernaryColumn) {
+					$arrTernaryColumn[$index]['columnPropertyName'] = $this->PropertyNameFromColumn($objTable->ColumnArray[$mixTernaryColumn['column']]);
+					$arrTernaryColumn[$index]['columnVariableName'] = $this->VariableNameFromColumn($objTable->ColumnArray[$mixTernaryColumn['column']]);
+				}
 
+				$objTable->TernaryColumns = $arrTernaryColumn;
+			}
 
 			// Get the List of Indexes
 			$objTable->IndexArray = $this->objDb->GetIndexesForTable($objTable->Name);
