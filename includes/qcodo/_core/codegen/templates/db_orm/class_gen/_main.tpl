@@ -2,6 +2,7 @@
 <?php
 	namespace <%= QApplicationBase::$application->rootNamespace %>\Models\Database;
 	use <%= QApplicationBase::$application->rootNamespace %>\Managers\Application;
+	use <%= QApplicationBase::$application->rootNamespace %>\Models\Schema;
 
 	use QDateTime;
 	use QBaseClass;
