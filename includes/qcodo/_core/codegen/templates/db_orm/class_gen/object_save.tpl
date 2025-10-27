@@ -18,6 +18,11 @@
 
 			$mixToReturn = null;
 
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %><% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %><% $objJsonColumn = null; foreach ($objTable->ColumnArray as $objColumn) if ($objColumn->Name == $arrJsonSchemaColumn['column']) $objJsonColumn = $objColumn; %>
+			// Store the JsonSchema for <%= $arrJsonSchemaColumn['property'] %> (if applicable)
+			if ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json) $this-><%= $objJsonColumn->VariableName %> = $this->obj<%= $arrJsonSchemaColumn['property'] %>Json->JsonEncode();
+
+<% } %><% } %>
 			try {
 				if ((!$this->__blnRestored) || ($blnForceInsert)) {
 					// Perform an INSERT query

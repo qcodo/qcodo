@@ -29,6 +29,12 @@
 
 	<% } %>
 <% } %>
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+				case '<%= $arrJsonSchemaColumn['property'] %>': return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
+
+<% } %>
+<% } %>
 
 				///////////////////
 				// Member Objects

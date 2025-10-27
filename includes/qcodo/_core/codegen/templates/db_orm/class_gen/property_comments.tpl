@@ -1,6 +1,11 @@
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 	 * @property <%= $objColumn->VariableType %> $<%= $objColumn->PropertyName %> the value for <%= $objColumn->VariableName %> <% if ($objColumn->Identity) return '(Read-Only PK)'; else if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Timestamp) return '(Read-Only Timestamp)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
 <% } %>
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %> $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema object from <%= $arrJsonSchemaColumn['column'] %>
+<% } %>
+<% } %>
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 	<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
 	 * @property <%= $objColumn->Reference->VariableType %> $<%= $objColumn->Reference->PropertyName %> the value for the <%= $objColumn->Reference->VariableType %> object referenced by <%= $objColumn->VariableName %> <% if ($objColumn->Identity) return '(Read-Only PK)'; else if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>

@@ -17,6 +17,21 @@
 					return $this-><%= $objColumn->VariableName %>;
 
 <% } %>
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %><% $objJsonColumn = null; foreach ($objTable->ColumnArray as $objColumn) if ($objColumn->Name == $arrJsonSchemaColumn['column']) $objJsonColumn = $objColumn; %>
+				case '<%= $arrJsonSchemaColumn['property'] %>':
+					// Gets the value for the JsonSchema property from <%= $arrJsonSchemaColumn['column'] %>
+					// @return Schema\<%= $arrJsonSchemaColumn['schema'] %>
+					if (!$this->obj<%= $arrJsonSchemaColumn['property'] %>Json) {
+						if ($this-><%= $objJsonColumn->VariableName %>)
+							$this->obj<%= $arrJsonSchemaColumn['property'] %>Json = Schema\<%= $arrJsonSchemaColumn['schema'] %>::JsonDecode($this-><%= $objJsonColumn->VariableName %>);
+						else
+							$this->obj<%= $arrJsonSchemaColumn['property'] %>Json = new Schema\<%= $arrJsonSchemaColumn['schema'] %>();
+					}
+					return $this->obj<%= $arrJsonSchemaColumn['property'] %>Json;
+
+<% } %>
+<% } %>
 
 				///////////////////
 				// Member Objects

@@ -31,6 +31,16 @@
 	<% } %>
 
 <% } %>
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+		/**
+		 * Protected member variable for JsonSchema column <%= $objTable->Name %>.<%= $arrJsonSchemaColumn['column'] %>
+		 * @var Schema\<%= $arrJsonSchemaColumn['schema'] %> $obj<%= $arrJsonSchemaColumn['property'] %>Json
+		 */
+		protected $obj<%= $arrJsonSchemaColumn['property'] %>Json;
+
+<% } %>
+<% } %>
 <% foreach ($objTable->ManyToManyReferenceArray as $objReference) { %>
 		/**
 		 * Private member variable that stores a reference to a single <%= $objReference->ObjectDescription %> object
