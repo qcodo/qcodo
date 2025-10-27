@@ -29,12 +29,6 @@
 
 	<% } %>
 <% } %>
-<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
-<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
-				case '<%= $arrJsonSchemaColumn['property'] %>': return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
-
-<% } %>
-<% } %>
 
 				///////////////////
 				// Member Objects
@@ -56,7 +50,7 @@
 						} catch (QInvalidCastException $objExc) {
 							$objExc->IncrementOffset();
 							throw $objExc;
-						} 
+						}
 
 						// Make sure $mixValue is a SAVED <%= $objColumn->Reference->VariableType %> object
 						if (is_null($mixValue-><%= $objCodeGen->TableArray[strtolower($objColumn->Reference->Table)]->ColumnArray[strtolower($objColumn->Reference->Column)]->PropertyName %>))
@@ -113,6 +107,21 @@
 					break;
 
 	<% } %>
+<% } %>
+<% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+				case '<%= $arrJsonSchemaColumn['property'] %>':
+					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %> object
+					try {
+						$mixValue = QType::Cast($mixValue, Schema\<%= $arrJsonSchemaColumn['schema'] %>::class);
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+
+					return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
+
+<% } %>
 <% } %>
 				default:
 					try {
