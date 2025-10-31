@@ -1106,7 +1106,7 @@
 		protected function Pluralize($strName) {
 			// Special Rules go Here
 			switch (true) {
-				case (strtolower($strName) == 'play'):
+				case (substr(strtolower($strName), strlen($strName) - 2) == 'ay'):
 					return $strName . 's';
 			}
 
