@@ -109,7 +109,7 @@
 	<% } %>
 <% } %>
 <% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
-<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %><% if (!$arrJsonSchemaColumn['arrayFlag']) { %>
 				case '<%= $arrJsonSchemaColumn['property'] %>':
 					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %> object
 					try {
@@ -120,6 +120,18 @@
 					}
 
 					return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
+<% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
+				case '<%= $arrJsonSchemaColumn['property'] %>':
+					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %>[] array
+					try {
+						$mixValue = QType::Cast($mixValue, QType::ArrayType);
+					} catch (QInvalidCastException $objExc) {
+						$objExc->IncrementOffset();
+						throw $objExc;
+					}
+
+					return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
+<% } %>
 
 <% } %>
 <% } %>

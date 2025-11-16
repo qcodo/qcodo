@@ -32,12 +32,19 @@
 
 <% } %>
 <% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
-<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+<% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %><% if (!$arrJsonSchemaColumn['arrayFlag']) { %>
 		/**
 		 * Protected member variable for JsonSchema column <%= $objTable->Name %>.<%= $arrJsonSchemaColumn['column'] %>
 		 * @var Schema\<%= $arrJsonSchemaColumn['schema'] %> $obj<%= $arrJsonSchemaColumn['property'] %>Json
 		 */
 		protected $obj<%= $arrJsonSchemaColumn['property'] %>Json;
+<% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
+		/**
+		 * Protected member variable for JsonSchema column <%= $objTable->Name %>.<%= $arrJsonSchemaColumn['column'] %>
+		 * @var Schema\<%= $arrJsonSchemaColumn['schema'] %>[] $obj<%= $arrJsonSchemaColumn['property'] %>Json
+		 */
+		protected $obj<%= $arrJsonSchemaColumn['property'] %>Json;
+<% } %>
 
 <% } %>
 <% } %>

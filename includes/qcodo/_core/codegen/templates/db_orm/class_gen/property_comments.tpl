@@ -3,7 +3,11 @@
 <% } %>
 <% if ($objTable->JsonSchemaColumns && count($objTable->JsonSchemaColumns) > 0) { %>
 <% foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) { %>
+<% if (!$arrJsonSchemaColumn['arrayFlag']) { %>
 	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %> $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema object from <%= $arrJsonSchemaColumn['column'] %>
+<% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
+	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %>[] $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema array from <%= $arrJsonSchemaColumn['column'] %>
+<% } %>
 <% } %>
 <% } %>
 <% foreach ($objTable->ColumnArray as $objColumn) { %>

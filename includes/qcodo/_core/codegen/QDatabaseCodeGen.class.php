@@ -144,11 +144,12 @@
 				$strToReturn .= sprintf('			<jsonSchemaColumns>%s', $strCrLf);
 				foreach ($this->arrJsonSchemaColumns as $strTable => $arrJsonSchemaColumn) {
 					foreach ($arrJsonSchemaColumn as $mixJsonSchemaColumn) {
-						$strToReturn .= sprintf('				<jsonSchemaColumn table="%s" column="%s" property="%s" schema="%s"/>%s',
+						$strToReturn .= sprintf('				<jsonSchemaColumn table="%s" column="%s" property="%s" schema="%s" arrayFlag="%s"/>%s',
 							$strTable,
 							$mixJsonSchemaColumn['column'],
 							$mixJsonSchemaColumn['property'],
 							$mixJsonSchemaColumn['schema'],
+							$mixJsonSchemaColumn['arrayFlag'] ? 'true' : 'false',
 							$strCrLf);
 					}
 				}
@@ -294,8 +295,9 @@
 					$strColumn = QCodeGen::LookupSetting($objNode, null, 'column');
 					$strProperty = QCodeGen::LookupSetting($objNode, null, 'property');
 					$strSchema = QCodeGen::LookupSetting($objNode, null, 'schema');
+					$blnArrayFlag = QCodeGen::LookupSetting($objNode, null, 'arrayFlag', QType::Boolean);
 					if (!array_key_exists($strTable, $this->arrJsonSchemaColumns)) $this->arrJsonSchemaColumns[$strTable] = array();
-					$this->arrJsonSchemaColumns[$strTable][] = array('column' => $strColumn, 'property' => $strProperty, 'schema' => $strSchema);
+					$this->arrJsonSchemaColumns[$strTable][] = array('column' => $strColumn, 'property' => $strProperty, 'schema' => $strSchema, 'arrayFlag' => $blnArrayFlag);
 				}
 			}
 
