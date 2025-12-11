@@ -48,6 +48,8 @@ class Swagger extends QBaseClass {
 		$requestParts = explode("/", substr($requestPath, 1));
 		$requestPartsCount = count($requestParts);
 
+		$candidatePathArray = array();
+
 		foreach ($this->swaggerObject->paths as $path => $definition) {
 			if (substr($path, 0, 1) != "/") throw new Exception("Swagger Error: cannot parse path location that doesn't lead with slash: " . $path);
 			$pathParts = explode("/", substr($path, 1));
@@ -69,14 +71,54 @@ class Swagger extends QBaseClass {
 			}
 
 			// If we are here, it means all parts match!
-			return $path;
+			$candidatePathArray[] = $path;
 		}
 
+		// Unique Match?  Return it
+		if (count($candidatePathArray) == 1) return $candidatePathArray[0];
+
+		// No matches?
 		// If we are here, we have exhausted all paths in the swagger and didn't find a match
-		$pathArgumentsArray = array();
-		return null;
+		if (!count($candidatePathArray)) {
+			$pathArgumentsArray = array();
+			return null;
+		}
+
+		// Find the "Highest Priority" path where static routes take precedence over dynamic parameters per token
+		return self::highestPriorityPath($candidatePathArray);
 	}
 
+	private static function isParam($segment) {
+		return preg_match('/^\{.+\}$/', $segment);
+	}
+
+	private static function getPriorityVector($path) {
+		$segments = explode('/', trim($path, '/'));
+		return array_map(fn($s) => self::isParam($s) ? 0 : 1, $segments);
+	}
+
+	private static function highestPriorityPath(array $paths) {
+		$bestIndex = 0;
+		$bestVec = self::getPriorityVector($paths[0]);
+
+		foreach ($paths as $i => $path) {
+			$vec = self::getPriorityVector($path);
+
+			// Direct lexicographic comparison since lengths match
+			for ($j = 0; $j < count($vec); $j++) {
+				if ($vec[$j] > $bestVec[$j]) {
+					$bestIndex = $i;
+					$bestVec = $vec;
+					break;
+				} elseif ($vec[$j] < $bestVec[$j]) {
+					break;
+				}
+				// else equal → continue comparing
+			}
+		}
+
+		return $paths[$bestIndex];
+	}
 
 
 	/**
