@@ -330,7 +330,7 @@ class Qcodo extends Handlers\Console {
 				$html .= '<table class="specs"><tbody>';
 
 				$requestRendered = false;
-				if ($definition->parameters && count($definition->parameters)) {
+				if (isset($definition->parameters) && $definition->parameters && count($definition->parameters)) {
 					$requestRendered = true;
 					$html .= '<tr><td class="label">Request</td><td class="content">';
 
