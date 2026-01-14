@@ -57,7 +57,7 @@
 		 *
 		 * @var string $TestModeDirectory
 		 */
-		public static $TestModeDirectory = '/tmp';
+		public static $TestModeDirectory = __QCODO_LOG__ . DIRECTORY_SEPARATOR . '/emails';
 
 		/**
 		 * Boolean flag signifying whether SMTP's AUTH PLAIN should be used
@@ -171,9 +171,11 @@
 		 */
 		public static function SendRawMessage($strMailFrom, $strRcptToArray, $mixMessageHeader, $strMessageBody) {
 			self::$objSmtpSocket = null;
+			$strFileName = null;
 
 			if (QEmailServer::$TestMode === true) {
 				// Open up a File Resource to the TestModeDirectory
+				if (!is_dir(QEmailServer::$TestModeDirectory)) \QApplicationBase::MakeDirectory(QEmailServer::$TestModeDirectory, 0777);
 				$strArray = explode(' ', microtime());
 				$strFileName = sprintf('%s/email_%s%s.eml', QEmailServer::$TestModeDirectory, $strArray[1], substr($strArray[0], 1));
 				self::$objSmtpSocket = fopen($strFileName, 'w');
@@ -283,7 +285,31 @@
 			}
 			fclose(self::$objSmtpSocket);
 
-			if (QEmailServer::$TestMode === true) chmod($strFileName, 0777);
+			if (QEmailServer::$TestMode === true) {
+				chmod($strFileName, 0777);
+				self::LogCleanFile($strFileName);
+			}
+		}
+
+		/**
+		 * Attempts to "clean" the logged email file to a standard RFC-5322 (e.g. "EML") content
+		 * by stripping out any/all of the socket-level comm stuff
+		 *
+		 * This is a no-op if any issues while attempting to clean
+		 * @param string $strFileName
+		 * @return void
+		 */
+		public static function LogCleanFile($strFileName) {
+			if (!is_file($strFileName)) return;
+
+			$content = file_get_contents($strFileName);
+			$parts = explode("\r\nDATA\r\n", $content);
+			if (count($parts) != 2) return;
+
+			$content = $parts[1];
+			$content = str_replace("\r\n.\r\nQUIT\r\n", "", $content);
+
+			@file_put_contents($strFileName, trim($content));
 		}
 
 		protected static $objSmtpSocket;
