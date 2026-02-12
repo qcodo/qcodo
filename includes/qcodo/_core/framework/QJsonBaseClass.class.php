@@ -184,8 +184,19 @@
 			return array_key_exists($strIndex, $this->mixPropertiesDictionary);
 		}
 
+		public function PropertyUnset($strName) {
+			$strIndex = strtolower(substr($strName, 0, 1)) . substr($strName, 1);
+
+			if (array_key_exists($strIndex, $this->mixPropertiesDictionary)) unset($this->mixPropertiesDictionary[$strIndex]);
+		}
+
 		public function __isset($name) {
 			return $this->IsPropertySet($name);
+		}
+
+		public function __unset($name) {
+			$key = strtolower(substr($name, 0, 1)) . substr($name, 1);
+			if (array_key_exists($key, $this->mixPropertiesDictionary)) unset($this->mixPropertiesDictionary[$key]);
 		}
 
 		public function __get($strName) {
