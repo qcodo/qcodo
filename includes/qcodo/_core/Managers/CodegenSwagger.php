@@ -287,6 +287,16 @@ class CodegenSwagger extends QBaseClass {
 			ucfirst($schemaName),
 			$this->schemaPrefix,
 			ucfirst($schemaName),
+			$this->schemaPrefix,
+			ucfirst($schemaName),
+			$this->schemaPrefix,
+			ucfirst($schemaName),
+			$this->schemaPrefix,
+			ucfirst($schemaName),
+			$this->schemaPrefix,
+			ucfirst($schemaName),
+			$this->schemaPrefix,
+			ucfirst($schemaName),
 
 			// SetObject()
 			$setObject,

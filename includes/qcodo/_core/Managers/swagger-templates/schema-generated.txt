@@ -16,6 +16,17 @@
 		);
 %s
 		/**
+		 * Returns an instance of %s%s - can either the instance that is passed in, or if an array-map, it will create a new instance and apply the properties from the array-map, or if null it will create a new empty instance
+		 * @param %s%s|array|null $mixed
+		 * @return %s%s
+		 */
+		public static function GetInstance(%s%s|array|null $mixed) {
+			if (is_array($mixed)) return self::JsonDecodeForClass(get_called_class(), (object) $mixed);
+			if (!$mixed) return new %s%s();
+			return $mixed;
+		}
+
+		/**
 		 * Creates a %s%s from a JSON string or JSON-decoded stdClass object
 		 *
 		 * @param mixed $json can be a string-based JSON or a stdClass
