@@ -21,7 +21,7 @@
 		 * @return %s%s
 		 */
 		public static function GetInstance(%s%s|array|null $mixed) {
-			if (is_array($mixed)) return self::JsonDecodeForClass(get_called_class(), (object) $mixed);
+			if (is_array($mixed)) return self::JsonDecodeForClass(get_called_class(), json_decode(json_encode($mixed)));
 			if (!$mixed) return new %s%s();
 			return $mixed;
 		}
