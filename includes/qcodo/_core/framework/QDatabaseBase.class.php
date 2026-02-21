@@ -93,6 +93,11 @@
 				case 'StaticProperty':
 					return $this->objConfigArray[strtolower($strName)];
 
+				case 'Timezone':
+					$key = strtolower($strName);
+					if (array_key_exists($key, $this->objConfigArray)) return $this->objConfigArray[$key];
+					return null;
+
 				default:
 					try {
 						return parent::__get($strName);
@@ -298,8 +303,16 @@
 			if ($mixData instanceof QDateTime) {
 				if ($mixData->IsTimeNull())
 					return $strToReturn . sprintf("'%s'", $mixData->__toString('YYYY-MM-DD'));
-				else
+				else {
+					if ($this->Timezone) {
+						$originalDateTimeZone = $mixData->getTimezone();
+						$mixData->setTimezone(new DateTimeZone($this->Timezone));
+						$strToReturn .= sprintf("'%s'", $mixData->__toString(QDateTime::FormatIso));
+						$mixData->setTimezone($originalDateTimeZone);
+						return $strToReturn;
+					}
 					return $strToReturn . sprintf("'%s'", $mixData->__toString(QDateTime::FormatIso));
+				}
 			}
 
 			// Assume it's some kind of string value
