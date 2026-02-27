@@ -46,27 +46,34 @@
 
 		public function Connect() {
 			// Connect to the Database Server
-			$this->objMySqli = new MySqli($this->Server, $this->Username, $this->Password, $this->Database, $this->Port);
+			$this->objMySqli = mysqli_init();
+			$flags = 0;
 
-			if (!$this->objMySqli)
-				throw new QMySqliDatabaseException("Unable to connect to Database", -1, null);
+			// SSL (if applicable)
+			if (array_key_exists('sslCaCert', $this->objConfigArray) && $this->objConfigArray['sslCaCert']) {
+				$this->objMySqli->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+				$this->objMySqli->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+				$this->objMySqli->ssl_set(null, null, $this->objConfigArray['sslCaCert'], null, null);
+				$flags = $flags | MYSQLI_CLIENT_SSL;
+			}
 
-			if ($this->objMySqli->error)
-				throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, null);
+			// Default Charset Encoding (if applicable)
+			if (array_key_exists('encoding', $this->objConfigArray) && $this->objConfigArray['encoding']) {
+				$this->objMySqli->options(MYSQLI_SET_CHARSET_NAME, $this->objConfigArray['encoding']);
+			}
 
-			// Update "Connected" Flag
-			$this->blnConnectedFlag = true;
+			// Connect
+			$this->blnConnectedFlag = $this->objMySqli->real_connect($this->Server, $this->Username, $this->Password, $this->Database, $this->Port, null, $flags);
+			if ($this->objMySqli->error) throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, null);
+			if (!$this->blnConnectedFlag) throw new QMySqliDatabaseException("Unable to connect to Database", -1, null);
 
 			// Set to AutoCommit
 			$this->NonQuery('SET AUTOCOMMIT=1;');
 
-			// Set NAMES (if applicable)
-			if (array_key_exists('encoding', $this->objConfigArray) && $this->objConfigArray['encoding'])
-				$this->NonQuery('SET NAMES ' . $this->objConfigArray['encoding'] . ';');
-
 			// Set TIMEZONE (if applicable)
-			if (array_key_exists('timezone', $this->objConfigArray) && $this->objConfigArray['timezone'])
+			if (array_key_exists('timezone', $this->objConfigArray) && $this->objConfigArray['timezone']) {
 				$this->NonQuery(sprintf("SET time_zone='%s';", $this->objConfigArray['timezone']));
+			}
 		}
 
 		public function __get($strName) {
