@@ -566,7 +566,7 @@
 			asort($strFileArray);
 
 			foreach ($strFileArray as $strBaseName) {
-				$strFqcn = $this->rootNamespace . '\\Handlers\\Autorun\\' . $strBaseName;
+				$strFqcn = $this->rootNamespace . '\\Handlers\\' . $strFolderName . '\\' . $strBaseName;
 				if (!class_exists($strFqcn)) throw new Exception('Cannot call Autorun for file: ' . $strFile);
 
 				$objAutoRun = new $strFqcn;
