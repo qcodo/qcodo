@@ -87,6 +87,8 @@
 			// Next, Initialize PHP AutoLoad Functionality
 			$this->initializeAutoload();
 
+			// Any Autorun Pre Load Items
+			$this->initializeAutoRun('AutorunPreload');
 
 			$this->initializeConfiguration();
 
@@ -549,8 +551,10 @@
 		 *
 		 * @return void
 		 */
-		protected function initializeAutoRun() {
-			$objDirectory = @opendir(__APPLICATION__ . DIRECTORY_SEPARATOR . 'Handlers' . DIRECTORY_SEPARATOR . 'Autorun');
+		protected function initializeAutoRun($strFolderName = 'Autorun') {
+			$strFolderPath = __APPLICATION__ . DIRECTORY_SEPARATOR . 'Handlers' . DIRECTORY_SEPARATOR . $strFolderName;
+			if (!is_dir($strFolderPath)) return;
+			$objDirectory = @opendir($strFolderPath);
 			$strFileArray = array();
 
 			if ($objDirectory) while ($strFile = readdir($objDirectory)) {
