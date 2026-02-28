@@ -9,12 +9,11 @@ class BootstrapHelper {
 	public static function loadQcodo($consoleModeFlag) {
 		// Autorun Applicable Configuration Directory Items
 		$configurationPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'configuration';
-		$configurationDirectory =  opendir($configurationPath);
 
-		while ($file = readdir($configurationDirectory)) {
+		// Scan _-prefixed files in process in alphabetical order
+		foreach (scandir($configurationPath) as $file) {
 			if ((substr($file, 0, 1) == '_') && strtolower(substr($file, strlen($file) - 4)) == '.php') require_once($configurationPath . DIRECTORY_SEPARATOR . $file);
 		}
-		closedir($configurationDirectory);
 
 		require_once(__VENDOR__ . DIRECTORY_SEPARATOR . 'autoload.php');
 		require_once(__QCODO_CORE__ . DIRECTORY_SEPARATOR . 'qcodo.inc.php');
