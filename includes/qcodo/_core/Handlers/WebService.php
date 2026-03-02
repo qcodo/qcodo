@@ -262,6 +262,28 @@ abstract class WebService extends Base {
 		// Are we explicitly asking to view the swagger spec?
 		$viewSpecificationCommand = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewSpecificationCommand');
 		if ($viewSpecificationCommand && ($viewSpecificationCommand == $request->path)) {
+			$viewSpecificationAuthentication = QApplicationBase::$application->getConfiguration(self::ConfigurationNamespace, 'viewSpecificationAuthentication');
+			if ($viewSpecificationAuthentication) {
+				if (!is_array($viewSpecificationAuthentication)) throw new Exception('specification authentication is non-array');
+				if (count($viewSpecificationAuthentication) != 2) throw new Exception('specification authentication is malformed');
+				$username = $viewSpecificationAuthentication[0];
+				$password = $viewSpecificationAuthentication[1];
+
+				if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+					($_SERVER['PHP_AUTH_USER'] != $username) || ($_SERVER['PHP_AUTH_PW'] != $password)) {
+					header('WWW-Authenticate: Basic realm="Qcodo Specification Viewer"');
+					header('HTTP/1.0 401 Unauthorized');
+					print('<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Unauthorized</title>
+</head><body>
+<h1>Unauthorized</h1>
+<p>You are not authorized to view this page.</p>
+</body></html>');
+					exit;
+				}
+			}
+
 			$response = new HttpResponse(200, $swagger->getOriginalJson(), 'application/json');
 			$response->execute();
 			return;
