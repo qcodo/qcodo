@@ -13,6 +13,19 @@
 			return static::$_Model;
 		}
 
+		/**
+		 * Returns an array of properties that are set
+		 * Will essentially filter out anything that is unset (e.g. "undefined")
+		 * @return mixed[] indexed by propertyName
+		 */
+		public function GetSetPropertiesArray() {
+			$setPropertiesArray = [];
+			foreach (static::$_Model as $propertyName => $value) {
+				if ($this->IsPropertySet($propertyName)) $setPropertiesArray[$propertyName] = $value;
+			}
+			return $setPropertiesArray;
+		}
+
 		public static function JsonDecode($mixJson) {
 			throw new QCallerException('JsonDecode() Not Implemented: ' . get_called_class());
 		}
