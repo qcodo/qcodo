@@ -77,9 +77,21 @@
 			}
 <% } %>
 
+<% if ($this->blnMultitonSupport) { %>
+			// Check Multiton Instance
+<% foreach ($objTable->ColumnArray as $objColumn) { %><% if ($objColumn->PrimaryKey) { %>
+			$strAliasName = array_key_exists($strAliasPrefix . '<%= $objColumn->Name %>', $strColumnAliasArray) ? $strColumnAliasArray[$strAliasPrefix . '<%= $objColumn->Name %>'] : $strAliasPrefix . '<%= $objColumn->Name %>';
+			$mixMultitonKey = $objDbRow->GetColumn($strAliasName, '<%= $objColumn->DbType %>');
+<% } %><% } %>
+			if (array_key_exists($mixMultitonKey, self::$__objInstanceByPrimaryKey)) return self::$__objInstanceByPrimaryKey[$mixMultitonKey];
+
+<% } %><%-%>
 			// Create a new instance of the <%= $objTable->ClassName %> object
 			$objToReturn = new <%= $objTable->ClassName %>();
 			$objToReturn->__blnRestored = true;
+<% if ($this->blnMultitonSupport) { %>
+			self::$__objInstanceByPrimaryKey[$mixMultitonKey] = $objToReturn;
+<% } %><%-%>
 
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 			$strAliasName = array_key_exists($strAliasPrefix . '<%= $objColumn->Name %>', $strColumnAliasArray) ? $strColumnAliasArray[$strAliasPrefix . '<%= $objColumn->Name %>'] : $strAliasPrefix . '<%= $objColumn->Name %>';

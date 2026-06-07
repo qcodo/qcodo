@@ -39,8 +39,17 @@
 		protected $strAssociatedObjectPrefix;
 		protected $strAssociatedObjectSuffix;
 
-		// Manual Query (e.g. "Beta 2 Query") Suppor
+		// Manual Query (e.g. "Beta 2 Query") Support
 		protected $blnManualQuerySupport = false;
+
+		// Multiton Support
+		protected $blnMultitonSupport = false;
+
+		// SOAP Support
+		protected $blnSoapSupport = false;
+
+		// Journal Support
+		protected $blnJournalSupport = false;
 
 		// Relationship Scripts
 		protected $strRelationships;
@@ -134,6 +143,9 @@
 			$strToReturn .= sprintf('			<excludeTables pattern="%s" list="%s"/>%s', $this->strExcludePattern, implode(',', $this->strExcludeListArray), $strCrLf);
 			$strToReturn .= sprintf('			<includeTables pattern="%s" list="%s"/>%s', $this->strIncludePattern, implode(',', $this->strIncludeListArray), $strCrLf);
 			$strToReturn .= sprintf('			<manualQuery support="%s"/>%s', ($this->blnManualQuerySupport) ? 'true' : 'false', $strCrLf);
+			$strToReturn .= sprintf('			<multiton support="%s"/>%s', ($this->blnMultitonSupport) ? 'true' : 'false', $strCrLf);
+			$strToReturn .= sprintf('			<soap support="%s"/>%s', ($this->blnSoapSupport) ? 'true' : 'false', $strCrLf);
+			$strToReturn .= sprintf('			<journal support="%s"/>%s', ($this->blnJournalSupport) ? 'true' : 'false', $strCrLf);
 			$strToReturn .= sprintf('			<relationships>%s', $strCrLf);
 			if ($this->strRelationships)
 				$strToReturn .= sprintf('			%s%s', $this->strRelationships, $strCrLf);
@@ -281,6 +293,15 @@
 
 			// ManualQuery Support
 			$this->blnManualQuerySupport = QCodeGen::LookupSetting($objSettingsXml, 'manualQuery', 'support', QType::Boolean);
+
+			// Multiton Support
+			$this->blnMultitonSupport = QCodeGen::LookupSetting($objSettingsXml, 'multiton', 'support', QType::Boolean);
+
+			// SOAP Support
+			$this->blnSoapSupport = QCodeGen::LookupSetting($objSettingsXml, 'soap', 'support', QType::Boolean);
+
+			// Journal Support
+			$this->blnJournalSupport = QCodeGen::LookupSetting($objSettingsXml, 'journal', 'support', QType::Boolean);
 
 			// Relationship Scripts
 			$this->strRelationships = QCodeGen::LookupSetting($objSettingsXml, 'relationships');
@@ -950,6 +971,10 @@
 
 							// Add this reference to the column
 							$objColumn->Reference = $objReference;
+
+							if ($objColumn->Unique) {
+								$objReference->ReverseReferenceObjectPropertyName = $this->CalculateObjectPropertyName($strTableName, $strColumnName, $strReferencedTableName);
+							}
 
 
 

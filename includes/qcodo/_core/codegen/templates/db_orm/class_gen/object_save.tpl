@@ -50,13 +50,20 @@
 	foreach ($objArray = $objTable->PrimaryKeyColumnArray as $objColumn)
 		if ($objColumn->Identity)
 			return sprintf('					// Update Identity column and return its value
-					$mixToReturn = $this->%s = $objDatabase->InsertId(\'%s\', \'%s\');',
+					$mixToReturn = ($this->%s = $objDatabase->InsertId(\'%s\', \'%s\'));',
 					$objColumn->VariableName, $objTable->Name, $objColumn->Name);
 %>
 
+<% if ($this->blnMultitonSupport) { %><% foreach ($objArray = $objTable->PrimaryKeyColumnArray as $objColumn) { %>
+					// Multiton
+					self::$__objInstanceByPrimaryKey[$this-><%= $objColumn->VariableName %>] = $this;
+
+<% } %><% } %>
+<% if ($this->blnJournalSupport) { %>
 					// Journaling
 					if ($objDatabase->JournalingDatabase) $this->Journal('INSERT');
 
+<% } %>
 				} else {
 					// Perform an UPDATE query
 

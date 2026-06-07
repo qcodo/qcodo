@@ -78,10 +78,14 @@
 
 		<%@ object_delete('objTable'); %>
 
+<% if (!$this->blnMultitonSupport) { %>
 		<%@ object_reload('objTable'); %>
 
+<% } %>
+<% if ($this->blnJournalSupport) { %>
 		<%@ object_journal('objTable'); %>
 
+<% } %>
 		<%@ ternary_columns('objTable'); %>
 
 
@@ -110,10 +114,18 @@
 
 
 
+<% if ($this->blnSoapSupport) { %>
 		<%@ soap_methods('objTable'); %>
 
 
 
+<% } %>
+<% if ($this->blnMultitonSupport) { %>
+		<%@ multiton_methods('objTable'); %>
+
+
+
+<% } %>
 <% if ($this->blnManualQuerySupport) { %>
 		<%@ manual_query_methods('objTable'); %>
 <% } %>

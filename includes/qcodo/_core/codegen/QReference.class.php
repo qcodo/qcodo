@@ -56,6 +56,12 @@
 		 */
 		protected $blnIsType;
 
+		/**
+		 * If this is a unique reference, then the referencing table's ReverseReference ObjectPropertyName
+		 * @var string ReverseReferenceObjectPropertyName
+		 */
+		protected $strReverseReferenceObjectPropertyName;
+
 
 
 
@@ -86,6 +92,8 @@
 					return $this->strVariableType;
 				case 'IsType':
 					return $this->blnIsType;
+				case 'ReverseReferenceObjectPropertyName':
+					return $this->strReverseReferenceObjectPropertyName;
 				default:
 					try {
 						return parent::__get($strName);
@@ -121,6 +129,8 @@
 						return $this->strVariableType = QType::Cast($mixValue, QType::String);
 					case 'IsType':
 						return $this->blnIsType = QType::Cast($mixValue, QType::Boolean);
+					case 'ReverseReferenceObjectPropertyName':
+						return $this->strReverseReferenceObjectPropertyName = QType::Cast($mixValue, QType::String);
 					default:
 						return parent::__set($strName, $mixValue);
 				}

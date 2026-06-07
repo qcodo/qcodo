@@ -19,6 +19,11 @@
 					// @return <%= $objColumn->VariableType %>
 					try {
 		<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
+<% if ($this->blnMultitonSupport) { %><% if (!$objColumn->PrimaryKey) { %><% if ($objColumn->Unique) { %>
+						// Multiton Update
+						if ($this-><%= $objColumn->VariableName %>) <%= $objColumn->Reference->VariableType %>::ClearReverseReference_<%= $objColumn->Reference->ReverseReferenceObjectPropertyName %>($this-><%= $objColumn->VariableName %>);
+
+<% } %><% } %><% } %>
 						$this-><%= $objColumn->Reference->VariableName %> = null;
 		<% } %>
 						return ($this-><%= $objColumn->VariableName %> = QType::Cast($mixValue, <%= $objColumn->VariableTypeAsConstant %>));
@@ -36,6 +41,11 @@
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
 	<% if (($objColumn->Reference) && (!$objColumn->Reference->IsType)) { %>
 				case '<%= $objColumn->Reference->PropertyName %>':
+<% if ($this->blnMultitonSupport) { %><% if (!$objColumn->PrimaryKey) { %><% if ($objColumn->Unique) { %>
+					// Multiton Update
+					if ($this-><%= $objColumn->VariableName %>) <%= $objColumn->Reference->VariableType %>::ClearReverseReference_<%= $objColumn->Reference->ReverseReferenceObjectPropertyName %>($this-><%= $objColumn->VariableName %>);
+
+<% } %><% } %><% } %><%-%>
 					// Sets the value for the <%= $objColumn->Reference->VariableType %> object referenced by <%= $objColumn->VariableName %> <% if ($objColumn->Identity) return '(Read-Only PK)'; else if ($objColumn->PrimaryKey) return '(PK)'; else if ($objColumn->Unique) return '(Unique)'; else if ($objColumn->NotNull) return '(Not Null)'; %>
 					// @param <%= $objColumn->Reference->VariableType %> $mixValue
 					// @return <%= $objColumn->Reference->VariableType %>
