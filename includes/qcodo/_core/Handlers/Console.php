@@ -93,6 +93,7 @@ abstract class Console extends Base {
 			}
 
 			$handler->executeRunMethod($methodName);
+			$handler->executeCompletion($methodName);
 
 		// Revert to check against Legacy Qcodo, or report error if not found
 		} else {
@@ -167,6 +168,8 @@ abstract class Console extends Base {
 		// Make the method call
 		$this->reflectionMethod->invokeArgs($this, $valueArray);
 	}
+
+	protected function executeCompletion($methodName) {}
 
 	protected function executeHelp() {
 		printf('usage: %s %s::%s ', $this->argumentArray[0], $this->reflectionClass->getShortName(), $this->reflectionMethod->getName());
