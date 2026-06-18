@@ -83,7 +83,10 @@
 			$strAliasName = array_key_exists($strAliasPrefix . '<%= $objColumn->Name %>', $strColumnAliasArray) ? $strColumnAliasArray[$strAliasPrefix . '<%= $objColumn->Name %>'] : $strAliasPrefix . '<%= $objColumn->Name %>';
 			$mixMultitonKey = $objDbRow->GetColumn($strAliasName, '<%= $objColumn->DbType %>');
 <% } %><% } %>
-			if (array_key_exists($mixMultitonKey, self::$__objInstanceByPrimaryKey)) return self::$__objInstanceByPrimaryKey[$mixMultitonKey];
+			// Return Multiton (only if Override is not set)
+			if (!BaseClass::$MultitonOverride) {
+				if (array_key_exists($mixMultitonKey, self::$__objInstanceByPrimaryKey)) return self::$__objInstanceByPrimaryKey[$mixMultitonKey];
+			}
 
 <% } %><%-%>
 			// Create a new instance of the <%= $objTable->ClassName %> object

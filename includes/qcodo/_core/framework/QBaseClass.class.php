@@ -6,6 +6,13 @@
 	 */
 	abstract class QBaseClass {
 		/**
+		 * Only applicable on Multiton-enabled Database codegen projects.  If set to true, this will temporarily turn OFF Multiton support.
+		 * Primarily useful only for test scripts
+		 * @var boolean $MultitonOverride
+		 */
+		public static $MultitonOverride = false;
+
+		/**
 		 * Override method to perform a property "Get"
 		 * This will get the value of $strName
 		 * All inhereted objects that call __get() should always fall through
