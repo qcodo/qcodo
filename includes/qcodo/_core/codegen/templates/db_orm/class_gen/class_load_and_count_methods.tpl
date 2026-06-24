@@ -20,6 +20,14 @@
 		 * @return <%= $objTable->ClassName %>
 		 */
 		public static function Load(<%= $objCodeGen->ParameterListFromColumnArray($objTable->PrimaryKeyColumnArray); %>) {
+<% if ($this->blnMultitonSupport) { %>
+			// Check the Multiton (Application State) first (only if Override is not set) -- if it's already instantiated, return it right away
+			if (!BaseClass::$MultitonOverride) {
+				$obj<%= $objTable->ClassName %> = <%= $objTable->ClassName %>::LoadByMultiton(<%= $objCodeGen->ParameterListFromColumnArray($objTable->PrimaryKeyColumnArray); %>);
+				if ($obj<%= $objTable->ClassName %>) return $obj<%= $objTable->ClassName %>;
+			}
+
+<% } %>
 			// Use QuerySingle to Perform the Query
 			return <%= $objTable->ClassName %>::QuerySingle(
 <% if (count($objTable->PrimaryKeyColumnArray) > 1) { %>

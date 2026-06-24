@@ -47,6 +47,11 @@
 	<% } %>
 <% } %><%-----%>');
 
+<% if ($this->blnMultitonSupport) { %><% foreach ($objArray = $objTable->PrimaryKeyColumnArray as $objColumn) { %>
+			// Multiton -- clear this record from the Application State cache
+			if (array_key_exists($this-><%= $objColumn->VariableName %>, self::$__objInstanceByPrimaryKey)) unset(self::$__objInstanceByPrimaryKey[$this-><%= $objColumn->VariableName %>]);
+
+<% } %><% } %>
 			// Journaling
 			if ($objDatabase->JournalingDatabase) $this->Journal('DELETE');
 		}
@@ -63,6 +68,11 @@
 			$objDatabase->NonQuery('
 				DELETE FROM
 					<%= $strEscapeIdentifierBegin %><%= $objTable->Name %><%= $strEscapeIdentifierEnd %>');
+<% if ($this->blnMultitonSupport) { %>
+
+			// Multiton -- reset the Application State cache
+			self::$__objInstanceByPrimaryKey = [];
+<% } %>
 		}
 
 		/**
@@ -76,4 +86,9 @@
 			// Perform the Query
 			$objDatabase->NonQuery('
 				TRUNCATE <%= $strEscapeIdentifierBegin %><%= $objTable->Name %><%= $strEscapeIdentifierEnd %>');
+<% if ($this->blnMultitonSupport) { %>
+
+			// Multiton -- reset the Application State cache
+			self::$__objInstanceByPrimaryKey = [];
+<% } %>
 		}
