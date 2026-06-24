@@ -123,6 +123,7 @@
 				case '<%= $arrJsonSchemaColumn['property'] %>':
 					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %> object
 					try {
+						if (is_null($mixValue)) $this-><%= $arrJsonSchemaColumn['columnVariableName'] %> = null;
 						$mixValue = QType::Cast($mixValue, Schema\<%= $arrJsonSchemaColumn['schema'] %>::class);
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
@@ -134,6 +135,7 @@
 				case '<%= $arrJsonSchemaColumn['property'] %>':
 					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %>[] array
 					try {
+						if (is_null($mixValue)) $this-><%= $arrJsonSchemaColumn['columnVariableName'] %> = null;
 						$mixValue = QType::Cast($mixValue, QType::ArrayType);
 					} catch (QInvalidCastException $objExc) {
 						$objExc->IncrementOffset();
