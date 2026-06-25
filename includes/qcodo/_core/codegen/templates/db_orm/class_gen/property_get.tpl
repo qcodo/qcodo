@@ -76,7 +76,10 @@
 						if ($this-><%= $objReverseReference->ObjectMemberVariable %> === false)
 							// We've attempted early binding -- and the reverse reference object does not exist
 							return null;
-						if (!$this-><%= $objReverseReference->ObjectMemberVariable %>)
+						// A not-yet-saved object (null primary key) cannot have any row referencing it, so skip
+						// the load.  This also avoids LoadBy<%= $objReverseReferenceColumn->PropertyName %>(null) compiling to "... IS NULL", which would
+						// wrongly match an unrelated row whose foreign key happens to be null.
+						if ((!$this-><%= $objReverseReference->ObjectMemberVariable %>) && (!(<%= $objCodeGen->ImplodeObjectArray(' || ', '(is_null($this->', '))', 'VariableName', $objTable->PrimaryKeyColumnArray) %>)))
 							$this-><%= $objReverseReference->ObjectMemberVariable %> = <%= $objReverseReference->VariableType %>::LoadBy<%= $objReverseReferenceColumn->PropertyName %>(<%= $objCodeGen->ImplodeObjectArray(', ', '$this->', '', 'VariableName', $objTable->PrimaryKeyColumnArray) %>);
 						return $this-><%= $objReverseReference->ObjectMemberVariable %>;
 					} catch (QCallerException $objExc) {
