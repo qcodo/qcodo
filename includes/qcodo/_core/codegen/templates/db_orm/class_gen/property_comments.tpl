@@ -6,7 +6,7 @@
 <% if (!$arrJsonSchemaColumn['arrayFlag']) { %>
 	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %> $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema object from <%= $arrJsonSchemaColumn['column'] %>
 <% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
-	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %>[] $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema array from <%= $arrJsonSchemaColumn['column'] %>
+	 * @property Schema\<%= $arrJsonSchemaColumn['schema'] %>[]|ArrayObject $<%= $arrJsonSchemaColumn['property'] %> the value for the JsonSchema array from <%= $arrJsonSchemaColumn['column'] %>
 <% } %>
 <% } %>
 <% } %>

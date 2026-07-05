@@ -133,7 +133,7 @@
 					return ($this->obj<%= $arrJsonSchemaColumn['property'] %>Json = $mixValue);
 <% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
 				case '<%= $arrJsonSchemaColumn['property'] %>':
-					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %>[] array
+					// Make sure $mixValue actually is a Schema\<%= $arrJsonSchemaColumn['schema'] %>[]|ArrayObject array
 					try {
 						if (is_null($mixValue)) $this-><%= $arrJsonSchemaColumn['columnVariableName'] %> = null;
 						$mixValue = QType::Cast($mixValue, QType::ArrayType);

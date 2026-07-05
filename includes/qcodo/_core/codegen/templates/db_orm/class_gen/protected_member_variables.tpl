@@ -41,7 +41,7 @@
 <% } %><% if ($arrJsonSchemaColumn['arrayFlag']) { %>
 		/**
 		 * Protected member variable for JsonSchema column <%= $objTable->Name %>.<%= $arrJsonSchemaColumn['column'] %>
-		 * @var Schema\<%= $arrJsonSchemaColumn['schema'] %>[] $obj<%= $arrJsonSchemaColumn['property'] %>Json
+		 * @var Schema\<%= $arrJsonSchemaColumn['schema'] %>[]|ArrayObject $obj<%= $arrJsonSchemaColumn['property'] %>Json
 		 */
 		protected $obj<%= $arrJsonSchemaColumn['property'] %>Json;
 <% } %>
