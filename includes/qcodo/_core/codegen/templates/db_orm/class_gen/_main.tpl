@@ -27,6 +27,7 @@
 <% $blnHasJsonSchemaArray = false; if ($objTable->JsonSchemaColumns) foreach ($objTable->JsonSchemaColumns as $arrJsonSchemaColumn) if ($arrJsonSchemaColumn['arrayFlag']) $blnHasJsonSchemaArray = true; %><% if ($blnHasJsonSchemaArray) { %>
 	use ArrayObject;
 <% } %>
+
 	/**
 	 * The abstract <%= $objTable->ClassName %>Gen class defined here is
 	 * code-generated and contains all the basic CRUD-type functionality as well as
