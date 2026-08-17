@@ -63,7 +63,23 @@
 			}
 
 			// Connect
-			$this->blnConnectedFlag = $this->objMySqli->real_connect($this->Server, $this->Username, $this->Password, $this->Database, $this->Port, null, $flags);
+			try {
+				$this->blnConnectedFlag = $this->objMySqli->real_connect($this->Server, $this->Username, $this->Password, $this->Database, $this->Port, null, $flags);
+			} catch (mysqli_sql_exception $exception) {
+				$errorNumber = $exception->getCode();
+				if (array_key_exists('onError_' . $errorNumber, $this->objConfigArray) && $this->objConfigArray['onError_' . $errorNumber]) {
+					$spec = $this->objConfigArray['onError_' . $errorNumber];
+					$parts = explode('::', $spec);
+					$class = $parts[0];
+					$method = $parts[1];
+					if ($class::$method())
+						$this->blnConnectedFlag = $this->objMySqli->real_connect($this->Server, $this->Username, $this->Password, $this->Database, $this->Port, null, $flags);
+					else
+						throw $exception;
+				} else {
+					throw $exception;
+				}
+			}
 			if ($this->objMySqli->error) throw new QMySqliDatabaseException($this->objMySqli->error, $this->objMySqli->errno, null);
 			if (!$this->blnConnectedFlag) throw new QMySqliDatabaseException("Unable to connect to Database", -1, null);
 
