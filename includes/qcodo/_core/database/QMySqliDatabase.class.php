@@ -610,14 +610,10 @@
 
 			// Calculate MaxLength of this column (e.g. if it's a varchar, calculate length of varchar
 			// NOTE: $mixFieldData->max_length in the MySQL spec is **DIFFERENT**
-			$mixDescribeDefault = null;
 			$objDescriptionResult = $objDb->Query(sprintf("DESCRIBE `%s`", $this->strOriginalTable));
 			while (($objRow = $objDescriptionResult->FetchArray())) {
 				if ($objRow["Field"] == $this->strOriginalName) {
 					$this->strOriginalType = $objRow["Type"];
-
-					// The DEFAULT (if any) as defined in the database (note that $mixFieldData->def is not populated by MySQL)
-					$mixDescribeDefault = $objRow["Default"];
 					$strLengthArray = explode("(", $objRow["Type"]);
 					if ((count($strLengthArray) > 1) &&
 						(strtolower($strLengthArray[0]) != 'enum') &&
@@ -636,13 +632,9 @@
 				}
 			}
 
+			$this->blnIdentity = ($mixFieldData->flags & MYSQLI_AUTO_INCREMENT_FLAG) ? true: false;
 			$this->blnNotNull = ($mixFieldData->flags & MYSQLI_NOT_NULL_FLAG) ? true : false;
 			$this->blnPrimaryKey = ($mixFieldData->flags & MYSQLI_PRI_KEY_FLAG) ? true : false;
-
-			// A column is an "Identity" column if the database itself generates the value on INSERT.  This is the case
-			// for any AUTO_INCREMENT column, and also for any PK column that has a DEFAULT defined (e.g. DEFAULT (UUID()))
-			$this->blnIdentity = (($mixFieldData->flags & MYSQLI_AUTO_INCREMENT_FLAG) ||
-				($this->blnPrimaryKey && !is_null($mixDescribeDefault))) ? true : false;
 			$this->blnUnique = ($mixFieldData->flags & MYSQLI_UNIQUE_KEY_FLAG) ? true : false;
 			$this->blnIndexed = ($mixFieldData->flags & MYSQLI_MULTIPLE_KEY_FLAG) ? true : false;
 			$this->blnUnsigned = ($mixFieldData->flags & MYSQLI_UNSIGNED_FLAG) ? true : false;
