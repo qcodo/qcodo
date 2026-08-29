@@ -1092,6 +1092,7 @@
 			$objColumn->PrimaryKey = $objField->PrimaryKey;
 			$objColumn->NotNull = $objField->NotNull;
 			$objColumn->Identity = $objField->Identity;
+			$objColumn->Uuid = $objField->Uuid;
 			$objColumn->Unique = $objField->Unique;
 			if (($objField->PrimaryKey) && $objTable && $objTable->PrimaryKeyColumnArray && (count($objTable->PrimaryKeyColumnArray) == 1))
 				$objColumn->Unique = true;

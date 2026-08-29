@@ -337,6 +337,63 @@
 		}
 
 		/**
+		 * Generate an RFC 9562 version 7 (Unix-time-ordered) UUID.
+		 *
+		 * No dependencies. Requires 64-bit PHP (PHP_INT_SIZE === 8).
+		 *
+		 * Layout, per RFC 9562 section 5.7:
+		 *   unix_ts_ms  48 bits   milliseconds since the Unix epoch
+		 *   version      4 bits   0111
+		 *   rand_a      12 bits   sub-millisecond precision (RFC "method 3")
+		 *   variant      2 bits   10
+		 *   rand_b      62 bits   random
+		 *
+		 * Using rand_a for sub-millisecond precision rather than random bits matches
+		 * MariaDB's own uuid_v7() implementation and makes ids from a single process
+		 * strictly increasing, not merely increasing per millisecond.
+		 *
+		 * REQUIRES MariaDB >= 10.11.5. Earlier 10.11.x byte-swaps every UUID on the
+		 * assumption it is a v1, which destroys v7 ordering. Check with:
+		 *   SELECT VERSION();
+		 */
+		public function Uuid7() {
+			static $lastMs = 0;
+			static $lastSub = -1;
+
+			[$usec, $sec] = explode(' ', microtime());
+			$micros = (int) $sec * 1000000 + (int) round(((float) $usec) * 1000000);
+			$ms  = intdiv($micros, 1000);
+			$sub = intdiv(($micros % 1000) * 4096, 1000);  // 0..999 scaled to 12 bits
+
+			// Keep ids strictly increasing even if the clock stalls or steps backwards.
+			if ($ms < $lastMs) {
+				$ms  = $lastMs;
+				$sub = $lastSub + 1;
+			} elseif ($ms === $lastMs && $sub <= $lastSub) {
+				$sub = $lastSub + 1;
+			}
+			if ($sub > 0x0FFF) {   // more than 4096 ids in one millisecond
+				$ms++;
+				$sub = 0;
+			}
+			$lastMs  = $ms;
+			$lastSub = $sub;
+
+			$rand = random_bytes(8);
+			$rand[0] = chr((ord($rand[0]) & 0x3F) | 0x80);  // variant 10
+			$hex = bin2hex($rand);
+
+			return sprintf(
+				'%08x-%04x-%04x-%s-%s',
+				($ms >> 16) & 0xFFFFFFFF,  // unix_ts_ms, high 32 bits
+				$ms & 0xFFFF,              // unix_ts_ms, low 16 bits
+				0x7000 | $sub,             // version 7 | rand_a (sub-ms)
+				substr($hex, 0, 4),        // variant | rand_b high bits
+				substr($hex, 4, 12)        // rand_b remainder
+			);
+		}
+
+		/**
 		 * Displays the OutputProfiling results, plus a link which will popup the details of the profiling.
 		 *
 		 * @return void
@@ -361,6 +418,7 @@
 
 		// Bool
 		protected $blnIdentity;
+		protected $blnUuid;
 		protected $blnNotNull;
 		protected $blnPrimaryKey;
 		protected $blnIndexed;
@@ -388,6 +446,8 @@
 					return $this->intMaxLength;
 				case "Identity":
 					return $this->blnIdentity;
+				case "Uuid":
+					return $this->blnUuid;
 				case "NotNull":
 					return $this->blnNotNull;
 				case "PrimaryKey":

@@ -5,7 +5,7 @@
 <%
 	foreach ($objArray = $objTable->ColumnArray as $objColumn)
 		if ($objColumn->Identity)
-			return '		 * @return int';
+			return ($objColumn->Uuid) ? '		 * @return string' : '		 * @return int';
 	return '		 * @return null';
 %>
 		 */
@@ -29,17 +29,24 @@
 <% } %><% } %>
 			try {
 				if ((!$this->__blnRestored) || ($blnForceInsert)) {
+<% foreach ($objTable->PrimaryKeyColumnArray as $objColumn) { %>
+	<% if (($objColumn->Identity) && ($objColumn->Uuid)) { %>
+					// Generate the value for this Uuid Identity column
+					$mixToReturn = ($this-><%= $objColumn->VariableName %> = $objDatabase->Uuid7());
+
+	<% } %>
+<% } %>
 					// Perform an INSERT query
 					$objDatabase->NonQuery('
 						INSERT INTO <%= $strEscapeIdentifierBegin %><%= $objTable->Name %><%= $strEscapeIdentifierEnd %> (
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
-	<% if ((!$objColumn->Identity) && (!$objColumn->Timestamp)) { %>
+	<% if (((!$objColumn->Identity) || ($objColumn->Uuid)) && (!$objColumn->Timestamp)) { %>
 							<%= $strEscapeIdentifierBegin %><%= $objColumn->Name %><%= $strEscapeIdentifierEnd %>,
 	<% } %>
 <% } %><%--%>
 						) VALUES (
 <% foreach ($objTable->ColumnArray as $objColumn) { %>
-	<% if ((!$objColumn->Identity) && (!$objColumn->Timestamp)) { %>
+	<% if (((!$objColumn->Identity) || ($objColumn->Uuid)) && (!$objColumn->Timestamp)) { %>
 							' . $objDatabase->SqlVariable($this-><%= $objColumn->VariableName %>) . ',
 	<% } %>
 <% } %><%--%>
@@ -48,7 +55,7 @@
 
 <%
 	foreach ($objArray = $objTable->PrimaryKeyColumnArray as $objColumn)
-		if ($objColumn->Identity)
+		if (($objColumn->Identity) && (!$objColumn->Uuid))
 			return sprintf('					// Update Identity column and return its value
 					$mixToReturn = ($this->%s = $objDatabase->InsertId(\'%s\', \'%s\'));',
 					$objColumn->VariableName, $objTable->Name, $objColumn->Name);

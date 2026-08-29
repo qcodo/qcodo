@@ -78,6 +78,12 @@
 		protected $blnIdentity;
 
 		/**
+		 * Specifies whether or not the column is a UUID column
+		 * @var bool Uuid
+		 */
+		protected $blnUuid;
+
+		/**
 		 * Specifies whether or not the column is a single-column Index
 		 * @var bool Indexed
 		 */
@@ -140,6 +146,8 @@
 					return $this->blnNotNull;
 				case 'Identity':
 					return $this->blnIdentity;
+				case 'Uuid':
+					return $this->blnUuid;
 				case 'Indexed':
 					return $this->blnIndexed;
 				case 'Unique':
@@ -198,6 +206,8 @@
 						return $this->blnNotNull = QType::Cast($mixValue, QType::Boolean);
 					case 'Identity':
 						return $this->blnIdentity = QType::Cast($mixValue, QType::Boolean);
+					case 'Uuid':
+						return $this->blnUuid = QType::Cast($mixValue, QType::Boolean);
 					case 'Indexed':
 						return $this->blnIndexed = QType::Cast($mixValue, QType::Boolean);
 					case 'Unique':
