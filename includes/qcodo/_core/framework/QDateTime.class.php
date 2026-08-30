@@ -357,6 +357,13 @@
 			return $strToReturn;
 		}
 
+		/**
+		 * @return string
+		 */
+		public function ToIso8601String() {
+			return $this->PhpDate(DATE_ATOM);
+		}
+
 		public function format($strFormat) : string {
 			$this->ReinforceNullProperties();
 			return parent::format($strFormat);
