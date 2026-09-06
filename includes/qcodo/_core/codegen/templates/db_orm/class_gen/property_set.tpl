@@ -79,7 +79,7 @@
 <% } %>
 <% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>
 	<% if ($objReverseReference->Unique) { %>
-				case '<%= $objReverseReference->ObjectPropertyName %>':
+				case '<%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %>':
 					// Sets the value for the <%= $objReverseReference->VariableType %> object referenced by <%= $objReverseReference->ObjectMemberVariable %> (Unique)
 					// @param <%= $objReverseReference->VariableType %> $mixValue
 					// @return <%= $objReverseReference->VariableType %>
@@ -100,7 +100,7 @@
 						}
 
 						// Are we setting <%= $objReverseReference->ObjectMemberVariable %> to a DIFFERENT $mixValue?
-						if ((!$this-><%= $objReverseReference->ObjectPropertyName %>) || ($this-><%= $objReverseReference->ObjectPropertyName %>-><%= $objCodeGen->GetTable($objReverseReference->Table)->PrimaryKeyColumnArray[0]->PropertyName %> != $mixValue-><%= $objCodeGen->GetTable($objReverseReference->Table)->PrimaryKeyColumnArray[0]->PropertyName %>)) {
+						if ((!$this-><%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %>) || ($this-><%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %>-><%= $objCodeGen->GetTable($objReverseReference->Table)->PrimaryKeyColumnArray[0]->PropertyName %> != $mixValue-><%= $objCodeGen->GetTable($objReverseReference->Table)->PrimaryKeyColumnArray[0]->PropertyName %>)) {
 							// Yes -- therefore, set the "Dirty" flag to true
 							// to make sure we update the adjoined <%= $objReverseReference->VariableType %> object the next time we call Save()
 							$this->blnDirty<%= $objReverseReference->ObjectPropertyName %> = true;

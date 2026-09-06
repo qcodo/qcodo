@@ -68,6 +68,14 @@
 		protected $arrJsonSchemaColumns = array();
 		protected $arrTernaryColumns = array();
 
+		// Property Name Overrides
+		// Indexed by table, and then by the default (e.g. code generated) property name
+		protected $arrPropertyNameOverrides = array();
+
+		// Keeps track of the Property Name Overrides which actually ended up getting applied,
+		// so that we can warn about any that were defined but that never matched anything
+		protected $arrPropertyNameOverridesApplied = array();
+
 		// Type Table Items, Table Name and Column Name RegExp Patterns
 		protected $strPatternTableName = '[[:alpha:]_][[:alnum:]_]*';
 		protected $strPatternColumnName = '[[:alpha:]_][[:alnum:]_]*';
@@ -122,6 +130,36 @@
 			}
 
 			return false;
+		}
+
+		/**
+		 * Given the name of a table, and the name of a property as the code generator calculated it
+		 * by default, this will return the name that the property should actually be exposed as --
+		 * either the <propertyNameOverride> that was defined for it in the CodeGen Settings XML, or
+		 * the default name itself if no override was defined.
+		 *
+		 * Note that an override ONLY renames the publicly exposed property, e.g. the @property
+		 * PHPDoc for it and the __get() and __set() cases which implement it, in the generated DB
+		 * ORM class.  Everything else deliberately continues to use the default name: the protected
+		 * member variables backing the property, every internal method built off of it, and all
+		 * table names, column names, SQL aliases and QQuery Node names.
+		 *
+		 * This is called by the DB ORM templates as they generate each property.
+		 *
+		 * @param string $strTableName the table whose generated class exposes the property
+		 * @param string $strPropertyName the default (e.g. code generated) property name
+		 * @return string the property name to actually expose
+		 */
+		public function PropertyNameOverride($strTableName, $strPropertyName) {
+			$strTableName = strtolower($strTableName);
+
+			if (array_key_exists($strTableName, $this->arrPropertyNameOverrides) &&
+				array_key_exists($strPropertyName, $this->arrPropertyNameOverrides[$strTableName])) {
+				$this->arrPropertyNameOverridesApplied[$strTableName][$strPropertyName] = true;
+				return $this->arrPropertyNameOverrides[$strTableName][$strPropertyName];
+			}
+
+			return $strPropertyName;
 		}
 
 		public function GetTitle() {
@@ -185,6 +223,20 @@
 				$strToReturn .= sprintf('			</ternaryColumns>%s', $strCrLf);
 			}
 
+			if ($this->arrPropertyNameOverrides) {
+				$strToReturn .= sprintf('			<propertyNameOverrides>%s', $strCrLf);
+				foreach ($this->arrPropertyNameOverrides as $strTable => $strOverrideArray) {
+					foreach ($strOverrideArray as $strPropertyName => $strOverride) {
+						$strToReturn .= sprintf('				<propertyNameOverride table="%s" property="%s" override="%s"/>%s',
+							$strTable,
+							$strPropertyName,
+							$strOverride,
+							$strCrLf);
+					}
+				}
+				$strToReturn .= sprintf('			</propertyNameOverrides>%s', $strCrLf);
+			}
+
 			$strToReturn .= sprintf('		</database>%s', $strCrLf);
 			return $strToReturn;
 		}
@@ -227,6 +279,14 @@
 				else
 					$strReport .= sprintf("FAILED to generate DB Type class:      %s\n", $objTypeTable->ClassName);
 			}
+
+			// Finally, warn on any Property Name Override that never ended up matching a property
+			foreach ($this->arrPropertyNameOverrides as $strTableName => $strOverrideArray)
+				foreach ($strOverrideArray as $strPropertyName => $strOverride)
+					if (!array_key_exists($strTableName, $this->arrPropertyNameOverridesApplied) ||
+						!array_key_exists($strPropertyName, $this->arrPropertyNameOverridesApplied[$strTableName]))
+						$this->strErrors .= sprintf("Warning: propertyNameOverride for \"%s.%s\" was never applied -- no such overridable property exists\r\n",
+							$strTableName, $strPropertyName);
 
 			return $strReport;
 		}
@@ -334,6 +394,30 @@
 					$strNullToken = QCodeGen::LookupSetting($objNode, null, 'nullToken');
 					if (!array_key_exists($strTable, $this->arrTernaryColumns)) $this->arrTernaryColumns[$strTable] = array();
 					$this->arrTernaryColumns[$strTable][] = array('column' => $strColumn, 'property' => $strProperty, 'trueToken' => $strTrueToken, 'falseToken' => $strFalseToken, 'nullToken' => $strNullToken);
+				}
+			}
+
+			// PropertyNameOverrides
+			if ($objNodeArray = QCodeGen::LookupSettingArray($objSettingsXml, 'propertyNameOverrides')) {
+				$this->arrPropertyNameOverrides = array();
+				foreach ($objNodeArray as $objNode) {
+					$strTable = strtolower(QCodeGen::LookupSetting($objNode, null, 'table'));
+					$strProperty = QCodeGen::LookupSetting($objNode, null, 'property');
+					$strOverride = QCodeGen::LookupSetting($objNode, null, 'override');
+
+					if ((!$strTable) || (!$strProperty) || (!$strOverride)) {
+						$this->strErrors .= "CodeGen Settings XML Fatal Error: every propertyNameOverride must define a table, a property and an override\r\n";
+						continue;
+					}
+
+					if (!preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $strOverride)) {
+						$this->strErrors .= sprintf("CodeGen Settings XML Fatal Error: propertyNameOverride \"%s\" for %s.%s is not a valid PHP property name\r\n",
+							$strOverride, $strTable, $strProperty);
+						continue;
+					}
+
+					if (!array_key_exists($strTable, $this->arrPropertyNameOverrides)) $this->arrPropertyNameOverrides[$strTable] = array();
+					$this->arrPropertyNameOverrides[$strTable][$strProperty] = $strOverride;
 				}
 			}
 

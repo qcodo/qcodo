@@ -22,7 +22,7 @@
 		 * Protected member variable that contains the object which points to
 		 * this object by the reference in the unique database column <%= $objReverseReference->Table %>.<%= $objReverseReference->Column %>.
 		 *
-		 * NOTE: Always use the <%= $objReverseReference->ObjectPropertyName %> property getter to correctly retrieve this <%= $objReverseReference->VariableType %> object.
+		 * NOTE: Always use the <%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %> property getter to correctly retrieve this <%= $objReverseReference->VariableType %> object.
 		 * (Because this class implements late binding, this variable reference MAY be null.)
 		 * @var <%= $objReverseReference->VariableType %> <%= $objReverseReference->ObjectMemberVariable %>
 		 */

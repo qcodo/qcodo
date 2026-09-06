@@ -68,7 +68,7 @@
 	<% if ($objReverseReference->Unique) { %>
 		<% $objReverseReferenceTable = $objCodeGen->TableArray[strtolower($objReverseReference->Table)]; %>
 		<% $objReverseReferenceColumn = $objReverseReferenceTable->ColumnArray[strtolower($objReverseReference->Column)]; %>
-				case '<%= $objReverseReference->ObjectPropertyName %>':
+				case '<%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %>':
 					// Gets the value for the <%= $objReverseReference->VariableType %> object that uniquely references this <%= $objTable->ClassName %>
 					// by <%= $objReverseReference->ObjectMemberVariable %> (Unique)
 					// @return <%= $objReverseReference->VariableType %>

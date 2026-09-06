@@ -17,7 +17,7 @@
 <% } %>
 <% foreach ($objTable->ReverseReferenceArray as $objReverseReference) { %>
 	<% if ($objReverseReference->Unique) { %>
-	 * @property <%= $objReverseReference->VariableType %> $<%= $objReverseReference->ObjectPropertyName %> the value for the <%= $objReverseReference->VariableType %> object that uniquely references this <%= $objTable->ClassName %>
+	 * @property <%= $objReverseReference->VariableType %> $<%= $objCodeGen->PropertyNameOverride($objTable->Name, $objReverseReference->ObjectPropertyName) %> the value for the <%= $objReverseReference->VariableType %> object that uniquely references this <%= $objTable->ClassName %>
 	<% } %>
 <% } %>
 <% foreach ($objTable->ManyToManyReferenceArray as $objReference) { %>
